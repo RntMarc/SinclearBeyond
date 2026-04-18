@@ -1,15 +1,8 @@
-import { Cormorant_Garamond, Figtree } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const figtree = Figtree({
-  variable: "--font-body",
+const inter = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
@@ -22,11 +15,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="de"
-      className={`${cormorant.variable} ${figtree.variable} h-full`}
-    >
-      <body className="min-h-full flex flex-col bg-[#0f110e] text-[#f0ebe0]">
+    <html lang="de" className={`${inter.variable} dark h-full`}>
+      <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
         {children}
       </body>
     </html>
