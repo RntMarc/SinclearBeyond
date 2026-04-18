@@ -1,5 +1,14 @@
 import { mysqlTable, varchar, datetime, tinyint } from "drizzle-orm/mysql-core";
 
+export const otpTokens = mysqlTable("OtpToken", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  email: varchar("email", { length: 191 }).notNull(),
+  code: varchar("code", { length: 6 }).notNull(),
+  expiresAt: datetime("expiresAt", { fsp: 3 }).notNull(),
+  usedAt: datetime("usedAt", { fsp: 3 }),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
 export const users = mysqlTable("User", {
   id: varchar("id", { length: 191 }).primaryKey(),
   email: varchar("email", { length: 191 }).notNull(),
