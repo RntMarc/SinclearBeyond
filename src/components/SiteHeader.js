@@ -4,7 +4,7 @@ import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import LogoutButton from "@/components/LogoutButton";
 
-export default async function SiteHeader() {
+export default async function SiteHeader({ variant = "default" }) {
   const session = await getSession();
 
   var user = null
@@ -25,20 +25,24 @@ export default async function SiteHeader() {
       >
         Sinclear Beyond
       </a>
-      {session ? (
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground hidden sm:block">
-            {user?.displayName ?? session.email}
-          </span>
-          <LogoutButton />
-        </div>
-      ) : (
-        <a
-          href="/login"
-          className="text-sm font-medium px-4 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
-        >
-          Login
-        </a>
+      {variant !== "loginPage" && (
+        <>
+          {session ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground hidden sm:block">
+                {user?.displayName ?? session.email}
+              </span>
+              <LogoutButton />
+            </div>
+          ) : (
+            <a
+              href="/login"
+              className="text-sm font-medium px-4 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
+            >
+              Login
+            </a>
+          )}
+        </>
       )}
     </nav>
   );

@@ -4,7 +4,7 @@ import LoginForm from "@/components/LoginForm";
 export default function LoginPage() {
   return (
     <>
-      <SiteHeader />
+      <SiteHeader variant="loginPage" />
       <LoginForm />
     </>
   );

@@ -133,10 +133,10 @@ export default function LoginPage() {
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-light text-foreground mb-2 text-center">
-          {mode === "login" ? "Willkommen zurück" : "Konto erstellen"}
+          {mode === "login" ? "Willkommen zurück!" : "Konto erstellen"}
         </h1>
         <p className="text-sm text-muted-foreground text-center mb-8">
-          Sinclear Beyond
+          Login/Registration nur mit @sinclear.de-Adresse möglich.
         </p>
 
         {/* Mode toggle */}
