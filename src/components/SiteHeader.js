@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import LogoutButton from "@/components/LogoutButton";
+import OpenAppButton from "./OpenAppButton";
 
 export default async function SiteHeader({ variant = "default" }) {
   const session = await getSession();
@@ -32,6 +33,11 @@ export default async function SiteHeader({ variant = "default" }) {
               <span className="text-sm text-muted-foreground hidden sm:block">
                 {user?.displayName ?? session.email}
               </span>
+              {variant == "loggedInOnLanding" && (
+                <>
+                  <OpenAppButton />
+                </>
+              )}
               <LogoutButton />
             </div>
           ) : (

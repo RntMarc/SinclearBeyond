@@ -1,6 +1,9 @@
+import { getSession } from "@/lib/session";
 import SiteHeader from "@/components/SiteHeader";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession();
+
   const features = [
     {
       icon: "💬",
@@ -37,7 +40,11 @@ export default function Home() {
   return (
     <>
       {/* Nav */}
-      <SiteHeader />
+      {session ? (
+        <SiteHeader variant="loggedInOnLanding" />
+      ) : (
+        <SiteHeader />
+      )}
 
       <main className="flex flex-col">
         {/* Hero */}
@@ -85,7 +92,7 @@ export default function Home() {
         <section className="px-6 md:px-12 py-20 border-y border-border/40 bg-card">
           <div className="max-w-3xl mx-auto">
             <p className="text-2xl md:text-3xl font-light text-muted-foreground leading-relaxed">
-              Discord wird unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen{" "}
+              Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen {" "}
               <em className="italic text-foreground">eigenen Ort.</em>
             </p>
           </div>
