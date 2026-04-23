@@ -26,7 +26,10 @@ export async function requestOtp(email) {
     createdAt: now,
   });
 
-  await sendOtpEmail(email, code);
+  await sendOtpEmail(email, code).catch((err) => {
+    console.error("[OTP] sendOtpEmail failed:", err);
+    throw new Error("mail_send_failed");
+  });
   return { ok: true };
 }
 
