@@ -3,7 +3,7 @@ import { jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export async function middleware(req) {
+export async function proxy(req) {
   const token = req.cookies.get("session")?.value;
 
   if (!token) {
