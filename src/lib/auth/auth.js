@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
-import { db } from "@/lib/db";
-import { users } from "@/lib/schema";
+import { db } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);

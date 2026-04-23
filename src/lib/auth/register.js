@@ -1,9 +1,9 @@
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
-import { users } from "@/lib/schema";
+import { db } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { requestOtp } from "@/lib/otp";
+import { requestOtp } from "@/lib/auth/otp";
 
 function getAllowedDomains() {
   return (process.env.ALLOWED_EMAIL_DOMAINS ?? "")

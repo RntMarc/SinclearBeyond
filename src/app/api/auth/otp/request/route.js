@@ -1,4 +1,4 @@
-import { requestOtp } from "@/lib/otp";
+import { requestOtp } from "@/lib/auth/otp";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {

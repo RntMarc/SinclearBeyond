@@ -1,8 +1,8 @@
-import { getSession } from "@/lib/session";
-import { db } from "@/lib/db";
-import { users } from "@/lib/schema";
+import { getSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import SiteHeader from "@/components/SiteHeader";
+import SiteHeader from "@/components/header/SiteHeader";
 
 export default async function HomePage() {
   const session = await getSession();

@@ -1,8 +1,8 @@
-import { getSession } from "@/lib/session";
-import { db } from "@/lib/db";
-import { users } from "@/lib/schema";
+import { getSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import LogoutButton from "@/components/LogoutButton";
+import LogoutButton from "@/components/auth/LogoutButton";
 import OpenAppButton from "./OpenAppButton";
 
 export default async function SiteHeader({ variant = "default" }) {

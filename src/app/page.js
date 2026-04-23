@@ -1,5 +1,5 @@
-import { getSession } from "@/lib/session";
-import SiteHeader from "@/components/SiteHeader";
+import { getSession } from "@/lib/auth/session";
+import SiteHeader from "@/components/header/SiteHeader";
 
 export default async function Home() {
   const session = await getSession();

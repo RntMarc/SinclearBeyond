@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
-import { db } from "@/lib/db";
-import { otpTokens, users } from "@/lib/schema";
+import { db } from "@/lib/db/db";
+import { otpTokens, users } from "@/lib/db/schema";
 import { eq, and, gt, isNull } from "drizzle-orm";
-import { sendOtpEmail } from "@/lib/email";
+import { sendOtpEmail } from "@/lib/auth/email";
 import { SignJWT } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);

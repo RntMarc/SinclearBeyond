@@ -1,7 +1,7 @@
-import { getSession } from "@/lib/session";
+import { getSession } from "@/lib/auth/session";
 import { redirect } from 'next/navigation';
-import SiteHeader from "@/components/SiteHeader";
-import LoginForm from "@/components/LoginForm";
+import SiteHeader from "@/components/header/SiteHeader";
+import LoginForm from "@/components/auth/LoginForm";
 
 export default async function LoginPage() {
   const session = await getSession();
