@@ -7,11 +7,15 @@ import LogoutButton from "@/components/LogoutButton";
 export default async function SiteHeader() {
   const session = await getSession();
 
-  const [user] = await db
+  var user = null
+
+  if (session != null) {
+    const [user] = await db
       .select({ displayName: users.displayName, email: users.email, createdAt: users.createdAt })
       .from(users)
       .where(eq(users.id, session.sub))
       .limit(1);
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 border-b border-border/40 backdrop-blur-sm bg-background/80">
