@@ -48,6 +48,7 @@ export default function KalenderClient() {
   const [month, setMonth] = useState(today.getMonth());
   const [eventList, setEventList] = useState([]);
   const [modal, setModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -116,7 +117,9 @@ export default function KalenderClient() {
   const calDays = getCalendarDays(year, month);
 
   function eventsForDay(date) {
-    return eventList.filter((ev) => isSameDay(new Date(ev.startAt), date));
+    return eventList
+      .filter((ev) => isSameDay(new Date(ev.startAt), date))
+      .sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
   }
 
   return (
@@ -200,8 +203,8 @@ export default function KalenderClient() {
                 {dayEvents.slice(0, 3).map((ev) => (
                   <div
                     key={ev.id}
-                    className="text-[10px] leading-snug px-1.5 py-px rounded bg-primary/15 text-primary truncate shrink-0"
-                    onClick={(e) => e.stopPropagation()}
+                    className="text-[10px] leading-snug px-1.5 py-px rounded bg-primary/15 text-primary truncate shrink-0 cursor-pointer hover:bg-primary/25 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); setSelectedEvent(ev); }}
                     title={ev.title}
                   >
                     {!ev.allDay && (
@@ -225,6 +228,74 @@ export default function KalenderClient() {
           );
         })}
       </div>
+
+      {/* Detail modal */}
+      {selectedEvent && (() => {
+        const ev = selectedEvent;
+        const start = new Date(ev.startAt);
+        const end = ev.endAt ? new Date(ev.endAt) : null;
+        const dateOpts = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
+        const timeOpts = { hour: "2-digit", minute: "2-digit" };
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+            <div className="w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl">
+              <div className="flex items-start justify-between px-6 py-4 border-b border-border gap-3">
+                <h3 className="text-base font-medium text-foreground leading-snug">{ev.title}</h3>
+                <button
+                  type="button"
+                  onClick={() => setSelectedEvent(null)}
+                  className="text-muted-foreground hover:text-foreground transition-colors shrink-0 mt-0.5"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="px-6 py-5 flex flex-col gap-3">
+                {/* Date / time */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                    {ev.allDay ? "Datum" : "Zeitraum"}
+                  </span>
+                  {ev.allDay ? (
+                    <span className="text-sm text-foreground">
+                      {start.toLocaleDateString("de-DE", dateOpts)}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-foreground">
+                      {start.toLocaleDateString("de-DE", dateOpts)},{" "}
+                      {start.toLocaleTimeString("de-DE", timeOpts)}
+                      {end && (
+                        <>
+                          {" – "}
+                          {isSameDay(start, end)
+                            ? end.toLocaleTimeString("de-DE", timeOpts)
+                            : `${end.toLocaleDateString("de-DE", dateOpts)}, ${end.toLocaleTimeString("de-DE", timeOpts)}`}
+                        </>
+                      )}
+                    </span>
+                  )}
+                </div>
+
+                {/* Description */}
+                {ev.description && (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs text-muted-foreground uppercase tracking-wider">Beschreibung</span>
+                    <p className="text-sm text-foreground whitespace-pre-wrap">{ev.description}</p>
+                  </div>
+                )}
+              </div>
+              <div className="px-6 pb-5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedEvent(null)}
+                  className="w-full px-4 py-2.5 rounded-full border border-border text-muted-foreground text-sm hover:text-foreground hover:border-foreground/30 transition-colors"
+                >
+                  Schließen
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Create modal */}
       {modal && (
