@@ -1,3 +1,5 @@
+import SiteHeader from "@/components/SiteHeader";
+
 export default function Home() {
   const features = [
     {
@@ -35,17 +37,7 @@ export default function Home() {
   return (
     <>
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 border-b border-border/40 backdrop-blur-sm bg-background/80">
-        <span className="text-xl font-semibold tracking-tight text-foreground">
-          Sinclear Beyond
-        </span>
-        <a
-          href="/login"
-          className="text-sm font-medium px-4 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
-        >
-          Login
-        </a>
-      </nav>
+      <SiteHeader />
 
       <main className="flex flex-col">
         {/* Hero */}
