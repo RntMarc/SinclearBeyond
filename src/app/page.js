@@ -40,7 +40,7 @@ export default function Home() {
           Sinclear Beyond
         </span>
         <a
-          href="#"
+          href="/login"
           className="text-sm font-medium px-4 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
         >
           Login
@@ -75,7 +75,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             <a
-              href="#"
+              href="/login"
               className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
             >
               Jetzt starten
@@ -137,7 +137,7 @@ export default function Home() {
             Sinclear Beyond ist in aktiver Entwicklung.<br/>Es können Fehler vorkommen.
           </p>
           <a
-            href="#"
+            href="/login"
             className="inline-block px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
           >
             Jetzt starten
