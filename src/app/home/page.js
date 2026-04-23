@@ -2,7 +2,7 @@ import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import SiteHeader from "@/components/header/SiteHeader";
+import AppShell from "@/components/layout/Appshell";
 
 export default async function HomePage() {
   const session = await getSession();
@@ -14,9 +14,8 @@ export default async function HomePage() {
     .limit(1);
 
   return (
-    <>
-      <SiteHeader />
-      <main className="min-h-screen flex flex-col items-center justify-center px-6 pt-24">
+    <AppShell user={user} session={session}>
+      <div className="flex flex-col items-center justify-center min-h-full px-6 py-20">
         <div className="w-full max-w-2xl">
           <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
             Dashboard
@@ -28,7 +27,7 @@ export default async function HomePage() {
             Willkommen bei Sinclear Beyond.
           </p>
         </div>
-      </main>
-    </>
+      </div>
+    </AppShell>
   );
 }
