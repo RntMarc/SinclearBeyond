@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Wir brauchen ALLE dependencies für den Build (auch devDeps)
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 
