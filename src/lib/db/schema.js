@@ -41,6 +41,16 @@ export const events = mysqlTable("Event", {
   startAt: datetime("startAt", { fsp: 3 }).notNull(),
   endAt: datetime("endAt", { fsp: 3 }),
   allDay: tinyint("allDay").notNull().default(0),
+  isPublic: tinyint("isPublic").notNull().default(1), // NEW
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   creatorId: varchar("creatorId", { length: 191 }).notNull(),
+});
+
+export const eventPermissions = mysqlTable("EventPermission", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  eventId: varchar("eventId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  canView: tinyint("canView").notNull().default(1),
+  canEdit: tinyint("canEdit").notNull().default(0),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });

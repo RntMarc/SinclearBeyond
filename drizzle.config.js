@@ -1,5 +1,5 @@
 export default {
-  schema: "./src/lib/schema.js",
+  schema: "./src/lib/db/schema.js",
   out: "./drizzle",
   dialect: "mysql",
   dbCredentials: {
