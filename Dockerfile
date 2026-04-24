@@ -1,11 +1,31 @@
-FROM node:lts-alpine
-ENV NODE_ENV=production
-WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
+# Stage 1: Install & Build
+FROM node:lts-alpine AS builder
+WORKDIR /app
+
+# Wir brauchen ALLE dependencies für den Build (auch devDeps)
+COPY package.json package-lock.json* ./
+RUN npm ci
+
 COPY . .
+
+# Next.js braucht oft schärfere Umgebungsvariablen beim Build
+ENV NODE_ENV=production
 RUN npx next build
-EXPOSE 3000
-RUN chown -R node /usr/src/app
+
+# Stage 2: Run
+FROM node:lts-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Wir kopieren NUR die produktionsrelevanten Dateien aus der Stage 'builder'
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Sicherheit: Nicht als Root ausführen
 USER node
+
+EXPOSE 3000
 CMD ["npx", "next", "start"]
