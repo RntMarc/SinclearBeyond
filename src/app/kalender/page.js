@@ -16,7 +16,7 @@ export default async function KalenderPage() {
 
   return (
     <AppShell user={user} session={session}>
-      <KalenderClient />
+      <KalenderClient userId={session.sub} />
     </AppShell>
   );
 }
