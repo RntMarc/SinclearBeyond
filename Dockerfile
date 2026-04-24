@@ -10,6 +10,8 @@ COPY . .
 
 # Next.js braucht oft schärfere Umgebungsvariablen beim Build
 ENV NODE_ENV=production
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
 RUN npx next build
 
 # Stage 2: Run
@@ -28,4 +30,4 @@ COPY --from=builder /app/package.json ./package.json
 USER node
 
 EXPOSE 3000
-CMD ["npx", "next", "start"]
+CMD ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]
