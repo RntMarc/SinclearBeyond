@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { saveProfile } from "@/app/profil/actions";
 import ContactField from "@/components/profile/ContactField";
+import SaveButton from "@/components/SaveButton";
 
 const FIELDS = [
   { name: "discordHandle",  visKey: "discordVisibility",  label: "Discord",  placeholder: "nutzername" },
@@ -12,6 +13,8 @@ const FIELDS = [
 ];
 
 export default function ProfilForm({ user, contact }) {
+  const [state, action, isPending] = useActionState(saveProfile, null);
+
   const [values, setValues] = useState({
     discordHandle:  contact?.discordHandle  ?? "",
     fluxerHandle:   contact?.fluxerHandle   ?? "",
@@ -29,7 +32,7 @@ export default function ProfilForm({ user, contact }) {
   });
 
   return (
-    <form action={saveProfile} className="space-y-5">
+    <form action={action} className="space-y-5">
       <div>
         <label className="block text-sm font-medium mb-1 text-foreground">Name</label>
         <input
@@ -56,12 +59,7 @@ export default function ProfilForm({ user, contact }) {
         />
       ))}
 
-      <button
-        type="submit"
-        className="w-full rounded-full bg-primary text-primary-foreground py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
-      >
-        Speichern
-      </button>
+      <SaveButton pending={isPending} state={state} />
     </form>
   );
 }
