@@ -2,7 +2,7 @@ import { getProfileData } from "@/app/profil/actions";
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
-import ProfilForm from "@/components/profil/ProfilForm";
+import ProfilForm from "@/components/profile/ProfilForm";
 
 export default async function ProfilPage() {
   const session = await getSession();

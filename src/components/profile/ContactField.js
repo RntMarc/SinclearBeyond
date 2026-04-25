@@ -1,5 +1,5 @@
 "use client";
-import VisibilityToggle from "@/components/profil/VisibilityToggle";
+import VisibilityToggle from "@/components/profile/VisibilityToggle";
 
 export default function ContactField({
   name, label, placeholder,

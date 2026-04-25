@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { saveProfile } from "@/app/profil/actions";
-import ContactField from "@/components/profil/ContactField";
+import ContactField from "@/components/profile/ContactField";
 
 const FIELDS = [
   { name: "discordHandle",  visKey: "discordVisibility",  label: "Discord",  placeholder: "nutzername" },
