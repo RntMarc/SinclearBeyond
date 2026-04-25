@@ -42,30 +42,19 @@ export default function ProfilForm({ user, contact }) {
       <hr className="border-border" />
       <p className="text-xs text-muted-foreground uppercase tracking-[0.2em]">Kontakt</p>
 
-      {FIELDS.map(({ name, label, placeholder }) => {
-        const visKey = `${name.replace("Handle", "").replace("Number", "")}Visibility`;
-        // discordHandle → discordVisibility, signalNumber → signalVisibility
-        const resolvedVisKey = (() => {
-          const base = name
-            .replace("Handle", "")
-            .replace("Number", "");
-          return `${base}Visibility`;
-        })();
-        return (
-          <ContactField
-            key={name}
-            name={name}
-            label={label}
-            placeholder={placeholder}
-            value={values[name]}
-            onChange={(v) => setValues((prev) => ({ ...prev, [name]: v }))}
-            visibility={visibility[resolvedVisKey]}
-            onVisibilityChange={(v) =>
-              setVisibility((prev) => ({ ...prev, [resolvedVisKey]: v }))
-            }
-          />
-        );
-      })}
+      {FIELDS.map(({ name, visKey, label, placeholder }) => (
+        <ContactField
+          key={name}
+          name={name}
+          visKey={visKey}
+          label={label}
+          placeholder={placeholder}
+          value={values[name]}
+          onChange={(v) => setValues((prev) => ({ ...prev, [name]: v }))}
+          visibility={visibility[visKey]}
+          onVisibilityChange={(v) => setVisibility((prev) => ({ ...prev, [visKey]: v }))}
+        />
+      ))}
 
       <button
         type="submit"

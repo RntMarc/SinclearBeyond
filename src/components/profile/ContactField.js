@@ -2,7 +2,7 @@
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 
 export default function ContactField({
-  name, label, placeholder,
+  name, visKey, label, placeholder,
   value, onChange,
   visibility, onVisibilityChange,
 }) {
@@ -18,7 +18,7 @@ export default function ContactField({
           className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground placeholder:text-muted-foreground"
         />
         <VisibilityToggle value={visibility} onChange={onVisibilityChange} />
-        <input type="hidden" name={`${name}Visibility`} value={visibility} />
+        <input type="hidden" name={visKey} value={visibility} />
       </div>
     </div>
   );
