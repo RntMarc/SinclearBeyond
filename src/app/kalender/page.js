@@ -3,7 +3,7 @@ import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import AppShell from "@/components/layout/Appshell";
-import KalenderClient from "@/components/kalender/KalenderClient";
+import KalenderClient from "@/components/calender/KalenderClient";
 
 export default async function KalenderPage() {
   const session = await getSession();
