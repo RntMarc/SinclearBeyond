@@ -2,11 +2,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, User, X, Menu } from "lucide-react";
+import { Calendar, User, X, Menu, Users } from "lucide-react";
 import LogoutButton from "@/components/auth/LogoutButton";
 
 const navItems = [
   { href: "/kalender", label: "Kalender", icon: Calendar },
+  { href: "/kontakte", label: "Kontakte", icon: Users },
   { href: "/profil",   label: "Profil",   icon: User },
 ];
 
