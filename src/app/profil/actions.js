@@ -18,7 +18,7 @@ export async function getProfileData() {
   const [contact] = await db
     .select()
     .from(contactInfo)
-    .where(eq(contactInfo.userId, session.userId))
+    .where(eq(contactInfo.userId, session.sub))
     .limit(1);
 
   return { user, contact: contact ?? null };
@@ -29,23 +29,23 @@ export async function saveProfile(formData) {
   if (!session?.sub) throw new Error("Unauthenticated");
 
   const displayName = formData.get("displayName")?.toString().trim();
-  const discord    = formData.get("discordHandle")?.toString().trim() || null;
-  const fluxer     = formData.get("fluxerHandle")?.toString().trim()  || null;
-  const matrix     = formData.get("matrixHandle")?.toString().trim()  || null;
-  const signal     = formData.get("signalNumber")?.toString().trim()  || null;
-  const whatsapp   = formData.get("whatsappNumber")?.toString().trim() || null;
+  const discord     = formData.get("discordHandle")?.toString().trim()  || null;
+  const fluxer      = formData.get("fluxerHandle")?.toString().trim()   || null;
+  const matrix      = formData.get("matrixHandle")?.toString().trim()   || null;
+  const signal      = formData.get("signalNumber")?.toString().trim()   || null;
+  const whatsapp    = formData.get("whatsappNumber")?.toString().trim() || null;
 
   if (displayName) {
     await db
       .update(users)
       .set({ displayName })
-      .where(eq(users.id, session.userId));
+      .where(eq(users.id, session.sub))
   }
 
   const [existing] = await db
     .select({ id: contactInfo.id })
     .from(contactInfo)
-    .where(eq(contactInfo.userId, session.userId))
+    .where(eq(contactInfo.userId, session.sub))
     .limit(1);
 
   if (existing) {
@@ -55,12 +55,12 @@ export async function saveProfile(formData) {
       .where(eq(contactInfo.id, existing.id));
   } else {
     await db.insert(contactInfo).values({
-      id: crypto.randomUUID(),
-      userId: session.userId,
-      discordHandle: discord,
-      fluxerHandle:  fluxer,
-      matrixHandle:  matrix,
-      signalNumber:  signal,
+      id:             crypto.randomUUID(),
+      userId:         session.sub,
+      discordHandle:  discord,
+      fluxerHandle:   fluxer,
+      matrixHandle:   matrix,
+      signalNumber:   signal,
       whatsappNumber: whatsapp,
     });
   }
