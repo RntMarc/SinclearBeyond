@@ -2,11 +2,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, X, Menu } from "lucide-react";
+import { Calendar, User, X, Menu } from "lucide-react";
 import LogoutButton from "@/components/auth/LogoutButton";
 
 const navItems = [
   { href: "/kalender", label: "Kalender", icon: Calendar },
+  { href: "/profil",   label: "Profil",   icon: User },
 ];
 
 export default function AppShell({ children, user, session }) {
