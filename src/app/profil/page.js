@@ -1,4 +1,4 @@
-import { getProfileData } from "@/app/profil/actions";
+import { getProfileData } from "@/lib/profile/profile";
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";

@@ -1,4 +1,5 @@
-import { getContacts } from "@/app/kontakte/actions";
+import { getProfileData } from "@/lib/profile/profile";
+import { getContacts } from "@/lib/profile/contacts";
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
@@ -6,16 +7,11 @@ import ContactList from "@/components/contacts/ContactList";
 
 export default async function KontaktePage() {
   const session = await getSession();
+  const data = await getProfileData();
   if (!session) redirect("/login");
 
   const contacts = await getContacts();
-
-  // Wir brauchen den user für die AppShell (displayName etc)
-  // session enthält email und sub (id)
-  const user = {
-    displayName: session.email.split('@')[0], // Fallback falls kein Name da
-    email: session.email
-  };
+  const { user } = data;
 
   return (
     <AppShell user={user} session={session}>

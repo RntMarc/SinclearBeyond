@@ -1,6 +1,6 @@
 "use client";
 import { useActionState, useState } from "react";
-import { saveProfile } from "@/app/profil/actions";
+import { saveProfile } from "@/lib/profile/profile";
 import ContactField from "@/components/profile/ContactField";
 import SaveButton from "@/components/SaveButton";
 
