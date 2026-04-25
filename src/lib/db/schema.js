@@ -27,11 +27,17 @@ export const closeFriends = mysqlTable("CloseFriend", {
 export const contactInfo = mysqlTable("ContactInfo", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
-  discordHandle: varchar("discordHandle", { length: 191 }),
-  fluxerHandle: varchar("fluxerHandle", { length: 191 }),
-  matrixHandle: varchar("matrixHandle", { length: 191 }),
-  signalNumber: varchar("signalNumber", { length: 191 }),
+  discordHandle:  varchar("discordHandle",  { length: 191 }),
+  fluxerHandle:   varchar("fluxerHandle",   { length: 191 }),
+  matrixHandle:   varchar("matrixHandle",   { length: 191 }),
+  signalNumber:   varchar("signalNumber",   { length: 191 }),
   whatsappNumber: varchar("whatsappNumber", { length: 191 }),
+  // Sichtbarkeit: 0 = niemand, 1 = alle, 2 = enge Kontakte
+  discordVisibility:  tinyint("discordVisibility").notNull().default(1),
+  fluxerVisibility:   tinyint("fluxerVisibility").notNull().default(1),
+  matrixVisibility:   tinyint("matrixVisibility").notNull().default(1),
+  signalVisibility:   tinyint("signalVisibility").notNull().default(1),
+  whatsappVisibility: tinyint("whatsappVisibility").notNull().default(1),
 });
 
 export const events = mysqlTable("Event", {
@@ -41,7 +47,7 @@ export const events = mysqlTable("Event", {
   startAt: datetime("startAt", { fsp: 3 }).notNull(),
   endAt: datetime("endAt", { fsp: 3 }),
   allDay: tinyint("allDay").notNull().default(0),
-  isPublic: tinyint("isPublic").notNull().default(1), // NEW
+  isPublic: tinyint("isPublic").notNull().default(1),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   creatorId: varchar("creatorId", { length: 191 }).notNull(),
 });

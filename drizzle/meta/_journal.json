@@ -15,6 +15,13 @@
       "when": 1777044328209,
       "tag": "0001_fixed_wolf_cub",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1777134769219,
+      "tag": "0002_true_earthquake",
+      "breakpoints": true
     }
   ]
 }

@@ -29,17 +29,22 @@ export async function saveProfile(formData) {
   if (!session?.sub) throw new Error("Unauthenticated");
 
   const displayName = formData.get("displayName")?.toString().trim();
-  const discord     = formData.get("discordHandle")?.toString().trim()  || null;
-  const fluxer      = formData.get("fluxerHandle")?.toString().trim()   || null;
-  const matrix      = formData.get("matrixHandle")?.toString().trim()   || null;
-  const signal      = formData.get("signalNumber")?.toString().trim()   || null;
-  const whatsapp    = formData.get("whatsappNumber")?.toString().trim() || null;
+
+  const discord  = formData.get("discordHandle")?.toString().trim()  || null;
+  const fluxer   = formData.get("fluxerHandle")?.toString().trim()   || null;
+  const matrix   = formData.get("matrixHandle")?.toString().trim()   || null;
+  const signal   = formData.get("signalNumber")?.toString().trim()   || null;
+  const whatsapp = formData.get("whatsappNumber")?.toString().trim() || null;
+
+  const clamp = (v) => { const n = Number(v); return [0, 1, 2].includes(n) ? n : 1; };
+  const discordVis  = clamp(formData.get("discordVisibility"));
+  const fluxerVis   = clamp(formData.get("fluxerVisibility"));
+  const matrixVis   = clamp(formData.get("matrixVisibility"));
+  const signalVis   = clamp(formData.get("signalVisibility"));
+  const whatsappVis = clamp(formData.get("whatsappVisibility"));
 
   if (displayName) {
-    await db
-      .update(users)
-      .set({ displayName })
-      .where(eq(users.id, session.sub))
+    await db.update(users).set({ displayName }).where(eq(users.id, session.sub));
   }
 
   const [existing] = await db
@@ -48,20 +53,26 @@ export async function saveProfile(formData) {
     .where(eq(contactInfo.userId, session.sub))
     .limit(1);
 
+  const contactData = {
+    discordHandle:  discord,
+    fluxerHandle:   fluxer,
+    matrixHandle:   matrix,
+    signalNumber:   signal,
+    whatsappNumber: whatsapp,
+    discordVisibility:  discordVis,
+    fluxerVisibility:   fluxerVis,
+    matrixVisibility:   matrixVis,
+    signalVisibility:   signalVis,
+    whatsappVisibility: whatsappVis,
+  };
+
   if (existing) {
-    await db
-      .update(contactInfo)
-      .set({ discordHandle: discord, fluxerHandle: fluxer, matrixHandle: matrix, signalNumber: signal, whatsappNumber: whatsapp })
-      .where(eq(contactInfo.id, existing.id));
+    await db.update(contactInfo).set(contactData).where(eq(contactInfo.id, existing.id));
   } else {
     await db.insert(contactInfo).values({
-      id:             crypto.randomUUID(),
-      userId:         session.sub,
-      discordHandle:  discord,
-      fluxerHandle:   fluxer,
-      matrixHandle:   matrix,
-      signalNumber:   signal,
-      whatsappNumber: whatsapp,
+      id: crypto.randomUUID(),
+      userId: session.sub,
+      ...contactData,
     });
   }
 
