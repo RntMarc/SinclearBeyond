@@ -1,13 +1,14 @@
+import crypto from "node:crypto";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { events, eventPermissions } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
-import crypto from "node:crypto";
+import { eventPermissions, events } from "@/lib/db/schema";
 
 export async function PUT(req, { params }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const { id } = await params;
   const userId = session.sub;
@@ -24,15 +25,23 @@ export async function PUT(req, { params }) {
         and(
           eq(eventPermissions.eventId, id),
           eq(eventPermissions.userId, userId),
-          eq(eventPermissions.canEdit, 1)
-        )
+          eq(eventPermissions.canEdit, 1),
+        ),
       )
       .limit(1);
-    if (!perm) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    if (!perm)
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
-  const { title, description, startAt, endAt, allDay, isPublic, permissions = [] } =
-    await req.json();
+  const {
+    title,
+    description,
+    startAt,
+    endAt,
+    allDay,
+    isPublic,
+    permissions = [],
+  } = await req.json();
 
   if (!title?.trim() || !startAt)
     return NextResponse.json({ error: "missing_fields" }, { status: 400 });
@@ -61,10 +70,14 @@ export async function PUT(req, { params }) {
         canView: p.canView ? 1 : 0,
         canEdit: p.canEdit ? 1 : 0,
         createdAt: now,
-      }))
+      })),
     );
   }
 
-  const [updated] = await db.select().from(events).where(eq(events.id, id)).limit(1);
+  const [updated] = await db
+    .select()
+    .from(events)
+    .where(eq(events.id, id))
+    .limit(1);
   return NextResponse.json({ ...updated, canEdit: true });
 }

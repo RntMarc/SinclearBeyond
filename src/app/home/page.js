@@ -1,14 +1,18 @@
+import { eq } from "drizzle-orm";
+import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import AppShell from "@/components/layout/Appshell";
 
 export default async function HomePage() {
   const session = await getSession();
 
   const [user] = await db
-    .select({ displayName: users.displayName, email: users.email, createdAt: users.createdAt })
+    .select({
+      displayName: users.displayName,
+      email: users.email,
+      createdAt: users.createdAt,
+    })
     .from(users)
     .where(eq(users.id, session.sub))
     .limit(1);

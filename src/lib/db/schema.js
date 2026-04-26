@@ -1,4 +1,4 @@
-import { mysqlTable, varchar, datetime, tinyint } from "drizzle-orm/mysql-core";
+import { datetime, mysqlTable, tinyint, varchar } from "drizzle-orm/mysql-core";
 
 export const otpTokens = mysqlTable("OtpToken", {
   id: varchar("id", { length: 191 }).primaryKey(),
@@ -14,6 +14,8 @@ export const users = mysqlTable("User", {
   email: varchar("email", { length: 191 }).notNull(),
   passwordHash: varchar("passwordHash", { length: 191 }).notNull(),
   displayName: varchar("displayName", { length: 191 }).notNull(),
+  birthday: datetime("birthday", { fsp: 3 }),
+  birthdayVisibility: tinyint("birthdayVisibility").notNull().default(1),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
@@ -27,16 +29,16 @@ export const closeFriends = mysqlTable("CloseFriend", {
 export const contactInfo = mysqlTable("ContactInfo", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
-  discordHandle:  varchar("discordHandle",  { length: 191 }),
-  fluxerHandle:   varchar("fluxerHandle",   { length: 191 }),
-  matrixHandle:   varchar("matrixHandle",   { length: 191 }),
-  signalNumber:   varchar("signalNumber",   { length: 191 }),
+  discordHandle: varchar("discordHandle", { length: 191 }),
+  fluxerHandle: varchar("fluxerHandle", { length: 191 }),
+  matrixHandle: varchar("matrixHandle", { length: 191 }),
+  signalNumber: varchar("signalNumber", { length: 191 }),
   whatsappNumber: varchar("whatsappNumber", { length: 191 }),
   // Sichtbarkeit: 0 = niemand, 1 = alle, 2 = enge Kontakte
-  discordVisibility:  tinyint("discordVisibility").notNull().default(1),
-  fluxerVisibility:   tinyint("fluxerVisibility").notNull().default(1),
-  matrixVisibility:   tinyint("matrixVisibility").notNull().default(1),
-  signalVisibility:   tinyint("signalVisibility").notNull().default(1),
+  discordVisibility: tinyint("discordVisibility").notNull().default(1),
+  fluxerVisibility: tinyint("fluxerVisibility").notNull().default(1),
+  matrixVisibility: tinyint("matrixVisibility").notNull().default(1),
+  signalVisibility: tinyint("signalVisibility").notNull().default(1),
   whatsappVisibility: tinyint("whatsappVisibility").notNull().default(1),
 });
 

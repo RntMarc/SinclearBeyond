@@ -1,22 +1,39 @@
 "use client";
-import { useState } from "react";
 import { X } from "lucide-react";
-import { toLocalDatetimeValue } from "@/lib/calendar/calendarUtils";
+import { useState } from "react";
 import EventForm from "@/components/calender/EventForm";
+import { toLocalDatetimeValue } from "@/lib/calendar/calendarUtils";
 
 const EMPTY_FORM = {
-  title: "", description: "", startAt: "", endAt: "",
-  allDay: false, isPublic: true, permissions: [],
+  title: "",
+  description: "",
+  startAt: "",
+  endAt: "",
+  allDay: false,
+  isPublic: true,
+  permissions: [],
 };
 
-export default function EventFormModal({ mode, event, allUsers, userId, onClose, onCreated, onUpdated }) {
+export default function EventFormModal({
+  mode,
+  event,
+  allUsers,
+  userId,
+  onClose,
+  onCreated,
+  onUpdated,
+}) {
   const [form, setForm] = useState(() => {
     if (mode === "create" && event) {
       const start = new Date(event);
       start.setHours(10, 0, 0, 0);
       const end = new Date(event);
       end.setHours(11, 0, 0, 0);
-      return { ...EMPTY_FORM, startAt: toLocalDatetimeValue(start), endAt: toLocalDatetimeValue(end) };
+      return {
+        ...EMPTY_FORM,
+        startAt: toLocalDatetimeValue(start),
+        endAt: toLocalDatetimeValue(end),
+      };
     }
     if (mode === "edit" && event) {
       const startDate = new Date(event.startAt);
@@ -24,7 +41,9 @@ export default function EventFormModal({ mode, event, allUsers, userId, onClose,
       return {
         title: event.title,
         description: event.description || "",
-        startAt: event.allDay ? startDate.toISOString().slice(0, 10) : toLocalDatetimeValue(startDate),
+        startAt: event.allDay
+          ? startDate.toISOString().slice(0, 10)
+          : toLocalDatetimeValue(startDate),
         endAt: endDate ? toLocalDatetimeValue(endDate) : "",
         allDay: Boolean(event.allDay),
         isPublic: event.isPublic === undefined ? true : Boolean(event.isPublic),
@@ -40,11 +59,17 @@ export default function EventFormModal({ mode, event, allUsers, userId, onClose,
     return {
       title: form.title,
       description: form.description || null,
-      startAt: form.allDay ? `${form.startAt.slice(0, 10)}T00:00:00` : form.startAt,
+      startAt: form.allDay
+        ? `${form.startAt.slice(0, 10)}T00:00:00`
+        : form.startAt,
       endAt: form.endAt || null,
       allDay: form.allDay,
       isPublic: form.isPublic,
-      permissions: form.permissions.map(({ userId, canView, canEdit }) => ({ userId, canView, canEdit })),
+      permissions: form.permissions.map(({ userId, canView, canEdit }) => ({
+        userId,
+        canView,
+        canEdit,
+      })),
     };
   }
 
@@ -63,7 +88,10 @@ export default function EventFormModal({ mode, event, allUsers, userId, onClose,
     });
 
     setSaving(false);
-    if (!res.ok) { setFormError("Fehler beim Speichern."); return; }
+    if (!res.ok) {
+      setFormError("Fehler beim Speichern.");
+      return;
+    }
 
     const result = await res.json();
     mode === "edit" ? onUpdated(result) : onCreated(result);
@@ -79,7 +107,11 @@ export default function EventFormModal({ mode, event, allUsers, userId, onClose,
           <h3 className="text-sm font-medium text-foreground">
             {mode === "edit" ? "Eintrag bearbeiten" : "Neuer Eintrag"}
           </h3>
-          <button type="button" onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
             <X size={16} />
           </button>
         </div>

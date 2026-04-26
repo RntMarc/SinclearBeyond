@@ -1,9 +1,9 @@
 import crypto from "node:crypto";
+import { and, eq, gt, isNull } from "drizzle-orm";
+import { SignJWT } from "jose";
+import { sendOtpEmail } from "@/lib/auth/email";
 import { db } from "@/lib/db/db";
 import { otpTokens, users } from "@/lib/db/schema";
-import { eq, and, gt, isNull } from "drizzle-orm";
-import { sendOtpEmail } from "@/lib/auth/email";
-import { SignJWT } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -44,8 +44,8 @@ export async function verifyOtp(email, code) {
         eq(otpTokens.email, email),
         eq(otpTokens.code, code),
         gt(otpTokens.expiresAt, now),
-        isNull(otpTokens.usedAt)
-      )
+        isNull(otpTokens.usedAt),
+      ),
     )
     .limit(1);
 

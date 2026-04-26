@@ -1,7 +1,7 @@
-import { getSession } from "@/lib/auth/session";
-import { redirect } from 'next/navigation';
-import SiteHeader from "@/components/header/SiteHeader";
+import { redirect } from "next/navigation";
 import LoginForm from "@/components/auth/LoginForm";
+import SiteHeader from "@/components/header/SiteHeader";
+import { getSession } from "@/lib/auth/session";
 
 export default async function LoginPage() {
   const session = await getSession();
@@ -10,11 +10,7 @@ export default async function LoginPage() {
     <>
       <SiteHeader variant="loginPage" />
 
-      {session ? (
-        redirect('/home')
-      ) : (
-        <LoginForm />
-      )}
+      {session ? redirect("/home") : <LoginForm />}
     </>
   );
 }

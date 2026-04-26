@@ -1,26 +1,28 @@
 import { redirect } from "next/navigation";
+import BirthdayList from "@/components/birthdays/BirthdayList";
 import AppShell from "@/components/layout/Appshell";
-import ProfilForm from "@/components/profile/ProfilForm";
 import { getSession } from "@/lib/auth/session";
+import { getBirthdays } from "@/lib/profile/birthdays";
 import { getProfileData } from "@/lib/profile/profile";
 
-export default async function ProfilPage() {
+export default async function GeburtstagePage() {
   const session = await getSession();
   const data = await getProfileData();
-  if (!data) redirect("/login");
+  if (!session) redirect("/login");
 
-  const { user, contact } = data;
+  const birthdays = await getBirthdays();
+  const { user } = data;
 
   return (
     <AppShell user={user} session={session}>
-      <div className="max-w-lg mx-auto w-full px-6 py-10">
+      <div className="max-w-4xl mx-auto w-full px-6 py-10">
         <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-          Profil
+          Feierlichkeiten
         </p>
         <h1 className="text-4xl font-light text-foreground mb-8">
-          {user.displayName}
+          Geburtstage
         </h1>
-        <ProfilForm user={user} contact={contact} />
+        <BirthdayList initialBirthdays={birthdays} />
       </div>
     </AppShell>
   );

@@ -1,9 +1,9 @@
+import { eq } from "drizzle-orm";
+import KalenderClient from "@/components/calender/KalenderClient";
+import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import AppShell from "@/components/layout/Appshell";
-import KalenderClient from "@/components/calender/KalenderClient";
 
 export default async function KalenderPage() {
   const session = await getSession();

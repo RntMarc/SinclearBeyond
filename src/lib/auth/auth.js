@@ -1,13 +1,17 @@
 import bcrypt from "bcryptjs";
-import { SignJWT, jwtVerify } from "jose";
+import { eq } from "drizzle-orm";
+import { jwtVerify, SignJWT } from "jose";
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function loginUser(email, password) {
-  const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
   if (!user) return null;
 
   const valid = await bcrypt.compare(password, user.passwordHash);
@@ -18,7 +22,10 @@ export async function loginUser(email, password) {
     .setExpirationTime("7d")
     .sign(secret);
 
-  return { token, user: { id: user.id, email: user.email, displayName: user.displayName } };
+  return {
+    token,
+    user: { id: user.id, email: user.email, displayName: user.displayName },
+  };
 }
 
 export async function verifyToken(token) {

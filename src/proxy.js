@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { NextResponse } from "next/server";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 

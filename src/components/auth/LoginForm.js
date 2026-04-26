@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function LoginPage() {
       setError(
         data.error === "user_not_found"
           ? "Kein Konto mit dieser E-Mail."
-          : "Fehler. Bitte erneut versuchen."
+          : "Fehler. Bitte erneut versuchen.",
       );
       return;
     }
@@ -48,11 +48,12 @@ export default function LoginPage() {
     setLoading(false);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      const msg = {
-        domain_not_allowed: "Diese E-Mail-Domain ist nicht erlaubt.",
-        email_taken: "Konto existiert bereits. Bitte einloggen.",
-        missing_fields: "Alle Felder ausfüllen.",
-      }[data.error] ?? "Fehler. Bitte erneut versuchen.";
+      const msg =
+        {
+          domain_not_allowed: "Diese E-Mail-Domain ist nicht erlaubt.",
+          email_taken: "Konto existiert bereits. Bitte einloggen.",
+          missing_fields: "Alle Felder ausfüllen.",
+        }[data.error] ?? "Fehler. Bitte erneut versuchen.";
       setError(msg);
       return;
     }
@@ -118,7 +119,11 @@ export default function LoginPage() {
             </button>
             <button
               type="button"
-              onClick={() => { setStep("email"); setCode(""); setError(""); }}
+              onClick={() => {
+                setStep("email");
+                setCode("");
+                setError("");
+              }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
             >
               ← Zurück
@@ -190,8 +195,8 @@ export default function LoginPage() {
             {loading
               ? "Wird gesendet…"
               : mode === "login"
-              ? "Code senden"
-              : "Konto erstellen & Code senden"}
+                ? "Code senden"
+                : "Konto erstellen & Code senden"}
           </button>
 
           {/* OAuth placeholders — login only */}

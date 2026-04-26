@@ -1,12 +1,13 @@
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { events, eventPermissions, users } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eventPermissions, events, users } from "@/lib/db/schema";
 
 export async function GET(req, { params }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const { id } = await params;
   const userId = session.sub;
@@ -23,11 +24,12 @@ export async function GET(req, { params }) {
         and(
           eq(eventPermissions.eventId, id),
           eq(eventPermissions.userId, userId),
-          eq(eventPermissions.canEdit, 1)
-        )
+          eq(eventPermissions.canEdit, 1),
+        ),
       )
       .limit(1);
-    if (!perm) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    if (!perm)
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
   const rows = await db

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useCalendarEvents() {
   const [eventList, setEventList] = useState([]);
@@ -25,7 +25,9 @@ export function useCalendarEvents() {
   }
 
   function updateEvent(updated) {
-    setEventList((prev) => prev.map((ev) => (ev.id === updated.id ? updated : ev)));
+    setEventList((prev) =>
+      prev.map((ev) => (ev.id === updated.id ? updated : ev)),
+    );
   }
 
   return { eventList, allUsers, addEvent, updateEvent };
