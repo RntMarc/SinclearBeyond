@@ -1,7 +1,14 @@
 "use client";
 import { isSameDay } from "@/lib/calendar/calendarUtils";
 
-export default function CalendarDay({ date, currentMonth, events, today, onDayClick, onEventClick }) {
+export default function CalendarDay({
+  date,
+  currentMonth,
+  events,
+  today,
+  onDayClick,
+  onEventClick,
+}) {
   const isToday = isSameDay(date, today);
 
   return (
@@ -20,20 +27,28 @@ export default function CalendarDay({ date, currentMonth, events, today, onDayCl
         {events.slice(0, 3).map((ev) => (
           <div
             key={ev.id}
-            onClick={(e) => { e.stopPropagation(); onEventClick(ev); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEventClick(ev);
+            }}
             className="text-[10px] leading-snug px-1.5 py-px rounded bg-primary/15 text-primary truncate shrink-0 cursor-pointer hover:bg-primary/25 transition-colors"
             title={ev.title}
           >
             {!ev.allDay && (
               <span className="opacity-70 mr-0.5">
-                {new Date(ev.startAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+                {new Date(ev.startAt).toLocaleTimeString("de-DE", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             )}
             {ev.title}
           </div>
         ))}
         {events.length > 3 && (
-          <span className="text-[9px] text-muted-foreground px-1">+{events.length - 3} weitere</span>
+          <span className="text-[9px] text-muted-foreground px-1">
+            +{events.length - 3} weitere
+          </span>
         )}
       </div>
     </div>

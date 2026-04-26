@@ -2,13 +2,20 @@
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 
 export default function ContactField({
-  name, visKey, label, placeholder,
-  value, onChange,
-  visibility, onVisibilityChange,
+  name,
+  visKey,
+  label,
+  placeholder,
+  value,
+  onChange,
+  visibility,
+  onVisibilityChange,
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium mb-1 text-foreground">{label}</label>
+      <label className="block text-sm font-medium mb-1 text-foreground">
+        {label}
+      </label>
       <div className="flex gap-2 items-center">
         <input
           name={name}

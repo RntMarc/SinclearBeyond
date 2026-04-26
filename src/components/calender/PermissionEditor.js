@@ -1,12 +1,18 @@
 "use client";
-import { useState } from "react";
 import { Plus, X } from "lucide-react";
+import { useState } from "react";
 
-export default function PermissionEditor({ allUsers, creatorId, isPublic, permissions, onChange }) {
+export default function PermissionEditor({
+  allUsers,
+  creatorId,
+  isPublic,
+  permissions,
+  onChange,
+}) {
   const [selectedUserId, setSelectedUserId] = useState("");
 
   const available = allUsers.filter(
-    (u) => u.id !== creatorId && !permissions.find((p) => p.userId === u.id)
+    (u) => u.id !== creatorId && !permissions.find((p) => p.userId === u.id),
   );
 
   function addUser() {
@@ -14,7 +20,12 @@ export default function PermissionEditor({ allUsers, creatorId, isPublic, permis
     if (!user) return;
     onChange([
       ...permissions,
-      { userId: user.id, displayName: user.displayName, canView: true, canEdit: false },
+      {
+        userId: user.id,
+        displayName: user.displayName,
+        canView: true,
+        canEdit: false,
+      },
     ]);
     setSelectedUserId("");
   }
@@ -24,12 +35,18 @@ export default function PermissionEditor({ allUsers, creatorId, isPublic, permis
   }
 
   function toggle(userId, field) {
-    onChange(permissions.map((p) => (p.userId === userId ? { ...p, [field]: !p[field] } : p)));
+    onChange(
+      permissions.map((p) =>
+        p.userId === userId ? { ...p, [field]: !p[field] } : p,
+      ),
+    );
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs text-muted-foreground uppercase tracking-wider">Berechtigungen</span>
+      <span className="text-xs text-muted-foreground uppercase tracking-wider">
+        Berechtigungen
+      </span>
       <div className="flex gap-2">
         <select
           value={selectedUserId}
@@ -57,7 +74,9 @@ export default function PermissionEditor({ allUsers, creatorId, isPublic, permis
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/30">
-                <th className="text-left font-medium text-muted-foreground px-3 py-2">Nutzer</th>
+                <th className="text-left font-medium text-muted-foreground px-3 py-2">
+                  Nutzer
+                </th>
                 {!isPublic && (
                   <th className="font-medium text-muted-foreground px-2 py-2 text-center whitespace-nowrap">
                     Sehen
@@ -72,7 +91,9 @@ export default function PermissionEditor({ allUsers, creatorId, isPublic, permis
             <tbody className="divide-y divide-border">
               {permissions.map((p) => (
                 <tr key={p.userId}>
-                  <td className="px-3 py-2 text-foreground truncate max-w-[120px]">{p.displayName}</td>
+                  <td className="px-3 py-2 text-foreground truncate max-w-[120px]">
+                    {p.displayName}
+                  </td>
                   {!isPublic && (
                     <td className="px-2 py-2 text-center">
                       <input

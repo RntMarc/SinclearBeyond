@@ -1,6 +1,6 @@
 "use client";
+import { ChevronRight, Heart } from "lucide-react";
 import { useState } from "react";
-import { Heart, ChevronRight } from "lucide-react";
 import ContactModal from "./ContactModal";
 
 export default function ContactList({ initialContacts }) {
@@ -39,7 +39,10 @@ export default function ContactList({ initialContacts }) {
                 <p className="text-xs text-muted-foreground">{contact.email}</p>
               </div>
             </div>
-            <ChevronRight size={18} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
+            <ChevronRight
+              size={18}
+              className="text-muted-foreground group-hover:translate-x-1 transition-transform"
+            />
           </button>
         ))}
       </div>

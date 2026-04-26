@@ -1,5 +1,5 @@
-import { getSession } from "@/lib/auth/session";
 import SiteHeader from "@/components/header/SiteHeader";
+import { getSession } from "@/lib/auth/session";
 
 export default async function Home() {
   const session = await getSession();
@@ -40,11 +40,7 @@ export default async function Home() {
   return (
     <>
       {/* Nav */}
-      {session ? (
-        <SiteHeader variant="loggedInOnLanding" />
-      ) : (
-        <SiteHeader />
-      )}
+      {session ? <SiteHeader variant="loggedInOnLanding" /> : <SiteHeader />}
 
       <main className="flex flex-col">
         {/* Hero */}
@@ -62,8 +58,10 @@ export default async function Home() {
           </p>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-light leading-[1.05] tracking-tight text-foreground max-w-3xl mb-8">
-            Gemeinsam sind wir {" "}
-            <em className="italic font-normal text-muted-foreground">Sinclear</em>
+            Gemeinsam sind wir{" "}
+            <em className="italic font-normal text-muted-foreground">
+              Sinclear
+            </em>
             .
           </h1>
 
@@ -92,7 +90,8 @@ export default async function Home() {
         <section className="px-6 md:px-12 py-20 border-y border-border/40 bg-card">
           <div className="max-w-3xl mx-auto">
             <p className="text-2xl md:text-3xl font-light text-muted-foreground leading-relaxed">
-              Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen {" "}
+              Discord ist unsicher und zunehmend kontrovers. Außerhalb davon
+              sind wir über viele Messenger zersplittert. Wir verdienen einen{" "}
               <em className="italic text-foreground">eigenen Ort.</em>
             </p>
           </div>
@@ -133,7 +132,9 @@ export default async function Home() {
             Bereit?
           </h2>
           <p className="text-muted-foreground mb-10 max-w-sm mx-auto">
-            Sinclear Beyond ist in aktiver Entwicklung.<br/>Es können Fehler vorkommen.
+            Sinclear Beyond ist in aktiver Entwicklung.
+            <br />
+            Es können Fehler vorkommen.
           </p>
           <a
             href="/login"

@@ -1,8 +1,15 @@
 "use client";
-import { getCalendarDays, isSameDay } from "@/lib/calendar/calendarUtils";
 import CalendarDay from "@/components/calender/CalendarDay";
+import { getCalendarDays, isSameDay } from "@/lib/calendar/calendarUtils";
 
-export default function CalendarGrid({ year, month, eventList, today, onDayClick, onEventClick }) {
+export default function CalendarGrid({
+  year,
+  month,
+  eventList,
+  today,
+  onDayClick,
+  onEventClick,
+}) {
   const calDays = getCalendarDays(year, month);
 
   function eventsForDay(date) {

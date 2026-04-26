@@ -41,9 +41,7 @@
       "compositePrimaryKeys": {
         "CloseFriend_id": {
           "name": "CloseFriend_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -147,9 +145,7 @@
       "compositePrimaryKeys": {
         "ContactInfo_id": {
           "name": "ContactInfo_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -208,9 +204,7 @@
       "compositePrimaryKeys": {
         "EventPermission_id": {
           "name": "EventPermission_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -290,9 +284,7 @@
       "compositePrimaryKeys": {
         "Event_id": {
           "name": "Event_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -349,9 +341,7 @@
       "compositePrimaryKeys": {
         "OtpToken_id": {
           "name": "OtpToken_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -401,9 +391,7 @@
       "compositePrimaryKeys": {
         "User_id": {
           "name": "User_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

@@ -1,9 +1,9 @@
 "use client";
-import { Globe, Heart, EyeOff } from "lucide-react";
+import { EyeOff, Globe, Heart } from "lucide-react";
 
 const OPTIONS = [
-  { value: 1, icon: Globe,  title: "Alle" },
-  { value: 2, icon: Heart,  title: "Enge Kontakte" },
+  { value: 1, icon: Globe, title: "Alle" },
+  { value: 2, icon: Heart, title: "Enge Kontakte" },
   { value: 0, icon: EyeOff, title: "Niemand" },
 ];
 

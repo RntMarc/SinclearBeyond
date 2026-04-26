@@ -1,9 +1,9 @@
-import { getProfileData } from "@/lib/profile/profile";
-import { getContacts } from "@/lib/profile/contacts";
-import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
-import AppShell from "@/components/layout/Appshell";
 import ContactList from "@/components/contacts/ContactList";
+import AppShell from "@/components/layout/Appshell";
+import { getSession } from "@/lib/auth/session";
+import { getContacts } from "@/lib/profile/contacts";
+import { getProfileData } from "@/lib/profile/profile";
 
 export default async function KontaktePage() {
   const session = await getSession();
@@ -19,9 +19,7 @@ export default async function KontaktePage() {
         <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
           Netzwerk
         </p>
-        <h1 className="text-4xl font-light text-foreground mb-8">
-          Kontakte
-        </h1>
+        <h1 className="text-4xl font-light text-foreground mb-8">Kontakte</h1>
         <ContactList initialContacts={contacts} />
       </div>
     </AppShell>

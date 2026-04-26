@@ -1,18 +1,14 @@
 "use client";
-import { Heart, Mail, MessageSquare, Phone, X } from "lucide-react";
+import { Calendar, Gift, Heart, X } from "lucide-react";
+import { useState } from "react";
 
-export default function ContactModal({ contact, onClose }) {
-  const info = contact.contactInfo || {};
-
-  const hasDetails = Object.values(info).some((v) => v !== null);
-
-  const detailFields = [
-    { label: "Discord", value: info.discordHandle, icon: MessageSquare },
-    { label: "Fluxer", value: info.fluxerHandle, icon: MessageSquare },
-    { label: "Matrix", value: info.matrixHandle, icon: MessageSquare },
-    { label: "Signal", value: info.signalNumber, icon: Phone },
-    { label: "WhatsApp", value: info.whatsappNumber, icon: Phone },
-  ];
+export default function BirthdayModal({ user, onClose }) {
+  const bday = new Date(user.birthday);
+  const formattedDate = bday.toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -30,12 +26,12 @@ export default function ContactModal({ contact, onClose }) {
           </button>
           <div className="flex items-center gap-3">
             <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground text-2xl font-semibold shadow-lg border-4 border-sidebar">
-              {contact.displayName?.[0]?.toUpperCase() || "?"}
+              {user.displayName?.[0]?.toUpperCase() || "?"}
             </div>
             <div className="mb-1">
               <h2 className="text-xl font-semibold flex items-center gap-2">
-                {contact.displayName}
-                {contact.isCloseFriend && (
+                {user.displayName}
+                {user.isCloseFriend && (
                   <Heart size={16} className="fill-primary text-primary" />
                 )}
               </h2>
@@ -50,47 +46,41 @@ export default function ContactModal({ contact, onClose }) {
         <div className="p-6 space-y-6">
           <div className="space-y-4">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-sidebar-border pb-2">
-              Kontaktinformationen
+              Geburtstagsinfo
             </h3>
 
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
                 <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
-                  <Mail size={16} />
+                  <Calendar size={16} />
                 </div>
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                    E-Mail
+                    Geburtsdatum
                   </p>
-                  <p className="text-foreground">{contact.email}</p>
+                  <p className="text-foreground">{formattedDate}</p>
                 </div>
               </div>
 
-              {detailFields.map(
-                ({ label, value, icon: Icon }) =>
-                  value && (
-                    <div
-                      key={label}
-                      className="flex items-center gap-3 text-sm"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
-                        <Icon size={16} />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                          {label}
-                        </p>
-                        <p className="text-foreground">{value}</p>
-                      </div>
-                    </div>
-                  ),
-              )}
+              <div className="flex items-center gap-3 text-sm">
+                <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                  <Gift size={16} />
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
+                    Alter
+                  </p>
+                  <p className="text-foreground">{user.currentAge} Jahre</p>
+                </div>
+              </div>
 
-              {!hasDetails && (
-                <p className="text-sm text-muted-foreground italic py-2">
-                  Keine weiteren Kontaktinformationen freigegeben.
+              <div className="mt-4 p-3 bg-primary/5 rounded-xl border border-primary/10 text-center">
+                <p className="text-sm text-primary font-medium">
+                  {user.daysUntil === 0
+                    ? "Hat heute Geburtstag! 🎉"
+                    : `Noch ${user.daysUntil} Tage bis zum ${user.ageAtNextBirthday}. Geburtstag.`}
                 </p>
-              )}
+              </div>
             </div>
           </div>
 

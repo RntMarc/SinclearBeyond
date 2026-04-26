@@ -1,7 +1,7 @@
-import { db } from "@/lib/db/db";
-import { users, contactInfo, closeFriends } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/db";
+import { closeFriends, contactInfo, users } from "@/lib/db/schema";
 
 export async function getContacts() {
   const session = await getSession();
@@ -19,9 +19,7 @@ export async function getContacts() {
     .from(users);
 
   // 2. Kontaktinformationen abrufen
-  const allContactInfos = await db
-    .select()
-    .from(contactInfo);
+  const allContactInfos = await db.select().from(contactInfo);
 
   // 3. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat
   const whoMarkedMeAsCloseFriend = await db
@@ -29,41 +27,43 @@ export async function getContacts() {
     .from(closeFriends)
     .where(eq(closeFriends.friendId, currentUserId));
 
-  const closeFriendIds = new Set(whoMarkedMeAsCloseFriend.map(f => f.userId));
+  const closeFriendIds = new Set(whoMarkedMeAsCloseFriend.map((f) => f.userId));
 
   // 4. Daten zusammenführen und filtern
-  const contacts = allUsers.map(user => {
-    if (user.id === currentUserId) return null; // Sich selbst nicht anzeigen? Meistens erwünscht, aber ich filtere es mal raus oder markiere es.
+  const contacts = allUsers
+    .map((user) => {
+      if (user.id === currentUserId) return null; // Sich selbst nicht anzeigen? Meistens erwünscht, aber ich filtere es mal raus oder markiere es.
 
-    const info = allContactInfos.find(i => i.userId === user.id);
-    const isCloseFriend = closeFriendIds.has(user.id);
+      const info = allContactInfos.find((i) => i.userId === user.id);
+      const isCloseFriend = closeFriendIds.has(user.id);
 
-    const filteredInfo = {};
-    if (info) {
-      const fields = [
-        { key: "discordHandle", vis: "discordVisibility" },
-        { key: "fluxerHandle", vis: "fluxerVisibility" },
-        { key: "matrixHandle", vis: "matrixVisibility" },
-        { key: "signalNumber", vis: "signalVisibility" },
-        { key: "whatsappNumber", vis: "whatsappVisibility" },
-      ];
+      const filteredInfo = {};
+      if (info) {
+        const fields = [
+          { key: "discordHandle", vis: "discordVisibility" },
+          { key: "fluxerHandle", vis: "fluxerVisibility" },
+          { key: "matrixHandle", vis: "matrixVisibility" },
+          { key: "signalNumber", vis: "signalVisibility" },
+          { key: "whatsappNumber", vis: "whatsappVisibility" },
+        ];
 
-      fields.forEach(({ key, vis }) => {
-        const visibility = info[vis];
-        if (visibility === 1 || (visibility === 2 && isCloseFriend)) {
-          filteredInfo[key] = info[key];
-        } else {
-          filteredInfo[key] = null;
-        }
-      });
-    }
+        fields.forEach(({ key, vis }) => {
+          const visibility = info[vis];
+          if (visibility === 1 || (visibility === 2 && isCloseFriend)) {
+            filteredInfo[key] = info[key];
+          } else {
+            filteredInfo[key] = null;
+          }
+        });
+      }
 
-    return {
-      ...user,
-      isCloseFriend,
-      contactInfo: filteredInfo
-    };
-  }).filter(Boolean);
+      return {
+        ...user,
+        isCloseFriend,
+        contactInfo: filteredInfo,
+      };
+    })
+    .filter(Boolean);
 
   // Sortierung: Enge Kontakte zuerst, dann alphabetisch
   contacts.sort((a, b) => {

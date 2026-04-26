@@ -2,7 +2,14 @@
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { MONTHS } from "@/lib/calendar/calendarUtils";
 
-export default function CalendarHeader({ year, month, onPrev, onNext, onToday, onNew }) {
+export default function CalendarHeader({
+  year,
+  month,
+  onPrev,
+  onNext,
+  onToday,
+  onNew,
+}) {
   return (
     <div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
       <div className="flex items-center gap-2">

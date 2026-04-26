@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import CalendarHeader from "@/components/calender/CalendarHeader";
 import CalendarDayLabels from "@/components/calender/CalendarDayLabels";
 import CalendarGrid from "@/components/calender/CalendarGrid";
+import CalendarHeader from "@/components/calender/CalendarHeader";
 import EventDetailModal from "@/components/calender/EventDetailModal";
 import EventFormModal from "@/components/calender/EventFormModal";
 import { useCalendarEvents } from "@/hooks/useCalendarEvents";
@@ -17,12 +17,16 @@ export default function KalenderClient({ userId }) {
   const { eventList, allUsers, addEvent, updateEvent } = useCalendarEvents();
 
   function prevMonth() {
-    if (month === 0) { setYear((y) => y - 1); setMonth(11); }
-    else setMonth((m) => m - 1);
+    if (month === 0) {
+      setYear((y) => y - 1);
+      setMonth(11);
+    } else setMonth((m) => m - 1);
   }
   function nextMonth() {
-    if (month === 11) { setYear((y) => y + 1); setMonth(0); }
-    else setMonth((m) => m + 1);
+    if (month === 11) {
+      setYear((y) => y + 1);
+      setMonth(0);
+    } else setMonth((m) => m + 1);
   }
 
   async function openEditModal(ev) {
@@ -39,7 +43,10 @@ export default function KalenderClient({ userId }) {
         month={month}
         onPrev={prevMonth}
         onNext={nextMonth}
-        onToday={() => { setYear(today.getFullYear()); setMonth(today.getMonth()); }}
+        onToday={() => {
+          setYear(today.getFullYear());
+          setMonth(today.getMonth());
+        }}
         onNew={() => setFormModal({ mode: "create", event: today })}
       />
       <CalendarDayLabels />

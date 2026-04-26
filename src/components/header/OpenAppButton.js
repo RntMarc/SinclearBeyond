@@ -1,7 +1,6 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 export default function OpenAppButton() {
-
   return (
     <Link
       type="button"
