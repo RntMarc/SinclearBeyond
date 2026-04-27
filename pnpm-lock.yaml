@@ -44,6 +44,9 @@ importers:
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      rate-limiter-flexible:
+        specifier: ^11.0.1
+        version: 11.0.1
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -3058,6 +3061,9 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
+  rate-limiter-flexible@11.0.1:
+    resolution: {integrity: sha512-hvyCUefjRund2N6hro2H8Dql7OvB6+B3Qv2FLWWbdsdyQScXf4+N0tM0Bryz11awTtNxx6C1QbHYb1rCiAx7pA==}
+
   raw-body@3.0.2:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
@@ -5931,6 +5937,8 @@ snapshots:
       react-dom: 19.2.4(react@19.2.4)
 
   range-parser@1.2.1: {}
+
+  rate-limiter-flexible@11.0.1: {}
 
   raw-body@3.0.2:
     dependencies:

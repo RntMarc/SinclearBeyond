@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { verifyOtp } from "@/lib/auth/otp";
+import { otpVerifyLimiter } from "@/lib/auth/rateLimiter";
 
 export async function POST(req) {
   const { email, code } = await req.json();
   if (!email || !code)
     return NextResponse.json({ error: "missing_fields" }, { status: 400 });
+
+  try {
+    await otpVerifyLimiter.consume(email);
+  } catch {
+    return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
+  }
 
   const result = await verifyOtp(email, code);
   if (!result.ok)

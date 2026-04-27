@@ -1,11 +1,15 @@
 import crypto from "node:crypto";
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, isNull, lt } from "drizzle-orm";
 import { SignJWT } from "jose";
 import { sendOtpEmail } from "@/lib/auth/email";
 import { db } from "@/lib/db/db";
 import { otpTokens, users } from "@/lib/db/schema";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+async function purgeExpiredTokens() {
+  await db.delete(otpTokens).where(lt(otpTokens.expiresAt, new Date()));
+}
 
 export async function requestOtp(email) {
   const [user] = await db
@@ -14,6 +18,14 @@ export async function requestOtp(email) {
     .where(eq(users.email, email))
     .limit(1);
   if (!user) return { ok: false, error: "user_not_found" };
+
+  // Invalidate all prior unused tokens for this email
+  await db
+    .delete(otpTokens)
+    .where(and(eq(otpTokens.email, email), isNull(otpTokens.usedAt)));
+
+  // Purge all expired tokens across all users
+  await purgeExpiredTokens();
 
   const code = String(crypto.randomInt(100000, 999999));
   const now = new Date();
