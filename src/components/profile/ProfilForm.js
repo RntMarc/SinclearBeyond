@@ -55,13 +55,13 @@ const SOCIAL_FIELDS = [
     name: "mastodonHandle",
     visKey: "mastodonVisibility",
     label: "Mastodon",
-    placeholder: "@nutzer@instanz.de",
+    placeholder: "nutzer@instanz.de",
   },
   {
     name: "pixelfedHandle",
     visKey: "pixelfedVisibility",
     label: "Pixelfed",
-    placeholder: "@nutzer@pixelfed.de",
+    placeholder: "nutzer@instanz.de",
   },
   {
     name: "blueskyHandle",
@@ -73,7 +73,7 @@ const SOCIAL_FIELDS = [
     name: "youtubeHandle",
     visKey: "youtubeVisibility",
     label: "YouTube",
-    placeholder: "@kanal",
+    placeholder: "nutzername",
   },
   {
     name: "twitchHandle",
