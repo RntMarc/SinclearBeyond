@@ -7,7 +7,7 @@ export default function PhotoGrid({ initialPhotos }) {
   const [photos, setPhotos] = useState(initialPhotos);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(initialPhotos.length > 0);
+  const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
   const loadMorePhotos = useCallback(async () => {
