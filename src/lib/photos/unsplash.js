@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { closeFriends, socialInfo, users } from "@/lib/db/schema";
 
-const UNSPLASH_API_KEY = process.env.UNSPLASH_API;
+const UNSPLASH_API_KEY = process.env.UNSPLASH_API_KEY;
 
 export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
   const session = await getSession();
