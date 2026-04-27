@@ -29,6 +29,13 @@
       "when": 1777221000541,
       "tag": "0003_woozy_makkari",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1777327668331,
+      "tag": "0004_sturdy_pet_avengers",
+      "breakpoints": true
     }
   ]
 }

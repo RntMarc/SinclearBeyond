@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "7591ec7c-dd74-440f-aa7b-d5150c9e66e8",
-  "prevId": "0482c3e0-6c57-4b9f-930d-11641dec5c77",
+  "id": "d4464acf-5eab-464a-83e3-7f33d4d8a828",
+  "prevId": "7591ec7c-dd74-440f-aa7b-d5150c9e66e8",
   "tables": {
     "CloseFriend": {
       "name": "CloseFriend",
@@ -41,7 +41,9 @@
       "compositePrimaryKeys": {
         "CloseFriend_id": {
           "name": "CloseFriend_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -145,7 +147,9 @@
       "compositePrimaryKeys": {
         "ContactInfo_id": {
           "name": "ContactInfo_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -204,7 +208,9 @@
       "compositePrimaryKeys": {
         "EventPermission_id": {
           "name": "EventPermission_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -284,7 +290,9 @@
       "compositePrimaryKeys": {
         "Event_id": {
           "name": "Event_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -341,7 +349,145 @@
       "compositePrimaryKeys": {
         "OtpToken_id": {
           "name": "OtpToken_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "SocialInfo": {
+      "name": "SocialInfo",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "unsplashHandle": {
+          "name": "unsplashHandle",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "instagramHandle": {
+          "name": "instagramHandle",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "mastodonHandle": {
+          "name": "mastodonHandle",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "pixelfedHandle": {
+          "name": "pixelfedHandle",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "blueskyHandle": {
+          "name": "blueskyHandle",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "youtubeHandle": {
+          "name": "youtubeHandle",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "twitchHandle": {
+          "name": "twitchHandle",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "unsplashVisibility": {
+          "name": "unsplashVisibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "instagramVisibility": {
+          "name": "instagramVisibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "mastodonVisibility": {
+          "name": "mastodonVisibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "pixelfedVisibility": {
+          "name": "pixelfedVisibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "blueskyVisibility": {
+          "name": "blueskyVisibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "youtubeVisibility": {
+          "name": "youtubeVisibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "twitchVisibility": {
+          "name": "twitchVisibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "SocialInfo_id": {
+          "name": "SocialInfo_id",
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -406,7 +552,9 @@
       "compositePrimaryKeys": {
         "User_id": {
           "name": "User_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},

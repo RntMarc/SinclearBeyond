@@ -19,5 +19,12 @@ export async function proxy(req) {
 }
 
 export const config = {
-  matcher: ["/home/:path*", "/kalender/:path*", "/profil/:path*", "/geburtstage/:path*", "/kontakte/:path*"],
+  matcher: [
+    "/home/:path*",
+    "/kalender/:path*",
+    "/profil/:path*",
+    "/geburtstage/:path*",
+    "/kontakte/:path*",
+    "/fotos/:path*",
+  ],
 };

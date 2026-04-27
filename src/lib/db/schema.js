@@ -42,6 +42,26 @@ export const contactInfo = mysqlTable("ContactInfo", {
   whatsappVisibility: tinyint("whatsappVisibility").notNull().default(1),
 });
 
+export const socialInfo = mysqlTable("SocialInfo", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  unsplashHandle: varchar("unsplashHandle", { length: 191 }),
+  instagramHandle: varchar("instagramHandle", { length: 191 }),
+  mastodonHandle: varchar("mastodonHandle", { length: 191 }),
+  pixelfedHandle: varchar("pixelfedHandle", { length: 191 }),
+  blueskyHandle: varchar("blueskyHandle", { length: 191 }),
+  youtubeHandle: varchar("youtubeHandle", { length: 191 }),
+  twitchHandle: varchar("twitchHandle", { length: 191 }),
+  // Sichtbarkeit: 0 = niemand, 1 = alle, 2 = enge Kontakte
+  unsplashVisibility: tinyint("unsplashVisibility").notNull().default(1),
+  instagramVisibility: tinyint("instagramVisibility").notNull().default(1),
+  mastodonVisibility: tinyint("mastodonVisibility").notNull().default(1),
+  pixelfedVisibility: tinyint("pixelfedVisibility").notNull().default(1),
+  blueskyVisibility: tinyint("blueskyVisibility").notNull().default(1),
+  youtubeVisibility: tinyint("youtubeVisibility").notNull().default(1),
+  twitchVisibility: tinyint("twitchVisibility").notNull().default(1),
+});
+
 export const events = mysqlTable("Event", {
   id: varchar("id", { length: 191 }).primaryKey(),
   title: varchar("title", { length: 191 }).notNull(),

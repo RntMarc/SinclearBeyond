@@ -1,10 +1,13 @@
 "use client";
 import { Heart, Mail, MessageSquare, Phone, X } from "lucide-react";
+import BrandIcon from "@/components/BrandIcon";
 
 export default function ContactModal({ contact, onClose }) {
   const info = contact.contactInfo || {};
+  const social = contact.socialInfo || {};
 
   const hasDetails = Object.values(info).some((v) => v !== null);
+  const hasSocial = Object.values(social).some((v) => v !== null);
 
   const detailFields = [
     { label: "Discord", value: info.discordHandle, icon: MessageSquare },
@@ -12,6 +15,16 @@ export default function ContactModal({ contact, onClose }) {
     { label: "Matrix", value: info.matrixHandle, icon: MessageSquare },
     { label: "Signal", value: info.signalNumber, icon: Phone },
     { label: "WhatsApp", value: info.whatsappNumber, icon: Phone },
+  ];
+
+  const socialFields = [
+    { label: "Unsplash", value: social.unsplashHandle, icon: "Unsplash" },
+    { label: "Instagram", value: social.instagramHandle, icon: "Instagram" },
+    { label: "Mastodon", value: social.mastodonHandle, icon: "Mastodon" },
+    { label: "Pixelfed", value: social.pixelfedHandle, icon: "Pixelfed" },
+    { label: "Bluesky", value: social.blueskyHandle, icon: "Bluesky" },
+    { label: "YouTube", value: social.youtubeHandle, icon: "Youtube" },
+    { label: "Twitch", value: social.twitchHandle, icon: "Twitch" },
   ];
 
   return (
@@ -23,6 +36,7 @@ export default function ContactModal({ contact, onClose }) {
         {/* Header */}
         <div className="relative h-24 bg-primary/10 flex items-end px-6 pb-4">
           <button
+            type="button"
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-full bg-black/10 hover:bg-black/20 text-foreground transition-colors"
           >
@@ -86,15 +100,46 @@ export default function ContactModal({ contact, onClose }) {
                   ),
               )}
 
-              {!hasDetails && (
+              {!hasDetails && !hasSocial && (
                 <p className="text-sm text-muted-foreground italic py-2">
-                  Keine weiteren Kontaktinformationen freigegeben.
+                  Keine weiteren Informationen freigegeben.
                 </p>
               )}
             </div>
           </div>
 
+          {hasSocial && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-sidebar-border pb-2">
+                Soziale Medien
+              </h3>
+
+              <div className="space-y-3">
+                {socialFields.map(
+                  ({ label, value, icon: iconName }) =>
+                    value && (
+                      <div
+                        key={label}
+                        className="flex items-center gap-3 text-sm"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                          <BrandIcon name={iconName} size={16} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
+                            {label}
+                          </p>
+                          <p className="text-foreground">{value}</p>
+                        </div>
+                      </div>
+                    ),
+                )}
+              </div>
+            </div>
+          )}
+
           <button
+            type="button"
             onClick={onClose}
             className="w-full py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-xl font-medium transition-colors border border-sidebar-border"
           >
