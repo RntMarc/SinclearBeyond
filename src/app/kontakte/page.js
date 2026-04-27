@@ -7,7 +7,7 @@ import { getProfileData } from "@/lib/profile/profile";
 
 export default async function KontaktePage() {
   const session = await getSession();
-  const data = await getProfileData();
+  const data = await getProfileData(session);
   if (!session) redirect("/login");
 
   const contacts = await getContacts();
