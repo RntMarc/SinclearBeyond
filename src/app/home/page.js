@@ -6,6 +6,7 @@ import { users } from "@/lib/db/schema";
 
 export default async function HomePage() {
   const session = await getSession();
+  if (!session) redirect("/login");
 
   const [user] = await db
     .select({
@@ -20,7 +21,7 @@ export default async function HomePage() {
   return (
     <AppShell user={user} session={session}>
       <div className="flex flex-col items-center justify-center min-h-full px-6 py-20">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-3xl">
           <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
             Dashboard
           </p>

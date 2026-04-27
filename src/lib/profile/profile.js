@@ -5,8 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { contactInfo, users } from "@/lib/db/schema";
 
-export async function getProfileData() {
-  const session = await getSession();
+export async function getProfileData(session) {
   if (!session?.sub) return null;
 
   const [user] = await db

@@ -1,6 +1,5 @@
 "use client";
 import { Plus, X } from "lucide-react";
-import { isSameDay } from "@/lib/calendar/calendarUtils";
 
 export default function DayEventsModal({
   date,

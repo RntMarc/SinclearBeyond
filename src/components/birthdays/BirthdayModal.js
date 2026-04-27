@@ -1,6 +1,5 @@
 "use client";
 import { Calendar, Gift, Heart, X } from "lucide-react";
-import { useState } from "react";
 
 export default function BirthdayModal({ user, onClose }) {
   const bday = new Date(user.birthday);

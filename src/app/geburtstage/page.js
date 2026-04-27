@@ -7,7 +7,7 @@ import { getProfileData } from "@/lib/profile/profile";
 
 export default async function GeburtstagePage() {
   const session = await getSession();
-  const data = await getProfileData();
+  const data = await getProfileData(session);
   if (!session) redirect("/login");
 
   const birthdays = await getBirthdays();
@@ -15,7 +15,7 @@ export default async function GeburtstagePage() {
 
   return (
     <AppShell user={user} session={session}>
-      <div className="max-w-4xl mx-auto w-full px-6 py-10">
+      <div className="max-w-3xl mx-auto w-full px-6 py-10">
         <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
           Feierlichkeiten
         </p>

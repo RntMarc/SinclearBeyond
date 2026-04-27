@@ -8,10 +8,10 @@ import OpenAppButton from "./OpenAppButton";
 export default async function SiteHeader({ variant = "default" }) {
   const session = await getSession();
 
-  var user = null;
+  let user = null;
 
   if (session != null) {
-    const [user] = await db
+    [user] = await db
       .select({
         displayName: users.displayName,
         email: users.email,

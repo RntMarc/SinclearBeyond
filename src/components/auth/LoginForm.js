@@ -74,7 +74,7 @@ export default function LoginPage() {
       setError("Code ungültig oder abgelaufen.");
       return;
     }
-    router.push("/");
+    router.push("/home");
   }
 
   function switchMode(m) {

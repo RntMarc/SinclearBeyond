@@ -7,6 +7,7 @@ import { users } from "@/lib/db/schema";
 
 export default async function KalenderPage() {
   const session = await getSession();
+  if (!session) redirect("/login");
 
   const [user] = await db
     .select({ displayName: users.displayName, email: users.email })
