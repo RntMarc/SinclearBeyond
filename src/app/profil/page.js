@@ -6,6 +6,7 @@ import { getProfileData } from "@/lib/profile/profile";
 
 export default async function ProfilPage() {
   const session = await getSession();
+  if (!session) redirect("/login");
   const data = await getProfileData(session);
   if (!data) redirect("/login");
 

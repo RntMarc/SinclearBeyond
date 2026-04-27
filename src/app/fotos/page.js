@@ -8,8 +8,8 @@ import { getProfileData } from "@/lib/profile/profile";
 export default async function FotosPage() {
   const session = await getSession();
   if (!session) redirect("/login");
-
   const profile = await getProfileData(session);
+  if (!profile) redirect("/login");
   const initialPhotos = await getUnsplashPhotos({ page: 1, perPage: 10 });
 
   return (

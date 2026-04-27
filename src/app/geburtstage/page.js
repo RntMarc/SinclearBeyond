@@ -7,8 +7,9 @@ import { getProfileData } from "@/lib/profile/profile";
 
 export default async function GeburtstagePage() {
   const session = await getSession();
-  const data = await getProfileData(session);
   if (!session) redirect("/login");
+  const data = await getProfileData(session);
+  if (!data) redirect("/login");
 
   const birthdays = await getBirthdays();
   const { user } = data;
