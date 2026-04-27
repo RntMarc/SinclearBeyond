@@ -1,5 +1,6 @@
 "use client";
 import { ExternalLink } from "lucide-react";
+import BrandIcon from "@/components/BrandIcon";
 
 export default function PhotoItem({ photo }) {
   return (
@@ -35,10 +36,10 @@ export default function PhotoItem({ photo }) {
             className="text-white/60 hover:text-white transition-colors"
             title="Auf Unsplash ansehen"
           >
-            <img
-              src="/favicon.ico"
-              className="w-3 h-3 grayscale brightness-200"
-              alt="Unsplash"
+            <BrandIcon
+              name="Unsplash"
+              size={14}
+              className="grayscale brightness-200"
             />
           </a>
         </div>

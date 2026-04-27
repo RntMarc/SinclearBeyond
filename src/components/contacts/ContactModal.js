@@ -1,17 +1,6 @@
 "use client";
-import {
-  AtSign,
-  Camera,
-  Cloud,
-  Heart,
-  Instagram,
-  Mail,
-  MessageSquare,
-  Phone,
-  Tv,
-  X,
-  Youtube,
-} from "lucide-react";
+import { Heart, Mail, MessageSquare, Phone, X } from "lucide-react";
+import BrandIcon from "@/components/BrandIcon";
 
 export default function ContactModal({ contact, onClose }) {
   const info = contact.contactInfo || {};
@@ -29,13 +18,13 @@ export default function ContactModal({ contact, onClose }) {
   ];
 
   const socialFields = [
-    { label: "Unsplash", value: social.unsplashHandle, icon: Camera },
-    { label: "Instagram", value: social.instagramHandle, icon: Instagram },
-    { label: "Mastodon", value: social.mastodonHandle, icon: AtSign },
-    { label: "Pixelfed", value: social.pixelfedHandle, icon: Camera },
-    { label: "Bluesky", value: social.blueskyHandle, icon: Cloud },
-    { label: "YouTube", value: social.youtubeHandle, icon: Youtube },
-    { label: "Twitch", value: social.twitchHandle, icon: Tv },
+    { label: "Unsplash", value: social.unsplashHandle, icon: "Unsplash" },
+    { label: "Instagram", value: social.instagramHandle, icon: "Instagram" },
+    { label: "Mastodon", value: social.mastodonHandle, icon: "Mastodon" },
+    { label: "Pixelfed", value: social.pixelfedHandle, icon: "Pixelfed" },
+    { label: "Bluesky", value: social.blueskyHandle, icon: "Bluesky" },
+    { label: "YouTube", value: social.youtubeHandle, icon: "Youtube" },
+    { label: "Twitch", value: social.twitchHandle, icon: "Twitch" },
   ];
 
   return (
@@ -47,6 +36,7 @@ export default function ContactModal({ contact, onClose }) {
         {/* Header */}
         <div className="relative h-24 bg-primary/10 flex items-end px-6 pb-4">
           <button
+            type="button"
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-full bg-black/10 hover:bg-black/20 text-foreground transition-colors"
           >
@@ -126,14 +116,14 @@ export default function ContactModal({ contact, onClose }) {
 
               <div className="space-y-3">
                 {socialFields.map(
-                  ({ label, value, icon: Icon }) =>
+                  ({ label, value, icon: iconName }) =>
                     value && (
                       <div
                         key={label}
                         className="flex items-center gap-3 text-sm"
                       >
                         <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
-                          <Icon size={16} />
+                          <BrandIcon name={iconName} size={16} />
                         </div>
                         <div>
                           <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
@@ -149,6 +139,7 @@ export default function ContactModal({ contact, onClose }) {
           )}
 
           <button
+            type="button"
             onClick={onClose}
             className="w-full py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-xl font-medium transition-colors border border-sidebar-border"
           >
