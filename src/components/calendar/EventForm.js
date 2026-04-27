@@ -1,5 +1,5 @@
 "use client";
-import PermissionEditor from "@/components/calender/PermissionEditor";
+import PermissionEditor from "@/components/calendar/PermissionEditor";
 
 export default function EventForm({
   form,

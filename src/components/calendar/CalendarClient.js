@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import CalendarAgenda from "@/components/calender/CalendarAgenda";
-import CalendarDayLabels from "@/components/calender/CalendarDayLabels";
-import CalendarGrid from "@/components/calender/CalendarGrid";
-import CalendarHeader from "@/components/calender/CalendarHeader";
-import DayEventsModal from "@/components/calender/DayEventsModal";
-import TimeGridView from "@/components/calender/TimeGridView";
-import EventDetailModal from "@/components/calender/EventDetailModal";
-import EventFormModal from "@/components/calender/EventFormModal";
+import CalendarAgenda from "@/components/calendar/CalendarAgenda";
+import CalendarDayLabels from "@/components/calendar/CalendarDayLabels";
+import CalendarGrid from "@/components/calendar/CalendarGrid";
+import CalendarHeader from "@/components/calendar/CalendarHeader";
+import DayEventsModal from "@/components/calendar/DayEventsModal";
+import TimeGridView from "@/components/calendar/TimeGridView";
+import EventDetailModal from "@/components/calendar/EventDetailModal";
+import EventFormModal from "@/components/calendar/EventFormModal";
 import { useCalendarEvents } from "@/hooks/useCalendarEvents";
 import {
   addDays,

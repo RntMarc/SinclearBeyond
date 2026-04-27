@@ -1,7 +1,7 @@
 "use client";
 import { X } from "lucide-react";
 import { useState } from "react";
-import EventForm from "@/components/calender/EventForm";
+import EventForm from "@/components/calendar/EventForm";
 import { toLocalDatetimeValue } from "@/lib/calendar/calendarUtils";
 
 const EMPTY_FORM = {

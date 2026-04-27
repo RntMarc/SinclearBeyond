@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import KalenderClient from "@/components/calender/KalenderClient";
+import KalenderClient from "@/components/calendar/CalendarClient";
 import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";

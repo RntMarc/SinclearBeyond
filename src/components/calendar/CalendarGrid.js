@@ -1,5 +1,5 @@
 "use client";
-import CalendarDay from "@/components/calender/CalendarDay";
+import CalendarDay from "@/components/calendar/CalendarDay";
 import { getCalendarDays, isSameDay } from "@/lib/calendar/calendarUtils";
 
 export default function CalendarGrid({
