@@ -34,41 +34,39 @@ export default function DayEventsModal({
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {events.length > 0 ? (
-            events.map((ev) => (
-              <div
-                key={ev.id}
-                onClick={() => {
-                  onEventClick(ev);
-                  onClose();
-                }}
-                className="p-4 rounded-xl border border-border bg-accent/20 hover:bg-accent/40 transition-colors cursor-pointer group"
-              >
-                <div className="flex justify-between items-start mb-1">
-                  <span className="font-medium group-hover:text-primary transition-colors">
-                    {ev.title}
-                  </span>
-                  {!ev.allDay && (
-                    <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
-                      {new Date(ev.startAt).toLocaleTimeString("de-DE", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+          {events.length > 0
+            ? events.map((ev) => (
+                <div
+                  key={ev.id}
+                  onClick={() => {
+                    onEventClick(ev);
+                    onClose();
+                  }}
+                  className="p-4 rounded-xl border border-border bg-accent/20 hover:bg-accent/40 transition-colors cursor-pointer group"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="font-medium group-hover:text-primary transition-colors">
+                      {ev.title}
                     </span>
+                    {!ev.allDay && (
+                      <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
+                        {new Date(ev.startAt).toLocaleTimeString("de-DE", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    )}
+                  </div>
+                  {ev.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {ev.description}
+                    </p>
                   )}
                 </div>
-                {ev.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {ev.description}
-                  </p>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="py-12 text-center text-muted-foreground">
-              Keine Einträge für diesen Tag
-            </div>
-          )}
+              ))
+            : <div className="py-12 text-center text-muted-foreground">
+                Keine Einträge für diesen Tag
+              </div>}
         </div>
 
         <div className="p-4 border-t border-border bg-muted/20">

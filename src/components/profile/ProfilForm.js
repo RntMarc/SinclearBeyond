@@ -38,7 +38,52 @@ const FIELDS = [
   },
 ];
 
-export default function ProfilForm({ user, contact }) {
+const SOCIAL_FIELDS = [
+  {
+    name: "unsplashHandle",
+    visKey: "unsplashVisibility",
+    label: "Unsplash",
+    placeholder: "nutzername",
+  },
+  {
+    name: "instagramHandle",
+    visKey: "instagramVisibility",
+    label: "Instagram",
+    placeholder: "nutzername",
+  },
+  {
+    name: "mastodonHandle",
+    visKey: "mastodonVisibility",
+    label: "Mastodon",
+    placeholder: "@nutzer@instanz.de",
+  },
+  {
+    name: "pixelfedHandle",
+    visKey: "pixelfedVisibility",
+    label: "Pixelfed",
+    placeholder: "@nutzer@pixelfed.de",
+  },
+  {
+    name: "blueskyHandle",
+    visKey: "blueskyVisibility",
+    label: "Bluesky",
+    placeholder: "nutzer.bsky.social",
+  },
+  {
+    name: "youtubeHandle",
+    visKey: "youtubeVisibility",
+    label: "YouTube",
+    placeholder: "@kanal",
+  },
+  {
+    name: "twitchHandle",
+    visKey: "twitchVisibility",
+    label: "Twitch",
+    placeholder: "nutzername",
+  },
+];
+
+export default function ProfilForm({ user, contact, social }) {
   const [state, action, isPending] = useActionState(saveProfile, null);
 
   const [values, setValues] = useState({
@@ -47,6 +92,13 @@ export default function ProfilForm({ user, contact }) {
     matrixHandle: contact?.matrixHandle ?? "",
     signalNumber: contact?.signalNumber ?? "",
     whatsappNumber: contact?.whatsappNumber ?? "",
+    unsplashHandle: social?.unsplashHandle ?? "",
+    instagramHandle: social?.instagramHandle ?? "",
+    mastodonHandle: social?.mastodonHandle ?? "",
+    pixelfedHandle: social?.pixelfedHandle ?? "",
+    blueskyHandle: social?.blueskyHandle ?? "",
+    youtubeHandle: social?.youtubeHandle ?? "",
+    twitchHandle: social?.twitchHandle ?? "",
   });
 
   const [visibility, setVisibility] = useState({
@@ -56,6 +108,13 @@ export default function ProfilForm({ user, contact }) {
     matrixVisibility: contact?.matrixVisibility ?? 1,
     signalVisibility: contact?.signalVisibility ?? 1,
     whatsappVisibility: contact?.whatsappVisibility ?? 1,
+    unsplashVisibility: social?.unsplashVisibility ?? 1,
+    instagramVisibility: social?.instagramVisibility ?? 1,
+    mastodonVisibility: social?.mastodonVisibility ?? 1,
+    pixelfedVisibility: social?.pixelfedVisibility ?? 1,
+    blueskyVisibility: social?.blueskyVisibility ?? 1,
+    youtubeVisibility: social?.youtubeVisibility ?? 1,
+    twitchVisibility: social?.twitchVisibility ?? 1,
   });
 
   const birthdayValue = user.birthday
@@ -106,6 +165,27 @@ export default function ProfilForm({ user, contact }) {
       </p>
 
       {FIELDS.map(({ name, visKey, label, placeholder }) => (
+        <ContactField
+          key={name}
+          name={name}
+          visKey={visKey}
+          label={label}
+          placeholder={placeholder}
+          value={values[name]}
+          onChange={(v) => setValues((prev) => ({ ...prev, [name]: v }))}
+          visibility={visibility[visKey]}
+          onVisibilityChange={(v) =>
+            setVisibility((prev) => ({ ...prev, [visKey]: v }))
+          }
+        />
+      ))}
+
+      <hr className="border-border" />
+      <p className="text-xs text-muted-foreground uppercase tracking-[0.2em]">
+        Soziale Medien
+      </p>
+
+      {SOCIAL_FIELDS.map(({ name, visKey, label, placeholder }) => (
         <ContactField
           key={name}
           name={name}

@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { contactInfo, users } from "@/lib/db/schema";
+import { contactInfo, socialInfo, users } from "@/lib/db/schema";
 
 export async function getProfileData(session) {
   if (!session?.sub) return null;
@@ -26,10 +26,16 @@ export async function getProfileData(session) {
     .where(eq(contactInfo.userId, session.sub))
     .limit(1);
 
-  return { user, contact: contact ?? null };
+  const [social] = await db
+    .select()
+    .from(socialInfo)
+    .where(eq(socialInfo.userId, session.sub))
+    .limit(1);
+
+  return { user, contact: contact ?? null, social: social ?? null };
 }
 
-export async function saveProfile(prevState, formData) {
+export async function saveProfile(_prevState, formData) {
   const session = await getSession();
   if (!session?.sub) return { ok: false, error: "Nicht angemeldet." };
 
@@ -43,6 +49,15 @@ export async function saveProfile(prevState, formData) {
     const signal = formData.get("signalNumber")?.toString().trim() || null;
     const whatsapp = formData.get("whatsappNumber")?.toString().trim() || null;
 
+    const unsplash = formData.get("unsplashHandle")?.toString().trim() || null;
+    const instagram =
+      formData.get("instagramHandle")?.toString().trim() || null;
+    const mastodon = formData.get("mastodonHandle")?.toString().trim() || null;
+    const pixelfed = formData.get("pixelfedHandle")?.toString().trim() || null;
+    const bluesky = formData.get("blueskyHandle")?.toString().trim() || null;
+    const youtube = formData.get("youtubeHandle")?.toString().trim() || null;
+    const twitch = formData.get("twitchHandle")?.toString().trim() || null;
+
     const clamp = (v) => {
       const n = Number(v);
       return [0, 1, 2].includes(n) ? n : 1;
@@ -53,6 +68,14 @@ export async function saveProfile(prevState, formData) {
     const matrixVis = clamp(formData.get("matrixVisibility"));
     const signalVis = clamp(formData.get("signalVisibility"));
     const whatsappVis = clamp(formData.get("whatsappVisibility"));
+
+    const unsplashVis = clamp(formData.get("unsplashVisibility"));
+    const instagramVis = clamp(formData.get("instagramVisibility"));
+    const mastodonVis = clamp(formData.get("mastodonVisibility"));
+    const pixelfedVis = clamp(formData.get("pixelfedVisibility"));
+    const blueskyVis = clamp(formData.get("blueskyVisibility"));
+    const youtubeVis = clamp(formData.get("youtubeVisibility"));
+    const twitchVis = clamp(formData.get("twitchVisibility"));
 
     if (displayName) {
       const userUpdate = { displayName, birthdayVisibility: birthdayVis };
@@ -93,6 +116,42 @@ export async function saveProfile(prevState, formData) {
         id: crypto.randomUUID(),
         userId: session.sub,
         ...contactData,
+      });
+    }
+
+    const [existingSocial] = await db
+      .select({ id: socialInfo.id })
+      .from(socialInfo)
+      .where(eq(socialInfo.userId, session.sub))
+      .limit(1);
+
+    const socialData = {
+      unsplashHandle: unsplash,
+      instagramHandle: instagram,
+      mastodonHandle: mastodon,
+      pixelfedHandle: pixelfed,
+      blueskyHandle: bluesky,
+      youtubeHandle: youtube,
+      twitchHandle: twitch,
+      unsplashVisibility: unsplashVis,
+      instagramVisibility: instagramVis,
+      mastodonVisibility: mastodonVis,
+      pixelfedVisibility: pixelfedVis,
+      blueskyVisibility: blueskyVis,
+      youtubeVisibility: youtubeVis,
+      twitchVisibility: twitchVis,
+    };
+
+    if (existingSocial) {
+      await db
+        .update(socialInfo)
+        .set(socialData)
+        .where(eq(socialInfo.id, existingSocial.id));
+    } else {
+      await db.insert(socialInfo).values({
+        id: crypto.randomUUID(),
+        userId: session.sub,
+        ...socialData,
       });
     }
 

@@ -1,7 +1,7 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { closeFriends, contactInfo, users } from "@/lib/db/schema";
+import { closeFriends, contactInfo, socialInfo, users } from "@/lib/db/schema";
 
 export async function getContacts() {
   const session = await getSession();
@@ -21,7 +21,10 @@ export async function getContacts() {
   // 2. Kontaktinformationen abrufen
   const allContactInfos = await db.select().from(contactInfo);
 
-  // 3. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat
+  // 3. SocialInformationen abrufen
+  const allSocialInfos = await db.select().from(socialInfo);
+
+  // 4. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat
   const whoMarkedMeAsCloseFriend = await db
     .select({ userId: closeFriends.userId })
     .from(closeFriends)
@@ -35,6 +38,7 @@ export async function getContacts() {
       if (user.id === currentUserId) return null; // Sich selbst nicht anzeigen? Meistens erwünscht, aber ich filtere es mal raus oder markiere es.
 
       const info = allContactInfos.find((i) => i.userId === user.id);
+      const social = allSocialInfos.find((i) => i.userId === user.id);
       const isCloseFriend = closeFriendIds.has(user.id);
 
       const filteredInfo = {};
@@ -57,10 +61,33 @@ export async function getContacts() {
         });
       }
 
+      const filteredSocial = {};
+      if (social) {
+        const socialFields = [
+          { key: "unsplashHandle", vis: "unsplashVisibility" },
+          { key: "instagramHandle", vis: "instagramVisibility" },
+          { key: "mastodonHandle", vis: "mastodonVisibility" },
+          { key: "pixelfedHandle", vis: "pixelfedVisibility" },
+          { key: "blueskyHandle", vis: "blueskyVisibility" },
+          { key: "youtubeHandle", vis: "youtubeVisibility" },
+          { key: "twitchHandle", vis: "twitchVisibility" },
+        ];
+
+        socialFields.forEach(({ key, vis }) => {
+          const visibility = social[vis];
+          if (visibility === 1 || (visibility === 2 && isCloseFriend)) {
+            filteredSocial[key] = social[key];
+          } else {
+            filteredSocial[key] = null;
+          }
+        });
+      }
+
       return {
         ...user,
         isCloseFriend,
         contactInfo: filteredInfo,
+        socialInfo: filteredSocial,
       };
     })
     .filter(Boolean);

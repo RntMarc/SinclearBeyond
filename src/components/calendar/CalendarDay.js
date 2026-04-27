@@ -57,10 +57,7 @@ export default function CalendarDay({
       {/* Mobile view: Dots */}
       <div className="flex sm:hidden flex-wrap gap-0.5 mt-auto">
         {events.slice(0, 4).map((ev) => (
-          <div
-            key={ev.id}
-            className="w-1.5 h-1.5 rounded-full bg-primary/60"
-          />
+          <div key={ev.id} className="w-1.5 h-1.5 rounded-full bg-primary/60" />
         ))}
         {events.length > 4 && (
           <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />

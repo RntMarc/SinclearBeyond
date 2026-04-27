@@ -1,10 +1,24 @@
 "use client";
-import { Heart, Mail, MessageSquare, Phone, X } from "lucide-react";
+import {
+  AtSign,
+  Camera,
+  Cloud,
+  Heart,
+  Instagram,
+  Mail,
+  MessageSquare,
+  Phone,
+  Tv,
+  X,
+  Youtube,
+} from "lucide-react";
 
 export default function ContactModal({ contact, onClose }) {
   const info = contact.contactInfo || {};
+  const social = contact.socialInfo || {};
 
   const hasDetails = Object.values(info).some((v) => v !== null);
+  const hasSocial = Object.values(social).some((v) => v !== null);
 
   const detailFields = [
     { label: "Discord", value: info.discordHandle, icon: MessageSquare },
@@ -12,6 +26,16 @@ export default function ContactModal({ contact, onClose }) {
     { label: "Matrix", value: info.matrixHandle, icon: MessageSquare },
     { label: "Signal", value: info.signalNumber, icon: Phone },
     { label: "WhatsApp", value: info.whatsappNumber, icon: Phone },
+  ];
+
+  const socialFields = [
+    { label: "Unsplash", value: social.unsplashHandle, icon: Camera },
+    { label: "Instagram", value: social.instagramHandle, icon: Instagram },
+    { label: "Mastodon", value: social.mastodonHandle, icon: AtSign },
+    { label: "Pixelfed", value: social.pixelfedHandle, icon: Camera },
+    { label: "Bluesky", value: social.blueskyHandle, icon: Cloud },
+    { label: "YouTube", value: social.youtubeHandle, icon: Youtube },
+    { label: "Twitch", value: social.twitchHandle, icon: Tv },
   ];
 
   return (
@@ -86,13 +110,43 @@ export default function ContactModal({ contact, onClose }) {
                   ),
               )}
 
-              {!hasDetails && (
+              {!hasDetails && !hasSocial && (
                 <p className="text-sm text-muted-foreground italic py-2">
-                  Keine weiteren Kontaktinformationen freigegeben.
+                  Keine weiteren Informationen freigegeben.
                 </p>
               )}
             </div>
           </div>
+
+          {hasSocial && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-sidebar-border pb-2">
+                Soziale Medien
+              </h3>
+
+              <div className="space-y-3">
+                {socialFields.map(
+                  ({ label, value, icon: Icon }) =>
+                    value && (
+                      <div
+                        key={label}
+                        className="flex items-center gap-3 text-sm"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                          <Icon size={16} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
+                            {label}
+                          </p>
+                          <p className="text-foreground">{value}</p>
+                        </div>
+                      </div>
+                    ),
+                )}
+              </div>
+            </div>
+          )}
 
           <button
             onClick={onClose}

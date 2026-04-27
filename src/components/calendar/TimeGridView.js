@@ -27,7 +27,8 @@ export default function TimeGridView({
 
   const handleScroll = () => {
     if (!scrollContainerRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    const { scrollTop, scrollHeight, clientHeight } =
+      scrollContainerRef.current;
 
     // Check for events above/below visible area
     // Simplified: just check if there are events in hidden hours
@@ -79,9 +80,7 @@ export default function TimeGridView({
             <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
               {day.toLocaleDateString("de-DE", { weekday: "short" })}
             </div>
-            <div className="text-lg font-light">
-              {day.getDate()}
-            </div>
+            <div className="text-lg font-light">{day.getDate()}</div>
           </div>
         ))}
       </div>
@@ -137,11 +136,17 @@ export default function TimeGridView({
 
                   {/* Events */}
                   {eventList
-                    .filter((ev) => isSameDay(new Date(ev.startAt), day) && !ev.allDay)
+                    .filter(
+                      (ev) =>
+                        isSameDay(new Date(ev.startAt), day) && !ev.allDay,
+                    )
                     .map((ev) => {
                       const start = new Date(ev.startAt);
-                      const end = ev.endAt ? new Date(ev.endAt) : new Date(start.getTime() + 3600000);
-                      const startHour = start.getHours() + start.getMinutes() / 60;
+                      const end = ev.endAt
+                        ? new Date(ev.endAt)
+                        : new Date(start.getTime() + 3600000);
+                      const startHour =
+                        start.getHours() + start.getMinutes() / 60;
                       const duration = (end - start) / 3600000;
 
                       return (
@@ -162,7 +167,10 @@ export default function TimeGridView({
                           </div>
                           {duration >= 0.75 && (
                             <div className="text-[9px] text-muted-foreground truncate">
-                              {start.toLocaleTimeString("de-DE", { hour: '2-digit', minute: '2-digit' })}
+                              {start.toLocaleTimeString("de-DE", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </div>
                           )}
                         </div>

@@ -9,7 +9,7 @@ export default async function ProfilPage() {
   const data = await getProfileData();
   if (!data) redirect("/login");
 
-  const { user, contact } = data;
+  const { user, contact, social } = data;
 
   return (
     <AppShell user={user} session={session}>
@@ -20,7 +20,7 @@ export default async function ProfilPage() {
         <h1 className="text-4xl font-light text-foreground mb-8">
           {user.displayName}
         </h1>
-        <ProfilForm user={user} contact={contact} />
+        <ProfilForm user={user} contact={contact} social={social} />
       </div>
     </AppShell>
   );
