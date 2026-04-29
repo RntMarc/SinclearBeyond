@@ -22,6 +22,7 @@ export const config = {
   matcher: [
     "/home/:path*",
     "/kalender/:path*",
+    "/reisen/:path*",
     "/profil/:path*",
     "/geburtstage/:path*",
     "/kontakte/:path*",

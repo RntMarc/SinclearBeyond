@@ -1,4 +1,14 @@
-import { datetime, mysqlTable, tinyint, varchar } from "drizzle-orm/mysql-core";
+import {
+  bigint,
+  double,
+  int,
+  mysqlEnum,
+  mysqlTable,
+  text,
+  datetime,
+  tinyint,
+  varchar,
+} from "drizzle-orm/mysql-core";
 
 export const otpTokens = mysqlTable("OtpToken", {
   id: varchar("id", { length: 191 }).primaryKey(),
@@ -34,7 +44,6 @@ export const contactInfo = mysqlTable("ContactInfo", {
   matrixHandle: varchar("matrixHandle", { length: 191 }),
   signalNumber: varchar("signalNumber", { length: 191 }),
   whatsappNumber: varchar("whatsappNumber", { length: 191 }),
-  // Sichtbarkeit: 0 = niemand, 1 = alle, 2 = enge Kontakte
   discordVisibility: tinyint("discordVisibility").notNull().default(1),
   fluxerVisibility: tinyint("fluxerVisibility").notNull().default(1),
   matrixVisibility: tinyint("matrixVisibility").notNull().default(1),
@@ -52,7 +61,6 @@ export const socialInfo = mysqlTable("SocialInfo", {
   blueskyHandle: varchar("blueskyHandle", { length: 191 }),
   youtubeHandle: varchar("youtubeHandle", { length: 191 }),
   twitchHandle: varchar("twitchHandle", { length: 191 }),
-  // Sichtbarkeit: 0 = niemand, 1 = alle, 2 = enge Kontakte
   unsplashVisibility: tinyint("unsplashVisibility").notNull().default(1),
   instagramVisibility: tinyint("instagramVisibility").notNull().default(1),
   mastodonVisibility: tinyint("mastodonVisibility").notNull().default(1),
@@ -81,4 +89,68 @@ export const eventPermissions = mysqlTable("EventPermission", {
   canView: tinyint("canView").notNull().default(1),
   canEdit: tinyint("canEdit").notNull().default(0),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+// ── Travel ────────────────────────────────────────────────────────────────────
+
+export const travelTrips = mysqlTable("TravelTrip", {
+  id: int("ID").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  start: datetime("start").notNull(),
+  end: datetime("end").notNull(),
+  hasTickets: mysqlEnum("hastickets", ["1", "0"]).default("0"),
+  ticketId: int("ticket").unsigned(),
+  ticketUrl: text("ticketUrl"),
+});
+
+export const travelEvents = mysqlTable("TravelEvent", {
+  id: int("ID").primaryKey().autoincrement(),
+  tripId: int("trip").unsigned().notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  start: datetime("start").notNull(),
+  end: datetime("end").notNull(),
+  hasTickets: mysqlEnum("hastickets", ["1", "0"]).default("0"),
+  ticketId: int("ticket").unsigned(),
+  ticketUrl: text("ticketUrl"),
+  url: text("url"),
+  image: text("image"),
+  organizer: varchar("organizer", { length: 255 }),
+  address: text("address"),
+  latitude: double("latitude"),
+  longitude: double("longitude"),
+  osmId: bigint("OSMID", { mode: "number" }),
+});
+
+export const travelRelations = mysqlTable("TravelRelation", {
+  id: int("ID").primaryKey().autoincrement(),
+  // varchar(191) — matches User.id UUID format after migration
+  userId: varchar("userid", { length: 191 }).notNull(),
+  tripId: int("tripid").unsigned().notNull(),
+  accommodationId: int("accommodation").unsigned(),
+});
+
+export const travelAccommodations = mysqlTable("TravelAccommodation", {
+  id: int("ID").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }),
+  description: text("description"),
+  address: text("address"),
+  osmId: bigint("OSMID", { mode: "number", unsigned: true }),
+  latitude: double("latitude"),
+  longitude: double("longitude"),
+  phone: varchar("phone", { length: 100 }),
+  mail: varchar("mail", { length: 191 }),
+  isHotel: tinyint("ishotel").notNull(),
+});
+
+export const travelEventTickets = mysqlTable("TravelEventTicket", {
+  id: int("ID").primaryKey().autoincrement(),
+  type: mysqlEnum("type", ["event", "trip", "user"]).notNull(),
+  eventId: int("event").unsigned(),
+  tripId: int("trip").unsigned(),
+  // varchar(191) — matches User.id UUID format after migration
+  userId: varchar("user", { length: 191 }),
+  qrcode: text("qrcode"),
+  image: text("image"),
 });

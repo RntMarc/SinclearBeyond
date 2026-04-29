@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, Camera, Gift, Menu, User, Users, X } from "lucide-react";
+import { Calendar, Camera, Gift, Map, Menu, User, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import LogoutButton from "@/components/auth/LogoutButton";
 
 const navItems = [
   { href: "/kalender", label: "Kalender", icon: Calendar },
+  { href: "/reisen", label: "Reisen", icon: Map },
   { href: "/geburtstage", label: "Geburtstage", icon: Gift },
   { href: "/kontakte", label: "Kontakte", icon: Users },
   { href: "/fotos", label: "Fotografien", icon: Camera },
