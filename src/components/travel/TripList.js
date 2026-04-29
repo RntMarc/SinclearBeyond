@@ -1,9 +1,10 @@
 "use client";
 import { ChevronRight, MapPin, Plane, Wrench } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import TripAdminModal from "./TripAdminModal";
 
-function TripCard({ trip, onClick, isAdmin, onAdminClick }) {
+function TripCard({ trip, isAdmin, onAdminClick }) {
   const start = new Date(trip.start);
   const end = new Date(trip.end);
 
@@ -32,8 +33,8 @@ function TripCard({ trip, onClick, isAdmin, onAdminClick }) {
 
   return (
     <div className="flex gap-2">
-      <button
-        onClick={onClick}
+      <Link
+        href={`/reisen/${trip.id}`}
         className={`flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-xl transition-all group text-left w-full ${isGrey ? "opacity-60 grayscale-[0.5]" : ""}`}
       >
         <div className="flex items-center gap-3">
@@ -60,7 +61,7 @@ function TripCard({ trip, onClick, isAdmin, onAdminClick }) {
           size={18}
           className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
         />
-      </button>
+      </Link>
       {isAdmin && (
         <button
           onClick={onAdminClick}
@@ -76,7 +77,6 @@ function TripCard({ trip, onClick, isAdmin, onAdminClick }) {
 
 export default function TripList({ initialTrips, isAdmin }) {
   const [trips, setTrips] = useState(initialTrips);
-  const [selected, setSelected] = useState(null);
   const [adminTrip, setAdminTrip] = useState(null);
 
   const refreshTrips = useCallback(async () => {
@@ -110,7 +110,6 @@ export default function TripList({ initialTrips, isAdmin }) {
               <TripCard
                 key={t.id}
                 trip={t}
-                onClick={() => setSelected(t)}
                 isAdmin={isAdmin}
                 onAdminClick={() => setAdminTrip(t)}
               />

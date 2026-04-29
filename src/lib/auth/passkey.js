@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
@@ -5,9 +6,8 @@ import {
   verifyRegistrationResponse,
 } from "@simplewebauthn/server";
 import { and, eq, gt, isNull, lt } from "drizzle-orm";
-import crypto from "node:crypto";
 import { db } from "@/lib/db/db";
-import { passkeys, webauthnChallenges, users } from "@/lib/db/schema";
+import { passkeys, users, webauthnChallenges } from "@/lib/db/schema";
 
 const RP_ID = process.env.NEXT_PUBLIC_RP_ID || "localhost";
 const RP_NAME = "Sinclear Beyond";

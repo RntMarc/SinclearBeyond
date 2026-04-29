@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
-import ProfilForm from "@/components/profile/ProfilForm";
 import PasskeyManager from "@/components/profile/PasskeyManager";
+import ProfilForm from "@/components/profile/ProfilForm";
 import { getSession } from "@/lib/auth/session";
 import { getProfileData } from "@/lib/profile/profile";
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/session";
 import { verifyRegistration } from "@/lib/auth/passkey";
+import { getSession } from "@/lib/auth/session";
 
 export async function POST(req) {
   const session = await getSession();

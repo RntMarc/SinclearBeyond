@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { verifyAuthentication } from "@/lib/auth/passkey";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { verifyAuthentication } from "@/lib/auth/passkey";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
