@@ -1,11 +1,11 @@
 import {
   bigint,
+  datetime,
   double,
   int,
   mysqlEnum,
   mysqlTable,
   text,
-  datetime,
   tinyint,
   varchar,
 } from "drizzle-orm/mysql-core";
@@ -26,6 +26,7 @@ export const users = mysqlTable("User", {
   displayName: varchar("displayName", { length: 191 }).notNull(),
   birthday: datetime("birthday", { fsp: 3 }),
   birthdayVisibility: tinyint("birthdayVisibility").notNull().default(1),
+  isAdmin: tinyint("isAdmin").notNull().default(0),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 

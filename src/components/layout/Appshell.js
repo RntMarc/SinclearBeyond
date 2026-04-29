@@ -1,5 +1,15 @@
 "use client";
-import { Calendar, Camera, Gift, Map, Menu, User, Users, X } from "lucide-react";
+import {
+  Calendar,
+  Camera,
+  Gift,
+  Lock,
+  Map,
+  Menu,
+  User,
+  Users,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -13,6 +23,8 @@ const navItems = [
   { href: "/fotos", label: "Fotografien", icon: Camera },
   { href: "/profil", label: "Profil", icon: User },
 ];
+
+const adminNavItem = { href: "/admin", label: "Admin", icon: Lock };
 
 export default function AppShell({ children, user, session }) {
   const [open, setOpen] = useState(false);
@@ -52,7 +64,10 @@ export default function AppShell({ children, user, session }) {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navItems.map(({ href, label, icon: Icon }) => {
+          {[
+            ...navItems,
+            ...(user?.isAdmin || session?.isAdmin ? [adminNavItem] : []),
+          ].map(({ href, label, icon: Icon }) => {
             const active = pathname.startsWith(href);
             return (
               <Link

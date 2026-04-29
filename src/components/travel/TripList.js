@@ -74,16 +74,16 @@ export default function TripList({ initialTrips }) {
   const past = initialTrips.filter((t) => t.isPast);
 
   const Section = ({ title, trips }) =>
-    trips.length > 0 ? (
-      <div className="space-y-3">
-        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium">
-          {title}
-        </p>
-        {trips.map((t) => (
-          <TripCard key={t.id} trip={t} onClick={() => setSelected(t)} />
-        ))}
-      </div>
-    ) : null;
+    trips.length > 0
+      ? <div className="space-y-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium">
+            {title}
+          </p>
+          {trips.map((t) => (
+            <TripCard key={t.id} trip={t} onClick={() => setSelected(t)} />
+          ))}
+        </div>
+      : null;
 
   return (
     <div className="space-y-8">
