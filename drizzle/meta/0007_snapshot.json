@@ -41,9 +41,7 @@
       "compositePrimaryKeys": {
         "CloseFriend_id": {
           "name": "CloseFriend_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -147,9 +145,7 @@
       "compositePrimaryKeys": {
         "ContactInfo_id": {
           "name": "ContactInfo_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -208,9 +204,7 @@
       "compositePrimaryKeys": {
         "EventPermission_id": {
           "name": "EventPermission_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -290,9 +284,7 @@
       "compositePrimaryKeys": {
         "Event_id": {
           "name": "Event_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -349,9 +341,7 @@
       "compositePrimaryKeys": {
         "OtpToken_id": {
           "name": "OtpToken_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -430,9 +420,7 @@
       "compositePrimaryKeys": {
         "Passkey_id": {
           "name": "Passkey_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -566,9 +554,7 @@
       "compositePrimaryKeys": {
         "SocialInfo_id": {
           "name": "SocialInfo_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -653,9 +639,7 @@
       "compositePrimaryKeys": {
         "TravelAccommodation_ID": {
           "name": "TravelAccommodation_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -719,9 +703,7 @@
       "compositePrimaryKeys": {
         "TravelEventTicket_ID": {
           "name": "TravelEventTicket_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -849,9 +831,7 @@
       "compositePrimaryKeys": {
         "TravelEvent_ID": {
           "name": "TravelEvent_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -894,9 +874,7 @@
       "compositePrimaryKeys": {
         "TravelRelation_ID": {
           "name": "TravelRelation_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -968,9 +946,7 @@
       "compositePrimaryKeys": {
         "TravelTrip_ID": {
           "name": "TravelTrip_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -1043,9 +1019,7 @@
       "compositePrimaryKeys": {
         "User_id": {
           "name": "User_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1095,9 +1069,7 @@
       "compositePrimaryKeys": {
         "WebauthnChallenge_id": {
           "name": "WebauthnChallenge_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

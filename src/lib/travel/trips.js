@@ -1,7 +1,13 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { travelRelations, travelTrips } from "@/lib/db/schema";
+import {
+  travelAccommodations,
+  travelEvents,
+  travelRelations,
+  travelTrips,
+  users,
+} from "@/lib/db/schema";
 
 export async function getTrips() {
   const session = await getSession();
@@ -35,4 +41,82 @@ export async function getTrips() {
     isUpcoming: new Date(trip.start) > now,
     isParticipant: participantTripIds.has(trip.id),
   }));
+}
+
+export async function getTripById(id) {
+  const session = await getSession();
+  if (!session?.sub) return null;
+
+  const tripId = Number.parseInt(id);
+  if (Number.isNaN(tripId)) return null;
+
+  // 1. Fetch trip
+  const [trip] = await db
+    .select()
+    .from(travelTrips)
+    .where(eq(travelTrips.id, tripId))
+    .limit(1);
+
+  if (!trip) return null;
+
+  // 2. Check permission
+  const userRelation = await db
+    .select()
+    .from(travelRelations)
+    .where(
+      and(
+        eq(travelRelations.tripId, tripId),
+        eq(travelRelations.userId, session.sub),
+      ),
+    )
+    .limit(1);
+
+  const isParticipant = userRelation.length > 0;
+  if (!session.isAdmin && !isParticipant) return { error: "Unauthorized" };
+
+  // 3. Fetch participants with their accommodations
+  const relations = await db
+    .select({
+      user: {
+        id: users.id,
+        displayName: users.displayName,
+        email: users.email,
+      },
+      accommodation: travelAccommodations,
+    })
+    .from(travelRelations)
+    .innerJoin(users, eq(travelRelations.userId, users.id))
+    .leftJoin(
+      travelAccommodations,
+      eq(travelRelations.accommodationId, travelAccommodations.id),
+    )
+    .where(eq(travelRelations.tripId, tripId));
+
+  // 4. Fetch events
+  const events = await db
+    .select()
+    .from(travelEvents)
+    .where(eq(travelEvents.tripId, tripId))
+    .orderBy(travelEvents.start);
+
+  const now = new Date();
+
+  return {
+    ...trip,
+    isPast: new Date(trip.end) < now,
+    isActive: new Date(trip.start) <= now && new Date(trip.end) >= now,
+    isUpcoming: new Date(trip.start) > now,
+    participants: relations.map((r) => ({
+      ...r.user,
+      accommodation: r.accommodation,
+    })),
+    userAccommodation:
+      relations.find((r) => r.user.id === session.sub)?.accommodation || null,
+    events: events.map((event) => ({
+      ...event,
+      isPast: new Date(event.end) < now,
+      isActive: new Date(event.start) <= now && new Date(event.end) >= now,
+      isUpcoming: new Date(event.start) > now,
+    })),
+  };
 }
