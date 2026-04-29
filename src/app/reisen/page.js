@@ -21,7 +21,10 @@ export default async function ReisenPage() {
           Unterwegs
         </p>
         <h1 className="text-4xl font-light text-foreground mb-8">Reisen</h1>
-        <TripList initialTrips={trips ?? []} />
+        <TripList
+          initialTrips={trips ?? []}
+          isAdmin={Boolean(session.isAdmin)}
+        />
       </div>
     </AppShell>
   );

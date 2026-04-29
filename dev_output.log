@@ -1,0 +1,46 @@
+
+> sinclear-beyond@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 555ms
+
+⨯ Error: Failed query: select `displayName`, `email`, `birthday`, `birthdayVisibility`, `createdAt` from `User` where `User`.`id` = ? limit ?
+params: admin-id,1
+    at async getProfileData (src/lib/profile/profile.js:11:18)
+    at async ReisenPage (src/app/reisen/page.js:11:16)
+   9 |   if (!session?.sub) return null;
+  10 |
+> 11 |   const [user] = await db
+     |                  ^
+  12 |     .select({
+  13 |       displayName: users.displayName,
+  14 |       email: users.email, {
+  query: 'select `displayName`, `email`, `birthday`, `birthdayVisibility`, `createdAt` from `User` where `User`.`id` = ? limit ?',
+  params: [ 'admin-id', 1 ],
+  digest: '2766866312',
+  [cause]: Error:
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    errno: undefined,
+    sql: undefined,
+    sqlState: undefined,
+    sqlMessage: undefined
+  }
+}
+ GET /reisen 500 in 2.8s (next.js: 1570ms, proxy.ts: 275ms, application-code: 912ms)
+[browser] Uncaught Error: Failed query: select `displayName`, `email`, `birthday`, `birthdayVisibility`, `createdAt` from `User` where `User`.`id` = ? limit ?
+params: admin-id,1
+    at MySql2PreparedQuery.queryWithCache (node_modules/.pnpm/drizzle-orm@0.45.2_mysql2@3.22.1_@types+node@25.6.0_/node_modules/src/mysql-core/session.ts:79:11)
+    at  MySql2PreparedQuery.execute (node_modules/.pnpm/drizzle-orm@0.45.2_mysql2@3.22.1_@types+node@25.6.0_/node_modules/src/mysql2/session.ts:132:18)
+    at  getProfileData (src/lib/profile/profile.js:11:18)
+    at  ReisenPage (src/app/reisen/page.js:11:16)
+  77 | 				return await query();
+  78 | 			} catch (e) {
+> 79 | 				throw new DrizzleQueryError(queryString, params, e as Error);
+     |       ^
+  80 | 			}
+  81 | 		}
+  82 |
