@@ -100,19 +100,19 @@ export const travelTrips = mysqlTable("TravelTrip", {
   start: datetime("start").notNull(),
   end: datetime("end").notNull(),
   hasTickets: mysqlEnum("hastickets", ["1", "0"]).default("0"),
-  ticketId: int("ticket").unsigned(),
+  ticketId: int("ticket", { unsigned: true }), // <-- FIXED
   ticketUrl: text("ticketUrl"),
 });
 
 export const travelEvents = mysqlTable("TravelEvent", {
   id: int("ID").primaryKey().autoincrement(),
-  tripId: int("trip").unsigned().notNull(),
+  tripId: int("trip", { unsigned: true }).notNull(), // <-- FIXED
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   start: datetime("start").notNull(),
   end: datetime("end").notNull(),
   hasTickets: mysqlEnum("hastickets", ["1", "0"]).default("0"),
-  ticketId: int("ticket").unsigned(),
+  ticketId: int("ticket", { unsigned: true }), // <-- FIXED
   ticketUrl: text("ticketUrl"),
   url: text("url"),
   image: text("image"),
@@ -127,8 +127,8 @@ export const travelRelations = mysqlTable("TravelRelation", {
   id: int("ID").primaryKey().autoincrement(),
   // varchar(191) — matches User.id UUID format after migration
   userId: varchar("userid", { length: 191 }).notNull(),
-  tripId: int("tripid").unsigned().notNull(),
-  accommodationId: int("accommodation").unsigned(),
+  tripId: int("tripid", { unsigned: true }).notNull(), // <-- FIXED
+  accommodationId: int("accommodation", { unsigned: true }), // <-- FIXED
 });
 
 export const travelAccommodations = mysqlTable("TravelAccommodation", {
@@ -147,8 +147,8 @@ export const travelAccommodations = mysqlTable("TravelAccommodation", {
 export const travelEventTickets = mysqlTable("TravelEventTicket", {
   id: int("ID").primaryKey().autoincrement(),
   type: mysqlEnum("type", ["event", "trip", "user"]).notNull(),
-  eventId: int("event").unsigned(),
-  tripId: int("trip").unsigned(),
+  eventId: int("event", { unsigned: true }), // <-- FIXED
+  tripId: int("trip", { unsigned: true }), // <-- FIXED
   // varchar(191) — matches User.id UUID format after migration
   userId: varchar("user", { length: 191 }),
   qrcode: text("qrcode"),
