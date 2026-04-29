@@ -1,0 +1,1 @@
+ALTER TABLE `Passkey` MODIFY COLUMN `credentialId` varchar(191) NOT NULL;

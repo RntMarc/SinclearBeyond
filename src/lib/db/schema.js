@@ -162,7 +162,7 @@ export const passkeys = mysqlTable("Passkey", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
   name: varchar("name", { length: 191 }).notNull(),
-  credentialId: text("credentialId").notNull(),
+  credentialId: varchar("credentialId", { length: 191 }).notNull(),
   publicKey: text("publicKey").notNull(),
   counter: bigint("counter", { mode: "number" }).notNull().default(0),
   transports: text("transports"), // JSON string of AuthenticatorTransport[]

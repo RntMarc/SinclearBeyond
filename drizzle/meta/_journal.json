@@ -57,6 +57,13 @@
       "when": 1777487377490,
       "tag": "0007_wooden_lady_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1777490020654,
+      "tag": "0008_mixed_champions",
+      "breakpoints": true
     }
   ]
 }
