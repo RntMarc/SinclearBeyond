@@ -7,20 +7,24 @@ export async function getTrips() {
   const session = await getSession();
   if (!session?.sub) return null;
 
-  const relations = await db
+  const userRelations = await db
     .select({ tripId: travelRelations.tripId })
     .from(travelRelations)
     .where(eq(travelRelations.userId, session.sub));
 
-  if (relations.length === 0) return [];
+  const participantTripIds = new Set(userRelations.map((r) => r.tripId));
 
-  const tripIds = relations.map((r) => r.tripId);
-
-  const trips = await db
-    .select()
-    .from(travelTrips)
-    .where(inArray(travelTrips.id, tripIds))
-    .orderBy(travelTrips.start);
+  let trips;
+  if (session.isAdmin) {
+    trips = await db.select().from(travelTrips).orderBy(travelTrips.start);
+  } else {
+    if (participantTripIds.size === 0) return [];
+    trips = await db
+      .select()
+      .from(travelTrips)
+      .where(inArray(travelTrips.id, Array.from(participantTripIds)))
+      .orderBy(travelTrips.start);
+  }
 
   const now = new Date();
 
@@ -29,5 +33,6 @@ export async function getTrips() {
     isPast: new Date(trip.end) < now,
     isActive: new Date(trip.start) <= now && new Date(trip.end) >= now,
     isUpcoming: new Date(trip.start) > now,
+    isParticipant: participantTripIds.has(trip.id),
   }));
 }
