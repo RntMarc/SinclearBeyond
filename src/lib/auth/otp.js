@@ -75,7 +75,11 @@ export async function verifyOtp(email, code) {
     .limit(1);
   if (!user) return { ok: false, error: "user_not_found" };
 
-  const jwt = await new SignJWT({ sub: user.id, email: user.email })
+  const jwt = await new SignJWT({
+    sub: user.id,
+    email: user.email,
+    isAdmin: user.isAdmin,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
     .sign(secret);
@@ -83,6 +87,11 @@ export async function verifyOtp(email, code) {
   return {
     ok: true,
     token: jwt,
-    user: { id: user.id, email: user.email, displayName: user.displayName },
+    user: {
+      id: user.id,
+      email: user.email,
+      displayName: user.displayName,
+      isAdmin: user.isAdmin,
+    },
   };
 }

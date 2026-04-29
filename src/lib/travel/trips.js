@@ -27,8 +27,7 @@ export async function getTrips() {
   return trips.map((trip) => ({
     ...trip,
     isPast: new Date(trip.end) < now,
-    isActive:
-      new Date(trip.start) <= now && new Date(trip.end) >= now,
+    isActive: new Date(trip.start) <= now && new Date(trip.end) >= now,
     isUpcoming: new Date(trip.start) > now,
   }));
 }

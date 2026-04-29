@@ -17,14 +17,23 @@ export async function loginUser(email, password) {
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return null;
 
-  const token = await new SignJWT({ sub: user.id, email: user.email })
+  const token = await new SignJWT({
+    sub: user.id,
+    email: user.email,
+    isAdmin: user.isAdmin,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
     .sign(secret);
 
   return {
     token,
-    user: { id: user.id, email: user.email, displayName: user.displayName },
+    user: {
+      id: user.id,
+      email: user.email,
+      displayName: user.displayName,
+      isAdmin: user.isAdmin,
+    },
   };
 }
 

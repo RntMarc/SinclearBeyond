@@ -27,5 +27,6 @@ export const config = {
     "/geburtstage/:path*",
     "/kontakte/:path*",
     "/fotos/:path*",
+    "/admin/:path*",
   ],
 };

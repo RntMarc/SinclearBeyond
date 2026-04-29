@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { isSameDay } from "@/lib/calendar/calendarUtils";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);

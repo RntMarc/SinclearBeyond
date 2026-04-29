@@ -57,7 +57,7 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
       userId: s.userId,
     }));
 
-  console.log("[Unsplash] handles:", handles)
+  console.log("[Unsplash] handles:", handles);
 
   if (handles.length === 0) return [];
 
