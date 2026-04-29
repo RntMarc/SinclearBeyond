@@ -17,17 +17,14 @@ export async function DELETE(req, { params }) {
       .delete(travelRelations)
       .where(
         and(
-          eq(travelRelations.tripId, Number(id)),
+          eq(travelRelations.tripId, id),
           eq(travelRelations.userId, userId),
         ),
       );
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error(
-      "[API/Travel/Trips/Participants/UserID] DELETE Error:",
-      error,
-    );
+    console.error("[API/Travel/Trips/Participants/UserID] DELETE Error:", error);
     return NextResponse.json(
       { error: "Fehler beim Entfernen des Teilnehmers." },
       { status: 500 },

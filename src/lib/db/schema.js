@@ -95,25 +95,25 @@ export const eventPermissions = mysqlTable("EventPermission", {
 // ── Travel ────────────────────────────────────────────────────────────────────
 
 export const travelTrips = mysqlTable("TravelTrip", {
-  id: int("ID").primaryKey().autoincrement(),
+  id: varchar("id", { length: 191 }).primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   start: datetime("start").notNull(),
   end: datetime("end").notNull(),
   hasTickets: mysqlEnum("hastickets", ["1", "0"]).default("0"),
-  ticketId: int("ticket", { unsigned: true }), // <-- FIXED
+  ticketId: varchar("ticket", { length: 191 }),
   ticketUrl: text("ticketUrl"),
 });
 
 export const travelEvents = mysqlTable("TravelEvent", {
-  id: int("ID").primaryKey().autoincrement(),
-  tripId: int("trip", { unsigned: true }).notNull(), // <-- FIXED
+  id: varchar("ID", { length: 191 }).primaryKey(),
+  tripId: varchar("trip", { length: 191 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   start: datetime("start").notNull(),
   end: datetime("end").notNull(),
   hasTickets: mysqlEnum("hastickets", ["1", "0"]).default("0"),
-  ticketId: int("ticket", { unsigned: true }), // <-- FIXED
+  ticketId: varchar("ticket", { length: 191 }),
   ticketUrl: text("ticketUrl"),
   url: text("url"),
   image: text("image"),
@@ -125,15 +125,14 @@ export const travelEvents = mysqlTable("TravelEvent", {
 });
 
 export const travelRelations = mysqlTable("TravelRelation", {
-  id: int("ID").primaryKey().autoincrement(),
-  // varchar(191) — matches User.id UUID format after migration
+  id: varchar("ID", { length: 191 }).primaryKey(),
   userId: varchar("userid", { length: 191 }).notNull(),
-  tripId: int("tripid", { unsigned: true }).notNull(), // <-- FIXED
-  accommodationId: int("accommodation", { unsigned: true }), // <-- FIXED
+  tripId: varchar("tripid", { length: 191 }).notNull(),
+  accommodationId: varchar("accommodation", { length: 191 }),
 });
 
 export const travelAccommodations = mysqlTable("TravelAccommodation", {
-  id: int("ID").primaryKey().autoincrement(),
+  id: varchar("ID", { length: 191 }).primaryKey(),
   name: varchar("name", { length: 255 }),
   description: text("description"),
   address: text("address"),
@@ -146,11 +145,10 @@ export const travelAccommodations = mysqlTable("TravelAccommodation", {
 });
 
 export const travelEventTickets = mysqlTable("TravelEventTicket", {
-  id: int("ID").primaryKey().autoincrement(),
+  id: varchar("ID", { length: 191 }).primaryKey(),
   type: mysqlEnum("type", ["event", "trip", "user"]).notNull(),
-  eventId: int("event", { unsigned: true }), // <-- FIXED
-  tripId: int("trip", { unsigned: true }), // <-- FIXED
-  // varchar(191) — matches User.id UUID format after migration
+  eventId: varchar("event", { length: 191 }),
+  tripId: varchar("trip", { length: 191 }),
   userId: varchar("user", { length: 191 }),
   qrcode: text("qrcode"),
   image: text("image"),

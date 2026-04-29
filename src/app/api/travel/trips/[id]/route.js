@@ -16,15 +16,11 @@ export async function PATCH(req, { params }) {
     const body = await req.json();
     const updateData = {};
     if (body.name) updateData.name = body.name;
-    if (body.description !== undefined)
-      updateData.description = body.description;
+    if (body.description !== undefined) updateData.description = body.description;
     if (body.start) updateData.start = new Date(body.start);
     if (body.end) updateData.end = new Date(body.end);
 
-    await db
-      .update(travelTrips)
-      .set(updateData)
-      .where(eq(travelTrips.id, Number(id)));
+    await db.update(travelTrips).set(updateData).where(eq(travelTrips.id, id));
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -45,7 +41,7 @@ export async function DELETE(req, { params }) {
   }
 
   try {
-    await db.delete(travelTrips).where(eq(travelTrips.id, Number(id)));
+    await db.delete(travelTrips).where(eq(travelTrips.id, id));
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[API/Travel/Trips/ID] DELETE Error:", error);

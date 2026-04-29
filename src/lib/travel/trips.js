@@ -47,25 +47,22 @@ export async function getTripById(id) {
   const session = await getSession();
   if (!session?.sub) return null;
 
-  const tripId = Number.parseInt(id);
-  if (Number.isNaN(tripId)) return null;
+  if (!id) return null;
 
-  // 1. Fetch trip
   const [trip] = await db
     .select()
     .from(travelTrips)
-    .where(eq(travelTrips.id, tripId))
+    .where(eq(travelTrips.id, id))
     .limit(1);
 
   if (!trip) return null;
 
-  // 2. Check permission
   const userRelation = await db
     .select()
     .from(travelRelations)
     .where(
       and(
-        eq(travelRelations.tripId, tripId),
+        eq(travelRelations.tripId, id),
         eq(travelRelations.userId, session.sub),
       ),
     )
@@ -74,7 +71,6 @@ export async function getTripById(id) {
   const isParticipant = userRelation.length > 0;
   if (!session.isAdmin && !isParticipant) return { error: "Unauthorized" };
 
-  // 3. Fetch participants with their accommodations
   const relations = await db
     .select({
       user: {
@@ -90,13 +86,12 @@ export async function getTripById(id) {
       travelAccommodations,
       eq(travelRelations.accommodationId, travelAccommodations.id),
     )
-    .where(eq(travelRelations.tripId, tripId));
+    .where(eq(travelRelations.tripId, id));
 
-  // 4. Fetch events
   const events = await db
     .select()
     .from(travelEvents)
-    .where(eq(travelEvents.tripId, tripId))
+    .where(eq(travelEvents.tripId, id))
     .orderBy(travelEvents.start);
 
   const now = new Date();

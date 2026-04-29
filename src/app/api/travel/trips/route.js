@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -20,14 +21,17 @@ export async function POST(req) {
       );
     }
 
-    const [result] = await db.insert(travelTrips).values({
+    const id = crypto.randomUUID();
+
+    await db.insert(travelTrips).values({
+      id,
       name,
       description: description || null,
       start: new Date(start),
       end: new Date(end),
     });
 
-    return NextResponse.json({ ok: true, id: result.insertId });
+    return NextResponse.json({ ok: true, id });
   } catch (error) {
     console.error("[API/Travel/Trips] Error:", error);
     return NextResponse.json(

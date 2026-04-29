@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -11,17 +12,8 @@ export async function POST(req) {
   }
 
   try {
-    const {
-      name,
-      description,
-      address,
-      osmId,
-      latitude,
-      longitude,
-      phone,
-      mail,
-      isHotel,
-    } = await req.json();
+    const { name, description, address, osmId, latitude, longitude, phone, mail, isHotel } =
+      await req.json();
 
     if (!name || latitude === undefined || longitude === undefined) {
       return NextResponse.json(
@@ -30,7 +22,10 @@ export async function POST(req) {
       );
     }
 
-    const [result] = await db.insert(travelAccommodations).values({
+    const id = crypto.randomUUID();
+
+    await db.insert(travelAccommodations).values({
+      id,
       name,
       description: description || null,
       address: address || null,
@@ -42,7 +37,7 @@ export async function POST(req) {
       isHotel: isHotel ? 1 : 0,
     });
 
-    return NextResponse.json({ ok: true, id: result.insertId });
+    return NextResponse.json({ ok: true, id });
   } catch (error) {
     console.error("[API/Travel/Accommodations] Error:", error);
     return NextResponse.json(

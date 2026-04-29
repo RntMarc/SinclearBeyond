@@ -6,7 +6,7 @@ import { getProfileData } from "@/lib/profile/profile";
 import { getTripById } from "@/lib/travel/trips";
 
 export default async function TripDetailPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
   const session = await getSession();
   if (!session) redirect("/login");
 

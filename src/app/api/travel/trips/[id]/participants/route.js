@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { travelRelations, users } from "@/lib/db/schema";
+import crypto from "node:crypto";
 
 export async function GET(req, { params }) {
   const session = await getSession();
@@ -21,7 +22,7 @@ export async function GET(req, { params }) {
       })
       .from(travelRelations)
       .innerJoin(users, eq(travelRelations.userId, users.id))
-      .where(eq(travelRelations.tripId, Number(id)));
+      .where(eq(travelRelations.tripId, id));
 
     return NextResponse.json(participants);
   } catch (error) {
@@ -51,13 +52,12 @@ export async function POST(req, { params }) {
       );
     }
 
-    // Check if already participant
     const [existing] = await db
       .select()
       .from(travelRelations)
       .where(
         and(
-          eq(travelRelations.tripId, Number(id)),
+          eq(travelRelations.tripId, id),
           eq(travelRelations.userId, userId),
         ),
       )
@@ -68,8 +68,9 @@ export async function POST(req, { params }) {
     }
 
     await db.insert(travelRelations).values({
-      tripId: Number(id),
-      userId: userId,
+      id: crypto.randomUUID(),
+      tripId: id,
+      userId,
     });
 
     return NextResponse.json({ ok: true });
