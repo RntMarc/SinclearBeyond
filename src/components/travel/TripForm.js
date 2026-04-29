@@ -1,6 +1,6 @@
 "use client";
 
-import { SaveButton } from "@/components/SaveButton";
+import SaveButton from "@/components/SaveButton";
 
 export default function TripForm({
   form,
