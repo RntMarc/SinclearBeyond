@@ -1,12 +1,14 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, Hotel } from "lucide-react";
 import { useState } from "react";
 import AppShell from "@/components/layout/Appshell";
 import TripFormModal from "@/components/travel/TripFormModal";
+import AccommodationFormModal from "@/components/travel/AccommodationFormModal";
 
 export default function AdminPage({ user, session }) {
-  const [showModal, setShowModal] = useState(false);
+  const [showTripModal, setShowTripModal] = useState(false);
+  const [showAccommodationModal, setShowAccommodationModal] = useState(false);
 
   return (
     <AppShell user={user} session={session}>
@@ -19,13 +21,25 @@ export default function AdminPage({ user, session }) {
             <h1 className="text-4xl font-light text-foreground">Übersicht</h1>
           </div>
 
-          <button
-            onClick={() => setShowModal(true)}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
-          >
-            <Plus size={18} />
-            Reise anlegen
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setShowAccommodationModal(true)}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+            >
+              <Hotel size={18} />
+              Unterkunft anlegen
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowTripModal(true)}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              <Plus size={18} />
+              Reise anlegen
+            </button>
+          </div>
         </div>
 
         <div className="grid gap-6">
@@ -40,12 +54,21 @@ export default function AdminPage({ user, session }) {
           </div>
         </div>
 
-        {showModal && (
+        {showTripModal && (
           <TripFormModal
-            onClose={() => setShowModal(false)}
+            onClose={() => setShowTripModal(false)}
             onCreated={() => {
               // Optionally show a success message or refresh data
               console.log("Trip created");
+            }}
+          />
+        )}
+
+        {showAccommodationModal && (
+          <AccommodationFormModal
+            onClose={() => setShowAccommodationModal(false)}
+            onCreated={() => {
+              console.log("Accommodation created");
             }}
           />
         )}
