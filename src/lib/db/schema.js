@@ -155,3 +155,25 @@ export const travelEventTickets = mysqlTable("TravelEventTicket", {
   qrcode: text("qrcode"),
   image: text("image"),
 });
+
+// ── WebAuthn / Passkeys ──────────────────────────────────────────────────────
+
+export const passkeys = mysqlTable("Passkey", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  name: varchar("name", { length: 191 }).notNull(),
+  credentialId: text("credentialId").notNull(),
+  publicKey: text("publicKey").notNull(),
+  counter: bigint("counter", { mode: "number" }).notNull().default(0),
+  transports: text("transports"), // JSON string of AuthenticatorTransport[]
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  lastUsedAt: datetime("lastUsedAt", { fsp: 3 }),
+});
+
+export const webauthnChallenges = mysqlTable("WebauthnChallenge", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  challenge: varchar("challenge", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }), // null for login, set for registration
+  expiresAt: datetime("expiresAt", { fsp: 3 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});

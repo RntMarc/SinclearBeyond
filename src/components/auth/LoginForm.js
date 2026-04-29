@@ -1,4 +1,6 @@
 "use client";
+import { startAuthentication } from "@simplewebauthn/browser";
+import { Fingerprint } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -58,6 +60,43 @@ export default function LoginPage() {
       return;
     }
     setStep("otp");
+  }
+
+  async function handlePasskeyLogin() {
+    setError("");
+    setLoading(true);
+    try {
+      // Step 1: Get options
+      const optionsRes = await fetch("/api/auth/passkey/login/options", {
+        method: "POST",
+      });
+      if (!optionsRes.ok) throw new Error("Konnte Login-Optionen nicht laden.");
+      const options = await optionsRes.json();
+
+      // Step 2: Browser authentication
+      const assertion = await startAuthentication({ optionsJSON: options });
+
+      // Step 3: Verify
+      const verifyRes = await fetch("/api/auth/passkey/login/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(assertion),
+      });
+
+      if (verifyRes.ok) {
+        router.push("/home");
+      } else {
+        const data = await verifyRes.json();
+        throw new Error(data.error || "Login fehlgeschlagen.");
+      }
+    } catch (err) {
+      console.error(err);
+      if (err.name !== "NotAllowedError") {
+        setError(err.message || "Passkey-Login fehlgeschlagen.");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleVerifyOtp(e) {
@@ -199,9 +238,19 @@ export default function LoginPage() {
                 : "Konto erstellen & Code senden"}
           </button>
 
-          {/* OAuth placeholders — login only */}
+          {/* Passkey & OAuth — login only */}
           {mode === "login" && (
             <>
+              <button
+                type="button"
+                onClick={handlePasskeyLogin}
+                disabled={loading}
+                className="w-full px-4 py-3 rounded-full border border-primary/30 text-foreground text-sm font-medium hover:bg-primary/5 transition-colors flex items-center justify-center gap-2"
+              >
+                <Fingerprint className="w-4 h-4 text-primary" />
+                Mit Passkey einloggen
+              </button>
+
               <div className="relative my-3">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border" />
