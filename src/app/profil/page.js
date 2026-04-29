@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
 import ProfilForm from "@/components/profile/ProfilForm";
+import PasskeyManager from "@/components/profile/PasskeyManager";
 import { getSession } from "@/lib/auth/session";
 import { getProfileData } from "@/lib/profile/profile";
 
@@ -22,6 +23,7 @@ export default async function ProfilPage() {
           {user.displayName}
         </h1>
         <ProfilForm user={user} contact={contact} social={social} />
+        <PasskeyManager />
       </div>
     </AppShell>
   );

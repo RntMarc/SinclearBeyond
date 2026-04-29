@@ -50,6 +50,13 @@
       "when": 1777464867065,
       "tag": "0006_daily_raza",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1777487377490,
+      "tag": "0007_wooden_lady_vermin",
+      "breakpoints": true
     }
   ]
 }
