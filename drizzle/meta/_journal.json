@@ -71,6 +71,13 @@
       "when": 1777590440244,
       "tag": "0009_legal_silvermane",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1777592988461,
+      "tag": "0010_yellow_blue_marvel",
+      "breakpoints": true
     }
   ]
 }

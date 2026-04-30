@@ -167,7 +167,7 @@ export const passkeys = mysqlTable("Passkey", {
   lastUsedAt: datetime("lastUsedAt", { fsp: 3 }),
 });
 
-export const feedPosts = mysqlTable("feedPosts", {
+export const feedPosts = mysqlTable("FeedPosts", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
   category: mysqlEnum("category", [
