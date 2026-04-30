@@ -11,20 +11,33 @@ import {
   SquarePlay,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
   const [showOptions, setShowOptions] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const optionsRef = useRef(null);
 
-  const formattedDate = new Date(post.createdAt).toLocaleDateString("de-DE", {
+  const formattedDate = new Date(post.createdAt).toLocaleString("de-DE", {
     day: "2-digit",
     month: "long",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  useEffect(() => {
+    if (!showOptions) return;
+    function handleOutsideClick(e) {
+      if (optionsRef.current && !optionsRef.current.contains(e.target)) {
+        setShowOptions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [showOptions]);
 
   const categoryIcons = {
     music: Music,
@@ -36,13 +49,17 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
   const Icon = categoryIcons[post.category] || SquarePlay;
 
   const handleDelete = async () => {
+    setDeleteError("");
     try {
       const res = await fetch(`/api/feed/${post.id}`, { method: "DELETE" });
       if (res.ok) {
         onDeleteSuccess();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setDeleteError(data.error || "Löschen fehlgeschlagen.");
       }
-    } catch (error) {
-      console.error("Failed to delete post", error);
+    } catch {
+      setDeleteError("Verbindungsfehler beim Löschen.");
     }
   };
 
@@ -75,7 +92,7 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
           </div>
 
           {post.canEdit && (
-            <div className="relative">
+            <div className="relative" ref={optionsRef}>
               <button
                 type="button"
                 onClick={() => setShowOptions(!showOptions)}
@@ -111,6 +128,10 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
             </div>
           )}
         </div>
+
+        {deleteError && (
+          <p className="text-destructive text-xs mb-3">{deleteError}</p>
+        )}
 
         {/* Content Section */}
         <div className="space-y-4">

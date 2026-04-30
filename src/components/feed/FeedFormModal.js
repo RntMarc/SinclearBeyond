@@ -57,6 +57,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (saving) return;
     setError("");
 
     // Validation

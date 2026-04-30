@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { and, eq, inArray, or } from "drizzle-orm";
+import { and, desc, eq, inArray, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -15,35 +15,37 @@ export async function GET(req) {
   const category = searchParams.get("category");
   const onlyCloseFriends = searchParams.get("onlyCloseFriends") === "true";
 
-  // 1. Get who marked me as close friend (to see their "close friend only" posts)
-  const whoMarkedMeAsCloseFriend = await db
+  // 1. Who has marked ME as their close friend
+  //    → these users' visibility=2 posts are visible to me
+  const usersWhoMarkedMeAsCloseFriend = await db
     .select({ userId: closeFriends.userId })
     .from(closeFriends)
     .where(eq(closeFriends.friendId, userId));
-  const markedByMeAsCloseFriendIds = whoMarkedMeAsCloseFriend.map(
+  const usersWhoMarkedMeIds = usersWhoMarkedMeAsCloseFriend.map(
     (r) => r.userId,
   );
 
-  // 2. Get who I marked as close friend (for the "only close friends" filter)
+  // 2. Who I have marked as my close friend
+  //    → used for the onlyCloseFriends UI filter
   const myCloseFriends = await db
     .select({ friendId: closeFriends.friendId })
     .from(closeFriends)
     .where(eq(closeFriends.userId, userId));
-  const closeFriendIds = myCloseFriends.map((r) => r.friendId);
+  const myCloseFriendIds = myCloseFriends.map((r) => r.friendId);
 
-  // Conditions for visibility:
-  // - Public (visibility = 1)
-  // - Close Friends (visibility = 2) AND the author has me as a close friend
-  // - Own posts
+  // Visibility rules:
+  // - Public (visibility = 1): always visible
+  // - Close Friends (visibility = 2): only if the creator has ME in their close friends
+  // - Own posts: always visible
   const visibilityConditions = [
     eq(feedPosts.visibility, 1),
     eq(feedPosts.userId, userId),
   ];
-  if (markedByMeAsCloseFriendIds.length > 0) {
+  if (usersWhoMarkedMeIds.length > 0) {
     visibilityConditions.push(
       and(
         eq(feedPosts.visibility, 2),
-        inArray(feedPosts.userId, markedByMeAsCloseFriendIds),
+        inArray(feedPosts.userId, usersWhoMarkedMeIds),
       ),
     );
   }
@@ -54,11 +56,13 @@ export async function GET(req) {
     whereConditions.push(eq(feedPosts.category, category));
   }
 
+  // UI filter: only posts from users I have marked as close friend
+  // (visibility rules still apply — e.g. a visibility=2 post from someone
+  //  I marked as close friend is only visible if they also marked me)
   if (onlyCloseFriends) {
-    if (closeFriendIds.length > 0) {
-      whereConditions.push(inArray(feedPosts.userId, closeFriendIds));
+    if (myCloseFriendIds.length > 0) {
+      whereConditions.push(inArray(feedPosts.userId, myCloseFriendIds));
     } else {
-      // If filtering by close friends but I have none, return empty
       return NextResponse.json([]);
     }
   }
@@ -74,12 +78,9 @@ export async function GET(req) {
     .from(feedPosts)
     .innerJoin(users, eq(feedPosts.userId, users.id))
     .where(and(...whereConditions))
-    .orderBy(feedPosts.createdAt); // We'll reverse it in frontend or here. Request said chronological, usually means newest last but "Social Media Feed" usually means newest first. Let's use desc.
+    .orderBy(desc(feedPosts.createdAt));
 
-  // Re-sorting desc for newest first if preferred for "Social Media Feed"
-  const sortedRows = rows.sort((a, b) => b.post.createdAt - a.post.createdAt);
-
-  const result = sortedRows.map((row) => ({
+  const result = rows.map((row) => ({
     ...row.post,
     user: row.user,
     canEdit: row.post.userId === userId,
@@ -110,7 +111,6 @@ export async function POST(req) {
     visibility: visibility || 1,
     createdAt: now,
     updatedAt: now,
-    // Details
     artist: details.artist?.trim() || null,
     title: details.title?.trim() || null,
     spotifyUrl: details.spotifyUrl?.trim() || null,

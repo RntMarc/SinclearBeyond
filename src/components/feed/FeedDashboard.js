@@ -29,7 +29,7 @@ export default function FeedDashboard() {
         setPosts(data);
       }
     } catch (error) {
-      console.error("Failed to fetch posts", error);
+      setNotification({ type: "error", message: "Beiträge konnten nicht geladen werden." });
     } finally {
       setLoading(false);
     }
