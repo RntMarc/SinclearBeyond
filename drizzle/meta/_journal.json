@@ -64,6 +64,13 @@
       "when": 1777490020654,
       "tag": "0008_mixed_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1777590440244,
+      "tag": "0009_legal_silvermane",
+      "breakpoints": true
     }
   ]
 }
