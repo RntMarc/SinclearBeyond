@@ -56,10 +56,7 @@ export async function POST(req, { params }) {
       .select()
       .from(travelRelations)
       .where(
-        and(
-          eq(travelRelations.tripId, id),
-          eq(travelRelations.userId, userId),
-        ),
+        and(eq(travelRelations.tripId, id), eq(travelRelations.userId, userId)),
       )
       .limit(1);
 

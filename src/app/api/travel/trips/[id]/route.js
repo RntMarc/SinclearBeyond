@@ -16,7 +16,8 @@ export async function PATCH(req, { params }) {
     const body = await req.json();
     const updateData = {};
     if (body.name) updateData.name = body.name;
-    if (body.description !== undefined) updateData.description = body.description;
+    if (body.description !== undefined)
+      updateData.description = body.description;
     if (body.start) updateData.start = new Date(body.start);
     if (body.end) updateData.end = new Date(body.end);
 

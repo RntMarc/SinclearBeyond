@@ -12,8 +12,17 @@ export async function POST(req) {
   }
 
   try {
-    const { name, description, address, osmId, latitude, longitude, phone, mail, isHotel } =
-      await req.json();
+    const {
+      name,
+      description,
+      address,
+      osmId,
+      latitude,
+      longitude,
+      phone,
+      mail,
+      isHotel,
+    } = await req.json();
 
     if (!name || latitude === undefined || longitude === undefined) {
       return NextResponse.json(
