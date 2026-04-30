@@ -2,7 +2,6 @@ import {
   bigint,
   datetime,
   double,
-  int,
   mysqlEnum,
   mysqlTable,
   text,
@@ -166,6 +165,42 @@ export const passkeys = mysqlTable("Passkey", {
   transports: text("transports"), // JSON string of AuthenticatorTransport[]
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   lastUsedAt: datetime("lastUsedAt", { fsp: 3 }),
+});
+
+export const feedPosts = mysqlTable("feedPosts", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  category: mysqlEnum("category", [
+    "music",
+    "video",
+    "news",
+    "other",
+  ]).notNull(),
+  content: text("content"), // Optional general comment/reason
+
+  // Music specific
+  artist: varchar("artist", { length: 255 }),
+  title: varchar("title", { length: 255 }),
+  spotifyUrl: text("spotifyUrl"),
+  youtubeMusicUrl: text("youtubeMusicUrl"),
+  soundcloudUrl: text("soundcloudUrl"),
+
+  // Video specific
+  videoUrl: text("videoUrl"),
+  videoPlatform: varchar("videoPlatform", { length: 100 }), // e.g. YouTube, PeerTube, Twitch
+
+  // News specific
+  newsTitle: varchar("newsTitle", { length: 255 }),
+  newsSite: varchar("newsSite", { length: 255 }),
+  newsUrl: text("newsUrl"),
+
+  // Other specific
+  otherTitle: varchar("otherTitle", { length: 255 }),
+  otherUrl: text("otherUrl"),
+
+  visibility: tinyint("visibility").notNull().default(1), // 1 = Alle, 2 = Enge Kontakte
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
 });
 
 export const webauthnChallenges = mysqlTable("WebauthnChallenge", {
