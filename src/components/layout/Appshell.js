@@ -18,8 +18,8 @@ import LogoutButton from "@/components/auth/LogoutButton";
 
 const navItems = [
   { href: "/feed", label: "Unterhaltung", icon: SquarePlay },
-  { href: "/kalender", label: "Kalender", icon: Calendar },
   { href: "/reisen", label: "Reisen", icon: MapIcon },
+  { href: "/kalender", label: "Kalender", icon: Calendar },
   { href: "/geburtstage", label: "Geburtstage", icon: Gift },
   { href: "/kontakte", label: "Kontakte", icon: Users },
   { href: "/fotos", label: "Fotografien", icon: Camera },
