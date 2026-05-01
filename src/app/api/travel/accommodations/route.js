@@ -4,6 +4,29 @@ import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { travelAccommodations } from "@/lib/db/schema";
 
+export async function GET(req) {
+  const session = await getSession();
+
+  if (!session || !session.isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const accommodations = await db
+      .select()
+      .from(travelAccommodations)
+      .orderBy(travelAccommodations.name);
+
+    return NextResponse.json(accommodations);
+  } catch (error) {
+    console.error("[API/Travel/Accommodations] GET Error:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Laden der Unterkünfte." },
+      { status: 500 },
+    );
+  }
+}
+
 export async function POST(req) {
   const session = await getSession();
 

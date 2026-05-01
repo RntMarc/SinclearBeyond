@@ -1,0 +1,68 @@
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/db";
+import { travelAccommodations } from "@/lib/db/schema";
+
+export async function PATCH(req, { params }) {
+  const session = await getSession();
+  const { id } = await params;
+
+  if (!session || !session.isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const data = await req.json();
+    const updateData = {};
+
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.description !== undefined)
+      updateData.description = data.description;
+    if (data.address !== undefined) updateData.address = data.address;
+    if (data.latitude !== undefined)
+      updateData.latitude = data.latitude ? parseFloat(data.latitude) : null;
+    if (data.longitude !== undefined)
+      updateData.longitude = data.longitude ? parseFloat(data.longitude) : null;
+    if (data.phone !== undefined) updateData.phone = data.phone;
+    if (data.mail !== undefined) updateData.mail = data.mail;
+    if (data.osmId !== undefined)
+      updateData.osmId = data.osmId ? BigInt(data.osmId) : null;
+    if (data.isHotel !== undefined) updateData.isHotel = data.isHotel ? 1 : 0;
+
+    await db
+      .update(travelAccommodations)
+      .set(updateData)
+      .where(eq(travelAccommodations.id, id));
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[API/Travel/Accommodations] PATCH Error:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Aktualisieren der Unterkunft." },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(req, { params }) {
+  const session = await getSession();
+  const { id } = await params;
+
+  if (!session || !session.isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await db
+      .delete(travelAccommodations)
+      .where(eq(travelAccommodations.id, id));
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[API/Travel/Accommodations] DELETE Error:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Löschen der Unterkunft." },
+      { status: 500 },
+    );
+  }
+}

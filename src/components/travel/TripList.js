@@ -1,10 +1,9 @@
 "use client";
-import { ChevronRight, MapPin, Plane, Wrench } from "lucide-react";
+import { ChevronRight, MapPin, Plane } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import TripAdminModal from "./TripAdminModal";
 
-function TripCard({ trip, isAdmin, onAdminClick }) {
+function TripCard({ trip, isAdmin }) {
   const start = new Date(trip.start);
   const end = new Date(trip.end);
 
@@ -62,23 +61,12 @@ function TripCard({ trip, isAdmin, onAdminClick }) {
           className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
         />
       </Link>
-      {isAdmin && (
-        <button
-          onClick={onAdminClick}
-          className="flex items-center justify-center w-12 shrink-0 bg-sidebar border border-sidebar-border rounded-xl hover:bg-sidebar-accent transition-colors text-muted-foreground hover:text-primary"
-          title="Verwalten"
-        >
-          <Wrench size={18} />
-        </button>
-      )}
     </div>
   );
 }
 
 export default function TripList({ initialTrips, isAdmin }) {
   const [trips, setTrips] = useState(initialTrips);
-  const [adminTrip, setAdminTrip] = useState(null);
-
   const refreshTrips = useCallback(async () => {
     const res = await fetch("/api/reisen/data");
     if (res.ok) {
@@ -107,12 +95,7 @@ export default function TripList({ initialTrips, isAdmin }) {
           </p>
           <div className="space-y-3">
             {trips.map((t) => (
-              <TripCard
-                key={t.id}
-                trip={t}
-                isAdmin={isAdmin}
-                onAdminClick={() => setAdminTrip(t)}
-              />
+              <TripCard key={t.id} trip={t} isAdmin={isAdmin} />
             ))}
           </div>
         </div>
@@ -123,14 +106,6 @@ export default function TripList({ initialTrips, isAdmin }) {
       <Section title="Aktuell" trips={active} />
       <Section title="Bevorstehend" trips={upcoming} />
       <Section title="Vergangen" trips={past} />
-
-      {adminTrip && (
-        <TripAdminModal
-          trip={adminTrip}
-          onClose={() => setAdminTrip(null)}
-          onUpdated={refreshTrips}
-        />
-      )}
     </div>
   );
 }

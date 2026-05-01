@@ -4,6 +4,34 @@ import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { travelRelations } from "@/lib/db/schema";
 
+export async function PATCH(req, { params }) {
+  const session = await getSession();
+  const { id, userId } = await params;
+
+  if (!session || !session.isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { accommodationId } = await req.json();
+
+    await db
+      .update(travelRelations)
+      .set({ accommodationId: accommodationId || null })
+      .where(
+        and(eq(travelRelations.tripId, id), eq(travelRelations.userId, userId)),
+      );
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[API/Travel/Trips/Participants/UserID] PATCH Error:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Aktualisieren der Teilnehmer-Unterkunft." },
+      { status: 500 },
+    );
+  }
+}
+
 export async function DELETE(req, { params }) {
   const session = await getSession();
   const { id, userId } = await params;

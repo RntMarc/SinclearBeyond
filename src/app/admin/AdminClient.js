@@ -1,19 +1,66 @@
 "use client";
 
-import { Plus, Hotel } from "lucide-react";
-import { useState } from "react";
+import {
+  Calendar,
+  ChevronRight,
+  Hotel,
+  MapPin,
+  Plane,
+  Plus,
+  Settings,
+  Users,
+  Webhook,
+  Wrench,
+} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import AppShell from "@/components/layout/Appshell";
-import TripFormModal from "@/components/travel/TripFormModal";
+import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";
 import AccommodationFormModal from "@/components/travel/AccommodationFormModal";
+import TripAdminModal from "@/components/travel/TripAdminModal";
+import TripFormModal from "@/components/travel/TripFormModal";
 
 export default function AdminPage({ user, session }) {
+  const [activeTab, setActiveTab] = useState("reisen");
   const [showTripModal, setShowTripModal] = useState(false);
   const [showAccommodationModal, setShowAccommodationModal] = useState(false);
+  const [trips, setTrips] = useState([]);
+  const [accommodations, setAccommodations] = useState([]);
+  const [editingTrip, setEditingTrip] = useState(null);
+  const [editingAccommodation, setEditingAccommodation] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [tripsRes, accommodationsRes] = await Promise.all([
+        fetch("/api/reisen/data"),
+        fetch("/api/travel/accommodations"),
+      ]);
+
+      if (tripsRes.ok) setTrips(await tripsRes.json());
+      if (accommodationsRes.ok)
+        setAccommodations(await accommodationsRes.json());
+    } catch (error) {
+      console.error("Error fetching admin data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const tabs = [
+    { id: "reisen", label: "Reisen", icon: Plane },
+    { id: "users", label: "Nutzer", icon: Users },
+    { id: "webhooks", label: "Webhooks", icon: Webhook },
+  ];
 
   return (
     <AppShell user={user} session={session}>
-      <div className="max-w-4xl mx-auto w-full px-6 py-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
               Verwaltung
@@ -42,34 +89,163 @@ export default function AdminPage({ user, session }) {
           </div>
         </div>
 
-        <div className="grid gap-6">
-          <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 text-center">
+        {/* Tabs */}
+        <div className="flex border-b border-border mb-8 overflow-x-auto no-scrollbar">
+          {tabs.map((tab) => (
+            <button
+              type="button"
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-6 py-3 border-b-2 transition-all whitespace-nowrap ${
+                activeTab === tab.id
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <tab.icon size={18} />
+              <span className="text-sm font-medium">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === "reisen" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Reisen Spalte */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-light flex items-center gap-2">
+                  <Plane className="text-primary" size={20} />
+                  Reisen
+                </h2>
+                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                  {trips.length}
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {loading
+                  ? <div className="animate-pulse space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                      ))}
+                    </div>
+                  : trips.length > 0
+                    ? trips.map((trip) => (
+                        <div
+                          key={trip.id}
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        >
+                          <div>
+                            <h3 className="font-medium text-sm">{trip.name}</h3>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(trip.start).toLocaleDateString("de-DE")}{" "}
+                              – {new Date(trip.end).toLocaleDateString("de-DE")}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEditingTrip(trip)}
+                            className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Wrench size={18} />
+                          </button>
+                        </div>
+                      ))
+                    : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                        Keine Reisen vorhanden.
+                      </div>}
+              </div>
+            </div>
+
+            {/* Unterkünfte Spalte */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-light flex items-center gap-2">
+                  <Hotel className="text-primary" size={20} />
+                  Unterkünfte
+                </h2>
+                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                  {accommodations.length}
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {loading
+                  ? <div className="animate-pulse space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                      ))}
+                    </div>
+                  : accommodations.length > 0
+                    ? accommodations.map((acc) => (
+                        <div
+                          key={acc.id}
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        >
+                          <div className="min-w-0">
+                            <h3 className="font-medium text-sm truncate">
+                              {acc.name}
+                            </h3>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {acc.address || "Keine Adresse"}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEditingAccommodation(acc)}
+                            className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Wrench size={18} />
+                          </button>
+                        </div>
+                      ))
+                    : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                        Keine Unterkünfte vorhanden.
+                      </div>}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {(activeTab === "users" || activeTab === "webhooks") && (
+          <div className="bg-sidebar border border-sidebar-border rounded-2xl p-12 text-center">
             <h2 className="text-lg font-medium mb-2">
-              Willkommen im Admin-Bereich
+              Hier entsteht etwas Neues
             </h2>
             <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              Hier kannst du globale Einstellungen vornehmen und neue Inhalte
-              wie Reisen erstellen.
+              Dieser Bereich wird in Kürze verfügbar sein.
             </p>
           </div>
-        </div>
+        )}
 
         {showTripModal && (
           <TripFormModal
             onClose={() => setShowTripModal(false)}
-            onCreated={() => {
-              // Optionally show a success message or refresh data
-              console.log("Trip created");
-            }}
+            onCreated={fetchData}
           />
         )}
 
         {showAccommodationModal && (
           <AccommodationFormModal
             onClose={() => setShowAccommodationModal(false)}
-            onCreated={() => {
-              console.log("Accommodation created");
-            }}
+            onCreated={fetchData}
+          />
+        )}
+
+        {editingTrip && (
+          <TripAdminModal
+            trip={editingTrip}
+            onClose={() => setEditingTrip(null)}
+            onUpdated={fetchData}
+          />
+        )}
+
+        {editingAccommodation && (
+          <AccommodationAdminModal
+            accommodation={editingAccommodation}
+            onClose={() => setEditingAccommodation(null)}
+            onUpdated={fetchData}
           />
         )}
       </div>
