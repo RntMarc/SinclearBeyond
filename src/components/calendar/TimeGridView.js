@@ -1,5 +1,5 @@
 "use client";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Cake, ChevronDown, ChevronUp, Plane } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { isSameDay } from "@/lib/calendar/calendarUtils";
 
@@ -149,6 +149,15 @@ export default function TimeGridView({
                         start.getHours() + start.getMinutes() / 60;
                       const duration = (end - start) / 3600000;
 
+                      const isTrip =
+                        ev.type === "trip" || ev.type === "travelEvent";
+                      const isBirthday = ev.type === "birthday";
+                      const styleClass = isTrip
+                        ? "bg-trip/20 border-trip hover:bg-trip/30"
+                        : isBirthday
+                          ? "bg-birthday/20 border-birthday hover:bg-birthday/30"
+                          : "bg-primary/20 border-primary hover:bg-primary/30";
+
                       return (
                         <div
                           key={ev.id}
@@ -156,14 +165,18 @@ export default function TimeGridView({
                             e.stopPropagation();
                             onEventClick(ev);
                           }}
-                          className="absolute left-1 right-1 rounded-md bg-primary/20 border-l-2 border-primary p-1 overflow-hidden cursor-pointer hover:bg-primary/30 transition-colors z-[5]"
+                          className={`absolute left-1 right-1 rounded-md border-l-2 p-1 overflow-hidden cursor-pointer transition-colors z-[5] ${styleClass}`}
                           style={{
                             top: `${startHour * 64}px`,
                             height: `${Math.max(duration * 64, 24)}px`,
                           }}
                         >
-                          <div className="text-[10px] font-bold truncate leading-tight">
-                            {ev.title}
+                          <div className="text-[10px] font-bold truncate leading-tight flex items-center gap-1">
+                            {isTrip && <Plane size={10} className="shrink-0" />}
+                            {isBirthday && (
+                              <Cake size={10} className="shrink-0" />
+                            )}
+                            <span className="truncate">{ev.title}</span>
                           </div>
                           {duration >= 0.75 && (
                             <div className="text-[9px] text-muted-foreground truncate">
