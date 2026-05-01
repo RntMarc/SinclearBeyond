@@ -16,9 +16,9 @@ export default function AdminPage({ user, session }) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-              Administration
+              Verwaltung
             </p>
-            <h1 className="text-4xl font-light text-foreground">Übersicht</h1>
+            <h1 className="text-4xl font-light text-foreground">Admin-Panel</h1>
           </div>
 
           <div className="flex flex-wrap gap-3">
