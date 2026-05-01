@@ -1,6 +1,7 @@
 "use client";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import BirthdayModal from "@/components/birthdays/BirthdayModal";
 import CalendarAgenda from "@/components/calendar/CalendarAgenda";
 import CalendarDayLabels from "@/components/calendar/CalendarDayLabels";
 import CalendarGrid from "@/components/calendar/CalendarGrid";
@@ -9,6 +10,8 @@ import DayEventsModal from "@/components/calendar/DayEventsModal";
 import EventDetailModal from "@/components/calendar/EventDetailModal";
 import EventFormModal from "@/components/calendar/EventFormModal";
 import TimeGridView from "@/components/calendar/TimeGridView";
+import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
+import TripDetailModal from "@/components/calendar/TripDetailModal";
 import { useCalendarEvents } from "@/hooks/useCalendarEvents";
 import {
   addDays,
@@ -147,11 +150,46 @@ export default function KalenderClient({ userId }) {
         <Plus size={24} />
       </button>
 
-      {selectedEvent && (
+      {selectedEvent && selectedEvent.type === "event" && (
         <EventDetailModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
           onEdit={openEditModal}
+        />
+      )}
+
+      {selectedEvent && selectedEvent.type === "trip" && (
+        <TripDetailModal
+          tripId={selectedEvent.id}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
+
+      {selectedEvent && selectedEvent.type === "travelEvent" && (
+        <TravelEventDetailModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
+
+      {selectedEvent && selectedEvent.type === "birthday" && (
+        <BirthdayModal
+          user={{
+            id: selectedEvent.userId,
+            displayName: selectedEvent.title,
+            birthday: selectedEvent.originalBirthday,
+            currentAge:
+              new Date(selectedEvent.startAt).getFullYear() -
+              new Date(selectedEvent.originalBirthday).getFullYear(),
+            daysUntil: Math.ceil(
+              (new Date(selectedEvent.startAt) - new Date()) /
+                (1000 * 60 * 60 * 24),
+            ),
+            ageAtNextBirthday:
+              new Date(selectedEvent.startAt).getFullYear() -
+              new Date(selectedEvent.originalBirthday).getFullYear(),
+          }}
+          onClose={() => setSelectedEvent(null)}
         />
       )}
 

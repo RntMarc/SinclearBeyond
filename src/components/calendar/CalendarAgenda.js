@@ -1,5 +1,5 @@
 "use client";
-import { ChevronDown } from "lucide-react";
+import { Cake, ChevronDown, Plane } from "lucide-react";
 import { useState } from "react";
 
 export default function CalendarAgenda({ eventList, onEventClick }) {
@@ -52,7 +52,14 @@ export default function CalendarAgenda({ eventList, onEventClick }) {
                     <div
                       key={ev.id}
                       onClick={() => onEventClick(ev)}
-                      className="flex items-center gap-4 p-4 rounded-xl border border-border bg-accent/10 hover:bg-accent/30 transition-colors cursor-pointer group"
+                      className={`flex items-center gap-4 p-4 rounded-xl border transition-colors cursor-pointer group
+                        ${
+                          ev.type === "trip" || ev.type === "travelEvent"
+                            ? "border-trip/30 bg-trip/5 hover:bg-trip/10"
+                            : ev.type === "birthday"
+                              ? "border-birthday/30 bg-birthday/5 hover:bg-birthday/10"
+                              : "border-border bg-accent/10 hover:bg-accent/30"
+                        }`}
                     >
                       {!ev.allDay && (
                         <div className="text-sm font-medium text-muted-foreground w-12 shrink-0">
@@ -63,12 +70,37 @@ export default function CalendarAgenda({ eventList, onEventClick }) {
                         </div>
                       )}
                       {ev.allDay && (
-                        <div className="text-[10px] font-bold uppercase text-primary/70 w-12 shrink-0">
+                        <div
+                          className={`text-[10px] font-bold uppercase w-12 shrink-0 ${
+                            ev.type === "trip" || ev.type === "travelEvent"
+                              ? "text-trip/70"
+                              : ev.type === "birthday"
+                                ? "text-birthday/70"
+                                : "text-primary/70"
+                          }`}
+                        >
                           Ganztägig
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold truncate group-hover:text-primary transition-colors">
+                        <div
+                          className={`font-semibold truncate transition-colors flex items-center gap-2 ${
+                            ev.type === "trip" || ev.type === "travelEvent"
+                              ? "group-hover:text-trip"
+                              : ev.type === "birthday"
+                                ? "group-hover:text-birthday"
+                                : "group-hover:text-primary"
+                          }`}
+                        >
+                          {ev.type === "trip" && (
+                            <Plane size={16} className="text-trip" />
+                          )}
+                          {ev.type === "travelEvent" && (
+                            <Plane size={16} className="text-trip" />
+                          )}
+                          {ev.type === "birthday" && (
+                            <Cake size={16} className="text-birthday" />
+                          )}
                           {ev.title}
                         </div>
                         {ev.description && (
