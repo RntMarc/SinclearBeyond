@@ -20,8 +20,8 @@ export default function CalendarGrid({
 
   return (
     <div
-      className="flex-1 grid grid-cols-7 min-h-0 divide-x divide-y divide-border border-b border-border overflow-hidden"
-      style={{ gridTemplateRows: "repeat(6, minmax(0, 1fr))" }}
+      className="h-full grid grid-cols-7 divide-x divide-y divide-border border-b border-border overflow-hidden"
+      style={{ gridTemplateRows: "repeat(6, minmax(60px, 1fr))" }}
     >
       {calDays.map(({ date, currentMonth }, i) => (
         <CalendarDay

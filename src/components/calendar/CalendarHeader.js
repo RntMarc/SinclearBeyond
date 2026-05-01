@@ -31,30 +31,36 @@ export default function CalendarHeader({
     <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-3 border-b border-border shrink-0 gap-4">
       <div className="flex items-center justify-between w-full sm:w-auto gap-2">
         <div className="flex items-center gap-1 sm:gap-2">
-          <button
-            type="button"
-            onClick={onPrev}
-            className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <ChevronLeft size={17} />
-          </button>
-          <span className="text-sm sm:text-base font-light text-foreground min-w-[120px] sm:w-44 text-center select-none">
-            {viewMode === "agenda" ? "Upcoming" : `${MONTHS[month]} ${year}`}
+          {viewMode !== "agenda" && (
+            <button
+              type="button"
+              onClick={onPrev}
+              className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+            >
+              <ChevronLeft size={17} />
+            </button>
+          )}
+          <span className={`text-sm sm:text-base font-light text-foreground select-none ${viewMode !== "agenda" ? "min-w-[120px] sm:w-44 text-center" : ""}`}>
+            {viewMode === "agenda" ? "Agenda" : `${MONTHS[month]} ${year}`}
           </span>
-          <button
-            type="button"
-            onClick={onNext}
-            className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <ChevronRight size={17} />
-          </button>
-          <button
-            type="button"
-            onClick={onToday}
-            className="ml-1 px-2 sm:px-3 py-1 text-[10px] sm:text-xs rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-          >
-            Heute
-          </button>
+          {viewMode !== "agenda" && (
+            <>
+              <button
+                type="button"
+                onClick={onNext}
+                className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <ChevronRight size={17} />
+              </button>
+              <button
+                type="button"
+                onClick={onToday}
+                className="ml-1 px-2 sm:px-3 py-1 text-[10px] sm:text-xs rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+              >
+                Heute
+              </button>
+            </>
+          )}
         </div>
 
         {/* View Switcher Mobile - icons only */}

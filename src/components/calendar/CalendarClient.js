@@ -43,7 +43,7 @@ export default function KalenderClient({ userId }) {
         setMonth(11);
       } else setMonth((m) => m - 1);
     } else if (viewMode === "week") {
-      setCurrentDate((d) => addDays(d, -7));
+      setCurrentDate((d) => addDays(d, isMobile ? -3 : -7));
     } else if (viewMode === "day") {
       setCurrentDate((d) => addDays(d, -1));
     }
@@ -55,7 +55,7 @@ export default function KalenderClient({ userId }) {
         setMonth(0);
       } else setMonth((m) => m + 1);
     } else if (viewMode === "week") {
-      setCurrentDate((d) => addDays(d, 7));
+      setCurrentDate((d) => addDays(d, isMobile ? 3 : 7));
     } else if (viewMode === "day") {
       setCurrentDate((d) => addDays(d, 1));
     }
@@ -80,10 +80,10 @@ export default function KalenderClient({ userId }) {
   }
 
   const weekDays = [];
-  const startOfWeek = getStartOfWeek(currentDate);
+  const weekStart = isMobile ? currentDate : getStartOfWeek(currentDate);
   const numWeekDays = isMobile ? 3 : 7;
   for (let i = 0; i < numWeekDays; i++) {
-    weekDays.push(addDays(startOfWeek, i));
+    weekDays.push(addDays(weekStart, i));
   }
 
   return (
