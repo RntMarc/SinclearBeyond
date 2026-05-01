@@ -18,7 +18,7 @@ export default function FeedFilters({
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-      <div className="flex items-center gap-1 bg-sidebar-accent/50 p-1 rounded-xl border border-sidebar-border w-fit overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-1 bg-sidebar-accent/50 p-1 rounded-xl border border-sidebar-border max-w-full overflow-x-auto no-scrollbar">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
