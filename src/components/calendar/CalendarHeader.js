@@ -40,7 +40,9 @@ export default function CalendarHeader({
               <ChevronLeft size={17} />
             </button>
           )}
-          <span className={`text-sm sm:text-base font-light text-foreground select-none ${viewMode !== "agenda" ? "min-w-[120px] sm:w-44 text-center" : ""}`}>
+          <span
+            className={`text-sm sm:text-base font-light text-foreground select-none ${viewMode !== "agenda" ? "min-w-[120px] sm:w-44 text-center" : ""}`}
+          >
             {viewMode === "agenda" ? "Agenda" : `${MONTHS[month]} ${year}`}
           </span>
           {viewMode !== "agenda" && (

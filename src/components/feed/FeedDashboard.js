@@ -29,7 +29,10 @@ export default function FeedDashboard() {
         setPosts(data);
       }
     } catch (error) {
-      setNotification({ type: "error", message: "Beiträge konnten nicht geladen werden." });
+      setNotification({
+        type: "error",
+        message: "Beiträge konnten nicht geladen werden.",
+      });
     } finally {
       setLoading(false);
     }

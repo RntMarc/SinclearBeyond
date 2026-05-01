@@ -1,9 +1,9 @@
+import crypto from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { travelRelations, users } from "@/lib/db/schema";
-import crypto from "node:crypto";
 
 export async function GET(req, { params }) {
   const session = await getSession();
