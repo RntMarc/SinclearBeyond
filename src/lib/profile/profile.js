@@ -10,10 +10,12 @@ export async function getProfileData(session) {
 
   const [user] = await db
     .select({
+      id: users.id,
       displayName: users.displayName,
       email: users.email,
       birthday: users.birthday,
       birthdayVisibility: users.birthdayVisibility,
+      discordId: users.discordId,
       createdAt: users.createdAt,
     })
     .from(users)
@@ -88,13 +90,19 @@ export async function saveProfile(_prevState, formData) {
     }
 
     const [existing] = await db
-      .select({ id: contactInfo.id })
+      .select()
       .from(contactInfo)
       .where(eq(contactInfo.userId, session.sub))
       .limit(1);
 
+    const [user] = await db
+      .select({ discordId: users.discordId })
+      .from(users)
+      .where(eq(users.id, session.sub))
+      .limit(1);
+
     const contactData = {
-      discordHandle: discord,
+      discordHandle: user?.discordId ? existing?.discordHandle : discord,
       fluxerHandle: fluxer,
       matrixHandle: matrix,
       signalNumber: signal,

@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-// TODO: Discord OAuth
-export async function GET() {
-  return NextResponse.json({ error: "not_implemented" }, { status: 501 });
+import { getDiscordAuthUrl } from "@/lib/auth/discord";
+
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const mode = searchParams.get("mode") || "login";
+  const url = await getDiscordAuthUrl(mode);
+  return NextResponse.redirect(url);
 }
