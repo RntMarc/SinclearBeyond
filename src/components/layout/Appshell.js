@@ -13,8 +13,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LogoutButton from "@/components/auth/LogoutButton";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const navItems = [
   { href: "/feed", label: "Unterhaltung", icon: SquarePlay },
@@ -31,21 +32,28 @@ const adminNavItem = { href: "/admin", label: "Admin", icon: Lock };
 export default function AppShell({ children, user, session }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const isMobile = useIsMobile();
+
+  // On mobile, the sidebar is hidden by default and uses the mobile-specific overlay and top-bar.
+  // We use isMobile to supplement Tailwind's md: breakpoints for landscape smartphones.
+  const showMobileElements = isMobile;
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Mobile overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+      {open && showMobileElements && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-black/50 w-full h-full cursor-default"
           onClick={() => setOpen(false)}
+          aria-label="Menü schließen"
         />
       )}
 
       {/* Sidebar */}
       <aside
         className={`fixed z-50 top-0 left-0 h-full w-64 bg-sidebar border-r border-sidebar-border flex flex-col transition-transform duration-200
-          ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:flex`}
+          ${open ? "translate-x-0" : "-translate-x-full"} ${showMobileElements ? "" : "md:translate-x-0 md:static md:flex"}`}
       >
         <div className="flex items-center justify-between px-5 py-5 border-b border-sidebar-border shrink-0">
           <Link
@@ -57,7 +65,7 @@ export default function AppShell({ children, user, session }) {
           </Link>
           <button
             type="button"
-            className="md:hidden text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent transition-colors"
+            className={`${showMobileElements ? "flex" : "hidden md:hidden"} text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent transition-colors`}
             onClick={() => setOpen(false)}
             aria-label="Menü schließen"
           >
@@ -101,7 +109,11 @@ export default function AppShell({ children, user, session }) {
       {/* Main area — flex-col so children can fill height */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Mobile top bar */}
-        <div className="md:hidden flex items-center gap-3 px-4 py-4 border-b border-border shrink-0 bg-background/80 backdrop-blur-sm z-30">
+        <div
+          className={`${
+            showMobileElements ? "flex" : "hidden"
+          } items-center gap-3 px-4 py-4 border-b border-border shrink-0 bg-background/80 backdrop-blur-sm z-30`}
+        >
           <button
             type="button"
             onClick={() => setOpen(true)}

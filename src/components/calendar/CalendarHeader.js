@@ -8,6 +8,7 @@ import {
   List,
   Plus,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { MONTHS } from "@/lib/calendar/calendarUtils";
 
 const VIEW_MODES = [
@@ -27,9 +28,17 @@ export default function CalendarHeader({
   onToday,
   onNew,
 }) {
+  const isMobile = useIsMobile();
+
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-3 border-b border-border shrink-0 gap-4">
-      <div className="flex items-center justify-between w-full sm:w-auto gap-2">
+    <div
+      className={`flex flex-col ${isMobile ? "" : "sm:flex-row"} items-center justify-between px-4 sm:px-6 py-3 border-b border-border shrink-0 gap-4`}
+    >
+      <div
+        className={`flex items-center justify-between w-full ${
+          isMobile ? "" : "sm:w-auto"
+        } gap-2`}
+      >
         <div className="flex items-center gap-1 sm:gap-2">
           {viewMode !== "agenda" && (
             <button
@@ -66,7 +75,7 @@ export default function CalendarHeader({
         </div>
 
         {/* View Switcher Mobile - icons only */}
-        <div className="flex sm:hidden bg-muted/50 p-1 rounded-lg">
+        <div className="flex bg-muted/50 p-1 rounded-lg">
           {VIEW_MODES.map((mode) => (
             <button
               key={mode.id}
@@ -83,9 +92,17 @@ export default function CalendarHeader({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-end">
+      <div
+        className={`flex items-center gap-2 sm:gap-4 w-full ${
+          isMobile ? "hidden" : "sm:w-auto"
+        } justify-end`}
+      >
         {/* View Switcher Desktop - text/icons */}
-        <div className="hidden sm:flex bg-muted/50 p-1 rounded-lg">
+        <div
+          className={`hidden ${
+            isMobile ? "" : "sm:flex"
+          } bg-muted/50 p-1 rounded-lg`}
+        >
           {VIEW_MODES.map((mode) => (
             <button
               key={mode.id}
@@ -105,7 +122,7 @@ export default function CalendarHeader({
         <button
           type="button"
           onClick={onNew}
-          className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+          className={`${isMobile ? "hidden" : "hidden md:flex"} items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0`}
         >
           <Plus size={15} />
           Neuer Eintrag

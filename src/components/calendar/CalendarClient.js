@@ -13,6 +13,7 @@ import TimeGridView from "@/components/calendar/TimeGridView";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
 import TripDetailModal from "@/components/calendar/TripDetailModal";
 import { useCalendarEvents } from "@/hooks/useCalendarEvents";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import {
   addDays,
   getStartOfWeek,
@@ -28,16 +29,9 @@ export default function KalenderClient({ userId }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [dayEventsModal, setDayEventsModal] = useState(null); // { date, events }
   const [formModal, setFormModal] = useState(null); // null | { mode: "create"|"edit", event }
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
 
   const { eventList, allUsers, addEvent, updateEvent } = useCalendarEvents();
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   function prev() {
     if (viewMode === "month") {

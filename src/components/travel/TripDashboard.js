@@ -9,6 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 function StatusBadge({ isActive, isUpcoming, isPast }) {
   const label = isActive
@@ -91,6 +92,7 @@ function EventCard({ event }) {
 export default function TripDashboard({ trip }) {
   const [expandOtherAccomm, setExpandOtherAccomm] = useState(false);
   const [mobileTab, setMobileTab] = useState("details");
+  const isMobile = useIsMobile();
   const start = new Date(trip.start);
   const end = new Date(trip.end);
   const formatDate = (d) =>
@@ -174,6 +176,7 @@ export default function TripDashboard({ trip }) {
           {otherAccommodations.length > 0 && (
             <div className="pt-2">
               <button
+                type="button"
                 onClick={() => setExpandOtherAccomm(!expandOtherAccomm)}
                 className="flex items-center justify-between w-full text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
               >
@@ -258,15 +261,18 @@ export default function TripDashboard({ trip }) {
       </p>
 
       {/* Desktop Layout */}
-      <div className="hidden md:grid grid-cols-3 gap-8">
+      <div
+        className={`${isMobile ? "hidden" : "hidden md:grid"} grid-cols-3 gap-8`}
+      >
         <div className="col-span-2">{DashboardContent}</div>
         <div className="col-span-1">{EventsContent}</div>
       </div>
 
       {/* Mobile Layout */}
-      <div className="md:hidden">
+      <div className={`${isMobile ? "block" : "md:hidden"}`}>
         <div className="flex bg-sidebar border border-sidebar-border rounded-xl p-1 mb-6">
           <button
+            type="button"
             onClick={() => setMobileTab("details")}
             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
               mobileTab === "details"
@@ -277,6 +283,7 @@ export default function TripDashboard({ trip }) {
             Details
           </button>
           <button
+            type="button"
             onClick={() => setMobileTab("events")}
             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
               mobileTab === "events"

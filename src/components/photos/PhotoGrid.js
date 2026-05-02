@@ -1,10 +1,12 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getUnsplashPhotos } from "@/lib/photos/unsplash";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import PhotoItem from "./PhotoItem";
 
-function getNumCols() {
+function getNumCols(isMobile) {
   if (typeof window === "undefined") return 1;
+  if (isMobile) return 1;
   if (window.innerWidth >= 1280) return 4;
   if (window.innerWidth >= 1024) return 3;
   if (window.innerWidth >= 640) return 2;
@@ -18,6 +20,7 @@ function distribute(photos, n) {
 }
 
 export default function PhotoGrid({ initialPhotos }) {
+  const isMobile = useIsMobile();
   // SSR-safe: start with 1 col, redistribute on mount
   const [columns, setColumns] = useState([initialPhotos]);
   const [page, setPage] = useState(1);
@@ -25,11 +28,11 @@ export default function PhotoGrid({ initialPhotos }) {
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
-  // Redistribute to correct col count on mount
+  // Redistribute to correct col count on mount or isMobile change
   useEffect(() => {
-    const n = getNumCols();
+    const n = getNumCols(isMobile);
     setColumns(distribute(initialPhotos, n));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Redistribute on resize (only changes col count, reflow OK here)
   useEffect(() => {
@@ -38,7 +41,7 @@ export default function PhotoGrid({ initialPhotos }) {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         setColumns((prev) => {
-          const n = getNumCols();
+          const n = getNumCols(isMobile);
           if (n === prev.length) return prev;
           return distribute(prev.flat(), n);
         });
@@ -49,7 +52,7 @@ export default function PhotoGrid({ initialPhotos }) {
       window.removeEventListener("resize", handleResize);
       clearTimeout(timeout);
     };
-  }, []);
+  }, [isMobile]);
 
   const loadMorePhotos = useCallback(async () => {
     if (loading || !hasMore) return;
