@@ -29,6 +29,7 @@ export const users = mysqlTable("User", {
   isAdmin: tinyint("isAdmin").notNull().default(0),
   discordId: varchar("discordId", { length: 191 }),
   image: longtext("image"),
+  davToken: varchar("davToken", { length: 191 }),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 

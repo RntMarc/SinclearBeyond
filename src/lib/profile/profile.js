@@ -16,6 +16,7 @@ export async function getProfileData(session) {
       birthday: users.birthday,
       birthdayVisibility: users.birthdayVisibility,
       discordId: users.discordId,
+      davToken: users.davToken,
       createdAt: users.createdAt,
     })
     .from(users)
@@ -167,5 +168,23 @@ export async function saveProfile(_prevState, formData) {
     return { ok: true };
   } catch {
     return { ok: false, error: "Speichern fehlgeschlagen." };
+  }
+}
+
+export async function generateDavToken() {
+  const session = await getSession();
+  if (!session?.sub) return { ok: false, error: "Nicht angemeldet." };
+
+  try {
+    const newToken = crypto.randomUUID().replace(/-/g, "");
+    await db
+      .update(users)
+      .set({ davToken: newToken })
+      .where(eq(users.id, session.sub));
+
+    revalidatePath("/profil");
+    return { ok: true, token: newToken };
+  } catch {
+    return { ok: false, error: "Token-Generierung fehlgeschlagen." };
   }
 }

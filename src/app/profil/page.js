@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
+import DavTokenManager from "@/components/profile/DavTokenManager";
 import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
 import { getSession } from "@/lib/auth/session";
@@ -23,6 +24,7 @@ export default async function ProfilPage() {
           {user.displayName}
         </h1>
         <ProfilForm user={user} contact={contact} social={social} />
+        <DavTokenManager initialToken={user.davToken} />
         <PasskeyManager />
       </div>
     </AppShell>

@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a6938e53-6244-4d4f-9452-777c03b836a4",
-  "prevId": "a09facf8-4b2a-441e-b809-409a6062f45c",
+  "id": "9e7fa6a2-8e2d-47a3-9426-911493374782",
+  "prevId": "a6938e53-6244-4d4f-9452-777c03b836a4",
   "tables": {
     "CloseFriend": {
       "name": "CloseFriend",
@@ -1165,6 +1165,13 @@
         "image": {
           "name": "image",
           "type": "longtext",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "davToken": {
+          "name": "davToken",
+          "type": "varchar(191)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

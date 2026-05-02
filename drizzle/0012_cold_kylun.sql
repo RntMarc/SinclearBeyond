@@ -1,0 +1,1 @@
+ALTER TABLE `User` ADD `davToken` varchar(191);

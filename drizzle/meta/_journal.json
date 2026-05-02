@@ -85,6 +85,13 @@
       "when": 1777739678960,
       "tag": "0011_white_daimon_hellstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1777762580220,
+      "tag": "0012_cold_kylun",
+      "breakpoints": true
     }
   ]
 }
