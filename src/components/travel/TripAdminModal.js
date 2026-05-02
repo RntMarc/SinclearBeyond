@@ -28,7 +28,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated }) {
       fetch(`/api/travel/trips/${trip.id}/participants`),
       fetch("/api/users"),
       fetch("/api/travel/accommodations"),
-      fetch(`/api/travel/trips/${trip.id}`), // Re-using existing trip endpoint for events
+      fetch(`/api/travel/trips/${trip.id}/details`),
     ]);
 
     if (partRes.ok) setParticipants(await partRes.json());
