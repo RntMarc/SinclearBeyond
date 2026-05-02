@@ -1,6 +1,10 @@
 "use client";
 import CalendarDay from "@/components/calendar/CalendarDay";
-import { getCalendarDays, isSameDay } from "@/lib/calendar/calendarUtils";
+import {
+  getCalendarDays,
+  isEventOnDay,
+  sortEvents,
+} from "@/lib/calendar/calendarUtils";
 
 export default function CalendarGrid({
   year,
@@ -13,9 +17,7 @@ export default function CalendarGrid({
   const calDays = getCalendarDays(year, month);
 
   function eventsForDay(date) {
-    return eventList
-      .filter((ev) => isSameDay(new Date(ev.startAt), date))
-      .sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+    return eventList.filter((ev) => isEventOnDay(ev, date)).sort(sortEvents);
   }
 
   return (
