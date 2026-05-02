@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sinclear Beyond
 
-## Getting Started
+Sinclear Beyond ist eine umfassende Webanwendung zur Verwaltung von Reisen, Terminen und sozialen Interaktionen. Es wurde primär für den privaten Gebrauch entwickelt, kann aber von jedem geforkt und angepasst werden.
 
-First, run the development server:
+## Funktionen
+
+- ✈️ **Reiseverwaltung:** Plane Trips, verwalte Unterkünfte und behalte den Überblick über Teilnehmer und Tickets.
+- 📅 **Kalender:** Ein kombinierter Kalender für Events, Reisen und Geburtstage.
+- 📱 **Social Feed:** Teile Musik, Videos, News und andere Inhalte mit deinen Kontakten.
+- 🔒 **Sicherheit:** Moderne Authentifizierung mittels Passkeys (WebAuthn) oder E-Mail OTP.
+- 👥 **Kontakte:** Verwalte enge Kontakte und teile spezifische Informationen basierend auf Sichtbarkeitseinstellungen.
+- 🛠️ **Admin-Bereich:** Zentrale Verwaltung für Reisen, Nutzer und Webhooks.
+- 🖼️ **Integrationen:** Fotovorschau via Unsplash-API.
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Datenbank:** MySQL mit Drizzle ORM
+- **Styling:** Tailwind CSS & Shadcn/UI
+- **Icons:** Lucide React
+
+## Installation
+
+### Voraussetzungen
+
+- Node.js (v18 oder neuer)
+- Ein MySQL-Datenbankserver
+- Ein SMTP-Server für den E-Mail-Versand (OTP)
+
+### Setup
+
+1. Klone das Repository:
+   ```bash
+   git clone https://github.com/dein-nutzer/sinclear-beyond.git
+   cd sinclear-beyond
+   ```
+
+2. Installiere die Abhängigkeiten:
+   ```bash
+   pnpm install
+   # oder
+   npm install
+   ```
+
+3. Erstelle eine `.env` Datei basierend auf der `.env.example`:
+   ```bash
+   cp .env.example .env
+   ```
+   Fülle die entsprechenden Werte in der `.env` aus.
+
+### Datenbank
+
+Die Datenbank wird mit Drizzle ORM verwaltet. Um das Schema zu pushen:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm drizzle-kit push
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Weitere Informationen findest du in der [Drizzle Dokumentation](https://orm.drizzle.team/).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Entwicklungsserver starten
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm dev
+```
 
-## Learn More
+Die Anwendung ist nun unter [http://localhost:3000](http://localhost:3000) erreichbar.
 
-To learn more about Next.js, take a look at the following resources:
+## Docker
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Das Projekt kann auch mit Docker betrieben werden:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Erstelle das Docker-Image:
+   ```bash
+   docker build -t sinclear-beyond .
+   ```
 
-## Deploy on Vercel
+2. Starte den Container:
+   ```bash
+   docker run -p 3000:3000 --env-file .env sinclear-beyond
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Lizenz
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Privat / Open Source (bitte Lizenzdatei falls vorhanden prüfen).
