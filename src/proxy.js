@@ -7,14 +7,24 @@ export async function proxy(req) {
   const token = req.cookies.get("session")?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    const url = new URL("/login", req.url);
+    url.searchParams.set(
+      "callbackUrl",
+      req.nextUrl.pathname + req.nextUrl.search,
+    );
+    return NextResponse.redirect(url);
   }
 
   try {
     await jwtVerify(token, secret);
     return NextResponse.next();
   } catch {
-    return NextResponse.redirect(new URL("/login", req.url));
+    const url = new URL("/login", req.url);
+    url.searchParams.set(
+      "callbackUrl",
+      req.nextUrl.pathname + req.nextUrl.search,
+    );
+    return NextResponse.redirect(url);
   }
 }
 
