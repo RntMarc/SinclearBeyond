@@ -19,6 +19,7 @@ export async function getProfileData(session) {
       discordId: users.discordId,
       davToken: users.davToken,
       image: users.image,
+      davToken: users.davToken,
       createdAt: users.createdAt,
     })
     .from(users)

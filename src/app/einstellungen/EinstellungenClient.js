@@ -101,6 +101,7 @@ export default function EinstellungenClient({
               )}
             </div>
             <PasskeyManager />
+            <DavTokenManager initialToken={user.davToken} />
           </div>
         )}
       </div>
