@@ -48,7 +48,11 @@ export default function DayEventsModal({
                     <span className="font-medium group-hover:text-primary transition-colors">
                       {ev.title}
                     </span>
-                    {!ev.allDay && (
+                    {ev.allDay ? (
+                      <span className="text-[10px] font-bold uppercase text-primary/70 whitespace-nowrap ml-2">
+                        Ganztägig
+                      </span>
+                    ) : (
                       <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
                         {new Date(ev.startAt).toLocaleTimeString("de-DE", {
                           hour: "2-digit",

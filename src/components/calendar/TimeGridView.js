@@ -1,7 +1,7 @@
 "use client";
 import { Cake, ChevronDown, ChevronUp, Plane } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { isSameDay } from "@/lib/calendar/calendarUtils";
+import { isEventOnDay } from "@/lib/calendar/calendarUtils";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DEFAULT_START_HOUR = 8;
@@ -41,7 +41,7 @@ export default function TimeGridView({
 
     days.forEach((day) => {
       eventList.forEach((ev) => {
-        if (isSameDay(new Date(ev.startAt), day) && !ev.allDay) {
+        if (isEventOnDay(ev, day) && !ev.allDay) {
           const hour = new Date(ev.startAt).getHours();
           if (hour < visibleStartHour) hasAbove = true;
           if (hour >= visibleEndHour) hasBelow = true;
@@ -86,7 +86,48 @@ export default function TimeGridView({
       </div>
 
       {/* Grid */}
-      <div className="flex-1 overflow-hidden relative">
+      <div className="flex-1 overflow-hidden flex flex-col relative">
+        {/* All Day Events Section */}
+        <div className="flex border-b border-border ml-12 shrink-0 bg-muted/5">
+          {days.map((day, dayIdx) => {
+            const allDayEvents = eventList.filter(
+              (ev) => isEventOnDay(ev, day) && ev.allDay,
+            );
+            return (
+              <div
+                key={dayIdx}
+                className="flex-1 p-1 min-h-[32px] border-l border-border first:border-l-0 flex flex-col gap-1"
+              >
+                {allDayEvents.map((ev) => {
+                  const isTrip =
+                    ev.type === "trip" || ev.type === "travelEvent";
+                  const isBirthday = ev.type === "birthday";
+                  const styleClass = isTrip
+                    ? "bg-trip/20 border-trip text-trip"
+                    : isBirthday
+                      ? "bg-birthday/20 border-birthday text-birthday"
+                      : "bg-primary/20 border-primary text-primary";
+
+                  return (
+                    <div
+                      key={ev.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEventClick(ev);
+                      }}
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded border-l-2 truncate cursor-pointer transition-colors hover:brightness-95 flex items-center gap-1 ${styleClass}`}
+                    >
+                      {isTrip && <Plane size={10} className="shrink-0" />}
+                      {isBirthday && <Cake size={10} className="shrink-0" />}
+                      <span className="truncate">{ev.title}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+
         {showUpArrow && (
           <button
             onClick={() => scrollToMore("up")}
@@ -136,18 +177,27 @@ export default function TimeGridView({
 
                   {/* Events */}
                   {eventList
-                    .filter(
-                      (ev) =>
-                        isSameDay(new Date(ev.startAt), day) && !ev.allDay,
-                    )
+                    .filter((ev) => isEventOnDay(ev, day) && !ev.allDay)
                     .map((ev) => {
-                      const start = new Date(ev.startAt);
-                      const end = ev.endAt
+                      const eventStart = new Date(ev.startAt);
+                      const eventEnd = ev.endAt
                         ? new Date(ev.endAt)
-                        : new Date(start.getTime() + 3600000);
+                        : new Date(eventStart.getTime() + 3600000);
+
+                      const dayStart = new Date(day);
+                      dayStart.setHours(0, 0, 0, 0);
+                      const dayEnd = new Date(day);
+                      dayEnd.setHours(23, 59, 59, 999);
+
+                      const effectiveStart =
+                        eventStart < dayStart ? dayStart : eventStart;
+                      const effectiveEnd =
+                        eventEnd > dayEnd ? dayEnd : eventEnd;
+
                       const startHour =
-                        start.getHours() + start.getMinutes() / 60;
-                      const duration = (end - start) / 3600000;
+                        effectiveStart.getHours() +
+                        effectiveStart.getMinutes() / 60;
+                      const duration = (effectiveEnd - effectiveStart) / 3600000;
 
                       const isTrip =
                         ev.type === "trip" || ev.type === "travelEvent";
@@ -180,7 +230,7 @@ export default function TimeGridView({
                           </div>
                           {duration >= 0.75 && (
                             <div className="text-[9px] text-muted-foreground truncate">
-                              {start.toLocaleTimeString("de-DE", {
+                              {eventStart.toLocaleTimeString("de-DE", {
                                 hour: "2-digit",
                                 minute: "2-digit",
                               })}

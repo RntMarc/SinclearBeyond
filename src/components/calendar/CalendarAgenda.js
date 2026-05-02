@@ -1,31 +1,56 @@
 "use client";
 import { Cake, ChevronDown, Plane } from "lucide-react";
 import { useState } from "react";
+import { isEventOnDay, sortEvents } from "@/lib/calendar/calendarUtils";
 
 export default function CalendarAgenda({ eventList, onEventClick }) {
   const [limit, setLimit] = useState(30);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const upcomingEvents = eventList
-    .filter((ev) => new Date(ev.startAt) >= today)
-    .sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+  // To properly handle multi-day events in agenda, we find all relevant dates
+  // for all upcoming events (including their duration).
+  const groupedEvents = {};
+  const todayTime = today.getTime();
 
-  const displayedEvents =
-    limit === null ? upcomingEvents : upcomingEvents.slice(0, limit);
+  for (const ev of eventList) {
+    const eventStart = new Date(ev.startAt);
+    const eventEnd = ev.endAt ? new Date(ev.endAt) : eventStart;
 
-  // Group events by date
-  const groupedEvents = displayedEvents.reduce((acc, ev) => {
-    const dateStr = new Date(ev.startAt).toDateString();
-    if (!acc[dateStr]) acc[dateStr] = [];
-    acc[dateStr].push(ev);
-    return acc;
-  }, {});
+    // Start checking from either today or event start, whichever is later
+    let current = new Date(Math.max(todayTime, eventStart.getTime()));
+    current.setHours(0, 0, 0, 0);
 
-  const sortedDates = Object.keys(groupedEvents).sort(
-    (a, b) => new Date(a) - new Date(b),
-  );
+    const end = new Date(eventEnd);
+    // If it ends at midnight on a different day, it shouldn't show on the end day
+    if (
+      end.getHours() === 0 &&
+      end.getMinutes() === 0 &&
+      end.getSeconds() === 0 &&
+      !isEventOnDay({ startAt: ev.startAt }, eventEnd) // Simplified check for "not same day"
+    ) {
+      end.setDate(end.getDate() - 1);
+    }
+    end.setHours(0, 0, 0, 0);
 
+    while (current <= end) {
+      const dateStr = current.toDateString();
+      if (!groupedEvents[dateStr]) groupedEvents[dateStr] = [];
+      groupedEvents[dateStr].push(ev);
+
+      // Advance one day
+      current.setDate(current.getDate() + 1);
+    }
+  }
+
+  // Sort dates and events within each date
+  const sortedDates = Object.keys(groupedEvents)
+    .sort((a, b) => new Date(a) - new Date(b))
+    .slice(0, limit === null ? undefined : limit);
+
+  for (const dateStr of sortedDates) {
+    groupedEvents[dateStr].sort(sortEvents);
+  }
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-8 max-w-3xl mx-auto pb-24">
       {sortedDates.length > 0
@@ -119,13 +144,13 @@ export default function CalendarAgenda({ eventList, onEventClick }) {
             Keine anstehenden Einträge gefunden.
           </div>}
 
-      {limit !== null && upcomingEvents.length > limit && (
+      {limit !== null && Object.keys(groupedEvents).length > limit && (
         <button
           onClick={() => setLimit(null)}
           className="flex items-center justify-center gap-2 py-4 mt-4 text-sm font-medium text-primary hover:text-primary/80 transition-colors border-t border-border"
         >
           <ChevronDown size={16} />
-          Alle {upcomingEvents.length - limit} weiteren Einträge laden
+          Alle weiteren Einträge laden
         </button>
       )}
     </div>

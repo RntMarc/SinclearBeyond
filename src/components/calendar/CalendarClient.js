@@ -17,7 +17,8 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import {
   addDays,
   getStartOfWeek,
-  isSameDay,
+  isEventOnDay,
+  sortEvents,
 } from "@/lib/calendar/calendarUtils";
 
 export default function KalenderClient({ userId }) {
@@ -68,8 +69,8 @@ export default function KalenderClient({ userId }) {
   function handleDayClick(date) {
     if (isMobile) {
       const dayEvents = eventList
-        .filter((ev) => isSameDay(new Date(ev.startAt), date))
-        .sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+        .filter((ev) => isEventOnDay(ev, date))
+        .sort(sortEvents);
       setDayEventsModal({ date, events: dayEvents });
     } else {
       setFormModal({ mode: "create", event: date });

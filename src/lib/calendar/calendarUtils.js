@@ -55,3 +55,39 @@ export function addDays(date, days) {
   d.setDate(d.getDate() + days);
   return d;
 }
+
+export function isEventOnDay(event, date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const dTime = d.getTime();
+
+  const start = new Date(event.startAt);
+  const s = new Date(start);
+  s.setHours(0, 0, 0, 0);
+  const sTime = s.getTime();
+
+  const end = event.endAt ? new Date(event.endAt) : start;
+  const e = new Date(end);
+  e.setHours(0, 0, 0, 0);
+  let eTime = e.getTime();
+
+  // If end time is exactly midnight and it's not the same as start day,
+  // it usually means it ends at the very beginning of that day (not inclusive).
+  // E.g. Jan 1st 00:00 to Jan 2nd 00:00 is just Jan 1st.
+  if (
+    end.getHours() === 0 &&
+    end.getMinutes() === 0 &&
+    end.getSeconds() === 0 &&
+    !isSameDay(start, end)
+  ) {
+    eTime -= 86400000; // Subtract one day
+  }
+
+  return dTime >= sTime && dTime <= eTime;
+}
+
+export function sortEvents(a, b) {
+  if (a.allDay && !b.allDay) return -1;
+  if (!a.allDay && b.allDay) return 1;
+  return new Date(a.startAt) - new Date(b.startAt);
+}
