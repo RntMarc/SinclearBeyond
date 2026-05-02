@@ -3,6 +3,7 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { Fingerprint } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { validateRelativeCallbackUrl } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,6 +38,9 @@ export default function LoginPage() {
   }, []);
 
   async function handleDiscordAuth() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const callbackUrl = mode === "login" ? urlParams.get("callbackUrl") : null;
+
     if (mode === "register") {
       if (!displayName.trim()) {
         setError("Bitte gib einen Anzeigenamen ein.");
@@ -48,7 +52,11 @@ export default function LoginPage() {
     }
 
     setLoading(true);
-    window.location.href = `/api/auth/discord?mode=${mode}`;
+    let discordUrl = `/api/auth/discord?mode=${mode}`;
+    if (callbackUrl) {
+      discordUrl += `&callbackUrl=${encodeURIComponent(callbackUrl)}`;
+    }
+    window.location.href = discordUrl;
   }
 
   async function handleLogin(e) {
@@ -119,7 +127,10 @@ export default function LoginPage() {
       });
 
       if (verifyRes.ok) {
-        router.push("/home");
+        const urlParams = new URLSearchParams(window.location.search);
+        const callbackUrl = urlParams.get("callbackUrl");
+        const validatedCallbackUrl = validateRelativeCallbackUrl(callbackUrl);
+        router.push(validatedCallbackUrl || "/home");
       } else {
         const data = await verifyRes.json();
         throw new Error(data.error || "Login fehlgeschlagen.");
@@ -148,7 +159,10 @@ export default function LoginPage() {
       setError("Code ungültig oder abgelaufen.");
       return;
     }
-    router.push("/home");
+    const urlParams = new URLSearchParams(window.location.search);
+    const callbackUrl = mode === "login" ? urlParams.get("callbackUrl") : null;
+    const validatedCallbackUrl = validateRelativeCallbackUrl(callbackUrl);
+    router.push(validatedCallbackUrl || "/home");
   }
 
   function switchMode(m) {

@@ -12,13 +12,17 @@ import {
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { contactInfo, users } from "@/lib/db/schema";
+import { validateRelativeCallbackUrl } from "@/lib/utils";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-  const mode = searchParams.get("state"); // 'login', 'register', or 'link'
+  const state = searchParams.get("state") || ""; // 'login', 'register', or 'link' (potentially with |callbackUrl)
+
+  const [mode, ...rest] = state.split("|");
+  const callbackUrl = rest.length > 0 ? rest.join("|") : null;
 
   if (!code) {
     return NextResponse.redirect(new URL("/login?error=no_code", req.url));
@@ -180,6 +184,7 @@ export async function GET(req) {
       user.email,
       user.isAdmin,
       req,
+      callbackUrl,
     );
   } catch (error) {
     console.error("Discord callback error:", error);
@@ -187,7 +192,13 @@ export async function GET(req) {
   }
 }
 
-async function createSessionAndRedirect(userId, email, isAdmin, req) {
+async function createSessionAndRedirect(
+  userId,
+  email,
+  isAdmin,
+  req,
+  callbackUrl,
+) {
   const token = await new SignJWT({
     sub: userId,
     email: email,
@@ -206,5 +217,8 @@ async function createSessionAndRedirect(userId, email, isAdmin, req) {
     path: "/",
   });
 
-  return NextResponse.redirect(new URL("/home", req.url));
+  const validatedCallbackUrl = validateRelativeCallbackUrl(callbackUrl);
+  return NextResponse.redirect(
+    new URL(validatedCallbackUrl || "/home", req.url),
+  );
 }
