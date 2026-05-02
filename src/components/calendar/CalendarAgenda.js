@@ -18,7 +18,7 @@ export default function CalendarAgenda({ eventList, onEventClick }) {
     const eventEnd = ev.endAt ? new Date(ev.endAt) : eventStart;
 
     // Start checking from either today or event start, whichever is later
-    let current = new Date(Math.max(todayTime, eventStart.getTime()));
+    const current = new Date(Math.max(todayTime, eventStart.getTime()));
     current.setHours(0, 0, 0, 0);
 
     const end = new Date(eventEnd);

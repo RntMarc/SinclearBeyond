@@ -197,7 +197,8 @@ export default function TimeGridView({
                       const startHour =
                         effectiveStart.getHours() +
                         effectiveStart.getMinutes() / 60;
-                      const duration = (effectiveEnd - effectiveStart) / 3600000;
+                      const duration =
+                        (effectiveEnd - effectiveStart) / 3600000;
 
                       const isTrip =
                         ev.type === "trip" || ev.type === "travelEvent";
