@@ -1,6 +1,7 @@
 "use server";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import sharp from "sharp";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { contactInfo, socialInfo, users } from "@/lib/db/schema";
@@ -17,6 +18,7 @@ export async function getProfileData(session) {
       birthdayVisibility: users.birthdayVisibility,
       discordId: users.discordId,
       davToken: users.davToken,
+      image: users.image,
       createdAt: users.createdAt,
     })
     .from(users)
@@ -80,15 +82,29 @@ export async function saveProfile(_prevState, formData) {
     const youtubeVis = clamp(formData.get("youtubeVisibility"));
     const twitchVis = clamp(formData.get("twitchVisibility"));
 
-    if (displayName) {
-      const userUpdate = { displayName, birthdayVisibility: birthdayVis };
-      if (birthday) {
-        userUpdate.birthday = new Date(birthday);
-      } else {
-        userUpdate.birthday = null;
-      }
-      await db.update(users).set(userUpdate).where(eq(users.id, session.sub));
+    const userUpdate = { birthdayVisibility: birthdayVis };
+    if (displayName) userUpdate.displayName = displayName;
+    if (birthday) {
+      userUpdate.birthday = new Date(birthday);
+    } else {
+      userUpdate.birthday = null;
     }
+
+    const removeImage = formData.get("removeImage") === "true";
+    const imageFile = formData.get("image");
+
+    if (removeImage) {
+      userUpdate.image = null;
+    } else if (imageFile && imageFile.size > 0) {
+      const buffer = await imageFile.arrayBuffer();
+      const processedBuffer = await sharp(Buffer.from(buffer))
+        .resize(265, 265)
+        .jpeg({ quality: 70 })
+        .toBuffer();
+      userUpdate.image = `data:image/jpeg;base64,${processedBuffer.toString("base64")}`;
+    }
+
+    await db.update(users).set(userUpdate).where(eq(users.id, session.sub));
 
     const [existing] = await db
       .select()
@@ -164,7 +180,7 @@ export async function saveProfile(_prevState, formData) {
       });
     }
 
-    revalidatePath("/profil");
+    revalidatePath("/einstellungen");
     return { ok: true };
   } catch {
     return { ok: false, error: "Speichern fehlgeschlagen." };

@@ -57,7 +57,7 @@ export async function GET(req) {
         existingByDiscordId[0].id !== session.sub
       ) {
         return NextResponse.redirect(
-          new URL("/profil?error=discord_already_linked", req.url),
+          new URL("/einstellungen?error=discord_already_linked", req.url),
         );
       }
 
@@ -88,7 +88,7 @@ export async function GET(req) {
       }
 
       return NextResponse.redirect(
-        new URL("/profil?success=discord_linked", req.url),
+        new URL("/einstellungen?success=discord_linked", req.url),
       );
     }
 
