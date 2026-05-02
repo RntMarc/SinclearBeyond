@@ -7,7 +7,7 @@ Sinclear Beyond ist eine umfassende Webanwendung zur Verwaltung von Reisen, Term
 - ✈️ **Reiseverwaltung:** Plane Trips, verwalte Unterkünfte und behalte den Überblick über Teilnehmer und Tickets.
 - 📅 **Kalender:** Ein kombinierter Kalender für Events, Reisen und Geburtstage.
 - 📱 **Social Feed:** Teile Musik, Videos, News und andere Inhalte mit deinen Kontakten.
-- 🔒 **Sicherheit:** Moderne Authentifizierung mittels Passkeys (WebAuthn) oder E-Mail OTP.
+- 🔒 **Sicherheit:** Moderne Authentifizierung mittels Passkeys (WebAuthn), E-Mail OTP oder Discord OAuth.
 - 👥 **Kontakte:** Verwalte enge Kontakte und teile spezifische Informationen basierend auf Sichtbarkeitseinstellungen.
 - 🛠️ **Admin-Bereich:** Zentrale Verwaltung für Reisen, Nutzer und Webhooks.
 - 🖼️ **Integrationen:** Fotovorschau via Unsplash-API.
@@ -47,6 +47,12 @@ Sinclear Beyond ist eine umfassende Webanwendung zur Verwaltung von Reisen, Term
    cp .env.example .env
    ```
    Fülle die entsprechenden Werte in der `.env` aus.
+
+Folgende Umgebungsvariablen werden für Discord OAuth benötigt:
+- `DISCORD_CLIENT_ID`: Deine Discord Client ID
+- `DISCORD_CLIENT_SECRET`: Dein Discord Client Secret
+- `DISCORD_REDIRECT_URI`: Deine Callback URL (z.B. `http://localhost:3000/api/auth/discord/callback`)
+- `DISCORD_ALLOWED_GUILD_ID`: Die ID des Discord-Servers, auf dem Nutzer sein müssen, um sich zu registrieren.
 
 ### Datenbank
 

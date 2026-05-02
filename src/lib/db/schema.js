@@ -2,6 +2,7 @@ import {
   bigint,
   datetime,
   double,
+  longtext,
   mysqlEnum,
   mysqlTable,
   text,
@@ -26,6 +27,8 @@ export const users = mysqlTable("User", {
   birthday: datetime("birthday", { fsp: 3 }),
   birthdayVisibility: tinyint("birthdayVisibility").notNull().default(1),
   isAdmin: tinyint("isAdmin").notNull().default(0),
+  discordId: varchar("discordId", { length: 191 }),
+  image: longtext("image"),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
