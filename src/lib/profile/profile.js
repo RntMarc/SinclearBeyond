@@ -20,6 +20,7 @@ export async function getProfileData(session) {
       davToken: users.davToken,
       image: users.image,
       davToken: users.davToken,
+      image: users.image,
       createdAt: users.createdAt,
     })
     .from(users)
