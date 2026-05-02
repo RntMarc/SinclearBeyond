@@ -6,6 +6,7 @@ import {
   Lock,
   Map as MapIcon,
   Menu,
+  Settings,
   SquarePlay,
   User,
   Users,
@@ -24,7 +25,7 @@ const navItems = [
   { href: "/geburtstage", label: "Geburtstage", icon: Gift },
   { href: "/kontakte", label: "Kontakte", icon: Users },
   { href: "/fotos", label: "Fotografien", icon: Camera },
-  { href: "/profil", label: "Profil", icon: User },
+  { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ];
 
 const adminNavItem = { href: "/admin", label: "Admin", icon: Lock };

@@ -1,5 +1,6 @@
 "use client";
-import { useActionState, useEffect, useState } from "react";
+import { Trash2, Upload, User } from "lucide-react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import ContactField from "@/components/profile/ContactField";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
@@ -85,6 +86,9 @@ const SOCIAL_FIELDS = [
 
 export default function ProfilForm({ user, contact, social }) {
   const [state, action, isPending] = useActionState(saveProfile, null);
+  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState(user.image);
+  const [removeImage, setRemoveImage] = useState(false);
 
   const [values, setValues] = useState({
     discordHandle: contact?.discordHandle ?? "",
@@ -143,10 +147,82 @@ export default function ProfilForm({ user, contact, social }) {
     }
   }, []);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setRemoveImage(false);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setRemoveImage(true);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   return (
     <form action={action} className="space-y-5">
       {error && <p className="text-destructive text-sm">{error}</p>}
       {success && <p className="text-green-500 text-sm">{success}</p>}
+
+      <div className="flex flex-col items-center gap-4 mb-8">
+        <div className="relative group">
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-sidebar-border bg-muted flex items-center justify-center">
+            {imagePreview
+              ? <img
+                  src={imagePreview}
+                  alt="Profilbild Vorschau"
+                  className="w-full h-full object-cover"
+                />
+              : <User size={48} className="text-muted-foreground" />}
+          </div>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center rounded-full"
+          >
+            <Upload size={24} />
+            <span className="text-[10px] uppercase font-bold mt-1">Ändern</span>
+          </button>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="text-xs font-medium px-3 py-1.5 bg-sidebar-accent rounded-lg border border-sidebar-border hover:bg-sidebar-accent/80 transition-colors"
+          >
+            Bild hochladen
+          </button>
+          {imagePreview && (
+            <button
+              type="button"
+              onClick={handleRemoveImage}
+              className="text-xs font-medium px-3 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg transition-colors flex items-center gap-1.5"
+            >
+              <Trash2 size={14} />
+              Löschen
+            </button>
+          )}
+        </div>
+
+        <input
+          type="file"
+          id="image"
+          name="image"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+        <input type="hidden" name="removeImage" value={removeImage} />
+      </div>
+
       <div>
         <label
           htmlFor="displayName"

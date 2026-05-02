@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getUnsplashPhotos } from "@/lib/photos/unsplash";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { getUnsplashPhotos } from "@/lib/photos/unsplash";
 import PhotoItem from "./PhotoItem";
 
 function getNumCols(isMobile) {

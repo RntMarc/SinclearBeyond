@@ -23,7 +23,7 @@ export const config = {
     "/home/:path*",
     "/kalender/:path*",
     "/reisen/:path*",
-    "/profil/:path*",
+    "/einstellungen/:path*",
     "/geburtstage/:path*",
     "/kontakte/:path*",
     "/fotos/:path*",
