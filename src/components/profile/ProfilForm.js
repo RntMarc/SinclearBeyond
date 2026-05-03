@@ -1,5 +1,6 @@
 "use client";
-import { Trash2, Upload, User } from "lucide-react";
+import { Languages, Trash2, Upload, User } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef, useState } from "react";
 import ContactField from "@/components/profile/ContactField";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
@@ -85,6 +86,7 @@ const SOCIAL_FIELDS = [
 ];
 
 export default function ProfilForm({ user, contact, social }) {
+  const t = useTranslations("Settings");
   const [state, action, isPending] = useActionState(saveProfile, null);
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(user.image);
@@ -221,6 +223,29 @@ export default function ProfilForm({ user, contact, social }) {
           onChange={handleImageChange}
         />
         <input type="hidden" name="removeImage" value={removeImage} />
+      </div>
+
+      <div>
+        <label
+          htmlFor="language"
+          className="block text-sm font-medium mb-1 text-foreground"
+        >
+          {t("language.label")}
+        </label>
+        <div className="relative">
+          <select
+            id="language"
+            name="language"
+            defaultValue={user.language || "de"}
+            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none"
+          >
+            <option value="de">{t("language.german")}</option>
+            <option value="en">{t("language.english")}</option>
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <Languages size={16} className="text-muted-foreground" />
+          </div>
+        </div>
       </div>
 
       <div>

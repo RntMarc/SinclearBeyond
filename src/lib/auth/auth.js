@@ -21,6 +21,7 @@ export async function loginUser(email, password) {
     sub: user.id,
     email: user.email,
     isAdmin: user.isAdmin,
+    language: user.language,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
