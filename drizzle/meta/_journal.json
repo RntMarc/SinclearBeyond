@@ -85,6 +85,13 @@
       "when": 1777739678960,
       "tag": "0011_white_daimon_hellstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1777840074778,
+      "tag": "0012_huge_centennial",
+      "breakpoints": true
     }
   ]
 }
