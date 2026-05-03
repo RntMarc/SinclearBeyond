@@ -1,9 +1,12 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function DeleteConfirmModal({ onConfirm, onCancel }) {
+  const t = useTranslations("Feed");
+  const tCommon = useTranslations("Common");
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
@@ -41,10 +44,11 @@ export default function DeleteConfirmModal({ onConfirm, onCancel }) {
           <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center text-destructive mx-auto mb-4">
             <AlertTriangle size={32} />
           </div>
-          <h2 className="text-xl font-semibold mb-2">Beitrag löschen?</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            {t("deleteConfirmTitle")}
+          </h2>
           <p className="text-muted-foreground text-sm">
-            Möchtest du diesen Beitrag wirklich unwiderruflich löschen? Diese
-            Aktion kann nicht rückgängig gemacht werden.
+            {t("deleteConfirmDesc")}
           </p>
         </div>
 
@@ -54,14 +58,14 @@ export default function DeleteConfirmModal({ onConfirm, onCancel }) {
             onClick={handleClose}
             className="flex-1 px-4 py-4 text-sm font-medium hover:bg-accent transition-colors border-r border-border"
           >
-            Abbrechen
+            {tCommon("cancel")}
           </button>
           <button
             type="button"
             onClick={handleConfirm}
             className="flex-1 px-4 py-4 text-sm font-semibold text-destructive hover:bg-destructive/10 transition-colors"
           >
-            Löschen
+            {tCommon("delete")}
           </button>
         </div>
       </div>

@@ -1,14 +1,17 @@
 "use client";
 import { ChevronRight, MapPin, Plane } from "lucide-react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
 function TripCard({ trip, isAdmin }) {
+  const t = useTranslations("Travel");
+  const locale = useLocale();
   const start = new Date(trip.start);
   const end = new Date(trip.end);
 
   const formatDate = (d) =>
-    d.toLocaleDateString("de-DE", {
+    d.toLocaleDateString(locale === "en" ? "en-GB" : "de-DE", {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -17,10 +20,10 @@ function TripCard({ trip, isAdmin }) {
   const isGrey = isAdmin && !trip.isParticipant;
 
   const statusLabel = trip.isActive
-    ? "Aktuell"
+    ? t("status.active")
     : trip.isUpcoming
-      ? "Bevorstehend"
-      : "Vergangen";
+      ? t("status.upcoming")
+      : t("status.past");
 
   const statusClass = isGrey
     ? "bg-muted text-muted-foreground"
@@ -66,6 +69,7 @@ function TripCard({ trip, isAdmin }) {
 }
 
 export default function TripList({ initialTrips, isAdmin }) {
+  const t = useTranslations("Travel");
   const [trips, setTrips] = useState(initialTrips);
   const refreshTrips = useCallback(async () => {
     const res = await fetch("/api/reisen/data");
@@ -78,7 +82,7 @@ export default function TripList({ initialTrips, isAdmin }) {
     return (
       <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
         <MapPin className="mx-auto mb-3 text-muted-foreground" size={28} />
-        <p className="text-muted-foreground">Keine Reisen gefunden.</p>
+        <p className="text-muted-foreground">{t("noTrips")}</p>
       </div>
     );
   }
@@ -103,9 +107,9 @@ export default function TripList({ initialTrips, isAdmin }) {
 
   return (
     <div className="space-y-8">
-      <Section title="Aktuell" trips={active} />
-      <Section title="Bevorstehend" trips={upcoming} />
-      <Section title="Vergangen" trips={past} />
+      <Section title={t("status.active")} trips={active} />
+      <Section title={t("status.upcoming")} trips={upcoming} />
+      <Section title={t("status.past")} trips={past} />
     </div>
   );
 }

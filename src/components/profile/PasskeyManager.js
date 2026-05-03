@@ -2,9 +2,13 @@
 
 import { startRegistration } from "@simplewebauthn/browser";
 import { Fingerprint, Plus, Trash2, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function PasskeyManager() {
+  const t = useTranslations("Settings.login");
+  const tCommon = useTranslations("Common");
+  const locale = useLocale();
   const [passkeys, setPasskeys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
@@ -87,7 +91,7 @@ export default function PasskeyManager() {
   }
 
   async function handleDelete(id) {
-    if (!confirm("Diesen Passkey wirklich löschen?")) return;
+    if (!confirm(t("passkeyDeleteConfirm"))) return;
 
     try {
       const res = await fetch("/api/auth/passkey/delete", {
@@ -107,22 +111,21 @@ export default function PasskeyManager() {
     <div className="mt-10 pt-10 border-t border-border">
       <h2 className="text-xl font-light text-foreground mb-6 flex items-center gap-2">
         <Fingerprint className="w-5 h-5 text-primary" />
-        Login & Passkeys
+        {t("title")}
       </h2>
 
-      <p className="text-sm text-muted-foreground mb-6">
-        Nutze Passkeys, um dich ohne E-Mail-Code sicher einzuloggen. Du kannst
-        mehrere Passkeys für verschiedene Geräte hinterlegen.
-      </p>
+      <p className="text-sm text-muted-foreground mb-6">{t("passkeyDesc")}</p>
 
       {error && <p className="text-destructive text-sm mb-4">{error}</p>}
 
       <div className="space-y-3 mb-6">
         {loading
-          ? <p className="text-sm text-muted-foreground">Wird geladen...</p>
+          ? <p className="text-sm text-muted-foreground">
+              {tCommon("loading")}
+            </p>
           : passkeys.length === 0
             ? <p className="text-sm text-muted-foreground italic">
-                Noch keine Passkeys hinterlegt.
+                {t("noPasskeys")}
               </p>
             : passkeys.map((pk) => (
                 <div
@@ -132,9 +135,12 @@ export default function PasskeyManager() {
                   <div>
                     <p className="font-medium text-foreground">{pk.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      Erstellt am {new Date(pk.createdAt).toLocaleDateString()}
+                      {t("passkeyCreated")}{" "}
+                      {new Date(pk.createdAt).toLocaleDateString(
+                        locale === "en" ? "en-GB" : "de-DE",
+                      )}
                       {pk.lastUsedAt &&
-                        ` • Zuletzt verwendet: ${new Date(pk.lastUsedAt).toLocaleDateString()}`}
+                        ` • ${t("passkeyLastUsed")}: ${new Date(pk.lastUsedAt).toLocaleDateString(locale === "en" ? "en-GB" : "de-DE")}`}
                     </p>
                   </div>
                   <button
@@ -156,7 +162,7 @@ export default function PasskeyManager() {
         className="flex items-center gap-2 px-4 py-2 rounded-full border border-border text-sm font-medium hover:bg-accent transition-colors disabled:opacity-50"
       >
         <Plus className="w-4 h-4" />
-        {adding ? "Wird hinzugefügt..." : "Passkey hinzufügen"}
+        {adding ? t("passkeyAdding") : t("addPasskey")}
       </button>
 
       {/* Name Modal */}
@@ -164,7 +170,7 @@ export default function PasskeyManager() {
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-card border border-border w-full max-w-sm rounded-2xl shadow-2xl p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Passkey benennen</h3>
+              <h3 className="text-lg font-medium">{t("passkeyModalTitle")}</h3>
               <button
                 onClick={() => setShowNameModal(false)}
                 className="text-muted-foreground hover:text-foreground"
@@ -173,8 +179,7 @@ export default function PasskeyManager() {
               </button>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Gib diesem Passkey einen Namen, damit du ihn später wiedererkennst
-              (z.B. "Mein iPhone").
+              {t("passkeyModalDesc")}
             </p>
             <input
               type="text"
@@ -188,14 +193,14 @@ export default function PasskeyManager() {
                 onClick={() => setShowNameModal(false)}
                 className="flex-1 px-4 py-2 rounded-full border border-border text-sm font-medium hover:bg-accent"
               >
-                Abbrechen
+                {tCommon("cancel")}
               </button>
               <button
                 onClick={confirmAddPasskey}
                 disabled={adding || !newName.trim()}
                 className="flex-1 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
               >
-                Speichern
+                {tCommon("save")}
               </button>
             </div>
           </div>

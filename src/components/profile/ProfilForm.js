@@ -7,87 +7,88 @@ import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
 import { saveProfile } from "@/lib/profile/profile";
 
-const FIELDS = [
-  {
-    name: "discordHandle",
-    visKey: "discordVisibility",
-    label: "Discord",
-    placeholder: "nutzername",
-  },
-  {
-    name: "fluxerHandle",
-    visKey: "fluxerVisibility",
-    label: "Fluxer",
-    placeholder: "nutzername#1234",
-  },
-  {
-    name: "matrixHandle",
-    visKey: "matrixVisibility",
-    label: "Matrix",
-    placeholder: "nutzername:server.de",
-  },
-  {
-    name: "signalNumber",
-    visKey: "signalVisibility",
-    label: "Signal",
-    placeholder: "+49...",
-  },
-  {
-    name: "whatsappNumber",
-    visKey: "whatsappVisibility",
-    label: "WhatsApp",
-    placeholder: "+49...",
-  },
-];
-
-const SOCIAL_FIELDS = [
-  {
-    name: "unsplashHandle",
-    visKey: "unsplashVisibility",
-    label: "Unsplash",
-    placeholder: "nutzername",
-  },
-  {
-    name: "instagramHandle",
-    visKey: "instagramVisibility",
-    label: "Instagram",
-    placeholder: "nutzername",
-  },
-  {
-    name: "mastodonHandle",
-    visKey: "mastodonVisibility",
-    label: "Mastodon",
-    placeholder: "nutzername@instanz.de",
-  },
-  {
-    name: "pixelfedHandle",
-    visKey: "pixelfedVisibility",
-    label: "Pixelfed",
-    placeholder: "nutzername@instanz.de",
-  },
-  {
-    name: "blueskyHandle",
-    visKey: "blueskyVisibility",
-    label: "Bluesky",
-    placeholder: "nutzername.bsky.social",
-  },
-  {
-    name: "youtubeHandle",
-    visKey: "youtubeVisibility",
-    label: "YouTube",
-    placeholder: "nutzername",
-  },
-  {
-    name: "twitchHandle",
-    visKey: "twitchVisibility",
-    label: "Twitch",
-    placeholder: "nutzername",
-  },
-];
-
 export default function ProfilForm({ user, contact, social }) {
   const t = useTranslations("Settings");
+  const tFields = useTranslations("Settings.profile.fields");
   const [state, action, isPending] = useActionState(saveProfile, null);
+
+  const FIELDS = [
+    {
+      name: "discordHandle",
+      visKey: "discordVisibility",
+      label: tFields("discord"),
+      placeholder: tFields("discordPlaceholder"),
+    },
+    {
+      name: "fluxerHandle",
+      visKey: "fluxerVisibility",
+      label: tFields("fluxer"),
+      placeholder: tFields("fluxerPlaceholder"),
+    },
+    {
+      name: "matrixHandle",
+      visKey: "matrixVisibility",
+      label: tFields("matrix"),
+      placeholder: tFields("matrixPlaceholder"),
+    },
+    {
+      name: "signalNumber",
+      visKey: "signalVisibility",
+      label: tFields("signal"),
+      placeholder: tFields("phonePlaceholder"),
+    },
+    {
+      name: "whatsappNumber",
+      visKey: "whatsappVisibility",
+      label: tFields("whatsapp"),
+      placeholder: tFields("phonePlaceholder"),
+    },
+  ];
+
+  const SOCIAL_FIELDS = [
+    {
+      name: "unsplashHandle",
+      visKey: "unsplashVisibility",
+      label: tFields("unsplash"),
+      placeholder: tFields("socialPlaceholder"),
+    },
+    {
+      name: "instagramHandle",
+      visKey: "instagramVisibility",
+      label: tFields("instagram"),
+      placeholder: tFields("socialPlaceholder"),
+    },
+    {
+      name: "mastodonHandle",
+      visKey: "mastodonVisibility",
+      label: tFields("mastodon"),
+      placeholder: tFields("mastodonPlaceholder"),
+    },
+    {
+      name: "pixelfedHandle",
+      visKey: "pixelfedVisibility",
+      label: tFields("pixelfed"),
+      placeholder: tFields("mastodonPlaceholder"),
+    },
+    {
+      name: "blueskyHandle",
+      visKey: "blueskyVisibility",
+      label: tFields("bluesky"),
+      placeholder: tFields("blueskyPlaceholder"),
+    },
+    {
+      name: "youtubeHandle",
+      visKey: "youtubeVisibility",
+      label: tFields("youtube"),
+      placeholder: tFields("socialPlaceholder"),
+    },
+    {
+      name: "twitchHandle",
+      visKey: "twitchVisibility",
+      label: tFields("twitch"),
+      placeholder: tFields("socialPlaceholder"),
+    },
+  ];
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(user.image);
   const [removeImage, setRemoveImage] = useState(false);
@@ -138,16 +139,16 @@ export default function ProfilForm({ user, contact, social }) {
     if (err) {
       setError(
         err === "discord_already_linked"
-          ? "Dieses Discord-Konto ist bereits mit einem anderen Nutzer verknüpft."
-          : "Fehler bei der Discord-Verknüpfung.",
+          ? t("profile.discordErrorAlreadyLinked")
+          : t("profile.discordErrorGeneric"),
       );
       window.history.replaceState({}, document.title, window.location.pathname);
     }
     if (succ) {
-      setSuccess("Discord erfolgreich verknüpft.");
+      setSuccess(t("profile.discordSuccess"));
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+  }, [t]);
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -178,7 +179,7 @@ export default function ProfilForm({ user, contact, social }) {
             {imagePreview
               ? <img
                   src={imagePreview}
-                  alt="Profilbild Vorschau"
+                  alt={t("profile.imagePreviewAlt")}
                   className="w-full h-full object-cover"
                 />
               : <User size={48} className="text-muted-foreground" />}
@@ -189,7 +190,9 @@ export default function ProfilForm({ user, contact, social }) {
             className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center rounded-full"
           >
             <Upload size={24} />
-            <span className="text-[10px] uppercase font-bold mt-1">Ändern</span>
+            <span className="text-[10px] uppercase font-bold mt-1">
+              {t("profile.changeImage")}
+            </span>
           </button>
         </div>
 
@@ -199,7 +202,7 @@ export default function ProfilForm({ user, contact, social }) {
             onClick={() => fileInputRef.current?.click()}
             className="text-xs font-medium px-3 py-1.5 bg-sidebar-accent rounded-lg border border-sidebar-border hover:bg-sidebar-accent/80 transition-colors"
           >
-            Bild hochladen
+            {t("profile.uploadImage")}
           </button>
           {imagePreview && (
             <button
@@ -208,7 +211,7 @@ export default function ProfilForm({ user, contact, social }) {
               className="text-xs font-medium px-3 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg transition-colors flex items-center gap-1.5"
             >
               <Trash2 size={14} />
-              Löschen
+              {t("profile.deleteImage")}
             </button>
           )}
         </div>
@@ -253,7 +256,7 @@ export default function ProfilForm({ user, contact, social }) {
           htmlFor="displayName"
           className="block text-sm font-medium mb-1 text-foreground"
         >
-          Name
+          {t("profile.nameLabel")}
         </label>
         <input
           id="displayName"
@@ -268,7 +271,7 @@ export default function ProfilForm({ user, contact, social }) {
           htmlFor="birthday"
           className="block text-sm font-medium mb-1 text-foreground"
         >
-          Geburtsdatum
+          {t("profile.birthdayLabel")}
         </label>
         <div className="flex gap-2 items-center">
           <input
@@ -294,7 +297,7 @@ export default function ProfilForm({ user, contact, social }) {
 
       <hr className="border-border" />
       <p className="text-xs text-muted-foreground uppercase tracking-[0.2em]">
-        Kontakt
+        {t("profile.contactTitle")}
       </p>
 
       {FIELDS.map(({ name, visKey, label, placeholder }) => (
@@ -332,13 +335,13 @@ export default function ProfilForm({ user, contact, social }) {
             <title>Discord Logo</title>
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
           </svg>
-          Discord verknüpfen
+          {t("profile.discordLink")}
         </button>
       )}
 
       <hr className="border-border" />
       <p className="text-xs text-muted-foreground uppercase tracking-[0.2em]">
-        Soziale Medien
+        {t("profile.socialTitle")}
       </p>
 
       {SOCIAL_FIELDS.map(({ name, visKey, label, placeholder }) => (

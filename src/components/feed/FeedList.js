@@ -1,8 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import FeedItem from "./FeedItem";
 
 export default function FeedList({ posts, loading, onEdit, onDeleteSuccess }) {
+  const t = useTranslations("Feed");
   if (loading) {
     return (
       <div className="space-y-6">
@@ -19,7 +21,7 @@ export default function FeedList({ posts, loading, onEdit, onDeleteSuccess }) {
   if (posts.length === 0) {
     return (
       <div className="text-center py-20 px-6 bg-sidebar-accent/30 rounded-3xl border border-dashed border-sidebar-border">
-        <p className="text-muted-foreground">Keine Beiträge gefunden.</p>
+        <p className="text-muted-foreground">{t("noPosts")}</p>
       </div>
     );
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import Notification from "@/components/Notification";
 import FeedFilters from "./FeedFilters";
@@ -8,6 +9,7 @@ import FeedFormModal from "./FeedFormModal";
 import FeedList from "./FeedList";
 
 export default function FeedDashboard() {
+  const t = useTranslations("Feed");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("all");
@@ -31,7 +33,7 @@ export default function FeedDashboard() {
     } catch (error) {
       setNotification({
         type: "error",
-        message: "Beiträge konnten nicht geladen werden.",
+        message: t("loadError"),
       });
     } finally {
       setLoading(false);
@@ -70,9 +72,9 @@ export default function FeedDashboard() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-            Feed
+            {t("subtitle")}
           </p>
-          <h1 className="text-4xl font-light text-foreground">Unterhaltung</h1>
+          <h1 className="text-4xl font-light text-foreground">{t("title")}</h1>
         </div>
         <button
           type="button"
@@ -80,7 +82,7 @@ export default function FeedDashboard() {
           className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 w-fit"
         >
           <Plus size={18} />
-          Neuer Beitrag
+          {t("newPost")}
         </button>
       </div>
 
@@ -95,7 +97,7 @@ export default function FeedDashboard() {
         posts={posts}
         loading={loading}
         onEdit={handleEditPost}
-        onDeleteSuccess={() => handleSuccess("Beitrag gelöscht")}
+        onDeleteSuccess={() => handleSuccess(t("deleteSuccess"))}
       />
 
       {isModalOpen && (
