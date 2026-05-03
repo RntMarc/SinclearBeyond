@@ -48,12 +48,6 @@ Sinclear Beyond ist eine umfassende Webanwendung zur Verwaltung von Reisen, Term
    ```
    Fülle die entsprechenden Werte in der `.env` aus.
 
-Folgende Umgebungsvariablen werden für Discord OAuth benötigt:
-- `DISCORD_CLIENT_ID`: Deine Discord Client ID
-- `DISCORD_CLIENT_SECRET`: Dein Discord Client Secret
-- `DISCORD_REDIRECT_URI`: Deine Callback URL (z.B. `http://localhost:3000/api/auth/discord/callback`)
-- `DISCORD_ALLOWED_GUILD_ID`: Die ID des Discord-Servers, auf dem Nutzer sein müssen, um sich zu registrieren.
-
 ### Datenbank
 
 Die Datenbank wird mit Drizzle ORM verwaltet. Um das Schema zu pushen:
