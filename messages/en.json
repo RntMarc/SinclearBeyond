@@ -1,0 +1,62 @@
+{
+  "Metadata": {
+    "title": "Sinclear Beyond",
+    "description": "Your community. No noise. Chats, calendars, birthdays and more – all in one place."
+  },
+  "LandingPage": {
+    "badge": "Community Platform",
+    "heroTitle": "Together we are <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
+    "heroDesc": "Chats, calendars, birthdays, contacts – everything a group needs to survive. In one place.",
+    "ctaStart": "Start now",
+    "ctaFeatures": "What it can do ↓",
+    "problemStatement": "Discord is insecure and increasingly controversial. Outside of it, we are fragmented across many messengers. We deserve our <em class='italic text-foreground'>own place.</em>",
+    "featuresTitle": "What Sinclear Beyond brings",
+    "readyTitle": "Ready?",
+    "readyDesc": "Sinclear Beyond is in active development.<br/>Errors may occur.",
+    "footerTitle": "Sinclear Beyond",
+    "footerDesc": "Built for real community. By and for Sinclear.",
+    "features": {
+      "chat": {
+        "title": "Chat",
+        "desc": "Group and direct messages – without annoying server structures."
+      },
+      "calendar": {
+        "title": "Calendar & Events",
+        "desc": "Plan joint meetings, regular tables and actions."
+      },
+      "birthdays": {
+        "title": "Birthday list",
+        "desc": "Never forget a birthday again – for everyone in the group."
+      },
+      "contacts": {
+        "title": "Address book",
+        "desc": "Community contacts – clear and always up to date."
+      },
+      "privacy": {
+        "title": "Data protection",
+        "desc": "No advertising. No data sharing. Your data belongs to you."
+      },
+      "hosting": {
+        "title": "Independently hosted",
+        "desc": "All data remains in the EU, with trustworthy providers."
+      }
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "tabs": {
+      "profile": "Profile",
+      "contacts": "Contacts",
+      "login": "Login",
+      "language": "Language"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Choose your preferred language for the user interface.",
+      "label": "Select language",
+      "german": "German",
+      "english": "English",
+      "save": "Save language"
+    }
+  }
+}

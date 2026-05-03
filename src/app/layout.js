@@ -1,6 +1,8 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,17 +11,24 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata = {
-  title: "Sinclear Beyond",
-  description:
-    "Deine Community. Kein Lärm. Chats, Kalender, Geburtstage und mehr – an einem Ort.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="de" className={`${inter.variable} dark h-full`}>
+    <html lang={locale} className={`${inter.variable} dark h-full`}>
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
-        {children}
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
       </body>
       <SpeedInsights />
       <Analytics />

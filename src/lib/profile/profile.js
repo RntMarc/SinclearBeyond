@@ -16,6 +16,7 @@ export async function getProfileData(session) {
       email: users.email,
       birthday: users.birthday,
       birthdayVisibility: users.birthdayVisibility,
+      language: users.language,
       discordId: users.discordId,
       image: users.image,
       createdAt: users.createdAt,
@@ -66,6 +67,7 @@ export async function saveProfile(_prevState, formData) {
       const n = Number(v);
       return [0, 1, 2].includes(n) ? n : 1;
     };
+    const language = formData.get("language")?.toString() || "de";
     const birthdayVis = clamp(formData.get("birthdayVisibility"));
     const discordVis = clamp(formData.get("discordVisibility"));
     const fluxerVis = clamp(formData.get("fluxerVisibility"));
@@ -81,7 +83,7 @@ export async function saveProfile(_prevState, formData) {
     const youtubeVis = clamp(formData.get("youtubeVisibility"));
     const twitchVis = clamp(formData.get("twitchVisibility"));
 
-    const userUpdate = { birthdayVisibility: birthdayVis };
+    const userUpdate = { birthdayVisibility: birthdayVis, language };
     if (displayName) userUpdate.displayName = displayName;
     if (birthday) {
       userUpdate.birthday = new Date(birthday);

@@ -2,6 +2,7 @@
 
 import { Key, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import CloseFriendsManager from "@/components/profile/CloseFriendsManager";
 import EmailChangeForm from "@/components/profile/EmailChangeForm";
 import PasskeyManager from "@/components/profile/PasskeyManager";
@@ -14,14 +15,15 @@ export default function EinstellungenClient({
   closeFriends,
   activeTab,
 }) {
+  const t = useTranslations("Settings");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const tabs = [
-    { id: "profil", label: "Profil", icon: User },
-    { id: "kontakte", label: "Kontakte", icon: Users },
-    { id: "login", label: "Login", icon: Key },
+    { id: "profil", label: t("tabs.profile"), icon: User },
+    { id: "kontakte", label: t("tabs.contacts"), icon: Users },
+    { id: "login", label: t("tabs.login"), icon: Key },
   ];
 
   const setTab = (id) => {
@@ -33,7 +35,7 @@ export default function EinstellungenClient({
   return (
     <div className="max-w-lg mx-auto w-full px-6 py-10">
       <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-        Einstellungen
+        {t("title")}
       </p>
       <h1 className="text-4xl font-light text-foreground mb-8">
         {user.displayName}

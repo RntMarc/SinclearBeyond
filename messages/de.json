@@ -1,0 +1,62 @@
+{
+  "Metadata": {
+    "title": "Sinclear Beyond",
+    "description": "Deine Community. Kein Lärm. Chats, Kalender, Geburtstage und mehr – an einem Ort."
+  },
+  "LandingPage": {
+    "badge": "Community-Plattform",
+    "heroTitle": "Gemeinsam sind wir <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
+    "heroDesc": "Chats, Kalender, Geburtstage, Kontakte – alles was eine Gruppe zum Überleben braucht. An einem Ort.",
+    "ctaStart": "Jetzt starten",
+    "ctaFeatures": "Was es kann ↓",
+    "problemStatement": "Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen <em class='italic text-foreground'>eigenen Ort.</em>",
+    "featuresTitle": "Was Sinclear Beyond mitbringt",
+    "readyTitle": "Bereit?",
+    "readyDesc": "Sinclear Beyond ist in aktiver Entwicklung.<br/>Es können Fehler vorkommen.",
+    "footerTitle": "Sinclear Beyond",
+    "footerDesc": "Gebaut für echte Gemeinschaft. Von und für Sinclear.",
+    "features": {
+      "chat": {
+        "title": "Chat",
+        "desc": "Gruppen- und Direktnachrichten – ohne nervige Server-Strukturen."
+      },
+      "calendar": {
+        "title": "Kalender & Events",
+        "desc": "Plant gemeinsame Treffen, Stammtische und Aktionen."
+      },
+      "birthdays": {
+        "title": "Geburtstagsliste",
+        "desc": "Kein Geburtstag mehr vergessen – für alle in der Gruppe."
+      },
+      "contacts": {
+        "title": "Adressbuch",
+        "desc": "Kontakte der Community – übersichtlich und immer aktuell."
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "desc": "Keine Werbung. Keine Datenweitergabe. Eure Daten gehören euch."
+      },
+      "hosting": {
+        "title": "Unabhängig gehostet",
+        "desc": "Alle Daten bleiben in der EU, bei vertrauenswürdigen Anbietern."
+      }
+    }
+  },
+  "Settings": {
+    "title": "Einstellungen",
+    "tabs": {
+      "profile": "Profil",
+      "contacts": "Kontakte",
+      "login": "Login",
+      "language": "Sprache"
+    },
+    "language": {
+      "title": "Sprache",
+      "description": "Wähle deine bevorzugte Sprache für die Benutzeroberfläche.",
+      "label": "Sprache wählen",
+      "german": "Deutsch",
+      "english": "Englisch",
+      "save": "Sprache speichern"
+    }
+  }
+}
