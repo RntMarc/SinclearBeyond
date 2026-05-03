@@ -1,6 +1,7 @@
 "use server";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import sharp from "sharp";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -106,6 +107,15 @@ export async function saveProfile(_prevState, formData) {
     }
 
     await db.update(users).set(userUpdate).where(eq(users.id, session.sub));
+
+    // Sprache sofort wirksam machen — kein Re-Login nötig
+    const cookieStore = await cookies();
+    cookieStore.set("NEXT_LOCALE", language, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      httpOnly: false,
+      sameSite: "lax",
+    });
 
     const [existing] = await db
       .select()
