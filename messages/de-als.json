@@ -1,0 +1,236 @@
+{
+  "Metadata": {
+    "title": "Sinclear Beyond",
+    "description": "Dei Community. Koi Gschroi. Chats, Kalender, Geburtsdag und meh – an oim Fleck."
+  },
+  "Common": {
+    "save": "Schbeichra",
+    "saving": "Wird gschbeicheret…",
+    "saved": "Gschbeicheret",
+    "error": "Fähler",
+    "delete": "Lescha",
+    "cancel": "Abbrecha",
+    "add": "Dazua dõa",
+    "search": "Suacha...",
+    "loading": "Ladet grad...",
+    "noEntries": "Nix gfonda."
+  },
+  "Navigation": {
+    "entertainment": "Onderhaldong",
+    "travel": "Reisa",
+    "calendar": "Kalender",
+    "birthdays": "Geburtsdag",
+    "contacts": "Kondagde",
+    "photos": "Bildla",
+    "settings": "Aischtellonga",
+    "admin": "Admin",
+    "logout": "Abmelda",
+    "closeMenu": "Menü zuamacha",
+    "openMenu": "Menü uffmacha"
+  },
+  "LandingPage": {
+    "badge": "Community-Pladdform",
+    "heroTitle": "Zemma semmr <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
+    "heroDesc": "Chats, Kalender, Geburtsdag, Kondagde – älles was ma für d'Grupp braucht. An oim Fleck.",
+    "ctaStart": "Jetzt loslega",
+    "ctaFeatures": "Was des ko ↓",
+    "problemStatement": "Discord isch osicher ond wird emmer gschbässiger. Außerhalb verzettelt mr sich uff viele Messenger. Mir brauchet an <em class='italic text-foreground'>oigena Blatz.</em>",
+    "featuresTitle": "Was Sinclear Beyond mitbrengt",
+    "readyTitle": "Bisch parat?",
+    "readyDesc": "Sinclear Beyond isch no am wergla.<br/>Es ko mol a Fählerla gäba.",
+    "footerTitle": "Sinclear Beyond",
+    "footerDesc": "Gmacht für a echta Gmoinschaft. Von und für Sinclear.",
+    "features": {
+      "chat": {
+        "title": "Chat",
+        "desc": "Grubba- und Direchtnõchrichta – ohne nervige Server-Gschichta."
+      },
+      "calendar": {
+        "title": "Kalender & Events",
+        "desc": "Zemma Dreffa, Schdammtisch und Agtiona blana."
+      },
+      "birthdays": {
+        "title": "Geburtsdagslischd",
+        "desc": "Koin Geburtsdag meh vergessa – für älle in dr Grubb."
+      },
+      "contacts": {
+        "title": "Adressbiächle",
+        "desc": "Kondagde vo dr Community – übersichtlich und emmer agtuell."
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "desc": "Koi Werbong. Koi Datageschachere. Eure Date gheret euch."
+      },
+      "hosting": {
+        "title": "Oigen gehoschdet",
+        "desc": "Älle Date bleibet in dr EU, bei saubere Abieder."
+      }
+    }
+  },
+  "Travel": {
+    "title": "Reisa",
+    "subtitle": "Onderwegs",
+    "detailsTitle": "Reisa-Details",
+    "accessDenied": "Dõ därfsch net nei",
+    "accessDeniedDesc": "Du bisch bei dera Reis net dabei und dörfsch des net seha.",
+    "tabs": {
+      "details": "Details",
+      "events": "Events"
+    },
+    "status": {
+      "active": "Agtuell",
+      "upcoming": "Kommt no",
+      "past": "Vorbei"
+    },
+    "overview": "Iberblick",
+    "accommodation": "Onderkonft",
+    "participants": "Mitroisende",
+    "events": "Events",
+    "noDescription": "S'geit koi Beschreibong.",
+    "noAccommodation": "Koi oigene Onderkonft henderlegt.",
+    "otherAccommodations": "Andere Onderkünfd vo de Leit",
+    "participantLabel": "Doilnehmer",
+    "noEvents": "Koine Events blant.",
+    "noTrips": "Koine Reisa gfonda."
+  },
+  "Feed": {
+    "title": "Onderhaldong",
+    "subtitle": "Feed",
+    "newPost": "Nuier Beidrag",
+    "categories": {
+      "all": "Älles",
+      "music": "Mugg",
+      "video": "Videos",
+      "news": "Neichkeita",
+      "other": "Sonschtiges"
+    },
+    "onlyCloseFriends": "Bloß enge Schbezi",
+    "closeFriendsShort": "Enge Schbezi",
+    "noPosts": "Koine Beidräg gfonda.",
+    "editPost": "Bearbeida",
+    "deletePost": "Lescha",
+    "newsOpenLink": "Link uffmacha",
+    "deleteSuccess": "Beidrag glescht",
+    "deleteConfirmTitle": "Beidrag lescha?",
+    "deleteConfirmDesc": "Willsch den Beidrag wirklich für emmer lescha? Des ka mr net rückgängig macha.",
+    "loadError": "Beidräg hend net glada werra kenna.",
+    "form": {
+      "modalTitleEdit": "Beidrag bearbeida",
+      "modalTitleNew": "Inhalt empfehla",
+      "modalSubtitle": "Doi ebbes Indressants mit de andere.",
+      "categoryLabel": "Kategorie raussuacha",
+      "commentLabel": "Doin Senf dazua (optional)",
+      "commentPlaceholder": "Warum empfihlsch den Inhalt?",
+      "visibilityLabel": "Sichtbarkeit",
+      "visibilityDesc": "Wer därf den Beidrag seha?",
+      "share": "Doila",
+      "update": "Agtualisiera",
+      "successUpdate": "Beidrag agtualisiert",
+      "successShare": "Beidrag doilt",
+      "fields": {
+        "artist": "Künschtler",
+        "title": "Titel",
+        "spotifyLink": "Spotify Link",
+        "ytMusicLink": "YouTube Music Link",
+        "soundcloudLink": "SoundCloud Link",
+        "videoLink": "Video Link",
+        "platform": "Pladdform",
+        "newsTitle": "Titel vom Beidrag",
+        "newsSite": "Nõchrichtaseita / Blog",
+        "newsLink": "Link",
+        "otherTitle": "Titel",
+        "otherLink": "Link"
+      },
+      "errors": {
+        "music": "Künschtler und Titel musch ageba.",
+        "musicLink": "Brauchsch mindeschtens oin Link zu ra Pladdform.",
+        "video": "Video-Link und Pladdform musch ageba.",
+        "news": "Titel, Nõchrichtaseita und Link musch ageba.",
+        "other": "Titel und Link musch ageba.",
+        "generic": "A Fähler isch bassiert.",
+        "connection": "Verbindongsfähler. Komm net ins Netz."
+      }
+    }
+  },
+  "Settings": {
+    "title": "Aischtellonga",
+    "tabs": {
+      "profile": "Profil",
+      "contacts": "Kondagde",
+      "login": "Login",
+      "language": "Schbrõch"
+    },
+    "language": {
+      "title": "Schbrõch",
+      "description": "Wähl doi Schbrõch fürs Ogsicht aus.",
+      "label": "Schbrõch raussuacha",
+      "german": "Hochdeitsch",
+      "english": "Englisch",
+      "save": "Schbrõch schbeichera"
+    },
+    "profile": {
+      "changeImage": "Ändera",
+      "uploadImage": "Bild nufflada",
+      "deleteImage": "Lescha",
+      "imagePreviewAlt": "Profilbild Vorschau",
+      "nameLabel": "Nama",
+      "birthdayLabel": "Geburtsdag",
+      "contactTitle": "Kondagd",
+      "socialTitle": "Soziale Mediena",
+      "discordLink": "Discord vrknüpfä",
+      "discordSuccess": "Discord basst jetzt zamma.",
+      "discordErrorAlreadyLinked": "Des Discord-Kondo ghört scho ma andere.",
+      "discordErrorGeneric": "Fähler beim Discord vrknüpfä.",
+      "fields": {
+        "discord": "Discord",
+        "discordPlaceholder": "nutzernama",
+        "fluxer": "Fluxer",
+        "fluxerPlaceholder": "nutzernama#1234",
+        "matrix": "Matrix",
+        "matrixPlaceholder": "nutzernama:server.de",
+        "signal": "Signal",
+        "whatsapp": "WhatsApp",
+        "phonePlaceholder": "+49...",
+        "unsplash": "Unsplash",
+        "instagram": "Instagram",
+        "mastodon": "Mastodon",
+        "pixelfed": "Pixelfed",
+        "bluesky": "Bluesky",
+        "youtube": "YouTube",
+        "twitch": "Twitch",
+        "socialPlaceholder": "nutzernama",
+        "mastodonPlaceholder": "nutzernama@instanz.de",
+        "blueskyPlaceholder": "nutzernama.bsky.social"
+      }
+    },
+    "contacts": {
+      "addTitle": "Enge Schbezi dazua dõa",
+      "searchPlaceholder": "Nama suacha...",
+      "yourFriends": "Doine enge Schbezi",
+      "noFriends": "No koine enge Schbezi neigmacht.",
+      "searching": "Suach grad..."
+    },
+    "login": {
+      "title": "Login & Passkeys",
+      "emailTitle": "E-Mail-Adress ändera",
+      "currentEmail": "Agtuell",
+      "newEmailLabel": "Nuie E-Mail-Adress",
+      "newEmailPlaceholder": "nui@beischbiel.de",
+      "requestCode": "Code a-fordere",
+      "otpLabel": "Bschdädigongscode",
+      "otpPlaceholder": "123456",
+      "verifyEmail": "E-Mail bschdädiga",
+      "emailSuccess": "E-Mail-Adress basst jetzt.",
+      "emailErrorSame": "Des isch jo scho doi agtuelle E-Mail-Adress.",
+      "passkeyDesc": "Nimm Passkeys, om di ohne E-Mail-Code sicher eizlogga. Du kasch mehrere Passkeys für verschiedene Grät naidõa.",
+      "noPasskeys": "No koine Passkeys henderlegt.",
+      "addPasskey": "Passkey dazua dõa",
+      "passkeyAdding": "Wird naigmacht...",
+      "passkeyCreated": "Gmacht am",
+      "passkeyLastUsed": "Zuletzt hergnomma",
+      "passkeyDeleteConfirm": "Den Passkey wirklich lescha?",
+      "passkeyModalTitle": "Passkey a Nama gäba",
+      "passkeyModalDesc": "Gib dem Passkey an Nama, damit en schbäder wiederkennsch (z.B. \"Moi iPhone\")."
+    }
+  }
+}

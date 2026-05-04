@@ -165,6 +165,7 @@
       "description": "Wähle deine bevorzugte Sprache für die Benutzeroberfläche.",
       "label": "Sprache wählen",
       "german": "Deutsch",
+      "german.swabian": "Deutsch (Schwäbisch)",
       "english": "Englisch",
       "save": "Sprache speichern"
     },
