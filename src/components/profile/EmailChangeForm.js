@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, Check, Loader2, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import SaveButton from "@/components/SaveButton";
 import {
@@ -9,6 +10,8 @@ import {
 } from "@/lib/profile/emailChange";
 
 export default function EmailChangeForm({ currentEmail }) {
+  const t = useTranslations("Settings.login");
+  const tCommon = useTranslations("Common");
   const [newEmail, setNewEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1); // 1: Email, 2: OTP
@@ -23,7 +26,7 @@ export default function EmailChangeForm({ currentEmail }) {
     setSuccess("");
 
     if (newEmail === currentEmail) {
-      setError("Das ist bereits deine aktuelle E-Mail-Adresse.");
+      setError(t("emailErrorSame"));
       setLoading(false);
       return;
     }
@@ -32,7 +35,7 @@ export default function EmailChangeForm({ currentEmail }) {
     if (res.ok) {
       setStep(2);
     } else {
-      setError(res.error || "Fehler beim Senden des Codes.");
+      setError(res.error || tCommon("error"));
     }
     setLoading(false);
   };
@@ -44,7 +47,7 @@ export default function EmailChangeForm({ currentEmail }) {
 
     const res = await verifyEmailChangeOtp(newEmail, otp);
     if (res.ok) {
-      setSuccess("E-Mail-Adresse erfolgreich geändert.");
+      setSuccess(t("emailSuccess"));
       setStep(1);
       setNewEmail("");
       setOtp("");
@@ -60,10 +63,10 @@ export default function EmailChangeForm({ currentEmail }) {
     <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8">
       <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
         <Mail size={20} className="text-primary" />
-        E-Mail-Adresse ändern
+        {t("emailTitle")}
       </h3>
       <p className="text-sm text-muted-foreground mb-6">
-        Aktuell:{" "}
+        {t("currentEmail")}:{" "}
         <span className="text-foreground font-medium">{currentEmail}</span>
       </p>
 
@@ -88,7 +91,7 @@ export default function EmailChangeForm({ currentEmail }) {
                 htmlFor="newEmail"
                 className="block text-sm font-medium mb-1 text-foreground"
               >
-                Neue E-Mail-Adresse
+                {t("newEmailLabel")}
               </label>
               <input
                 id="newEmail"
@@ -97,7 +100,7 @@ export default function EmailChangeForm({ currentEmail }) {
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                placeholder="neu@beispiel.de"
+                placeholder={t("newEmailPlaceholder")}
               />
             </div>
             <button
@@ -106,7 +109,7 @@ export default function EmailChangeForm({ currentEmail }) {
               className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
               {loading && <Loader2 size={16} className="animate-spin" />}
-              Code anfordern
+              {t("requestCode")}
             </button>
           </form>
         : <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -115,7 +118,7 @@ export default function EmailChangeForm({ currentEmail }) {
                 htmlFor="otp"
                 className="block text-sm font-medium mb-1 text-foreground"
               >
-                Bestätigungscode (an {newEmail})
+                {t("otpLabel")} (an {newEmail})
               </label>
               <input
                 id="otp"
@@ -124,7 +127,7 @@ export default function EmailChangeForm({ currentEmail }) {
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground text-center tracking-widest font-mono"
-                placeholder="123456"
+                placeholder={t("otpPlaceholder")}
                 maxLength={6}
               />
             </div>
@@ -134,7 +137,7 @@ export default function EmailChangeForm({ currentEmail }) {
                 onClick={() => setStep(1)}
                 className="flex-1 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground rounded-lg text-sm font-medium hover:bg-sidebar-accent/80 transition-colors"
               >
-                Abbrechen
+                {tCommon("cancel")}
               </button>
               <button
                 type="submit"
@@ -142,7 +145,7 @@ export default function EmailChangeForm({ currentEmail }) {
                 className="flex-[2] px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={16} className="animate-spin" />}
-                E-Mail bestätigen
+                {t("verifyEmail")}
               </button>
             </div>
           </form>}

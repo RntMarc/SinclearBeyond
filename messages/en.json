@@ -3,6 +3,31 @@
     "title": "Sinclear Beyond",
     "description": "Your community. No noise. Chats, calendars, birthdays and more – all in one place."
   },
+  "Common": {
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "error": "Error",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "add": "Add",
+    "search": "Search...",
+    "loading": "Loading...",
+    "noEntries": "No entries found."
+  },
+  "Navigation": {
+    "entertainment": "Entertainment",
+    "travel": "Travel",
+    "calendar": "Calendar",
+    "birthdays": "Birthdays",
+    "contacts": "Contacts",
+    "photos": "Photography",
+    "settings": "Settings",
+    "admin": "Admin",
+    "logout": "Logout",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu"
+  },
   "LandingPage": {
     "badge": "Community Platform",
     "heroTitle": "Together we are <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
@@ -42,6 +67,91 @@
       }
     }
   },
+  "Travel": {
+    "title": "Travel",
+    "subtitle": "On the road",
+    "detailsTitle": "Trip Details",
+    "accessDenied": "Access Denied",
+    "accessDeniedDesc": "You are not a participant of this trip and do not have permission to view this page.",
+    "tabs": {
+      "details": "Details",
+      "events": "Events"
+    },
+    "status": {
+      "active": "Active",
+      "upcoming": "Upcoming",
+      "past": "Past"
+    },
+    "overview": "Overview",
+    "accommodation": "Accommodation",
+    "participants": "Participants",
+    "events": "Events",
+    "noDescription": "No description available.",
+    "noAccommodation": "No personal accommodation recorded.",
+    "otherAccommodations": "Other participants' accommodations",
+    "participantLabel": "Participant",
+    "noEvents": "No events planned.",
+    "noTrips": "No trips found."
+  },
+  "Feed": {
+    "title": "Entertainment",
+    "subtitle": "Feed",
+    "newPost": "New post",
+    "categories": {
+      "all": "All",
+      "music": "Music",
+      "video": "Videos",
+      "news": "News",
+      "other": "Other"
+    },
+    "onlyCloseFriends": "Close contacts only",
+    "closeFriendsShort": "Close contacts",
+    "noPosts": "No posts found.",
+    "editPost": "Edit",
+    "deletePost": "Delete",
+    "newsOpenLink": "Open link",
+    "deleteSuccess": "Post deleted",
+    "deleteConfirmTitle": "Delete post?",
+    "deleteConfirmDesc": "Are you sure you want to delete this post permanently? This action cannot be undone.",
+    "loadError": "Posts could not be loaded.",
+    "form": {
+      "modalTitleEdit": "Edit post",
+      "modalTitleNew": "Recommend content",
+      "modalSubtitle": "Share something interesting with others.",
+      "categoryLabel": "Select category",
+      "commentLabel": "Your comment (optional)",
+      "commentPlaceholder": "Why do you recommend this content?",
+      "visibilityLabel": "Visibility",
+      "visibilityDesc": "Who can see this post?",
+      "share": "Share",
+      "update": "Update",
+      "successUpdate": "Post updated",
+      "successShare": "Post shared",
+      "fields": {
+        "artist": "Artist",
+        "title": "Title",
+        "spotifyLink": "Spotify Link",
+        "ytMusicLink": "YouTube Music Link",
+        "soundcloudLink": "SoundCloud Link",
+        "videoLink": "Video Link",
+        "platform": "Platform",
+        "newsTitle": "Post title",
+        "newsSite": "News site / Blog",
+        "newsLink": "Link",
+        "otherTitle": "Title",
+        "otherLink": "Link"
+      },
+      "errors": {
+        "music": "Artist and title are required.",
+        "musicLink": "At least one link to a platform is required.",
+        "video": "Video link and platform are required.",
+        "news": "Title, news site and link are required.",
+        "other": "Title and link are required.",
+        "generic": "An error occurred.",
+        "connection": "Connection error."
+      }
+    }
+  },
   "Settings": {
     "title": "Settings",
     "tabs": {
@@ -57,6 +167,70 @@
       "german": "German",
       "english": "English",
       "save": "Save language"
+    },
+    "profile": {
+      "changeImage": "Change",
+      "uploadImage": "Upload image",
+      "deleteImage": "Delete",
+      "imagePreviewAlt": "Profile picture preview",
+      "nameLabel": "Name",
+      "birthdayLabel": "Date of birth",
+      "contactTitle": "Contact",
+      "socialTitle": "Social Media",
+      "discordLink": "Link Discord",
+      "discordSuccess": "Discord linked successfully.",
+      "discordErrorAlreadyLinked": "This Discord account is already linked to another user.",
+      "discordErrorGeneric": "Error linking Discord.",
+      "fields": {
+        "discord": "Discord",
+        "discordPlaceholder": "username",
+        "fluxer": "Fluxer",
+        "fluxerPlaceholder": "username#1234",
+        "matrix": "Matrix",
+        "matrixPlaceholder": "username:server.com",
+        "signal": "Signal",
+        "whatsapp": "WhatsApp",
+        "phonePlaceholder": "+44...",
+        "unsplash": "Unsplash",
+        "instagram": "Instagram",
+        "mastodon": "Mastodon",
+        "pixelfed": "Pixelfed",
+        "bluesky": "Bluesky",
+        "youtube": "YouTube",
+        "twitch": "Twitch",
+        "socialPlaceholder": "username",
+        "mastodonPlaceholder": "username@instance.com",
+        "blueskyPlaceholder": "username.bsky.social"
+      }
+    },
+    "contacts": {
+      "addTitle": "Add close contacts",
+      "searchPlaceholder": "Search name...",
+      "yourFriends": "Your close contacts",
+      "noFriends": "No close contacts set yet.",
+      "searching": "Searching..."
+    },
+    "login": {
+      "title": "Login & Passkeys",
+      "emailTitle": "Change email address",
+      "currentEmail": "Current",
+      "newEmailLabel": "New email address",
+      "newEmailPlaceholder": "new@example.com",
+      "requestCode": "Request code",
+      "otpLabel": "Verification code",
+      "otpPlaceholder": "123456",
+      "verifyEmail": "Verify email",
+      "emailSuccess": "Email address changed successfully.",
+      "emailErrorSame": "This is already your current email address.",
+      "passkeyDesc": "Use passkeys to log in securely without an email code. You can store multiple passkeys for different devices.",
+      "noPasskeys": "No passkeys stored yet.",
+      "addPasskey": "Add passkey",
+      "passkeyAdding": "Adding...",
+      "passkeyCreated": "Created on",
+      "passkeyLastUsed": "Last used",
+      "passkeyDeleteConfirm": "Really delete this passkey?",
+      "passkeyModalTitle": "Name passkey",
+      "passkeyModalDesc": "Give this passkey a name so you can recognise it later (e.g. \"My iPhone\")."
     }
   }
 }

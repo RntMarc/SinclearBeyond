@@ -1,18 +1,22 @@
 "use client";
 
 import { Music, Newspaper, Play, SquarePlay, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
 
-const CATEGORIES = [
-  { id: "music", label: "Musik", icon: Music },
-  { id: "video", label: "Videos", icon: Play },
-  { id: "news", label: "News", icon: Newspaper },
-  { id: "other", label: "Sonstiges", icon: SquarePlay },
-];
-
 export default function FeedFormModal({ post, onClose, onSuccess }) {
+  const t = useTranslations("Feed.form");
+  const tFeed = useTranslations("Feed");
+  const tCommon = useTranslations("Common");
+
+  const CATEGORIES = [
+    { id: "music", label: tFeed("categories.music"), icon: Music },
+    { id: "video", label: tFeed("categories.video"), icon: Play },
+    { id: "news", label: tFeed("categories.news"), icon: Newspaper },
+    { id: "other", label: tFeed("categories.other"), icon: SquarePlay },
+  ];
   const [isClosing, setIsClosing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -63,26 +67,26 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
     // Validation
     if (category === "music") {
       if (!form.artist || !form.title) {
-        setError("Künstler und Titel sind erforderlich.");
+        setError(t("errors.music"));
         return;
       }
       if (!form.spotifyUrl && !form.youtubeMusicUrl && !form.soundcloudUrl) {
-        setError("Mindestens ein Link zu einer Plattform ist erforderlich.");
+        setError(t("errors.musicLink"));
         return;
       }
     } else if (category === "video") {
       if (!form.videoUrl || !form.videoPlatform) {
-        setError("Video-Link und Plattform sind erforderlich.");
+        setError(t("errors.video"));
         return;
       }
     } else if (category === "news") {
       if (!form.newsTitle || !form.newsSite || !form.newsUrl) {
-        setError("Titel, Nachrichtenseite und Link sind erforderlich.");
+        setError(t("errors.news"));
         return;
       }
     } else if (category === "other") {
       if (!form.otherTitle || !form.otherUrl) {
-        setError("Titel und Link sind erforderlich.");
+        setError(t("errors.other"));
         return;
       }
     }
@@ -98,13 +102,13 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
       });
 
       if (res.ok) {
-        onSuccess(post ? "Beitrag aktualisiert" : "Beitrag geteilt");
+        onSuccess(post ? t("successUpdate") : t("successShare"));
       } else {
         const data = await res.json();
-        setError(data.error || "Ein Fehler ist aufgetreten.");
+        setError(data.error || t("errors.generic"));
       }
     } catch (_err) {
-      setError("Verbindungsfehler.");
+      setError(t("errors.connection"));
     } finally {
       setSaving(false);
     }
@@ -128,10 +132,10 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
         <div className="px-6 py-5 border-b border-border flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-xl font-semibold">
-              {post ? "Beitrag bearbeiten" : "Inhalt empfehlen"}
+              {post ? t("modalTitleEdit") : t("modalTitleNew")}
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Teile etwas Interessantes mit anderen.
+              {t("modalSubtitle")}
             </p>
           </div>
           <button
@@ -156,7 +160,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
           {/* Category Selector */}
           <div className="space-y-3">
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1">
-              Kategorie wählen
+              {t("categoryLabel")}
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {CATEGORIES.map((cat) => (
@@ -183,7 +187,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
-                    label="Künstler"
+                    label={t("fields.artist")}
                     name="artist"
                     value={form.artist}
                     onChange={handleChange}
@@ -191,7 +195,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     required
                   />
                   <FormField
-                    label="Titel"
+                    label={t("fields.title")}
                     name="title"
                     value={form.title}
                     onChange={handleChange}
@@ -201,21 +205,21 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                 </div>
                 <div className="space-y-4">
                   <FormField
-                    label="Spotify Link"
+                    label={t("fields.spotifyLink")}
                     name="spotifyUrl"
                     value={form.spotifyUrl}
                     onChange={handleChange}
                     placeholder="https://open.spotify.com/..."
                   />
                   <FormField
-                    label="YouTube Music Link"
+                    label={t("fields.ytMusicLink")}
                     name="youtubeMusicUrl"
                     value={form.youtubeMusicUrl}
                     onChange={handleChange}
                     placeholder="https://music.youtube.com/..."
                   />
                   <FormField
-                    label="SoundCloud Link"
+                    label={t("fields.soundcloudLink")}
                     name="soundcloudUrl"
                     value={form.soundcloudUrl}
                     onChange={handleChange}
@@ -228,7 +232,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
             {category === "video" && (
               <>
                 <FormField
-                  label="Video Link"
+                  label={t("fields.videoLink")}
                   name="videoUrl"
                   value={form.videoUrl}
                   onChange={handleChange}
@@ -236,7 +240,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                   required
                 />
                 <FormField
-                  label="Plattform"
+                  label={t("fields.platform")}
                   name="videoPlatform"
                   value={form.videoPlatform}
                   onChange={handleChange}
@@ -249,7 +253,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
             {category === "news" && (
               <>
                 <FormField
-                  label="Titel des Beitrags"
+                  label={t("fields.newsTitle")}
                   name="newsTitle"
                   value={form.newsTitle}
                   onChange={handleChange}
@@ -258,7 +262,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
-                    label="Nachrichtenseite / Blog"
+                    label={t("fields.newsSite")}
                     name="newsSite"
                     value={form.newsSite}
                     onChange={handleChange}
@@ -266,7 +270,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     required
                   />
                   <FormField
-                    label="Link"
+                    label={t("fields.newsLink")}
                     name="newsUrl"
                     value={form.newsUrl}
                     onChange={handleChange}
@@ -280,7 +284,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
             {category === "other" && (
               <>
                 <FormField
-                  label="Titel"
+                  label={t("fields.otherTitle")}
                   name="otherTitle"
                   value={form.otherTitle}
                   onChange={handleChange}
@@ -288,7 +292,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                   required
                 />
                 <FormField
-                  label="Link"
+                  label={t("fields.otherLink")}
                   name="otherUrl"
                   value={form.otherUrl}
                   onChange={handleChange}
@@ -304,14 +308,14 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                 htmlFor="feed-content"
                 className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1"
               >
-                Dein Kommentar (optional)
+                {t("commentLabel")}
               </label>
               <textarea
                 id="feed-content"
                 name="content"
                 value={form.content}
                 onChange={handleChange}
-                placeholder="Warum empfiehlst du diesen Inhalt?"
+                placeholder={t("commentPlaceholder")}
                 rows={3}
                 className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               />
@@ -320,9 +324,9 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
             {/* Visibility Toggle */}
             <div className="pt-2 border-t border-border flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">Sichtbarkeit</p>
+                <p className="text-sm font-medium">{t("visibilityLabel")}</p>
                 <p className="text-xs text-muted-foreground">
-                  Wer darf diesen Beitrag sehen?
+                  {t("visibilityDesc")}
                 </p>
               </div>
               <VisibilityToggle
@@ -342,10 +346,10 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
             onClick={handleClose}
             className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            Abbrechen
+            {tCommon("cancel")}
           </button>
           <SaveButton loading={saving} onClick={handleSubmit}>
-            {post ? "Aktualisieren" : "Teilen"}
+            {post ? t("update") : t("share")}
           </SaveButton>
         </div>
       </div>

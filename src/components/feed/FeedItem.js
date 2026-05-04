@@ -11,22 +11,28 @@ import {
   SquarePlay,
   Trash2,
 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
+  const t = useTranslations("Feed");
+  const locale = useLocale();
   const [showOptions, setShowOptions] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const optionsRef = useRef(null);
 
-  const formattedDate = new Date(post.createdAt).toLocaleString("de-DE", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const formattedDate = new Date(post.createdAt).toLocaleString(
+    locale === "en" ? "en-GB" : "de-DE",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  );
 
   useEffect(() => {
     if (!showOptions) return;
@@ -111,7 +117,7 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
                     }}
                     className="w-full flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-accent transition-colors"
                   >
-                    <Edit2 size={14} /> Bearbeiten
+                    <Edit2 size={14} /> {t("editPost")}
                   </button>
                   <button
                     type="button"
@@ -121,7 +127,7 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
                     }}
                     className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors border-t border-border"
                   >
-                    <Trash2 size={14} /> Löschen
+                    <Trash2 size={14} /> {t("deletePost")}
                   </button>
                 </div>
               )}
@@ -217,7 +223,7 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
                     {post.newsTitle}
                   </h3>
                   <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                    <ExternalLink size={12} /> Link öffnen
+                    <ExternalLink size={12} /> {t("newsOpenLink")}
                   </div>
                 </a>
               </div>

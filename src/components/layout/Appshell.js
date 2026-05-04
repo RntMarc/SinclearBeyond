@@ -14,26 +14,28 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import LogoutButton from "@/components/auth/LogoutButton";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
-const navItems = [
-  { href: "/feed", label: "Unterhaltung", icon: SquarePlay },
-  { href: "/reisen", label: "Reisen", icon: MapIcon },
-  { href: "/kalender", label: "Kalender", icon: Calendar },
-  { href: "/geburtstage", label: "Geburtstage", icon: Gift },
-  { href: "/kontakte", label: "Kontakte", icon: Users },
-  { href: "/fotos", label: "Fotografien", icon: Camera },
-  { href: "/einstellungen", label: "Einstellungen", icon: Settings },
-];
-
-const adminNavItem = { href: "/admin", label: "Admin", icon: Lock };
-
 export default function AppShell({ children, user, session }) {
+  const t = useTranslations("Navigation");
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isMobile = useIsMobile();
+
+  const navItems = [
+    { href: "/feed", label: t("entertainment"), icon: SquarePlay },
+    { href: "/reisen", label: t("travel"), icon: MapIcon },
+    { href: "/kalender", label: t("calendar"), icon: Calendar },
+    { href: "/geburtstage", label: t("birthdays"), icon: Gift },
+    { href: "/kontakte", label: t("contacts"), icon: Users },
+    { href: "/fotos", label: t("photos"), icon: Camera },
+    { href: "/einstellungen", label: t("settings"), icon: Settings },
+  ];
+
+  const adminNavItem = { href: "/admin", label: t("admin"), icon: Lock };
 
   // On mobile, the sidebar is hidden by default and uses the mobile-specific overlay and top-bar.
   // We use isMobile to supplement Tailwind's md: breakpoints for landscape smartphones.
@@ -47,7 +49,7 @@ export default function AppShell({ children, user, session }) {
           type="button"
           className="fixed inset-0 z-40 bg-black/50 w-full h-full cursor-default"
           onClick={() => setOpen(false)}
-          aria-label="Menü schließen"
+          aria-label={t("closeMenu")}
         />
       )}
 
@@ -68,7 +70,7 @@ export default function AppShell({ children, user, session }) {
             type="button"
             className={`${showMobileElements ? "flex" : "hidden md:hidden"} text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent transition-colors`}
             onClick={() => setOpen(false)}
-            aria-label="Menü schließen"
+            aria-label={t("closeMenu")}
           >
             <X size={18} />
           </button>
@@ -119,7 +121,7 @@ export default function AppShell({ children, user, session }) {
             type="button"
             onClick={() => setOpen(true)}
             className="text-foreground p-1"
-            aria-label="Menü öffnen"
+            aria-label={t("openMenu")}
           >
             <Menu size={20} />
           </button>

@@ -8,15 +8,17 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 function StatusBadge({ isActive, isUpcoming, isPast }) {
+  const t = useTranslations("Travel");
   const label = isActive
-    ? "Aktuell"
+    ? t("status.active")
     : isUpcoming
-      ? "Bevorstehend"
-      : "Vergangen";
+      ? t("status.upcoming")
+      : t("status.past");
   const colorClass = isActive
     ? "bg-primary/15 text-primary"
     : isUpcoming
@@ -51,10 +53,11 @@ function SectionBox({ title, icon: Icon, children }) {
 }
 
 function EventCard({ event }) {
+  const locale = useLocale();
   const start = new Date(event.start);
   const end = new Date(event.end);
   const formatDate = (d) =>
-    d.toLocaleDateString("de-DE", {
+    d.toLocaleDateString(locale === "en" ? "en-GB" : "de-DE", {
       day: "2-digit",
       month: "short",
       hour: "2-digit",
@@ -90,13 +93,15 @@ function EventCard({ event }) {
 }
 
 export default function TripDashboard({ trip }) {
+  const t = useTranslations("Travel");
+  const locale = useLocale();
   const [expandOtherAccomm, setExpandOtherAccomm] = useState(false);
   const [mobileTab, setMobileTab] = useState("details");
   const isMobile = useIsMobile();
   const start = new Date(trip.start);
   const end = new Date(trip.end);
   const formatDate = (d) =>
-    d.toLocaleDateString("de-DE", {
+    d.toLocaleDateString(locale === "en" ? "en-GB" : "de-DE", {
       day: "2-digit",
       month: "long",
       year: "numeric",
@@ -117,7 +122,7 @@ export default function TripDashboard({ trip }) {
   const DashboardContent = (
     <div className="space-y-6">
       {/* Overview Box */}
-      <SectionBox title="Überblick" icon={Info}>
+      <SectionBox title={t("overview")} icon={Info}>
         <div className="space-y-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -131,7 +136,7 @@ export default function TripDashboard({ trip }) {
               />
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              {trip.description || "Keine Beschreibung vorhanden."}
+              {trip.description || t("noDescription")}
             </p>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2 border-t border-sidebar-border">
@@ -144,7 +149,7 @@ export default function TripDashboard({ trip }) {
       </SectionBox>
 
       {/* Accommodation Box */}
-      <SectionBox title="Unterkunft" icon={MapPin}>
+      <SectionBox title={t("accommodation")} icon={MapPin}>
         <div className="space-y-4">
           {trip.userAccommodation
             ? <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
@@ -170,7 +175,7 @@ export default function TripDashboard({ trip }) {
                 </div>
               </div>
             : <p className="text-sm text-muted-foreground italic">
-                Keine persönliche Unterkunft hinterlegt.
+                {t("noAccommodation")}
               </p>}
 
           {otherAccommodations.length > 0 && (
@@ -180,7 +185,7 @@ export default function TripDashboard({ trip }) {
                 onClick={() => setExpandOtherAccomm(!expandOtherAccomm)}
                 className="flex items-center justify-between w-full text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
               >
-                <span>Weitere Unterkünfte der Teilnehmer</span>
+                <span>{t("otherAccommodations")}</span>
                 <ChevronDown
                   size={14}
                   className={`transition-transform ${expandOtherAccomm ? "rotate-180" : ""}`}
@@ -192,7 +197,7 @@ export default function TripDashboard({ trip }) {
                     <div key={acc.id} className="text-xs">
                       <p className="font-medium text-foreground">{acc.name}</p>
                       <p className="text-muted-foreground text-[10px]">
-                        Teilnehmer: {acc.users.join(", ")}
+                        {t("participantLabel")}: {acc.users.join(", ")}
                       </p>
                     </div>
                   ))}
@@ -204,7 +209,7 @@ export default function TripDashboard({ trip }) {
       </SectionBox>
 
       {/* Participants Box */}
-      <SectionBox title="Mitreisende" icon={Users}>
+      <SectionBox title={t("participants")} icon={Users}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {trip.participants.map((p) => (
             <div
@@ -233,7 +238,7 @@ export default function TripDashboard({ trip }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between px-1">
         <h3 className="text-xs uppercase tracking-widest font-bold text-muted-foreground">
-          Events ({trip.events.length})
+          {t("events")} ({trip.events.length})
         </h3>
       </div>
       {trip.events.length > 0
@@ -247,9 +252,7 @@ export default function TripDashboard({ trip }) {
               className="mx-auto mb-2 text-muted-foreground"
               size={24}
             />
-            <p className="text-sm text-muted-foreground">
-              Keine Events geplant.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("noEvents")}</p>
           </div>}
     </div>
   );
@@ -257,7 +260,7 @@ export default function TripDashboard({ trip }) {
   return (
     <div className="max-w-6xl mx-auto w-full px-6 py-10">
       <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-        Reise-Details
+        {t("detailsTitle")}
       </p>
 
       {/* Desktop Layout */}
@@ -280,7 +283,7 @@ export default function TripDashboard({ trip }) {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Details
+            {t("tabs.details")}
           </button>
           <button
             type="button"
@@ -291,7 +294,7 @@ export default function TripDashboard({ trip }) {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Events ({trip.events.length})
+            {t("tabs.events")} ({trip.events.length})
           </button>
         </div>
         {mobileTab === "details" ? DashboardContent : EventsContent}

@@ -1,10 +1,12 @@
 "use client";
 
 import { Search, User, UserPlus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { addCloseFriend, removeCloseFriend } from "@/lib/profile/closeFriends";
 
 export default function CloseFriendsManager({ initialFriends }) {
+  const t = useTranslations("Settings.contacts");
   const [friends, setFriends] = useState(initialFriends);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -59,7 +61,7 @@ export default function CloseFriendsManager({ initialFriends }) {
     <div className="space-y-8">
       <div>
         <label className="block text-sm font-medium mb-3 text-foreground">
-          Enge Kontakte hinzufügen
+          {t("addTitle")}
         </label>
         <div className="relative">
           <Search
@@ -70,7 +72,7 @@ export default function CloseFriendsManager({ initialFriends }) {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Name suchen..."
+            placeholder={t("searchPlaceholder")}
             className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
           />
         </div>
@@ -108,13 +110,15 @@ export default function CloseFriendsManager({ initialFriends }) {
           </div>
         )}
         {loading && (
-          <p className="text-xs text-muted-foreground mt-2 px-2">Suche...</p>
+          <p className="text-xs text-muted-foreground mt-2 px-2">
+            {t("searching")}
+          </p>
         )}
       </div>
 
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-foreground">
-          Deine engen Kontakte
+          {t("yourFriends")}
         </h3>
         {friends.length > 0
           ? <div className="grid grid-cols-1 gap-3">
@@ -148,7 +152,7 @@ export default function CloseFriendsManager({ initialFriends }) {
               ))}
             </div>
           : <p className="text-sm text-muted-foreground italic">
-              Noch keine engen Kontakte festgelegt.
+              {t("noFriends")}
             </p>}
       </div>
     </div>

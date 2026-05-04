@@ -1,14 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
-
-const CATEGORIES = [
-  { id: "all", label: "Alle" },
-  { id: "music", label: "Musik" },
-  { id: "video", label: "Videos" },
-  { id: "news", label: "News" },
-  { id: "other", label: "Sonstige" },
-];
+import { useTranslations } from "next-intl";
 
 export default function FeedFilters({
   activeCategory,
@@ -16,6 +9,16 @@ export default function FeedFilters({
   onlyCloseFriends,
   onOnlyCloseFriendsChange,
 }) {
+  const t = useTranslations("Feed");
+
+  const CATEGORIES = [
+    { id: "all", label: t("categories.all") },
+    { id: "music", label: t("categories.music") },
+    { id: "video", label: t("categories.video") },
+    { id: "news", label: t("categories.news") },
+    { id: "other", label: t("categories.other") },
+  ];
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div className="flex items-center gap-1 bg-sidebar-accent/50 p-1 rounded-xl border border-sidebar-border max-w-full overflow-x-auto no-scrollbar">
@@ -45,8 +48,8 @@ export default function FeedFilters({
         }`}
       >
         <Heart size={16} fill={onlyCloseFriends ? "currentColor" : "none"} />
-        <span className="hidden xs:inline">Nur enge Kontakte</span>
-        <span className="xs:hidden font-light">Enge Kontakte</span>
+        <span className="hidden xs:inline">{t("onlyCloseFriends")}</span>
+        <span className="xs:hidden font-light">{t("closeFriendsShort")}</span>
       </button>
     </div>
   );
