@@ -165,7 +165,7 @@
       "description": "Choose your preferred language for the user interface.",
       "label": "Select language",
       "german": "German",
-      "german.swabian": "German (Swabian)",
+      "swabian": "German (Swabian)",
       "english": "English",
       "save": "Save language"
     },

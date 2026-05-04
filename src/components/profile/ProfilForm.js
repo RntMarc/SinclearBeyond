@@ -243,7 +243,7 @@ export default function ProfilForm({ user, contact, social }) {
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none"
           >
             <option value="de">{t("language.german")}</option>
-            <option value="de-als">{t("language.german.swabian")}</option>
+            <option value="de-als">{t("language.swabian")}</option>
             <option value="en">{t("language.english")}</option>
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
