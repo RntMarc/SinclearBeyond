@@ -244,6 +244,7 @@ export default function ProfilForm({ user, contact, social }) {
           >
             <option value="de">{t("language.german")}</option>
             <option value="de-als">{t("language.swabian")}</option>
+            <option value="de-lin">{t("language.linkedin")}</option>
             <option value="en">{t("language.english")}</option>
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
