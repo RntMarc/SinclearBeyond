@@ -1,0 +1,1 @@
+ALTER TABLE `DiscoverPlace` ADD `osmType` varchar(1);
