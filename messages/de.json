@@ -26,7 +26,8 @@
     "admin": "Admin",
     "logout": "Abmelden",
     "closeMenu": "Menü schließen",
-    "openMenu": "Menü öffnen"
+    "openMenu": "Menü öffnen",
+    "discover": "Entdecken"
   },
   "LandingPage": {
     "badge": "Community-Plattform",
@@ -151,6 +152,39 @@
         "connection": "Verbindungsfehler."
       }
     }
+  },
+  "Discover": {
+    "title": "Lokaler Entdecker-Guide",
+    "subtitle": "Entdecken",
+    "categories": {
+      "gastronomy": "Gastronomie",
+      "leisure": "Freizeitaktivitäten"
+    },
+    "bookmarks": "Lesezeichen",
+    "noBookmarks": "Du hast noch keine Lesezeichen gesetzt.",
+    "searchPlaceholder": "Ort suchen...",
+    "addPlace": "Ort hinzufügen",
+    "details": "Details",
+    "reviews": "Bewertungen",
+    "information": "Informationen",
+    "openingHours": "Öffnungszeiten",
+    "contact": "Kontakt",
+    "address": "Adresse",
+    "cuisine": "Küchenstil",
+    "rating": "Bewertung",
+    "comment": "Kommentar",
+    "noReviews": "Noch keine Bewertungen vorhanden.",
+    "addReview": "Bewertung abgeben",
+    "share": "Teilen",
+    "osmSearch": "In OpenStreetMap suchen",
+    "import": "Übernehmen",
+    "lastUpdated": "Zuletzt aktualisiert: {date}",
+    "deleteConfirm": "Diesen Ort wirklich löschen?",
+    "deleteReviewConfirm": "Diese Bewertung wirklich löschen?",
+    "successAdded": "Ort erfolgreich hinzugefügt.",
+    "successDeleted": "Ort erfolgreich gelöscht.",
+    "errorUpdate": "Fehler beim Aktualisieren der Daten.",
+    "linkCopied": "Link in die Zwischenablage kopiert."
   },
   "Settings": {
     "title": "Einstellungen",

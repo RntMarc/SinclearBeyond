@@ -92,6 +92,20 @@
       "when": 1777840074778,
       "tag": "0012_huge_centennial",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1778107922507,
+      "tag": "0013_add_discover",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1778108405594,
+      "tag": "0014_fix_discover_schema",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,7 @@ import {
   Calendar,
   Camera,
   Gift,
+  Compass,
   Lock,
   Map as MapIcon,
   Menu,
@@ -27,6 +28,7 @@ export default function AppShell({ children, user, session }) {
 
   const navItems = [
     { href: "/feed", label: t("entertainment"), icon: SquarePlay },
+    { href: "/entdecken", label: t("discover"), icon: Compass },
     { href: "/reisen", label: t("travel"), icon: MapIcon },
     { href: "/kalender", label: t("calendar"), icon: Calendar },
     { href: "/geburtstage", label: t("birthdays"), icon: Gift },

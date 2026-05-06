@@ -214,3 +214,46 @@ export const webauthnChallenges = mysqlTable("WebauthnChallenge", {
   expiresAt: datetime("expiresAt", { fsp: 3 }).notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
+
+// ── Discover ──────────────────────────────────────────────────────────────────
+
+export const discoverPlaces = mysqlTable("DiscoverPlace", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["gastronomy", "leisure"]).notNull(),
+  address: text("address"),
+  latitude: double("latitude"),
+  longitude: double("longitude"),
+  osmId: bigint("osmId", { mode: "number" }),
+  osmType: varchar("osmType", { length: 1 }), // N, W, R
+  phone: varchar("phone", { length: 191 }),
+  website: text("website"),
+  email: varchar("email", { length: 191 }),
+  openingHours: text("openingHours"),
+  lastUpdated: datetime("lastUpdated", { fsp: 3 }).notNull(),
+  creatorId: varchar("creatorId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const discoverGastronomy = mysqlTable("DiscoverGastronomy", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  placeId: varchar("placeId", { length: 191 }).notNull(),
+  cuisine: varchar("cuisine", { length: 191 }),
+});
+
+export const discoverReviews = mysqlTable("DiscoverReview", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  placeId: varchar("placeId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  rating: tinyint("rating").notNull(),
+  comment: text("comment"),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const discoverBookmarks = mysqlTable("DiscoverBookmark", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  placeId: varchar("placeId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
