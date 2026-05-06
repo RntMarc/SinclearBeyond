@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { discoverReviews } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export async function DELETE(req, { params }) {
   const session = await getSession();
@@ -12,9 +12,11 @@ export async function DELETE(req, { params }) {
   const { id } = await params;
 
   try {
-    const review = await db.query.discoverReviews.findFirst({
-      where: eq(discoverReviews.id, id),
-    });
+    const [review] = await db
+      .select()
+      .from(discoverReviews)
+      .where(eq(discoverReviews.id, id))
+      .limit(1);
 
     if (!review)
       return NextResponse.json({ error: "Review not found" }, { status: 404 });

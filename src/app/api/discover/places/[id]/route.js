@@ -18,19 +18,23 @@ export async function GET(req, { params }) {
   const { id } = await params;
 
   try {
-    const place = await db.query.discoverPlaces.findFirst({
-      where: eq(discoverPlaces.id, id),
-    });
+    const [place] = await db
+      .select()
+      .from(discoverPlaces)
+      .where(eq(discoverPlaces.id, id))
+      .limit(1);
 
     if (!place)
       return NextResponse.json({ error: "Place not found" }, { status: 404 });
 
     let details = {};
     if (place.category === "gastronomy") {
-      details =
-        (await db.query.discoverGastronomy.findFirst({
-          where: eq(discoverGastronomy.placeId, id),
-        })) || {};
+      const [gastro] = await db
+        .select()
+        .from(discoverGastronomy)
+        .where(eq(discoverGastronomy.placeId, id))
+        .limit(1);
+      details = gastro || {};
     }
 
     const reviews = await db
@@ -73,9 +77,12 @@ export async function PATCH(req, { params }) {
     const data = await req.json();
     const now = new Date();
 
-    const existing = await db.query.discoverPlaces.findFirst({
-      where: eq(discoverPlaces.id, id),
-    });
+    const [existing] = await db
+      .select()
+      .from(discoverPlaces)
+      .where(eq(discoverPlaces.id, id))
+      .limit(1);
+
     if (!existing)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
@@ -83,20 +90,13 @@ export async function PATCH(req, { params }) {
       Object.keys(data).length > 0 &&
       existing.lastUpdated < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    if (
-      !session.isAdmin &&
-      existing.creatorId !== session.sub &&
-      !isRefresh
-    ) {
+    if (!session.isAdmin && existing.creatorId !== session.sub && !isRefresh) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await db
       .update(discoverPlaces)
-      .set({
-        ...data,
-        lastUpdated: now,
-      })
+      .set({ ...data, lastUpdated: now })
       .where(eq(discoverPlaces.id, id));
 
     return NextResponse.json({ ok: true });
@@ -117,12 +117,18 @@ export async function DELETE(req, { params }) {
   const { id } = await params;
 
   try {
-    const place = await db.query.discoverPlaces.findFirst({
-      where: eq(discoverPlaces.id, id),
-    });
+    const [place] = await db
+      .select()
+      .from(discoverPlaces)
+      .where(eq(discoverPlaces.id, id))
+      .limit(1);
 
     if (!place)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    if (place.creatorId !== session.sub && !session.isAdmin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const otherReviews = await db
       .select()
@@ -133,10 +139,6 @@ export async function DELETE(req, { params }) {
           sql`${discoverReviews.userId} != ${session.sub}`,
         ),
       );
-
-    if (place.creatorId !== session.sub && !session.isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     if (otherReviews.length > 0 && !session.isAdmin) {
       return NextResponse.json(

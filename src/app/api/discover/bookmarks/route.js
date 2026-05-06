@@ -43,12 +43,16 @@ export async function POST(req) {
   try {
     const { placeId } = await req.json();
 
-    const existing = await db.query.discoverBookmarks.findFirst({
-      where: and(
-        eq(discoverBookmarks.userId, session.sub),
-        eq(discoverBookmarks.placeId, placeId),
-      ),
-    });
+    const [existing] = await db
+      .select()
+      .from(discoverBookmarks)
+      .where(
+        and(
+          eq(discoverBookmarks.userId, session.sub),
+          eq(discoverBookmarks.placeId, placeId),
+        ),
+      )
+      .limit(1);
 
     if (existing) {
       await db
