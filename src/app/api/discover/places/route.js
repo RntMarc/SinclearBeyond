@@ -94,7 +94,7 @@ export async function POST(req) {
       email,
       openingHours,
       lastUpdated: now,
-      creatorId: session.userId,
+      creatorId: session.sub,
       createdAt: now,
     });
 
@@ -110,7 +110,7 @@ export async function POST(req) {
       await db.insert(discoverReviews).values({
         id: crypto.randomUUID(),
         placeId,
-        userId: session.userId,
+        userId: session.sub,
         rating: parseInt(rating),
         comment,
         createdAt: now,

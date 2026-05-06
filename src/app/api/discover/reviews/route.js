@@ -24,7 +24,7 @@ export async function POST(req) {
     await db.insert(discoverReviews).values({
       id,
       placeId,
-      userId: session.userId,
+      userId: session.sub,
       rating: parseInt(rating),
       comment,
       createdAt: new Date(),

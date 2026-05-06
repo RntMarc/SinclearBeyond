@@ -38,5 +38,6 @@ export const config = {
     "/kontakte/:path*",
     "/fotos/:path*",
     "/admin/:path*",
+    "/entdecken/:path*",
   ],
 };

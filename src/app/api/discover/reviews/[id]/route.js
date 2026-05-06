@@ -19,7 +19,7 @@ export async function DELETE(req, { params }) {
     if (!review)
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
 
-    if (review.userId !== session.userId && !session.isAdmin) {
+    if (review.userId !== session.sub && !session.isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

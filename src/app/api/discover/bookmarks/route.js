@@ -23,7 +23,7 @@ export async function GET(req) {
         discoverPlaces,
         eq(discoverBookmarks.placeId, discoverPlaces.id),
       )
-      .where(eq(discoverBookmarks.userId, session.userId));
+      .where(eq(discoverBookmarks.userId, session.sub));
 
     return NextResponse.json(bookmarks);
   } catch (error) {
@@ -45,7 +45,7 @@ export async function POST(req) {
 
     const existing = await db.query.discoverBookmarks.findFirst({
       where: and(
-        eq(discoverBookmarks.userId, session.userId),
+        eq(discoverBookmarks.userId, session.sub),
         eq(discoverBookmarks.placeId, placeId),
       ),
     });
@@ -58,7 +58,7 @@ export async function POST(req) {
     } else {
       await db.insert(discoverBookmarks).values({
         id: crypto.randomUUID(),
-        userId: session.userId,
+        userId: session.sub,
         placeId,
         createdAt: new Date(),
       });

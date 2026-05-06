@@ -48,7 +48,6 @@ export async function GET(req, { params }) {
       .where(eq(discoverReviews.placeId, id))
       .orderBy(sql`${discoverReviews.createdAt} DESC`);
 
-    // Check if it needs OSM update (30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const needsUpdate = place.osmId && place.lastUpdated < thirtyDaysAgo;
@@ -80,16 +79,13 @@ export async function PATCH(req, { params }) {
     if (!existing)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    // Authorization: only creator, admin, or "system" (if we want to allow OSM refresh for anyone)
-    // The requirement says "The system ensures... information stays current".
-    // If it's a manual refresh button, we might want to let any user trigger it IF it's older than 30 days.
     const isRefresh =
       Object.keys(data).length > 0 &&
       existing.lastUpdated < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     if (
       !session.isAdmin &&
-      existing.creatorId !== session.userId &&
+      existing.creatorId !== session.sub &&
       !isRefresh
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -128,18 +124,17 @@ export async function DELETE(req, { params }) {
     if (!place)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    // Constraint: can delete if creator AND no other reviews
     const otherReviews = await db
       .select()
       .from(discoverReviews)
       .where(
         and(
           eq(discoverReviews.placeId, id),
-          sql`${discoverReviews.userId} != ${session.userId}`,
+          sql`${discoverReviews.userId} != ${session.sub}`,
         ),
       );
 
-    if (place.creatorId !== session.userId && !session.isAdmin) {
+    if (place.creatorId !== session.sub && !session.isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
