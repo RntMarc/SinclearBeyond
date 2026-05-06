@@ -22,6 +22,7 @@ CREATE TABLE `DiscoverPlace` (
 	`latitude` double,
 	`longitude` double,
 	`osmId` bigint,
+	`osmType` varchar(1),
 	`phone` varchar(191),
 	`website` text,
 	`email` varchar(191),
