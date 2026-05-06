@@ -3,3 +3,23 @@
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
+
+# Localization (i18n)
+
+This project uses `next-intl` for localization. All UI strings must be externalized into the translation files located in the `messages/` directory.
+
+### Supported Locales
+- `de.json` (German - **Primary Source**)
+- `en.json` (English)
+- `de-als.json` (Swabian / Schwäbisch)
+
+### Rules for AI Agents
+1. **Always Update All Locales:** When adding or changing a UI string, you MUST update all supported locale files (`de.json`, `en.json`, `de-als.json`).
+2. **German First:** German is the primary language. Always define the German string first and use it as the source for translations into other languages.
+3. **Swabian Translation:** You are required to provide a Swabian translation. If you feel your Swabian is not accurate or you cannot perform the translation, you MUST explicitly and clearly state in your response that you have declined to translate into Swabian and why.
+4. **No Hardcoded Strings:** Avoid hardcoding strings in JSX/TSX or logic files. Use the `useTranslations` hook (client-side) or `getTranslations` (server-side).
+5. **Proactive Refactoring:** When modifying existing components, check for any nearby hardcoded strings and move them to the translation files.
+6. **Key Naming Convention:**
+    - Use a structured hierarchy: `PageName.SectionName.KeyName` (e.g., `Settings.Profile.UploadButton`).
+    - Use `Common` for shared strings like "Save", "Cancel", "Error".
+    - Keys should be camelCase.
