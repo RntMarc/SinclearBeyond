@@ -1,8 +1,10 @@
 "use client";
 import { Calendar as CalendarIcon, Globe, Info, MapPin, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function TripDetailModal({ tripId, onClose }) {
+  const t = useTranslations("Calendar");
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +24,7 @@ export default function TripDetailModal({ tripId, onClose }) {
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <div className="bg-sidebar border border-sidebar-border w-full max-w-lg rounded-2xl p-8 text-center">
           <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-muted-foreground">Lade Reisedaten...</p>
+          <p className="text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     );

@@ -5,7 +5,7 @@ import { isEventOnDay } from "@/lib/calendar/calendarUtils";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DEFAULT_START_HOUR = 8;
-const DEFAULT_END_HOUR = 20;
+const _DEFAULT_END_HOUR = 20;
 
 export default function TimeGridView({
   days,
@@ -56,7 +56,7 @@ export default function TimeGridView({
   useEffect(() => {
     handleScroll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventList, days]);
+  }, [handleScroll]);
 
   const scrollToMore = (direction) => {
     if (!scrollContainerRef.current) return;

@@ -1,13 +1,15 @@
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { passkeys } from "@/lib/db/schema";
 
 export async function POST(req) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
   try {
@@ -19,9 +21,6 @@ export async function POST(req) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: t("error") }, { status: 500 });
   }
 }

@@ -71,7 +71,7 @@ function TripCard({ trip, isAdmin }) {
 export default function TripList({ initialTrips, isAdmin }) {
   const t = useTranslations("Travel");
   const [trips, setTrips] = useState(initialTrips);
-  const refreshTrips = useCallback(async () => {
+  const _refreshTrips = useCallback(async () => {
     const res = await fetch("/api/reisen/data");
     if (res.ok) {
       setTrips(await res.json());

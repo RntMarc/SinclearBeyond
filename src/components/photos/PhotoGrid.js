@@ -32,7 +32,7 @@ export default function PhotoGrid({ initialPhotos }) {
   useEffect(() => {
     const n = getNumCols(isMobile);
     setColumns(distribute(initialPhotos, n));
-  }, [isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isMobile, initialPhotos]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Redistribute on resize (only changes col count, reflow OK here)
   useEffect(() => {

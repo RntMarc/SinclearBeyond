@@ -1,15 +1,17 @@
 "use client";
 import { ChevronRight, Heart } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import ContactModal from "./ContactModal";
 
 export default function ContactList({ initialContacts }) {
+  const t = useTranslations("Common");
   const [selectedContact, setSelectedContact] = useState(null);
 
   if (!initialContacts || initialContacts.length === 0) {
     return (
       <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
-        <p className="text-muted-foreground">Keine Kontakte gefunden.</p>
+        <p className="text-muted-foreground">{t("noEntries")}</p>
       </div>
     );
   }

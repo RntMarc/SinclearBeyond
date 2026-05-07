@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import PhotoGrid from "@/components/photos/PhotoGrid";
 import { getSession } from "@/lib/auth/session";
@@ -6,6 +7,7 @@ import { getUnsplashPhotos } from "@/lib/photos/unsplash";
 import { getProfileData } from "@/lib/profile/profile";
 
 export default async function FotosPage() {
+  const t = await getTranslations("Photos");
   const session = await getSession();
   if (!session) redirect("/login");
   const profile = await getProfileData(session);
@@ -16,10 +18,10 @@ export default async function FotosPage() {
     <AppShell user={profile.user} session={session}>
       <div className="max-w-7xl mx-auto w-full px-6 py-10">
         <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-          Galerie
+          {t("subtitle")}
         </p>
         <h1 className="text-4xl font-light text-foreground mb-8">
-          Fotografien
+          {t("title")}
         </h1>
         <PhotoGrid initialPhotos={initialPhotos} />
       </div>

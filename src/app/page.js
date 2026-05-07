@@ -1,39 +1,41 @@
+import { getTranslations } from "next-intl/server";
 import SiteHeader from "@/components/header/SiteHeader";
 import { getSession } from "@/lib/auth/session";
 
 export default async function Home() {
+  const t = await getTranslations("LandingPage");
   const session = await getSession();
 
   const features = [
     {
       icon: "💬",
-      title: "Chat",
-      desc: "Gruppen- und Direktnachrichten – ohne nervige Server-Strukturen.",
+      title: t("features.chat.title"),
+      desc: t("features.chat.desc"),
     },
     {
       icon: "📅",
-      title: "Kalender & Events",
-      desc: "Plant gemeinsame Treffen, Stammtische und Aktionen.",
+      title: t("features.calendar.title"),
+      desc: t("features.calendar.desc"),
     },
     {
       icon: "🎂",
-      title: "Geburtstagsliste",
-      desc: "Kein Geburtstag mehr vergessen – für alle in der Gruppe.",
+      title: t("features.birthdays.title"),
+      desc: t("features.birthdays.desc"),
     },
     {
       icon: "📖",
-      title: "Adressbuch",
-      desc: "Kontakte der Community – übersichtlich und immer aktuell.",
+      title: t("features.contacts.title"),
+      desc: t("features.contacts.desc"),
     },
     {
       icon: "🔒",
-      title: "Datenschutz",
-      desc: "Keine Werbung. Keine Datenweitergabe. Eure Daten gehören euch.",
+      title: t("features.privacy.title"),
+      desc: t("features.privacy.desc"),
     },
     {
       icon: "🇪🇺",
-      title: "Unabhängig gehostet",
-      desc: "Alle Daten bleiben in der EU, bei vertrauenswürdigen Anbietern.",
+      title: t("features.hosting.title"),
+      desc: t("features.hosting.desc"),
     },
   ];
 
@@ -54,20 +56,16 @@ export default async function Home() {
           </div>
 
           <p className="text-xs uppercase tracking-[0.3em] text-primary mb-6 font-medium">
-            Community-Plattform
+            {t("badge")}
           </p>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-light leading-[1.05] tracking-tight text-foreground max-w-3xl mb-8">
-            Gemeinsam sind wir{" "}
-            <em className="italic font-normal text-muted-foreground">
-              Sinclear
-            </em>
-            .
-          </h1>
+          <h1
+            className="text-5xl md:text-7xl lg:text-8xl font-light leading-[1.05] tracking-tight text-foreground max-w-3xl mb-8"
+            dangerouslySetInnerHTML={{ __html: t("heroTitle") }}
+          />
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-12">
-            Chats, Kalender, Geburtstage, Kontakte – alles was eine Gruppe zum
-            Überleben braucht. An einem Ort.
+            {t("heroDesc")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center">
@@ -75,13 +73,13 @@ export default async function Home() {
               href="/login"
               className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
             >
-              Jetzt starten
+              {t("ctaStart")}
             </a>
             <a
               href="#features"
               className="px-7 py-3.5 rounded-full text-muted-foreground text-sm hover:text-foreground transition-colors"
             >
-              Was es kann ↓
+              {t("ctaFeatures")}
             </a>
           </div>
         </section>
@@ -89,11 +87,10 @@ export default async function Home() {
         {/* Problem statement */}
         <section className="px-6 md:px-12 py-20 border-y border-border/40 bg-card">
           <div className="max-w-3xl mx-auto">
-            <p className="text-2xl md:text-3xl font-light text-muted-foreground leading-relaxed">
-              Discord ist unsicher und zunehmend kontrovers. Außerhalb davon
-              sind wir über viele Messenger zersplittert. Wir verdienen einen{" "}
-              <em className="italic text-foreground">eigenen Ort.</em>
-            </p>
+            <p
+              className="text-2xl md:text-3xl font-light text-muted-foreground leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: t("problemStatement") }}
+            />
           </div>
         </section>
 
@@ -104,7 +101,7 @@ export default async function Home() {
               Features
             </p>
             <h2 className="text-3xl md:text-4xl font-light text-center text-foreground mb-16">
-              Was Sinclear Beyond mitbringt
+              {t("featuresTitle")}
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-px bg-border/40 rounded-2xl overflow-hidden">
@@ -129,18 +126,17 @@ export default async function Home() {
         {/* CTA */}
         <section className="px-6 md:px-12 py-24 text-center border-t border-border/40 bg-card">
           <h2 className="text-4xl md:text-5xl font-light text-foreground mb-6">
-            Bereit?
+            {t("readyTitle")}
           </h2>
-          <p className="text-muted-foreground mb-10 max-w-sm mx-auto">
-            Sinclear Beyond ist in aktiver Entwicklung.
-            <br />
-            Es können Fehler vorkommen.
-          </p>
+          <p
+            className="text-muted-foreground mb-10 max-w-sm mx-auto"
+            dangerouslySetInnerHTML={{ __html: t("readyDesc") }}
+          />
           <a
             href="/login"
             className="inline-block px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
           >
-            Jetzt starten
+            {t("ctaStart")}
           </a>
         </section>
       </main>
@@ -148,11 +144,9 @@ export default async function Home() {
       {/* Footer */}
       <footer className="px-6 md:px-12 py-8 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4">
         <span className="text-sm font-semibold text-foreground">
-          Sinclear Beyond
+          {t("footerTitle")}
         </span>
-        <p className="text-xs text-muted-foreground">
-          Gebaut für echte Gemeinschaft. Von und für Sinclear.
-        </p>
+        <p className="text-xs text-muted-foreground">{t("footerDesc")}</p>
       </footer>
     </>
   );

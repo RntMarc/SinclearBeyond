@@ -13,7 +13,18 @@
     "add": "Hinzufügen",
     "search": "Suchen...",
     "loading": "Wird geladen...",
-    "noEntries": "Keine Einträge gefunden."
+    "noEntries": "Keine Einträge gefunden.",
+    "unauthorized": "Nicht autorisiert",
+    "forbidden": "Zugriff verweigert",
+    "notFound": "Nicht gefunden",
+    "missingFields": "Erforderliche Felder fehlen",
+    "saveError": "Fehler beim Speichern",
+    "loadError": "Fehler beim Laden",
+    "deleteError": "Fehler beim Löschen",
+    "notImplemented": "Nicht implementiert",
+    "tooManyRequests": "Zu viele Anfragen",
+    "alreadyParticipant": "Bereits Teilnehmer.",
+    "genericError": "Ein Fehler ist aufgetreten."
   },
   "Navigation": {
     "entertainment": "Unterhaltung",
@@ -28,12 +39,65 @@
     "closeMenu": "Menü schließen",
     "openMenu": "Menü öffnen"
   },
+  "Auth": {
+    "login": "Login",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "email": "E-Mail-Adresse",
+    "displayName": "Anzeigename",
+    "code": "Bestätigungscode",
+    "codePlaceholder": "000000",
+    "sendCode": "Code senden",
+    "verifyCode": "Bestätigen",
+    "verifying": "Wird geprüft…",
+    "sending": "Wird gesendet…",
+    "back": "← Zurück",
+    "welcomeBack": "Willkommen zurück!",
+    "createAccount": "Konto erstellen",
+    "domainRestriction": "Login/Registration nur mit @sinclear.de-Adresse möglich.",
+    "enterCode": "Code eingeben",
+    "sentTo": "Gesendet an <email>{emailValue}</email>",
+    "passkeyLogin": "Mit Passkey einloggen",
+    "orContinueWith": "oder weiter mit",
+    "registerWithDiscord": "Mit Discord registrieren",
+    "errors": {
+      "discord": {
+        "notOnServer": "Du musst Mitglied auf dem Discord-Server sein.",
+        "accountExists": "Ein Konto mit dieser E-Mail oder Discord-ID existiert bereits.",
+        "userNotFound": "Kein Konto verknüpft. Bitte registriere dich zuerst.",
+        "authFailed": "Discord-Authentifizierung fehlgeschlagen.",
+        "noCode": "Kein Code von Discord erhalten.",
+        "generic": "Fehler bei der Discord-Anmeldung."
+      },
+      "otp": {
+        "userNotFound": "Kein Konto mit dieser E-Mail.",
+        "invalid": "Code ungültig oder abgelaufen.",
+        "generic": "Fehler. Bitte erneut versuchen."
+      },
+      "register": {
+        "domainNotAllowed": "Diese E-Mail-Domain ist nicht erlaubt.",
+        "emailTaken": "Konto existiert bereits. Bitte einloggen.",
+        "missingFields": "Alle Felder ausfüllen."
+      },
+      "passkey": {
+        "optionsFailed": "Konnte Login-Optionen nicht laden.",
+        "failed": "Passkey-Login fehlgeschlagen."
+      },
+      "displayNameRequired": "Bitte gib einen Anzeigenamen ein."
+    }
+  },
+  "Home": {
+    "subtitle": "Dashboard",
+    "welcome": "Hallo, {name}.",
+    "description": "Willkommen bei Sinclear Beyond."
+  },
   "LandingPage": {
     "badge": "Community-Plattform",
     "heroTitle": "Gemeinsam sind wir <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
     "heroDesc": "Chats, Kalender, Geburtstage, Kontakte – alles was eine Gruppe zum Überleben braucht. An einem Ort.",
     "ctaStart": "Jetzt starten",
     "ctaFeatures": "Was es kann ↓",
+    "ctaOpenApp": "App öffnen",
     "problemStatement": "Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen <em class='italic text-foreground'>eigenen Ort.</em>",
     "featuresTitle": "Was Sinclear Beyond mitbringt",
     "readyTitle": "Bereit?",
@@ -83,7 +147,7 @@
       "past": "Vergangen"
     },
     "overview": "Überblick",
-    "accommodation": "Unterkunft",
+    "accommodationLabel": "Unterkunft",
     "participants": "Mitreisende",
     "events": "Events",
     "noDescription": "Keine Beschreibung vorhanden.",
@@ -91,7 +155,96 @@
     "otherAccommodations": "Weitere Unterkünfte der Teilnehmer",
     "participantLabel": "Teilnehmer",
     "noEvents": "Keine Events geplant.",
-    "noTrips": "Keine Reisen gefunden."
+    "noTrips": "Keine Reisen gefunden.",
+    "newTrip": "Neue Reise",
+    "form": {
+      "name": "Name",
+      "description": "Beschreibung",
+      "start": "Start",
+      "end": "Ende",
+      "saveTrip": "Reise speichern",
+      "placeholders": {
+        "name": "z.B. Sommerurlaub",
+        "description": "..."
+      }
+    },
+    "accommodation": {
+      "name": "Name der Unterkunft",
+      "description": "Beschreibung",
+      "address": "Adresse",
+      "latitude": "Breitengrad (Lat)",
+      "longitude": "Längengrad (Lon)",
+      "mapIntegration": "Karten-Integration",
+      "mapPlaceholder": "Platzhalter für zukünftige Suche",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "osmId": "OpenStreetMap ID",
+      "isHotel": "Es handelt sich um ein Hotel",
+      "saveAccommodation": "Unterkunft speichern",
+      "placeholders": {
+        "name": "z.B. Hotel Central",
+        "description": "Optionale Beschreibung...",
+        "address": "Musterstraße 1, 12345 Stadt",
+        "latitude": "52.5200",
+        "longitude": "13.4050",
+        "phone": "+49 123 456789",
+        "email": "info@hotel.de",
+        "osmId": "z.B. 12345678"
+      }
+    }
+  },
+  "Birthdays": {
+    "subtitle": "Feierlichkeiten",
+    "title": "Geburtstage",
+    "today": "Heute! 🎉",
+    "inDays": "in {days} {days, plural, =1 {Tag} other {Tagen}}",
+    "years": "Jahre",
+    "infoTitle": "Geburtstagsinfo",
+    "dateLabel": "Geburtsdatum",
+    "ageLabel": "Alter",
+    "todayMessage": "Hat heute Geburtstag! 🎉",
+    "countdownMessage": "Noch {days} {days, plural, =1 {Tag} other {Tage}} bis zum {age}. Geburtstag."
+  },
+  "Contacts": {
+    "subtitle": "Netzwerk",
+    "title": "Kontakte",
+    "member": "Mitglied",
+    "infoTitle": "Kontaktinformationen",
+    "email": "E-Mail",
+    "noInfo": "Keine weiteren Informationen freigegeben.",
+    "socialTitle": "Soziale Medien",
+    "close": "Schließen"
+  },
+  "Photos": {
+    "subtitle": "Galerie",
+    "title": "Fotografien",
+    "photoBy": "Foto von"
+  },
+  "Calendar": {
+    "agenda": "Agenda",
+    "today": "Heute",
+    "newEntry": "Neuer Eintrag",
+    "loading": "Lade Reisedaten...",
+    "views": {
+      "month": "Monat",
+      "week": "Woche",
+      "day": "Tag",
+      "agenda": "Agenda"
+    },
+    "form": {
+      "title": "Titel *",
+      "description": "Beschreibung",
+      "allDay": "Ganztägig",
+      "date": "Datum",
+      "start": "Start *",
+      "end": "Ende",
+      "public": "Öffentlich sichtbar",
+      "addUser": "Nutzer hinzufügen…",
+      "permissions": "Berechtigungen",
+      "user": "Nutzer",
+      "view": "Sehen",
+      "edit": "Bearbeiten"
+    }
   },
   "Feed": {
     "title": "Unterhaltung",
@@ -127,6 +280,19 @@
       "update": "Aktualisieren",
       "successUpdate": "Beitrag aktualisiert",
       "successShare": "Beitrag geteilt",
+      "placeholders": {
+        "artist": "z.B. Pink Floyd",
+        "songTitle": "z.B. Wish You Were Here",
+        "spotify": "https://open.spotify.com/...",
+        "ytMusic": "https://music.youtube.com/...",
+        "soundcloud": "https://soundcloud.com/...",
+        "video": "https://youtube.com/watch?v=...",
+        "platform": "z.B. YouTube, Twitch, PeerTube",
+        "newsTitle": "z.B. Neue Entdeckung im Weltraum",
+        "newsSite": "z.B. Golem, Heise, BBC",
+        "link": "https://...",
+        "otherTitle": "z.B. Cooles Open Source Projekt"
+      },
       "fields": {
         "artist": "Künstler",
         "title": "Titel",

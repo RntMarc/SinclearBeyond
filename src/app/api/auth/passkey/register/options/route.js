@@ -1,14 +1,16 @@
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getRegistrationOptions } from "@/lib/auth/passkey";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 
 export async function POST() {
+  const t = await getTranslations("Common");
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
   const [user] = await db
@@ -18,7 +20,7 @@ export async function POST() {
     .limit(1);
 
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    return NextResponse.json({ error: t("notFound") }, { status: 404 });
   }
 
   try {
@@ -26,9 +28,6 @@ export async function POST() {
     return NextResponse.json(options);
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: t("error") }, { status: 500 });
   }
 }

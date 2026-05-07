@@ -1,5 +1,6 @@
 "use client";
 import { Plus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export default function PermissionEditor({
@@ -9,6 +10,7 @@ export default function PermissionEditor({
   permissions,
   onChange,
 }) {
+  const t = useTranslations("Calendar.form");
   const [selectedUserId, setSelectedUserId] = useState("");
 
   const available = allUsers.filter(
@@ -45,7 +47,7 @@ export default function PermissionEditor({
   return (
     <div className="flex flex-col gap-2">
       <span className="text-xs text-muted-foreground uppercase tracking-wider">
-        Berechtigungen
+        {t("permissions")}
       </span>
       <div className="flex gap-2">
         <select
@@ -53,7 +55,7 @@ export default function PermissionEditor({
           onChange={(e) => setSelectedUserId(e.target.value)}
           className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
         >
-          <option value="">Nutzer hinzufügen…</option>
+          <option value="">{t("addUser")}</option>
           {available.map((u) => (
             <option key={u.id} value={u.id}>
               {u.displayName} ({u.email})
@@ -75,15 +77,15 @@ export default function PermissionEditor({
             <thead>
               <tr className="border-b border-border bg-muted/30">
                 <th className="text-left font-medium text-muted-foreground px-3 py-2">
-                  Nutzer
+                  {t("user")}
                 </th>
                 {!isPublic && (
                   <th className="font-medium text-muted-foreground px-2 py-2 text-center whitespace-nowrap">
-                    Sehen
+                    {t("view")}
                   </th>
                 )}
                 <th className="font-medium text-muted-foreground px-2 py-2 text-center whitespace-nowrap">
-                  Bearbeiten
+                  {t("edit")}
                 </th>
                 <th className="w-8" />
               </tr>

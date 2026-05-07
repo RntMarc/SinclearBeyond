@@ -60,7 +60,7 @@ export default function TravelEventFormModal({
         const data = await res.json();
         setError(data.error || "Fehler beim Speichern.");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Ein unerwarteter Fehler ist aufgetreten.");
     } finally {
       setSaving(false);
@@ -78,7 +78,7 @@ export default function TravelEventFormModal({
         onUpdated();
         onClose();
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Fehler beim Löschen.");
     } finally {
       setSaving(false);

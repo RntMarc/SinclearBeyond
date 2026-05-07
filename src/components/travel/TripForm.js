@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import SaveButton from "@/components/SaveButton";
 
 export default function TripForm({
@@ -10,6 +11,8 @@ export default function TripForm({
   onSubmit,
   onCancel,
 }) {
+  const t = useTranslations("Travel.form");
+  const tc = useTranslations("Common");
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -27,7 +30,7 @@ export default function TripForm({
         <div className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-              Name der Reise
+              {t("name")}
             </label>
             <input
               type="text"
@@ -35,20 +38,20 @@ export default function TripForm({
               value={form.name}
               onChange={handleChange}
               required
-              placeholder="z.B. Sommerurlaub 2024"
+              placeholder={t("placeholders.name")}
               className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
 
           <div className="space-y-1.5">
             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-              Beschreibung
+              {t("description")}
             </label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="Optionale Beschreibung..."
+              placeholder={t("placeholders.description")}
               rows={3}
               className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
@@ -57,7 +60,7 @@ export default function TripForm({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-                Start
+                {t("start")}
               </label>
               <input
                 type="datetime-local"
@@ -71,7 +74,7 @@ export default function TripForm({
 
             <div className="space-y-1.5">
               <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-                Ende
+                {t("end")}
               </label>
               <input
                 type="datetime-local"
@@ -92,10 +95,10 @@ export default function TripForm({
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
-          Abbrechen
+          {tc("cancel")}
         </button>
         <SaveButton loading={saving} type="submit">
-          Reise speichern
+          {t("saveTrip")}
         </SaveButton>
       </div>
     </form>

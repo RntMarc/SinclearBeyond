@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Calendar,
-  ChevronDown,
-  ChevronRight,
-  Info,
-  MapPin,
-  Users,
-} from "lucide-react";
+import { Calendar, ChevronDown, Info, MapPin, Users } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -149,7 +142,7 @@ export default function TripDashboard({ trip }) {
       </SectionBox>
 
       {/* Accommodation Box */}
-      <SectionBox title={t("accommodation")} icon={MapPin}>
+      <SectionBox title={t("accommodationLabel")} icon={MapPin}>
         <div className="space-y-4">
           {trip.userAccommodation
             ? <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl">

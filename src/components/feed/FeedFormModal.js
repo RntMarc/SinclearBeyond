@@ -191,7 +191,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     name="artist"
                     value={form.artist}
                     onChange={handleChange}
-                    placeholder="z.B. Pink Floyd"
+                    placeholder={t("placeholders.artist")}
                     required
                   />
                   <FormField
@@ -199,7 +199,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     name="title"
                     value={form.title}
                     onChange={handleChange}
-                    placeholder="z.B. Wish You Were Here"
+                    placeholder={t("placeholders.songTitle")}
                     required
                   />
                 </div>
@@ -209,21 +209,21 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     name="spotifyUrl"
                     value={form.spotifyUrl}
                     onChange={handleChange}
-                    placeholder="https://open.spotify.com/..."
+                    placeholder={t("placeholders.spotify")}
                   />
                   <FormField
                     label={t("fields.ytMusicLink")}
                     name="youtubeMusicUrl"
                     value={form.youtubeMusicUrl}
                     onChange={handleChange}
-                    placeholder="https://music.youtube.com/..."
+                    placeholder={t("placeholders.ytMusic")}
                   />
                   <FormField
                     label={t("fields.soundcloudLink")}
                     name="soundcloudUrl"
                     value={form.soundcloudUrl}
                     onChange={handleChange}
-                    placeholder="https://soundcloud.com/..."
+                    placeholder={t("placeholders.soundcloud")}
                   />
                 </div>
               </>
@@ -236,7 +236,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                   name="videoUrl"
                   value={form.videoUrl}
                   onChange={handleChange}
-                  placeholder="https://youtube.com/watch?v=..."
+                  placeholder={t("placeholders.video")}
                   required
                 />
                 <FormField
@@ -244,7 +244,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                   name="videoPlatform"
                   value={form.videoPlatform}
                   onChange={handleChange}
-                  placeholder="z.B. YouTube, Twitch, PeerTube"
+                  placeholder={t("placeholders.platform")}
                   required
                 />
               </>
@@ -257,7 +257,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                   name="newsTitle"
                   value={form.newsTitle}
                   onChange={handleChange}
-                  placeholder="z.B. Neue Entdeckung im Weltraum"
+                  placeholder={t("placeholders.newsTitle")}
                   required
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -266,7 +266,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     name="newsSite"
                     value={form.newsSite}
                     onChange={handleChange}
-                    placeholder="z.B. Golem, Heise, BBC"
+                    placeholder={t("placeholders.newsSite")}
                     required
                   />
                   <FormField
@@ -274,7 +274,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     name="newsUrl"
                     value={form.newsUrl}
                     onChange={handleChange}
-                    placeholder="https://..."
+                    placeholder={t("placeholders.link")}
                     required
                   />
                 </div>
@@ -288,7 +288,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                   name="otherTitle"
                   value={form.otherTitle}
                   onChange={handleChange}
-                  placeholder="z.B. Cooles Open Source Projekt"
+                  placeholder={t("placeholders.otherTitle")}
                   required
                 />
                 <FormField
@@ -296,7 +296,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                   name="otherUrl"
                   value={form.otherUrl}
                   onChange={handleChange}
-                  placeholder="https://..."
+                  placeholder={t("placeholders.link")}
                   required
                 />
               </>

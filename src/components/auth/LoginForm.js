@@ -2,10 +2,12 @@
 import { startAuthentication } from "@simplewebauthn/browser";
 import { Fingerprint } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { validateRelativeCallbackUrl } from "@/lib/utils";
 
 export default function LoginPage() {
+  const t = useTranslations("Auth");
   const router = useRouter();
   // mode: "login" | "register"
   const [mode, setMode] = useState("login");
@@ -23,19 +25,17 @@ export default function LoginPage() {
     if (error) {
       const msg =
         {
-          not_on_server: "Du musst Mitglied auf dem Discord-Server sein.",
-          account_exists:
-            "Ein Konto mit dieser E-Mail oder Discord-ID existiert bereits.",
-          user_not_found:
-            "Kein Konto verknüpft. Bitte registriere dich zuerst.",
-          auth_failed: "Discord-Authentifizierung fehlgeschlagen.",
-          no_code: "Kein Code von Discord erhalten.",
-        }[error] ?? "Fehler bei der Discord-Anmeldung.";
+          not_on_server: t("errors.discord.notOnServer"),
+          account_exists: t("errors.discord.accountExists"),
+          user_not_found: t("errors.discord.userNotFound"),
+          auth_failed: t("errors.discord.authFailed"),
+          no_code: t("errors.discord.noCode"),
+        }[error] ?? t("errors.discord.generic");
       setError(msg);
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+  }, [t]);
 
   async function handleDiscordAuth() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -43,7 +43,7 @@ export default function LoginPage() {
 
     if (mode === "register") {
       if (!displayName.trim()) {
-        setError("Bitte gib einen Anzeigenamen ein.");
+        setError(t("errors.displayNameRequired"));
         return;
       }
       // Set a cookie with the display name so it can be picked up by the callback
@@ -73,8 +73,8 @@ export default function LoginPage() {
       const data = await res.json().catch(() => ({}));
       setError(
         data.error === "user_not_found"
-          ? "Kein Konto mit dieser E-Mail."
-          : "Fehler. Bitte erneut versuchen.",
+          ? t("errors.otp.userNotFound")
+          : t("errors.otp.generic"),
       );
       return;
     }
@@ -95,10 +95,10 @@ export default function LoginPage() {
       const data = await res.json().catch(() => ({}));
       const msg =
         {
-          domain_not_allowed: "Diese E-Mail-Domain ist nicht erlaubt.",
-          email_taken: "Konto existiert bereits. Bitte einloggen.",
-          missing_fields: "Alle Felder ausfüllen.",
-        }[data.error] ?? "Fehler. Bitte erneut versuchen.";
+          domain_not_allowed: t("errors.register.domainNotAllowed"),
+          email_taken: t("errors.register.emailTaken"),
+          missing_fields: t("errors.register.missingFields"),
+        }[data.error] ?? t("errors.otp.generic");
       setError(msg);
       return;
     }
@@ -113,7 +113,7 @@ export default function LoginPage() {
       const optionsRes = await fetch("/api/auth/passkey/login/options", {
         method: "POST",
       });
-      if (!optionsRes.ok) throw new Error("Konnte Login-Optionen nicht laden.");
+      if (!optionsRes.ok) throw new Error(t("errors.passkey.optionsFailed"));
       const options = await optionsRes.json();
 
       // Step 2: Browser authentication
@@ -133,12 +133,12 @@ export default function LoginPage() {
         router.push(validatedCallbackUrl || "/home");
       } else {
         const data = await verifyRes.json();
-        throw new Error(data.error || "Login fehlgeschlagen.");
+        throw new Error(data.error || t("errors.passkey.failed"));
       }
     } catch (err) {
       console.error(err);
       if (err.name !== "NotAllowedError") {
-        setError(err.message || "Passkey-Login fehlgeschlagen.");
+        setError(err.message || t("errors.passkey.failed"));
       }
     } finally {
       setLoading(false);
@@ -156,7 +156,7 @@ export default function LoginPage() {
     });
     setLoading(false);
     if (!res.ok) {
-      setError("Code ungültig oder abgelaufen.");
+      setError(t("errors.otp.invalid"));
       return;
     }
     const urlParams = new URLSearchParams(window.location.search);
@@ -177,10 +177,15 @@ export default function LoginPage() {
       <main className="min-h-screen flex items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <h1 className="text-2xl font-light text-foreground mb-2 text-center">
-            Code eingeben
+            {t("enterCode")}
           </h1>
           <p className="text-sm text-muted-foreground text-center mb-8">
-            Gesendet an <strong className="text-foreground">{email}</strong>
+            {t.rich("sentTo", {
+              email: (chunks) => (
+                <strong className="text-foreground">{chunks}</strong>
+              ),
+              emailValue: email,
+            })}
           </p>
           <form onSubmit={handleVerifyOtp} className="flex flex-col gap-3">
             <input
@@ -190,7 +195,7 @@ export default function LoginPage() {
               maxLength={6}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              placeholder="000000"
+              placeholder={t("codePlaceholder")}
               required
               className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-center text-2xl tracking-[.5em]"
             />
@@ -202,7 +207,7 @@ export default function LoginPage() {
               disabled={loading || code.length < 6}
               className="w-full px-4 py-3 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {loading ? "Wird geprüft…" : "Bestätigen"}
+              {loading ? t("verifying") : t("verifyCode")}
             </button>
             <button
               type="button"
@@ -213,7 +218,7 @@ export default function LoginPage() {
               }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
             >
-              ← Zurück
+              {t("back")}
             </button>
           </form>
         </div>
@@ -225,10 +230,10 @@ export default function LoginPage() {
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-light text-foreground mb-2 text-center">
-          {mode === "login" ? "Willkommen zurück!" : "Konto erstellen"}
+          {mode === "login" ? t("welcomeBack") : t("createAccount")}
         </h1>
         <p className="text-sm text-muted-foreground text-center mb-8">
-          Login/Registration nur mit @sinclear.de-Adresse möglich.
+          {t("domainRestriction")}
         </p>
 
         {/* Mode toggle */}
@@ -244,7 +249,7 @@ export default function LoginPage() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {m === "login" ? "Login" : "Registrieren"}
+              {m === "login" ? t("login") : t("register")}
             </button>
           ))}
         </div>
@@ -258,7 +263,7 @@ export default function LoginPage() {
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Anzeigename"
+              placeholder={t("displayName")}
               required
               className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
@@ -267,7 +272,7 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="E-Mail-Adresse"
+            placeholder={t("email")}
             required
             className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
@@ -278,10 +283,10 @@ export default function LoginPage() {
             className="w-full px-4 py-3 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             {loading
-              ? "Wird gesendet…"
+              ? t("sending")
               : mode === "login"
-                ? "Code senden"
-                : "Konto erstellen & Code senden"}
+                ? t("sendCode")
+                : `${t("createAccount")} & ${t("sendCode")}`}
           </button>
 
           {/* Passkey & OAuth — login only */}
@@ -294,7 +299,7 @@ export default function LoginPage() {
                 className="w-full px-4 py-3 rounded-full border border-primary/30 text-foreground text-sm font-medium hover:bg-primary/5 transition-colors flex items-center justify-center gap-2"
               >
                 <Fingerprint className="w-4 h-4 text-primary" />
-                Mit Passkey einloggen
+                {t("passkeyLogin")}
               </button>
 
               <div className="relative my-3">
@@ -303,7 +308,7 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-xs">
                   <span className="bg-background px-2 text-muted-foreground">
-                    oder weiter mit
+                    {t("orContinueWith")}
                   </span>
                 </div>
               </div>
@@ -363,7 +368,7 @@ export default function LoginPage() {
                   <title>Discord Logo</title>
                   <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
                 </svg>
-                Mit Discord registrieren
+                {t("registerWithDiscord")}
               </button>
             </>
           )}

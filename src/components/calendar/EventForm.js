@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import PermissionEditor from "@/components/calendar/PermissionEditor";
 
 export default function EventForm({
@@ -11,6 +12,9 @@ export default function EventForm({
   onSubmit,
   onCancel,
 }) {
+  const t = useTranslations("Calendar.form");
+  const tc = useTranslations("Common");
+
   return (
     <form
       onSubmit={onSubmit}
@@ -18,15 +22,14 @@ export default function EventForm({
     >
       <input
         type="text"
-        placeholder="Titel *"
+        placeholder={t("title")}
         value={form.title}
         onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
         required
-        autoFocus
         className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
       />
       <textarea
-        placeholder="Beschreibung"
+        placeholder={t("description")}
         value={form.description}
         onChange={(e) =>
           setForm((f) => ({ ...f, description: e.target.value }))
@@ -47,12 +50,12 @@ export default function EventForm({
             className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${form.allDay ? "translate-x-4" : "translate-x-0.5"}`}
           />
         </div>
-        <span className="text-sm text-muted-foreground">Ganztägig</span>
+        <span className="text-sm text-muted-foreground">{t("allDay")}</span>
       </button>
 
       {form.allDay
         ? <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground">Datum</label>
+            <label className="text-xs text-muted-foreground">{t("date")}</label>
             <input
               type="date"
               value={form.startAt.slice(0, 10)}
@@ -65,7 +68,9 @@ export default function EventForm({
           </div>
         : <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">Start *</label>
+              <label className="text-xs text-muted-foreground">
+                {t("start")}
+              </label>
               <input
                 type="datetime-local"
                 value={form.startAt}
@@ -77,7 +82,9 @@ export default function EventForm({
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">Ende</label>
+              <label className="text-xs text-muted-foreground">
+                {t("end")}
+              </label>
               <input
                 type="datetime-local"
                 value={form.endAt}
@@ -101,9 +108,7 @@ export default function EventForm({
             className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${form.isPublic ? "translate-x-4" : "translate-x-0.5"}`}
           />
         </div>
-        <span className="text-sm text-muted-foreground">
-          Öffentlich sichtbar
-        </span>
+        <span className="text-sm text-muted-foreground">{t("public")}</span>
       </button>
 
       <PermissionEditor
@@ -122,14 +127,14 @@ export default function EventForm({
           onClick={onCancel}
           className="flex-1 px-4 py-2.5 rounded-full border border-border text-muted-foreground text-sm hover:text-foreground hover:border-foreground/30 transition-colors"
         >
-          Abbrechen
+          {tc("cancel")}
         </button>
         <button
           type="submit"
           disabled={saving || !form.title.trim()}
           className="flex-1 px-4 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
         >
-          {saving ? "Wird gespeichert…" : "Speichern"}
+          {saving ? tc("saving") : tc("save")}
         </button>
       </div>
     </form>

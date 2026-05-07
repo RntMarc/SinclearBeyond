@@ -1,8 +1,10 @@
 "use client";
 import { Heart, Mail, MessageSquare, Phone, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import BrandIcon from "@/components/BrandIcon";
 
 export default function ContactModal({ contact, onClose }) {
+  const t = useTranslations("Contacts");
   const info = contact.contactInfo || {};
   const social = contact.socialInfo || {};
 
@@ -54,7 +56,7 @@ export default function ContactModal({ contact, onClose }) {
                 )}
               </h2>
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                Mitglied
+                {t("member")}
               </p>
             </div>
           </div>
@@ -64,7 +66,7 @@ export default function ContactModal({ contact, onClose }) {
         <div className="p-6 space-y-6">
           <div className="space-y-4">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-sidebar-border pb-2">
-              Kontaktinformationen
+              {t("infoTitle")}
             </h3>
 
             <div className="space-y-3">
@@ -74,7 +76,7 @@ export default function ContactModal({ contact, onClose }) {
                 </div>
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                    E-Mail
+                    {t("email")}
                   </p>
                   <p className="text-foreground">{contact.email}</p>
                 </div>
@@ -102,7 +104,7 @@ export default function ContactModal({ contact, onClose }) {
 
               {!hasDetails && !hasSocial && (
                 <p className="text-sm text-muted-foreground italic py-2">
-                  Keine weiteren Informationen freigegeben.
+                  {t("noInfo")}
                 </p>
               )}
             </div>
@@ -111,7 +113,7 @@ export default function ContactModal({ contact, onClose }) {
           {hasSocial && (
             <div className="space-y-4">
               <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-sidebar-border pb-2">
-                Soziale Medien
+                {t("socialTitle")}
               </h3>
 
               <div className="space-y-3">
@@ -143,7 +145,7 @@ export default function ContactModal({ contact, onClose }) {
             onClick={onClose}
             className="w-full py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-xl font-medium transition-colors border border-sidebar-border"
           >
-            Schließen
+            {t("close")}
           </button>
         </div>
       </div>

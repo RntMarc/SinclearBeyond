@@ -1,14 +1,16 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { travelAccommodations } from "@/lib/db/schema";
 
-export async function GET(req) {
+export async function GET(_req) {
+  const t = await getTranslations("Common");
   const session = await getSession();
 
   if (!session || !session.isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
   try {
@@ -20,18 +22,16 @@ export async function GET(req) {
     return NextResponse.json(accommodations);
   } catch (error) {
     console.error("[API/Travel/Accommodations] GET Error:", error);
-    return NextResponse.json(
-      { error: "Fehler beim Laden der Unterkünfte." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: t("loadError") }, { status: 500 });
   }
 }
 
 export async function POST(req) {
+  const t = await getTranslations("Common");
   const session = await getSession();
 
   if (!session || !session.isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
   try {
@@ -48,10 +48,7 @@ export async function POST(req) {
     } = await req.json();
 
     if (!name || latitude === undefined || longitude === undefined) {
-      return NextResponse.json(
-        { error: "Name, Breitengrad und Längengrad sind erforderlich." },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: t("missingFields") }, { status: 400 });
     }
 
     const id = crypto.randomUUID();
@@ -72,9 +69,6 @@ export async function POST(req) {
     return NextResponse.json({ ok: true, id });
   } catch (error) {
     console.error("[API/Travel/Accommodations] Error:", error);
-    return NextResponse.json(
-      { error: "Fehler beim Erstellen der Unterkunft." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: t("saveError") }, { status: 500 });
   }
 }

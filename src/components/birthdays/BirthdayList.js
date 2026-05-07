@@ -1,15 +1,18 @@
 "use client";
-import { ChevronRight, Gift, Heart } from "lucide-react";
+import { ChevronRight, Heart } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import BirthdayModal from "./BirthdayModal";
 
 export default function BirthdayList({ initialBirthdays }) {
+  const t = useTranslations("Birthdays");
+  const tc = useTranslations("Common");
   const [selectedUser, setSelectedUser] = useState(null);
 
   if (!initialBirthdays || initialBirthdays.length === 0) {
     return (
       <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
-        <p className="text-muted-foreground">Keine Geburtstage gefunden.</p>
+        <p className="text-muted-foreground">{tc("noEntries")}</p>
       </div>
     );
   }
@@ -49,11 +52,11 @@ export default function BirthdayList({ initialBirthdays }) {
               <div className="text-right hidden sm:block">
                 <p className="text-xs font-medium text-foreground">
                   {user.daysUntil === 0
-                    ? "Heute! 🎉"
-                    : `in ${user.daysUntil} ${user.daysUntil === 1 ? "Tag" : "Tagen"}`}
+                    ? t("today")
+                    : t("inDays", { days: user.daysUntil })}
                 </p>
                 <p className="text-[10px] text-muted-foreground uppercase">
-                  {user.ageAtNextBirthday} Jahre
+                  {user.ageAtNextBirthday} {t("years")}
                 </p>
               </div>
               <ChevronRight

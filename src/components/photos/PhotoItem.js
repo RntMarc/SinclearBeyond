@@ -1,8 +1,10 @@
 "use client";
 import { ExternalLink } from "lucide-react";
+import { useTranslations } from "next-intl";
 import BrandIcon from "@/components/BrandIcon";
 
 export default function PhotoItem({ photo }) {
+  const t = useTranslations("Photos");
   return (
     <div className="break-inside-avoid group relative overflow-hidden rounded-xl bg-sidebar border border-sidebar-border transition-all hover:shadow-xl hover:-translate-y-1">
       <img
@@ -34,7 +36,7 @@ export default function PhotoItem({ photo }) {
             target="_blank"
             rel="noopener noreferrer"
             className="text-white/60 hover:text-white transition-colors"
-            title="Auf Unsplash ansehen"
+            title="Unsplash"
           >
             <BrandIcon
               name="Unsplash"
@@ -47,7 +49,7 @@ export default function PhotoItem({ photo }) {
 
       {/* Fallback for mobile or touch where hover isn't as prevalent */}
       <div className="sm:hidden p-3 border-t border-sidebar-border">
-        <p className="text-xs text-muted-foreground mb-1">Foto von</p>
+        <p className="text-xs text-muted-foreground mb-1">{t("photoBy")}</p>
         <a
           href={`https://unsplash.com/@${photo.unsplashUser}`}
           target="_blank"

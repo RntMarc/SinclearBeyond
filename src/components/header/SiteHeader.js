@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { getTranslations } from "next-intl/server";
 import LogoutButton from "@/components/auth/LogoutButton";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -6,6 +7,7 @@ import { users } from "@/lib/db/schema";
 import OpenAppButton from "./OpenAppButton";
 
 export default async function SiteHeader({ variant = "default" }) {
+  const t = await getTranslations("Auth");
   const session = await getSession();
 
   let user = null;
@@ -30,28 +32,21 @@ export default async function SiteHeader({ variant = "default" }) {
       >
         Sinclear Beyond
       </a>
-      {variant !== "loginPage" && (
-        <>
-          {session
-            ? <div className="flex items-center gap-3">
-                <span className="text-sm text-muted-foreground hidden sm:block">
-                  {user?.displayName ?? session.email}
-                </span>
-                {variant == "loggedInOnLanding" && (
-                  <>
-                    <OpenAppButton />
-                  </>
-                )}
-                <LogoutButton />
-              </div>
-            : <a
-                href="/login"
-                className="text-sm font-medium px-4 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
-              >
-                Login
-              </a>}
-        </>
-      )}
+      {variant !== "loginPage" &&
+        (session
+          ? <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground hidden sm:block">
+                {user?.displayName ?? session.email}
+              </span>
+              {variant === "loggedInOnLanding" && <OpenAppButton />}
+              <LogoutButton />
+            </div>
+          : <a
+              href="/login"
+              className="text-sm font-medium px-4 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
+            >
+              {t("login")}
+            </a>)}
     </nav>
   );
 }

@@ -30,7 +30,7 @@ export default function FeedDashboard() {
         const data = await res.json();
         setPosts(data);
       }
-    } catch (error) {
+    } catch (_error) {
       setNotification({
         type: "error",
         message: t("loadError"),
@@ -38,7 +38,7 @@ export default function FeedDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [category, onlyCloseFriends]);
+  }, [category, onlyCloseFriends, t]);
 
   useEffect(() => {
     fetchPosts();
