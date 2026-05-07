@@ -57,7 +57,7 @@ export default async function DiscoverPage() {
             {/* Categories */}
             <section>
               <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-                Kategorien
+                {t("categoriesLabel")}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Link
@@ -70,7 +70,7 @@ export default async function DiscoverPage() {
                   <div>
                     <h3 className="font-bold">{t("categories.gastronomy")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Restaurants, Cafés und mehr
+                      {t("gastronomyDesc")}
                     </p>
                   </div>
                 </Link>
@@ -82,7 +82,7 @@ export default async function DiscoverPage() {
                   <div>
                     <h3 className="font-bold">{t("categories.leisure")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Demnächst verfügbar
+                      {t("leisureDesc")}
                     </p>
                   </div>
                 </div>
@@ -95,34 +95,37 @@ export default async function DiscoverPage() {
                 <Bookmark size={20} className="text-primary" />
                 {t("bookmarks")}
               </h2>
-              {bookmarks.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {bookmarks.map((place) => (
-                    <Link
-                      key={place.id}
-                      href={`/entdecken/orte/${place.id}`}
-                      className="p-4 bg-card border border-border rounded-xl hover:border-primary/50 transition-all shadow-sm"
-                    >
-                      <h3 className="font-bold text-sm truncate">{place.name}</h3>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        {place.address}
-                      </p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                          {t(`categories.${place.category}`)}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="p-12 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
-                  <Bookmark size={32} className="text-muted-foreground/30 mb-4" />
-                  <p className="text-sm text-muted-foreground max-w-xs">
-                    {t("noBookmarks")}
-                  </p>
-                </div>
-              )}
+              {bookmarks.length > 0
+                ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {bookmarks.map((place) => (
+                      <Link
+                        key={place.id}
+                        href={`/entdecken/orte/${place.id}`}
+                        className="p-4 bg-card border border-border rounded-xl hover:border-primary/50 transition-all shadow-sm"
+                      >
+                        <h3 className="font-bold text-sm truncate">
+                          {place.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {place.address}
+                        </p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                            {t(`categories.${place.category}`)}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                : <div className="p-12 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
+                    <Bookmark
+                      size={32}
+                      className="text-muted-foreground/30 mb-4"
+                    />
+                    <p className="text-sm text-muted-foreground max-w-xs">
+                      {t("noBookmarks")}
+                    </p>
+                  </div>}
             </section>
           </div>
         </div>
