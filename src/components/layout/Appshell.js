@@ -2,8 +2,8 @@
 import {
   Calendar,
   Camera,
-  Gift,
   Compass,
+  Gift,
   Lock,
   Map as MapIcon,
   Menu,

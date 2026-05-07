@@ -21,10 +21,12 @@ import {
   User as UserIcon,
   Utensils,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import ReviewForm from "@/components/discover/ReviewForm";
+import SimpleOSM from "@/components/discover/SimpleOSM";
 
 export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const t = useTranslations("Discover");

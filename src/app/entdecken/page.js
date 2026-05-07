@@ -1,13 +1,13 @@
-import { getTranslations } from "next-intl/server";
-import { Compass, Utensils, TreePine, Bookmark } from "lucide-react";
+import { eq } from "drizzle-orm";
+import { Bookmark, Compass, TreePine, Utensils } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import AppShell from "@/components/layout/Appshell";
+import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { discoverBookmarks, discoverPlaces } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { getSession } from "@/lib/auth/session";
 import { getProfileData } from "@/lib/profile/profile";
-import { redirect } from "next/navigation";
-import AppShell from "@/components/layout/Appshell";
 
 export default async function DiscoverPage() {
   const t = await getTranslations("Discover");
