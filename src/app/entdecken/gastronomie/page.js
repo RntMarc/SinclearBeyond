@@ -1,13 +1,13 @@
-import { getTranslations } from "next-intl/server";
-import { ArrowLeft, Star, Utensils, Plus } from "lucide-react";
+import { eq, sql } from "drizzle-orm";
+import { ArrowLeft, Plus, Star, Utensils } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import AppShell from "@/components/layout/Appshell";
+import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { discoverPlaces, discoverReviews } from "@/lib/db/schema";
-import { eq, sql } from "drizzle-orm";
-import { getSession } from "@/lib/auth/session";
 import { getProfileData } from "@/lib/profile/profile";
-import { redirect } from "next/navigation";
-import AppShell from "@/components/layout/Appshell";
 
 export default async function GastronomyListPage() {
   const t = await getTranslations("Discover");
@@ -115,7 +115,10 @@ export default async function GastronomyListPage() {
                   ))}
                 </div>
               : <div className="p-20 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
-                  <Utensils size={48} className="text-muted-foreground/20 mb-4" />
+                  <Utensils
+                    size={48}
+                    className="text-muted-foreground/20 mb-4"
+                  />
                   <p className="text-muted-foreground mb-6">
                     Noch keine Restaurants oder Cafés eingetragen.
                   </p>

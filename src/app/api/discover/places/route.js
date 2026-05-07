@@ -1,4 +1,6 @@
 import crypto from "node:crypto";
+import { eq, sql } from "drizzle-orm";
+import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import {
@@ -6,8 +8,6 @@ import {
   discoverPlaces,
   discoverReviews,
 } from "@/lib/db/schema";
-import { eq, sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
 
 export async function GET(req) {
   const session = await getSession();

@@ -1,8 +1,8 @@
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { discoverReviews } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 
 export async function DELETE(req, { params }) {
   const session = await getSession();
