@@ -1,5 +1,7 @@
 "use client";
 
+import ReviewModal from "@/components/discover/ReviewModal";
+import SimpleOSM from "@/components/discover/SimpleOSM";
 import {
   ArrowLeft,
   Bookmark,
