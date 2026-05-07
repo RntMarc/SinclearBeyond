@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, MapPin, Plus, Trash2, UserPlus, X } from "lucide-react";
+import { Calendar, MapPin, Plus, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import Notification from "@/components/Notification";
 import { toLocalDatetimeValue } from "@/lib/calendar/calendarUtils";

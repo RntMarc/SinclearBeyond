@@ -43,7 +43,7 @@ export default function AccommodationFormModal({ onClose, onCreated }) {
       const result = await res.json();
       onCreated(result);
       onClose();
-    } catch (error) {
+    } catch (_error) {
       setSaving(false);
       setFormError("Ein unerwarteter Fehler ist aufgetreten.");
     }

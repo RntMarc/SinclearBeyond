@@ -1,7 +1,9 @@
 "use client";
 import { Calendar, Gift, Heart, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function BirthdayModal({ user, onClose }) {
+  const t = useTranslations("Birthdays");
   const bday = new Date(user.birthday);
   const formattedDate = bday.toLocaleDateString("de-DE", {
     day: "2-digit",
@@ -35,7 +37,7 @@ export default function BirthdayModal({ user, onClose }) {
                 )}
               </h2>
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                Mitglied
+                {useTranslations("Contacts")("member")}
               </p>
             </div>
           </div>
@@ -45,7 +47,7 @@ export default function BirthdayModal({ user, onClose }) {
         <div className="p-6 space-y-6">
           <div className="space-y-4">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-sidebar-border pb-2">
-              Geburtstagsinfo
+              {t("infoTitle")}
             </h3>
 
             <div className="space-y-3">
@@ -55,7 +57,7 @@ export default function BirthdayModal({ user, onClose }) {
                 </div>
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                    Geburtsdatum
+                    {t("dateLabel")}
                   </p>
                   <p className="text-foreground">{formattedDate}</p>
                 </div>
@@ -67,17 +69,22 @@ export default function BirthdayModal({ user, onClose }) {
                 </div>
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                    Alter
+                    {t("ageLabel")}
                   </p>
-                  <p className="text-foreground">{user.currentAge} Jahre</p>
+                  <p className="text-foreground">
+                    {user.currentAge} {t("years")}
+                  </p>
                 </div>
               </div>
 
               <div className="mt-4 p-3 bg-primary/5 rounded-xl border border-primary/10 text-center">
                 <p className="text-sm text-primary font-medium">
                   {user.daysUntil === 0
-                    ? "Hat heute Geburtstag! 🎉"
-                    : `Noch ${user.daysUntil} Tage bis zum ${user.ageAtNextBirthday}. Geburtstag.`}
+                    ? t("todayMessage")
+                    : t("countdownMessage", {
+                        days: user.daysUntil,
+                        age: user.ageAtNextBirthday,
+                      })}
                 </p>
               </div>
             </div>
@@ -87,7 +94,7 @@ export default function BirthdayModal({ user, onClose }) {
             onClick={onClose}
             className="w-full py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-xl font-medium transition-colors border border-sidebar-border"
           >
-            Schließen
+            {useTranslations("Contacts")("close")}
           </button>
         </div>
       </div>

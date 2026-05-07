@@ -1,11 +1,13 @@
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { verifyAuthentication } from "@/lib/auth/passkey";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function POST(req) {
+  const t = await getTranslations("Common");
   try {
     const body = await req.json();
     const result = await verifyAuthentication(body);
@@ -33,15 +35,12 @@ export async function POST(req) {
 
       return NextResponse.json({ ok: true });
     } else {
-      return NextResponse.json(
-        { error: "Verifizierung fehlgeschlagen" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: t("error") }, { status: 400 });
     }
   } catch (err) {
     console.error(err);
     return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
+      { error: err.message || t("error") },
       { status: 500 },
     );
   }

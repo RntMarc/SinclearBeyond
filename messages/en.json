@@ -13,7 +13,18 @@
     "add": "Add",
     "search": "Search...",
     "loading": "Loading...",
-    "noEntries": "No entries found."
+    "noEntries": "No entries found.",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "notFound": "Not found",
+    "missingFields": "Missing required fields",
+    "saveError": "Error saving",
+    "loadError": "Error loading",
+    "deleteError": "Error deleting",
+    "notImplemented": "Not implemented",
+    "tooManyRequests": "Too many requests",
+    "alreadyParticipant": "Already a participant.",
+    "genericError": "An error occurred."
   },
   "Navigation": {
     "entertainment": "Entertainment",
@@ -28,12 +39,65 @@
     "closeMenu": "Close menu",
     "openMenu": "Open menu"
   },
+  "Auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email Address",
+    "displayName": "Display Name",
+    "code": "Verification Code",
+    "codePlaceholder": "000000",
+    "sendCode": "Send code",
+    "verifyCode": "Confirm",
+    "verifying": "Verifying…",
+    "sending": "Sending…",
+    "back": "← Back",
+    "welcomeBack": "Welcome back!",
+    "createAccount": "Create account",
+    "domainRestriction": "Login/Registration only possible with @sinclear.de address.",
+    "enterCode": "Enter code",
+    "sentTo": "Sent to <email>{emailValue}</email>",
+    "passkeyLogin": "Login with Passkey",
+    "orContinueWith": "or continue with",
+    "registerWithDiscord": "Register with Discord",
+    "errors": {
+      "discord": {
+        "notOnServer": "You must be a member of the Discord server.",
+        "accountExists": "An account with this email or Discord ID already exists.",
+        "userNotFound": "No account linked. Please register first.",
+        "authFailed": "Discord authentication failed.",
+        "noCode": "No code received from Discord.",
+        "generic": "Error during Discord login."
+      },
+      "otp": {
+        "userNotFound": "No account with this email.",
+        "invalid": "Code invalid or expired.",
+        "generic": "Error. Please try again."
+      },
+      "register": {
+        "domainNotAllowed": "This email domain is not allowed.",
+        "emailTaken": "Account already exists. Please log in.",
+        "missingFields": "Please fill in all fields."
+      },
+      "passkey": {
+        "optionsFailed": "Could not load login options.",
+        "failed": "Passkey login failed."
+      },
+      "displayNameRequired": "Please enter a display name."
+    }
+  },
+  "Home": {
+    "subtitle": "Dashboard",
+    "welcome": "Hello, {name}.",
+    "description": "Welcome to Sinclear Beyond."
+  },
   "LandingPage": {
     "badge": "Community Platform",
     "heroTitle": "Together we are <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
     "heroDesc": "Chats, calendars, birthdays, contacts – everything a group needs to survive. In one place.",
     "ctaStart": "Start now",
     "ctaFeatures": "What it can do ↓",
+    "ctaOpenApp": "Open App",
     "problemStatement": "Discord is insecure and increasingly controversial. Outside of it, we are fragmented across many messengers. We deserve our <em class='italic text-foreground'>own place.</em>",
     "featuresTitle": "What Sinclear Beyond brings",
     "readyTitle": "Ready?",
@@ -83,7 +147,7 @@
       "past": "Past"
     },
     "overview": "Overview",
-    "accommodation": "Accommodation",
+    "accommodationLabel": "Accommodation",
     "participants": "Participants",
     "events": "Events",
     "noDescription": "No description available.",
@@ -91,7 +155,96 @@
     "otherAccommodations": "Other participants' accommodations",
     "participantLabel": "Participant",
     "noEvents": "No events planned.",
-    "noTrips": "No trips found."
+    "noTrips": "No trips found.",
+    "newTrip": "New Trip",
+    "form": {
+      "name": "Name",
+      "description": "Description",
+      "start": "Start",
+      "end": "End",
+      "saveTrip": "Save Trip",
+      "placeholders": {
+        "name": "e.g. Summer Vacation",
+        "description": "..."
+      }
+    },
+    "accommodation": {
+      "name": "Accommodation Name",
+      "description": "Description",
+      "address": "Address",
+      "latitude": "Latitude (Lat)",
+      "longitude": "Longitude (Lon)",
+      "mapIntegration": "Map Integration",
+      "mapPlaceholder": "Placeholder for future search",
+      "phone": "Phone",
+      "email": "Email",
+      "osmId": "OpenStreetMap ID",
+      "isHotel": "This is a hotel",
+      "saveAccommodation": "Save Accommodation",
+      "placeholders": {
+        "name": "e.g. Hotel Central",
+        "description": "Optional description...",
+        "address": "Example St 1, 12345 City",
+        "latitude": "52.5200",
+        "longitude": "13.4050",
+        "phone": "+44 123 456789",
+        "email": "info@hotel.com",
+        "osmId": "e.g. 12345678"
+      }
+    }
+  },
+  "Birthdays": {
+    "subtitle": "Celebrations",
+    "title": "Birthdays",
+    "today": "Today! 🎉",
+    "inDays": "in {days} {days, plural, =1 {day} other {days}}",
+    "years": "years",
+    "infoTitle": "Birthday Info",
+    "dateLabel": "Date of Birth",
+    "ageLabel": "Age",
+    "todayMessage": "Has a birthday today! 🎉",
+    "countdownMessage": "{days} {days, plural, =1 {day} other {days}} left until {age}th birthday."
+  },
+  "Contacts": {
+    "subtitle": "Network",
+    "title": "Contacts",
+    "member": "Member",
+    "infoTitle": "Contact Information",
+    "email": "Email",
+    "noInfo": "No further information shared.",
+    "socialTitle": "Social Media",
+    "close": "Close"
+  },
+  "Photos": {
+    "subtitle": "Gallery",
+    "title": "Photography",
+    "photoBy": "Photo by"
+  },
+  "Calendar": {
+    "agenda": "Agenda",
+    "today": "Today",
+    "newEntry": "New Entry",
+    "loading": "Loading trip data...",
+    "views": {
+      "month": "Month",
+      "week": "Week",
+      "day": "Day",
+      "agenda": "Agenda"
+    },
+    "form": {
+      "title": "Title *",
+      "description": "Description",
+      "allDay": "All day",
+      "date": "Date",
+      "start": "Start *",
+      "end": "End",
+      "public": "Publicly visible",
+      "addUser": "Add user…",
+      "permissions": "Permissions",
+      "user": "User",
+      "view": "View",
+      "edit": "Edit"
+    }
   },
   "Feed": {
     "title": "Entertainment",
@@ -127,6 +280,19 @@
       "update": "Update",
       "successUpdate": "Post updated",
       "successShare": "Post shared",
+      "placeholders": {
+        "artist": "e.g. Pink Floyd",
+        "songTitle": "e.g. Wish You Were Here",
+        "spotify": "https://open.spotify.com/...",
+        "ytMusic": "https://music.youtube.com/...",
+        "soundcloud": "https://soundcloud.com/...",
+        "video": "https://youtube.com/watch?v=...",
+        "platform": "e.g. YouTube, Twitch, PeerTube",
+        "newsTitle": "e.g. New Discovery in Space",
+        "newsSite": "e.g. Wired, The Verge, BBC",
+        "link": "https://...",
+        "otherTitle": "e.g. Cool Open Source Project"
+      },
       "fields": {
         "artist": "Artist",
         "title": "Title",

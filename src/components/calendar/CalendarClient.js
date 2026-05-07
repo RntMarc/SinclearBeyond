@@ -1,6 +1,7 @@
 "use client";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 import BirthdayModal from "@/components/birthdays/BirthdayModal";
 import CalendarAgenda from "@/components/calendar/CalendarAgenda";
 import CalendarDayLabels from "@/components/calendar/CalendarDayLabels";
@@ -22,6 +23,7 @@ import {
 } from "@/lib/calendar/calendarUtils";
 
 export default function KalenderClient({ userId }) {
+  const t = useTranslations("Calendar");
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -140,7 +142,7 @@ export default function KalenderClient({ userId }) {
         type="button"
         onClick={() => setFormModal({ mode: "create", event: today })}
         className="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-transform active:scale-95 z-50"
-        aria-label="Neuer Eintrag"
+        aria-label={t("newEntry")}
       >
         <Plus size={24} />
       </button>
@@ -177,7 +179,7 @@ export default function KalenderClient({ userId }) {
               new Date(selectedEvent.startAt).getFullYear() -
               new Date(selectedEvent.originalBirthday).getFullYear(),
             daysUntil: Math.ceil(
-              (new Date(selectedEvent.startAt) - new Date()) /
+              (new Date(selectedEvent.startAt) - Date.now()) /
                 (1000 * 60 * 60 * 24),
             ),
             ageAtNextBirthday:

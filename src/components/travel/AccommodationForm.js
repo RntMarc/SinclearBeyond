@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import SaveButton from "@/components/SaveButton";
 
 export default function AccommodationForm({
@@ -10,6 +11,8 @@ export default function AccommodationForm({
   onSubmit,
   onCancel,
 }) {
+  const t = useTranslations("Travel.accommodation");
+  const tc = useTranslations("Common");
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -30,7 +33,7 @@ export default function AccommodationForm({
         <div className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-              Name der Unterkunft
+              {t("name")}
             </label>
             <input
               type="text"
@@ -38,20 +41,20 @@ export default function AccommodationForm({
               value={form.name}
               onChange={handleChange}
               required
-              placeholder="z.B. Hotel Central"
+              placeholder={t("placeholders.name")}
               className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
 
           <div className="space-y-1.5">
             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-              Beschreibung
+              {t("description")}
             </label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="Optionale Beschreibung..."
+              placeholder={t("placeholders.description")}
               rows={2}
               className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
@@ -59,14 +62,14 @@ export default function AccommodationForm({
 
           <div className="space-y-1.5">
             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-              Adresse
+              {t("address")}
             </label>
             <input
               type="text"
               name="address"
               value={form.address}
               onChange={handleChange}
-              placeholder="Musterstraße 1, 12345 Stadt"
+              placeholder={t("placeholders.address")}
               className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
@@ -74,7 +77,7 @@ export default function AccommodationForm({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-                Breitengrad (Lat)
+                {t("latitude")}
               </label>
               <input
                 type="number"
@@ -83,14 +86,14 @@ export default function AccommodationForm({
                 value={form.latitude}
                 onChange={handleChange}
                 required
-                placeholder="52.5200"
+                placeholder={t("placeholders.latitude")}
                 className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-                Längengrad (Lon)
+                {t("longitude")}
               </label>
               <input
                 type="number"
@@ -99,7 +102,7 @@ export default function AccommodationForm({
                 value={form.longitude}
                 onChange={handleChange}
                 required
-                placeholder="13.4050"
+                placeholder={t("placeholders.longitude")}
                 className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
@@ -111,9 +114,9 @@ export default function AccommodationForm({
                 M
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium">Karten-Integration</p>
+                <p className="text-xs font-medium">{t("mapIntegration")}</p>
                 <p className="text-[10px] text-muted-foreground">
-                  Platzhalter für zukünftige Suche
+                  {t("mapPlaceholder")}
                 </p>
               </div>
             </div>
@@ -122,28 +125,28 @@ export default function AccommodationForm({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-                Telefon
+                {t("phone")}
               </label>
               <input
                 type="tel"
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
-                placeholder="+49 123 456789"
+                placeholder={t("placeholders.phone")}
                 className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-                E-Mail
+                {t("email")}
               </label>
               <input
                 type="email"
                 name="mail"
                 value={form.mail}
                 onChange={handleChange}
-                placeholder="info@hotel.de"
+                placeholder={t("placeholders.email")}
                 className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
@@ -151,14 +154,14 @@ export default function AccommodationForm({
 
           <div className="space-y-1.5">
             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-              OpenStreetMap ID
+              {t("osmId")}
             </label>
             <input
               type="text"
               name="osmId"
               value={form.osmId}
               onChange={handleChange}
-              placeholder="z.B. 12345678"
+              placeholder={t("placeholders.osmId")}
               className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
@@ -171,9 +174,7 @@ export default function AccommodationForm({
               onChange={handleChange}
               className="w-4 h-4 rounded border-sidebar-border text-primary focus:ring-primary/20"
             />
-            <span className="text-sm font-medium">
-              Es handelt sich um ein Hotel
-            </span>
+            <span className="text-sm font-medium">{t("isHotel")}</span>
           </label>
         </div>
       </div>
@@ -184,10 +185,10 @@ export default function AccommodationForm({
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
-          Abbrechen
+          {tc("cancel")}
         </button>
         <SaveButton loading={saving} type="submit">
-          Unterkunft speichern
+          {t("saveAccommodation")}
         </SaveButton>
       </div>
     </form>

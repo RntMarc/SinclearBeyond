@@ -19,7 +19,7 @@ export default function PasskeyManager() {
 
   useEffect(() => {
     fetchPasskeys();
-  }, []);
+  }, [fetchPasskeys]);
 
   async function fetchPasskeys() {
     try {
@@ -186,7 +186,6 @@ export default function PasskeyManager() {
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               className="w-full px-4 py-2 rounded-lg bg-background border border-border mb-6 focus:outline-none focus:ring-2 focus:ring-primary/50"
-              autoFocus
             />
             <div className="flex gap-3">
               <button

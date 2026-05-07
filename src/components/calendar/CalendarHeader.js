@@ -8,15 +8,9 @@ import {
   List,
   Plus,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { MONTHS } from "@/lib/calendar/calendarUtils";
-
-const VIEW_MODES = [
-  { id: "month", label: "Monat", icon: Calendar },
-  { id: "week", label: "Woche", icon: CalendarRange },
-  { id: "day", label: "Tag", icon: CalendarDays },
-  { id: "agenda", label: "Agenda", icon: List },
-];
 
 export default function CalendarHeader({
   year,
@@ -28,7 +22,15 @@ export default function CalendarHeader({
   onToday,
   onNew,
 }) {
+  const t = useTranslations("Calendar");
   const isMobile = useIsMobile();
+
+  const VIEW_MODES = [
+    { id: "month", label: t("views.month"), icon: Calendar },
+    { id: "week", label: t("views.week"), icon: CalendarRange },
+    { id: "day", label: t("views.day"), icon: CalendarDays },
+    { id: "agenda", label: t("views.agenda"), icon: List },
+  ];
 
   return (
     <div
@@ -52,7 +54,7 @@ export default function CalendarHeader({
           <span
             className={`text-sm sm:text-base font-light text-foreground select-none ${viewMode !== "agenda" ? "min-w-[120px] sm:w-44 text-center" : ""}`}
           >
-            {viewMode === "agenda" ? "Agenda" : `${MONTHS[month]} ${year}`}
+            {viewMode === "agenda" ? t("agenda") : `${MONTHS[month]} ${year}`}
           </span>
           {viewMode !== "agenda" && (
             <>
@@ -68,7 +70,7 @@ export default function CalendarHeader({
                 onClick={onToday}
                 className="ml-1 px-2 sm:px-3 py-1 text-[10px] sm:text-xs rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
               >
-                Heute
+                {t("today")}
               </button>
             </>
           )}
@@ -125,7 +127,7 @@ export default function CalendarHeader({
           className={`${isMobile ? "hidden" : "hidden md:flex"} items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0`}
         >
           <Plus size={15} />
-          Neuer Eintrag
+          {t("newEntry")}
         </button>
       </div>
     </div>

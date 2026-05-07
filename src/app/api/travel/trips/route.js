@@ -1,24 +1,23 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { travelTrips } from "@/lib/db/schema";
 
 export async function POST(req) {
+  const t = await getTranslations("Common");
   const session = await getSession();
 
   if (!session || !session.isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
   try {
     const { name, description, start, end } = await req.json();
 
     if (!name || !start || !end) {
-      return NextResponse.json(
-        { error: "Name, Start und Ende sind erforderlich." },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: t("missingFields") }, { status: 400 });
     }
 
     const id = crypto.randomUUID();
@@ -34,9 +33,6 @@ export async function POST(req) {
     return NextResponse.json({ ok: true, id });
   } catch (error) {
     console.error("[API/Travel/Trips] Error:", error);
-    return NextResponse.json(
-      { error: "Fehler beim Erstellen der Reise." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: t("saveError") }, { status: 500 });
   }
 }

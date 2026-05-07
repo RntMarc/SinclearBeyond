@@ -1,20 +1,22 @@
 import crypto from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { eventPermissions, events } from "@/lib/db/schema";
 
 export async function PUT(req, { params }) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   if (!session)
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
 
   const { id } = await params;
   const userId = session.sub;
 
   const [ev] = await db.select().from(events).where(eq(events.id, id)).limit(1);
-  if (!ev) return NextResponse.json({ error: "not_found" }, { status: 404 });
+  if (!ev) return NextResponse.json({ error: t("notFound") }, { status: 404 });
 
   const isCreator = ev.creatorId === userId;
   if (!isCreator) {
@@ -30,7 +32,7 @@ export async function PUT(req, { params }) {
       )
       .limit(1);
     if (!perm)
-      return NextResponse.json({ error: "forbidden" }, { status: 403 });
+      return NextResponse.json({ error: t("forbidden") }, { status: 403 });
   }
 
   const {
@@ -44,7 +46,7 @@ export async function PUT(req, { params }) {
   } = await req.json();
 
   if (!title?.trim() || !startAt)
-    return NextResponse.json({ error: "missing_fields" }, { status: 400 });
+    return NextResponse.json({ error: t("missingFields") }, { status: 400 });
 
   await db
     .update(events)

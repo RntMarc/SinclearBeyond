@@ -1,15 +1,17 @@
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { travelEvents } from "@/lib/db/schema";
 
 export async function PATCH(req, { params }) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   const { id } = await params;
 
   if (!session || !session.isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
   try {
@@ -43,19 +45,17 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[API/Travel/Events] PATCH Error:", error);
-    return NextResponse.json(
-      { error: "Fehler beim Aktualisieren des Events." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: t("saveError") }, { status: 500 });
   }
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(_req, { params }) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   const { id } = await params;
 
   if (!session || !session.isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
   try {
@@ -63,9 +63,6 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[API/Travel/Events] DELETE Error:", error);
-    return NextResponse.json(
-      { error: "Fehler beim Löschen des Events." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: t("deleteError") }, { status: 500 });
   }
 }

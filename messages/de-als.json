@@ -13,7 +13,18 @@
     "add": "Dazua dõa",
     "search": "Suacha...",
     "loading": "Ladet grad...",
-    "noEntries": "Nix gfonda."
+    "noEntries": "Nix gfonda.",
+    "unauthorized": "Dõ därfsch net nei",
+    "forbidden": "Verbodda",
+    "notFound": "Fend i net",
+    "missingFields": "Du hosch ebbes vergessa",
+    "saveError": "Des hot net gklabbd beim Schbeichra",
+    "loadError": "I konnt des net lada",
+    "deleteError": "Lescha hot net gklabbd",
+    "notImplemented": "Geit's no net",
+    "tooManyRequests": "Langsam reit's",
+    "alreadyParticipant": "Bisch scho dabei.",
+    "genericError": "Ebbes isch schiaf ganga."
   },
   "Navigation": {
     "entertainment": "Onderhaldong",
@@ -28,12 +39,65 @@
     "closeMenu": "Menü zuamacha",
     "openMenu": "Menü uffmacha"
   },
+  "Auth": {
+    "login": "Neigauda",
+    "register": "Dazua ghera",
+    "logout": "Abhaua",
+    "email": "E-Mail-Adress",
+    "displayName": "Wie ma di rüaft",
+    "code": "Bschdädigongscode",
+    "codePlaceholder": "000000",
+    "sendCode": "Code rausschicken",
+    "verifyCode": "Basst scho",
+    "verifying": "I guck grad…",
+    "sending": "I schick's grad raus…",
+    "back": "← Zurück",
+    "welcomeBack": "Schee, dass wieder dõ bisch!",
+    "createAccount": "Mitlega",
+    "domainRestriction": "Dõ komma bloß Leit mit ra @sinclear.de-Adress nei.",
+    "enterCode": "Code naidõa",
+    "sentTo": "Schickt an <email>{emailValue}</email>",
+    "passkeyLogin": "Mit Passkey neigauda",
+    "orContinueWith": "odr halt so",
+    "registerWithDiscord": "Über Discord mitmacha",
+    "errors": {
+      "discord": {
+        "notOnServer": "Du musch scho uff de Discord-Server drauf.",
+        "accountExists": "Oiner mit dera E-Mail odr Discord-ID isch scho dõ.",
+        "userNotFound": "I kenn di no net. Musch di erscht mitlega.",
+        "authFailed": "Des mit Discord hot net gklabbd.",
+        "noCode": "Discord hot mir koin Code gäba.",
+        "generic": "Fähler bei dr Discord-Anmeldong."
+      },
+      "otp": {
+        "userNotFound": "Dera E-Mail kenn i net.",
+        "invalid": "Doi Code isch nix meh wert odr falsch.",
+        "generic": "Ebbes isch schiaf ganga. Probier's nomol."
+      },
+      "register": {
+        "domainNotAllowed": "Die E-Mail-Adress dürfa mir net.",
+        "emailTaken": "Dich geit's scho. Gugg mol beim Login.",
+        "missingFields": "Du musch scho älles ausfilla."
+      },
+      "passkey": {
+        "optionsFailed": "I konnt die Login-Sacha net lada.",
+        "failed": "Des mit dem Passkey hot net gklabbd."
+      },
+      "displayNameRequired": "Schreib mol dei Nama nei."
+    }
+  },
+  "Home": {
+    "subtitle": "Doin Blatz",
+    "welcome": "Griaß di, {name}.",
+    "description": "Schee, dass dõ bisch bei Sinclear Beyond."
+  },
   "LandingPage": {
     "badge": "Community-Pladdform",
     "heroTitle": "Zemma semmr <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
     "heroDesc": "Chats, Kalender, Geburtsdag, Kondagde – älles was ma für d'Grupp braucht. An oim Fleck.",
     "ctaStart": "Jetzt loslega",
     "ctaFeatures": "Was des ko ↓",
+    "ctaOpenApp": "App uffmacha",
     "problemStatement": "Discord isch osicher ond wird emmer gschbässiger. Außerhalb verzettelt mr sich uff viele Messenger. Mir brauchet an <em class='italic text-foreground'>oigena Blatz.</em>",
     "featuresTitle": "Was Sinclear Beyond mitbrengt",
     "readyTitle": "Bisch parat?",
@@ -83,7 +147,7 @@
       "past": "Vorbei"
     },
     "overview": "Iberblick",
-    "accommodation": "Onderkonft",
+    "accommodationLabel": "Onderkonft",
     "participants": "Mitroisende",
     "events": "Events",
     "noDescription": "S'geit koi Beschreibong.",
@@ -91,7 +155,96 @@
     "otherAccommodations": "Andere Onderkünfd vo de Leit",
     "participantLabel": "Doilnehmer",
     "noEvents": "Koine Events blant.",
-    "noTrips": "Koine Reisa gfonda."
+    "noTrips": "Koine Reisa gfonda.",
+    "newTrip": "Nuie Reis",
+    "form": {
+      "name": "Nama",
+      "description": "Was mr dõ macht",
+      "start": "Oafang",
+      "end": "End",
+      "saveTrip": "Reis schbeichera",
+      "placeholders": {
+        "name": "z.B. Sommerurlaub",
+        "description": "..."
+      }
+    },
+    "accommodation": {
+      "name": "Wia d'Onderkonft hoißt",
+      "description": "Was mr dõ macht",
+      "address": "Wo des isch",
+      "latitude": "Breitengrad (Lat)",
+      "longitude": "Längengrad (Lon)",
+      "mapIntegration": "Kärdle-Gschicht",
+      "mapPlaceholder": "Dõ ka mr bald suacha",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "osmId": "OpenStreetMap ID",
+      "isHotel": "Des isch a Hotel",
+      "saveAccommodation": "Onderkonft schbeichera",
+      "placeholders": {
+        "name": "z.B. Hotel Central",
+        "description": "Wenn de magsch...",
+        "address": "Mustersträßle 1, 12345 Schdaud",
+        "latitude": "52.5200",
+        "longitude": "13.4050",
+        "phone": "+49 123 456789",
+        "email": "info@hotel.de",
+        "osmId": "z.B. 12345678"
+      }
+    }
+  },
+  "Birthdays": {
+    "subtitle": "Feschdle",
+    "title": "Geburtsdag",
+    "today": "Heit! 🎉",
+    "inDays": "in {days} {days, plural, =1 {Dag} other {Däg}}",
+    "years": "Johr",
+    "infoTitle": "Geburtsdags-Gschwätz",
+    "dateLabel": "Wann gabora",
+    "ageLabel": "Aldr",
+    "todayMessage": "Hot heit Geburtsdag! 🎉",
+    "countdownMessage": "No {days} {days, plural, =1 {Dag} other {Däg}} bis zom {age}. Geburtsdag."
+  },
+  "Contacts": {
+    "subtitle": "Leit",
+    "title": "Kondagde",
+    "member": "Dabei",
+    "infoTitle": "Wia mr en erreicht",
+    "email": "E-Mail",
+    "noInfo": "Hot nix weidrs gsagt.",
+    "socialTitle": "Im Netz",
+    "close": "Zuamacha"
+  },
+  "Photos": {
+    "subtitle": "Bildla",
+    "title": "Fotografiena",
+    "photoBy": "Bildle von"
+  },
+  "Calendar": {
+    "agenda": "Agenda",
+    "today": "Heit",
+    "newEntry": "Nuier Eitrag",
+    "loading": "Lade Reisa-Date...",
+    "views": {
+      "month": "Monat",
+      "week": "Woch",
+      "day": "Dag",
+      "agenda": "Agenda"
+    },
+    "form": {
+      "title": "Titel *",
+      "description": "Beschreibong",
+      "allDay": "Ganza Dag",
+      "date": "Datum",
+      "start": "Oafang *",
+      "end": "End",
+      "public": "Älle dürfets seha",
+      "addUser": "Leit dazua dõa…",
+      "permissions": "Dörfsch des?",
+      "user": "Scho oiner",
+      "view": "Sega",
+      "edit": "Mitmacha"
+    }
   },
   "Feed": {
     "title": "Onderhaldong",
@@ -127,6 +280,19 @@
       "update": "Agtualisiera",
       "successUpdate": "Beidrag agtualisiert",
       "successShare": "Beidrag doilt",
+      "placeholders": {
+        "artist": "z.B. Pink Floyd",
+        "songTitle": "z.B. Wish You Were Here",
+        "spotify": "https://open.spotify.com/...",
+        "ytMusic": "https://music.youtube.com/...",
+        "soundcloud": "https://soundcloud.com/...",
+        "video": "https://youtube.com/watch?v=...",
+        "platform": "z.B. YouTube, Twitch, PeerTube",
+        "newsTitle": "z.B. Neue Entdeckung im Weltraum",
+        "newsSite": "z.B. Golem, Heise, BBC",
+        "link": "https://...",
+        "otherTitle": "z.B. Cooles Open Source Projekt"
+      },
       "fields": {
         "artist": "Künschtler",
         "title": "Titel",

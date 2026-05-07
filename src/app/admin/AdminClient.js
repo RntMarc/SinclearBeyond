@@ -1,17 +1,6 @@
 "use client";
 
-import {
-  Calendar,
-  ChevronRight,
-  Hotel,
-  MapPin,
-  Plane,
-  Plus,
-  Settings,
-  Users,
-  Webhook,
-  Wrench,
-} from "lucide-react";
+import { Hotel, Plane, Plus, Users, Webhook, Wrench } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import AppShell from "@/components/layout/Appshell";
 import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";

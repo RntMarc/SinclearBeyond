@@ -9,14 +9,13 @@ import {
   Menu,
   Settings,
   SquarePlay,
-  User,
   Users,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LogoutButton from "@/components/auth/LogoutButton";
 import { useIsMobile } from "@/hooks/useIsMobile";
 

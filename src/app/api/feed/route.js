@@ -1,14 +1,16 @@
 import crypto from "node:crypto";
 import { and, desc, eq, inArray, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { closeFriends, feedPosts, users } from "@/lib/db/schema";
 
 export async function GET(req) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   if (!session)
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
 
   const userId = session.sub;
   const { searchParams } = new URL(req.url);
@@ -90,15 +92,16 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   if (!session)
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
 
   const body = await req.json();
   const { category, content, visibility, ...details } = body;
 
   if (!category)
-    return NextResponse.json({ error: "missing_category" }, { status: 400 });
+    return NextResponse.json({ error: t("missingFields") }, { status: 400 });
 
   const id = crypto.randomUUID();
   const now = new Date();

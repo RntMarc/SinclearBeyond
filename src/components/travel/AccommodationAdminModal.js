@@ -42,7 +42,7 @@ export default function AccommodationAdminModal({
 
       onUpdated();
       onClose();
-    } catch (error) {
+    } catch (_error) {
       setSaving(false);
       setFormError("Ein unerwarteter Fehler ist aufgetreten.");
     }
@@ -71,7 +71,7 @@ export default function AccommodationAdminModal({
           message: data.error || "Fehler beim Löschen.",
         });
       }
-    } catch (error) {
+    } catch (_error) {
       setSaving(false);
       setNotification({
         type: "error",

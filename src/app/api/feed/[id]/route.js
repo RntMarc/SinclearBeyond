@@ -1,13 +1,15 @@
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { feedPosts } from "@/lib/db/schema";
 
 export async function PATCH(req, { params }) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   if (!session)
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
 
   const { id } = await params;
   const body = await req.json();
@@ -20,10 +22,10 @@ export async function PATCH(req, { params }) {
     .limit(1);
 
   if (!existing)
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    return NextResponse.json({ error: t("notFound") }, { status: 404 });
 
   if (existing.userId !== session.sub)
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    return NextResponse.json({ error: t("forbidden") }, { status: 403 });
 
   const now = new Date();
 
@@ -96,9 +98,10 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(_req, { params }) {
+  const t = await getTranslations("Common");
   const session = await getSession();
   if (!session)
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
 
   const { id } = await params;
 
@@ -109,10 +112,10 @@ export async function DELETE(_req, { params }) {
     .limit(1);
 
   if (!existing)
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    return NextResponse.json({ error: t("notFound") }, { status: 404 });
 
   if (existing.userId !== session.sub)
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    return NextResponse.json({ error: t("forbidden") }, { status: 403 });
 
   await db.delete(feedPosts).where(eq(feedPosts.id, id));
 
