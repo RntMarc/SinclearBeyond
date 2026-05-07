@@ -2,7 +2,9 @@ import { eq, sql } from "drizzle-orm";
 import { ArrowLeft, Plus, Star, Utensils } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { ArrowLeft, Star, Utensils, Plus } from "lucide-react";
+import Link from "next/link";
+import ClientGastronomyList from "./ClientGastronomyList";
 import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -10,8 +12,6 @@ import { discoverPlaces, discoverReviews } from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
 
 export default async function GastronomyListPage() {
-  const t = await getTranslations("Discover");
-
   const session = await getSession();
   if (!session) redirect("/login?callbackUrl=/entdecken/gastronomie");
 
@@ -132,6 +132,7 @@ export default async function GastronomyListPage() {
           </div>
         </div>
       </div>
+      <ClientGastronomyList initialPlaces={places} />
     </AppShell>
   );
 }

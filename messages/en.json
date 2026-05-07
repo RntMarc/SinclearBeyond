@@ -37,7 +37,8 @@
     "admin": "Admin",
     "logout": "Logout",
     "closeMenu": "Close menu",
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "discover": "Discover"
   },
   "Auth": {
     "login": "Login",
@@ -398,6 +399,42 @@
       "passkeyDeleteConfirm": "Really delete this passkey?",
       "passkeyModalTitle": "Name passkey",
       "passkeyModalDesc": "Give this passkey a name so you can recognise it later (e.g. \"My iPhone\")."
+    },
+    "Discover": {
+      "title": "Local Explorer Guide",
+      "subtitle": "Discover",
+      "categories": {
+        "gastronomy": "Gastronomy",
+        "leisure": "Leisure activities"
+      },
+      "bookmarks": "Bookmarks",
+      "noBookmarks": "You haven't set any bookmarks yet.",
+      "searchPlaceholder": "Search place...",
+      "addPlace": "Add place",
+      "categoriesLabel": "Categories",
+      "gastronomyDesc": "Restaurants, cafés and more",
+      "leisureDesc": "Coming soon",
+      "details": "Details",
+      "reviews": "Reviews",
+      "information": "Information",
+      "openingHours": "Opening Hours",
+      "contact": "Contact",
+      "address": "Address",
+      "cuisine": "Cuisine",
+      "rating": "Rating",
+      "comment": "Comment",
+      "noReviews": "No reviews yet.",
+      "addReview": "Add review",
+      "share": "Share",
+      "osmSearch": "Search in OpenStreetMap",
+      "import": "Import",
+      "lastUpdated": "Last updated: {date}",
+      "deleteConfirm": "Really delete this place?",
+      "deleteReviewConfirm": "Really delete this review?",
+      "successAdded": "Place added successfully.",
+      "successDeleted": "Place deleted successfully.",
+      "errorUpdate": "Error updating data.",
+      "linkCopied": "Link copied to clipboard."
     }
   }
 }

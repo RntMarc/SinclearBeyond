@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
+import { formatAddress, translateCuisine } from "@/lib/discover/utils";
 
 export async function GET(req, { params }) {
   const session = await getSession();
@@ -28,7 +29,7 @@ export async function GET(req, { params }) {
       osmId: item.osm_id,
       osmType: type,
       name: item.display_name.split(",")[0],
-      address: item.display_name,
+      address: formatAddress(item.address),
       latitude: item.lat,
       longitude: item.lon,
       phone: item.extratags?.phone || item.extratags?.["contact:phone"] || "",
@@ -36,7 +37,7 @@ export async function GET(req, { params }) {
         item.extratags?.website || item.extratags?.["contact:website"] || "",
       email: item.extratags?.email || item.extratags?.["contact:email"] || "",
       openingHours: item.extratags?.opening_hours || "",
-      cuisine: item.extratags?.cuisine || "",
+      cuisine: translateCuisine(item.extratags?.cuisine),
     };
 
     return NextResponse.json(result);

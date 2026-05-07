@@ -12,6 +12,7 @@ import {
   Phone,
   RefreshCcw,
   Share2,
+  Plus,
   Star,
   Trash2,
   TreePine,
@@ -35,6 +36,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const router = useRouter();
 
   async function loadPlace() {
@@ -189,7 +191,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
       <header className="px-4 py-4 border-b border-border bg-card shrink-0 sticky top-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link
-            href={`/entdecken/${place.category}`}
+            href={`/entdecken/${place.category === "gastronomy" ? "gastronomie" : place.category}`}
             className="p-2 hover:bg-muted rounded-full transition-colors"
           >
             <ArrowLeft size={20} />
@@ -403,9 +405,21 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                           <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
                             {t("openingHours")}
                           </p>
-                          <p className="text-sm whitespace-pre-line">
-                            {place.openingHours}
-                          </p>
+                          {place.formattedOpeningHours
+                            ? <div className="space-y-1 mt-2">
+                                {place.formattedOpeningHours.map((day, idx) => (
+                                  <div
+                                    key={idx}
+                                    className={`flex justify-between text-sm ${day.isToday ? "font-bold text-primary" : ""}`}
+                                  >
+                                    <span>{day.name}</span>
+                                    <span>{day.times}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            : <p className="text-sm whitespace-pre-line">
+                                {place.openingHours}
+                              </p>}
                         </div>
                       )}
                     </div>
@@ -423,14 +437,21 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
               <div
                 className={`${activeTab === "reviews" ? "block" : "hidden lg:block"} space-y-8 pb-12`}
               >
-                <h2 className="text-lg font-bold flex items-center gap-2">
-                  <Star size={20} className="text-primary" />
-                  {t("reviews")}
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold flex items-center gap-2">
+                    <Star size={20} className="text-primary" />
+                    {t("reviews")}
+                  </h2>
+                  <button
+                    onClick={() => setShowReviewModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-xs font-bold rounded-lg hover:bg-primary/20 transition-colors"
+                  >
+                    <Plus size={14} />
+                    {t("addReview")}
+                  </button>
+                </div>
 
                 <div className="space-y-6">
-                  <ReviewForm placeId={id} onAdded={loadPlace} />
-
                   <div className="space-y-4">
                     {place.reviews.length > 0
                       ? place.reviews.map((review) => (
@@ -495,6 +516,13 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                   </div>
                 </div>
               </div>
+              {showReviewModal && (
+                <ReviewModal
+                  placeId={id}
+                  onClose={() => setShowReviewModal(false)}
+                  onAdded={loadPlace}
+                />
+              )}
             </div>
           </div>
         </div>

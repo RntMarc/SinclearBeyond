@@ -9,6 +9,9 @@ import {
   discoverReviews,
   users,
 } from "@/lib/db/schema";
+import { formatOpeningHours } from "@/lib/discover/utils";
+import { and, eq, sql } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   const session = await getSession();
@@ -56,7 +59,13 @@ export async function GET(req, { params }) {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const needsUpdate = place.osmId && place.lastUpdated < thirtyDaysAgo;
 
-    return NextResponse.json({ ...place, details, reviews, needsUpdate });
+    return NextResponse.json({
+      ...place,
+      details,
+      reviews,
+      needsUpdate,
+      formattedOpeningHours: formatOpeningHours(place.openingHours),
+    });
   } catch (error) {
     console.error("[API/Discover/Places/[id]] GET Error:", error);
     return NextResponse.json(

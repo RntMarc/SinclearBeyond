@@ -57,7 +57,7 @@ export default async function DiscoverPage() {
             {/* Categories */}
             <section>
               <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-                Kategorien
+                {t("categoriesLabel")}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Link
@@ -70,7 +70,7 @@ export default async function DiscoverPage() {
                   <div>
                     <h3 className="font-bold">{t("categories.gastronomy")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Restaurants, Cafés und mehr
+                      {t("gastronomyDesc")}
                     </p>
                   </div>
                 </Link>
@@ -82,7 +82,7 @@ export default async function DiscoverPage() {
                   <div>
                     <h3 className="font-bold">{t("categories.leisure")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Demnächst verfügbar
+                      {t("leisureDesc")}
                     </p>
                   </div>
                 </div>
