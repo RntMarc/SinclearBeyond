@@ -4,6 +4,10 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+# Design Guidelines
+
+AI agents MUST always adhere to the principles outlined in `DESIGN.md` when creating new pages or modifying existing ones. This includes maintaining the established layout structure, typography, and component patterns.
+
 # Localization (i18n)
 
 This project uses `next-intl` for localization. All UI strings must be externalized into the translation files located in the `messages/` directory.
