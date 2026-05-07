@@ -11,10 +11,11 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "sharp",
-      "esbuild",
+      "@parcel/watcher",
       "@swc/core",
-      "@parcel/watcher"
+      "esbuild",
+      "msw",
+      "sharp"
     ]
   },
   "dependencies": {
