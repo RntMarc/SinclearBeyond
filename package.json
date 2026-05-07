@@ -9,6 +9,14 @@
     "lint": "biome check",
     "format": "biome format --write"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "esbuild",
+      "@swc/core",
+      "@parcel/watcher"
+    ]
+  },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.5",
     "@simplewebauthn/browser": "^13.3.0",
