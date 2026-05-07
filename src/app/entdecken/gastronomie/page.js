@@ -1,9 +1,5 @@
 import { eq, sql } from "drizzle-orm";
-import { ArrowLeft, Plus, Star, Utensils } from "lucide-react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, Star, Utensils, Plus } from "lucide-react";
-import Link from "next/link";
 import ClientGastronomyList from "./ClientGastronomyList";
 import { db } from "@/lib/db/db";
 import { discoverPlaces, discoverReviews } from "@/lib/db/schema";

@@ -10,8 +10,6 @@ import {
   users,
 } from "@/lib/db/schema";
 import { formatOpeningHours } from "@/lib/discover/utils";
-import { and, eq, sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   const session = await getSession();
