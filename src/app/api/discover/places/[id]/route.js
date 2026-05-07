@@ -1,3 +1,5 @@
+import { and, eq, sql } from "drizzle-orm";
+import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import {
@@ -7,8 +9,6 @@ import {
   discoverReviews,
   users,
 } from "@/lib/db/schema";
-import { and, eq, sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   const session = await getSession();

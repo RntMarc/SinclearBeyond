@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
-  Search,
-  MapPin,
   ArrowLeft,
-  Loader2,
-  Plus,
-  Star,
-  Utensils,
-  TreePine,
   Check,
+  Loader2,
+  MapPin,
+  Plus,
+  Search,
+  Star,
+  TreePine,
+  Utensils,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import SaveButton from "@/components/SaveButton";
 
 export default function AddPlacePage() {

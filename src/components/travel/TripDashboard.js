@@ -119,9 +119,7 @@ export default function TripDashboard({ trip }) {
         <div className="space-y-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-2xl font-light text-foreground">
-                {trip.name}
-              </h2>
+              <h2 className="text-lg font-bold text-foreground">{trip.name}</h2>
               <StatusBadge
                 isActive={trip.isActive}
                 isUpcoming={trip.isUpcoming}
@@ -251,46 +249,57 @@ export default function TripDashboard({ trip }) {
   );
 
   return (
-    <div className="max-w-6xl mx-auto w-full px-6 py-10">
-      <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-        {t("detailsTitle")}
-      </p>
-
-      {/* Desktop Layout */}
-      <div
-        className={`${isMobile ? "hidden" : "hidden md:grid"} grid-cols-3 gap-8`}
-      >
-        <div className="col-span-2">{DashboardContent}</div>
-        <div className="col-span-1">{EventsContent}</div>
-      </div>
-
-      {/* Mobile Layout */}
-      <div className={`${isMobile ? "block" : "md:hidden"}`}>
-        <div className="flex bg-sidebar border border-sidebar-border rounded-xl p-1 mb-6">
-          <button
-            type="button"
-            onClick={() => setMobileTab("details")}
-            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
-              mobileTab === "details"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {t("tabs.details")}
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobileTab("events")}
-            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
-              mobileTab === "events"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {t("tabs.events")} ({trip.events.length})
-          </button>
+    <div className="flex flex-col h-full bg-background">
+      <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+            {t("detailsTitle")}
+          </p>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+            {trip.name}
+          </h1>
         </div>
-        {mobileTab === "details" ? DashboardContent : EventsContent}
+      </header>
+
+      <div className="flex-1 overflow-y-auto p-6 md:p-10">
+        <div className="max-w-5xl mx-auto">
+          {/* Desktop Layout */}
+          <div
+            className={`${isMobile ? "hidden" : "hidden md:grid"} grid-cols-3 gap-8`}
+          >
+            <div className="col-span-2">{DashboardContent}</div>
+            <div className="col-span-1">{EventsContent}</div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className={`${isMobile ? "block" : "md:hidden"}`}>
+            <div className="flex bg-sidebar border border-sidebar-border rounded-xl p-1 mb-6">
+              <button
+                type="button"
+                onClick={() => setMobileTab("details")}
+                className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  mobileTab === "details"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("tabs.details")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileTab("events")}
+                className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  mobileTab === "events"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("tabs.events")} ({trip.events.length})
+              </button>
+            </div>
+            {mobileTab === "details" ? DashboardContent : EventsContent}
+          </div>
+        </div>
       </div>
     </div>
   );

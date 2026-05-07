@@ -1,8 +1,8 @@
 "use client";
 
+import { Star } from "lucide-react";
 import { useState } from "react";
 import SaveButton from "@/components/SaveButton";
-import { Star } from "lucide-react";
 
 export default function ReviewForm({ placeId, onAdded }) {
   const [rating, setRating] = useState(5);

@@ -1,8 +1,8 @@
+import { notFound, redirect } from "next/navigation";
+import PlaceDetailPage from "@/components/discover/PlaceDetailPage";
+import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
 import { getProfileData } from "@/lib/profile/profile";
-import AppShell from "@/components/layout/Appshell";
-import PlaceDetailPage from "@/components/discover/PlaceDetailPage";
-import { notFound, redirect } from "next/navigation";
 
 export default async function Page({ params }) {
   const session = await getSession();

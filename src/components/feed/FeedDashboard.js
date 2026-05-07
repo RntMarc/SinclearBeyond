@@ -60,45 +60,53 @@ export default function FeedDashboard() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto w-full px-6 py-10">
-      {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification(null)}
-        />
-      )}
-
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4 font-medium">
-            {t("subtitle")}
-          </p>
-          <h1 className="text-4xl font-light text-foreground">{t("title")}</h1>
+    <div className="flex flex-col h-full bg-background">
+      <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary">
+              {t("subtitle")}
+            </p>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+              {t("title")}
+            </h1>
+          </div>
+          <button
+            type="button"
+            onClick={handleCreatePost}
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 w-fit"
+          >
+            <Plus size={18} />
+            {t("newPost")}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={handleCreatePost}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 w-fit"
-        >
-          <Plus size={18} />
-          {t("newPost")}
-        </button>
+      </header>
+
+      <div className="flex-1 overflow-y-auto p-6 md:p-10">
+        <div className="max-w-5xl mx-auto">
+          {notification && (
+            <Notification
+              message={notification.message}
+              type={notification.type}
+              onClose={() => setNotification(null)}
+            />
+          )}
+
+          <FeedFilters
+            activeCategory={category}
+            onCategoryChange={setCategory}
+            onlyCloseFriends={onlyCloseFriends}
+            onOnlyCloseFriendsChange={setOnlyCloseFriends}
+          />
+
+          <FeedList
+            posts={posts}
+            loading={loading}
+            onEdit={handleEditPost}
+            onDeleteSuccess={() => handleSuccess(t("deleteSuccess"))}
+          />
+        </div>
       </div>
-
-      <FeedFilters
-        activeCategory={category}
-        onCategoryChange={setCategory}
-        onlyCloseFriends={onlyCloseFriends}
-        onOnlyCloseFriendsChange={setOnlyCloseFriends}
-      />
-
-      <FeedList
-        posts={posts}
-        loading={loading}
-        onEdit={handleEditPost}
-        onDeleteSuccess={() => handleSuccess(t("deleteSuccess"))}
-      />
 
       {isModalOpen && (
         <FeedFormModal
