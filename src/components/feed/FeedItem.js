@@ -59,7 +59,7 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
     try {
       const res = await fetch(`/api/feed/${post.id}`, { method: "DELETE" });
       if (res.ok) {
-        onDeleteSuccess();
+        onDeleteSuccess?.();
       } else {
         const data = await res.json().catch(() => ({}));
         setDeleteError(data.error || "Löschen fehlgeschlagen.");
@@ -112,7 +112,7 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
                   <button
                     type="button"
                     onClick={() => {
-                      onEdit(post);
+                      onEdit?.(post);
                       setShowOptions(false);
                     }}
                     className="w-full flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-accent transition-colors"

@@ -90,7 +90,12 @@
   "Home": {
     "subtitle": "Dashboard",
     "welcome": "Hello, {name}.",
-    "description": "Welcome to Sinclear Beyond."
+    "description": "Welcome to Sinclear Beyond.",
+    "upcomingEvents": "Upcoming Events",
+    "upcomingTrips": "Upcoming Trips",
+    "upcomingBirthdays": "Upcoming Birthdays",
+    "latestPosts": "Latest Posts",
+    "latestPhotos": "Latest Photos"
   },
   "LandingPage": {
     "badge": "Community Platform",

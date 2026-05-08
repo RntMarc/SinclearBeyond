@@ -5,7 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 
-export default async function KalenderPage() {
+export default async function KalenderPage({ searchParams }) {
   const session = await getSession();
   if (!session) redirect("/login");
 
@@ -15,9 +15,11 @@ export default async function KalenderPage() {
     .where(eq(users.id, session.sub))
     .limit(1);
 
+  const view = (await searchParams)?.view || "month";
+
   return (
     <AppShell user={user} session={session}>
-      <KalenderClient userId={session.sub} />
+      <KalenderClient userId={session.sub} initialView={view} />
     </AppShell>
   );
 }
