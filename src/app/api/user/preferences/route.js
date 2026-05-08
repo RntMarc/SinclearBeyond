@@ -54,6 +54,18 @@ export async function POST(req) {
     });
   }
 
+  const cookieStore = await cookies();
+
+  // Sprache sofort wirksam machen — kein Re-Login nötig
+  if (language) {
+    cookieStore.set("NEXT_LOCALE", language, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      httpOnly: false,
+      sameSite: "lax",
+    });
+  }
+
   // Update JWT session cookie
   const newToken = await new SignJWT({
     ...session,
@@ -65,7 +77,6 @@ export async function POST(req) {
     .setExpirationTime("7d")
     .sign(secret);
 
-  const cookieStore = await cookies();
   cookieStore.set("session", newToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

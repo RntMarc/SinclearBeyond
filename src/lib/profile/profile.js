@@ -1,7 +1,6 @@
 "use server";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 import sharp from "sharp";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -17,7 +16,6 @@ export async function getProfileData(session) {
       email: users.email,
       birthday: users.birthday,
       birthdayVisibility: users.birthdayVisibility,
-      language: users.language,
       discordId: users.discordId,
       image: users.image,
       createdAt: users.createdAt,
@@ -68,7 +66,6 @@ export async function saveProfile(_prevState, formData) {
       const n = Number(v);
       return [0, 1, 2].includes(n) ? n : 1;
     };
-    const language = formData.get("language")?.toString() || "de";
     const birthdayVis = clamp(formData.get("birthdayVisibility"));
     const discordVis = clamp(formData.get("discordVisibility"));
     const fluxerVis = clamp(formData.get("fluxerVisibility"));
@@ -84,7 +81,7 @@ export async function saveProfile(_prevState, formData) {
     const youtubeVis = clamp(formData.get("youtubeVisibility"));
     const twitchVis = clamp(formData.get("twitchVisibility"));
 
-    const userUpdate = { birthdayVisibility: birthdayVis, language };
+    const userUpdate = { birthdayVisibility: birthdayVis };
     if (displayName) userUpdate.displayName = displayName;
     if (birthday) {
       userUpdate.birthday = new Date(birthday);
@@ -107,15 +104,6 @@ export async function saveProfile(_prevState, formData) {
     }
 
     await db.update(users).set(userUpdate).where(eq(users.id, session.sub));
-
-    // Sprache sofort wirksam machen — kein Re-Login nötig
-    const cookieStore = await cookies();
-    cookieStore.set("NEXT_LOCALE", language, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      httpOnly: false,
-      sameSite: "lax",
-    });
 
     const [existing] = await db
       .select()

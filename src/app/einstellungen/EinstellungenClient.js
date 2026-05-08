@@ -13,6 +13,7 @@ export default function EinstellungenClient({
   user,
   contact,
   social,
+  preferences,
   closeFriends,
   activeTab,
 }) {
@@ -76,7 +77,9 @@ export default function EinstellungenClient({
             {activeTab === "kontakte" && (
               <CloseFriendsManager initialFriends={closeFriends} />
             )}
-            {activeTab === "appearance" && <AppearanceForm />}
+            {activeTab === "appearance" && (
+              <AppearanceForm initialPreferences={preferences} />
+            )}
             {activeTab === "login" && (
               <div className="space-y-10">
                 <EmailChangeForm currentEmail={user.email} />
