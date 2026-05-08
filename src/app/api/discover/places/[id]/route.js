@@ -9,9 +9,9 @@ import {
   discoverReviews,
   users,
 } from "@/lib/db/schema";
-import { formatOpeningHours } from "@/lib/discover/utils";
+import { formatOpeningHours, translateCuisine } from "@/lib/discover/utils";
 
-export async function GET(req, { params }) {
+export async function GET(_req, { params }) {
   const session = await getSession();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -59,7 +59,10 @@ export async function GET(req, { params }) {
 
     return NextResponse.json({
       ...place,
-      details,
+      details: {
+        ...details,
+        cuisine: translateCuisine(details.cuisine),
+      },
       reviews,
       needsUpdate,
       formattedOpeningHours: formatOpeningHours(place.openingHours),
@@ -116,7 +119,7 @@ export async function PATCH(req, { params }) {
   }
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(_req, { params }) {
   const session = await getSession();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

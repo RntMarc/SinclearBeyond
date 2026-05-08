@@ -1,9 +1,11 @@
 import { eq, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import ClientGastronomyList from "./ClientGastronomyList";
+import AppShell from "@/components/layout/Appshell";
+import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { discoverPlaces, discoverReviews } from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
+import ClientGastronomyList from "./ClientGastronomyList";
 
 export default async function GastronomyListPage() {
   const session = await getSession();
