@@ -27,7 +27,7 @@ export async function loginUser(email, password) {
     sub: user.id,
     email: user.email,
     isAdmin: user.isAdmin,
-    language: prefs?.language || user.language,
+    language: prefs?.language || "de",
     theme: prefs?.theme || "dark",
     primaryColor: prefs?.primaryColor || "#7c3aed",
   })

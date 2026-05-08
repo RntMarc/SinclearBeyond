@@ -1,17 +1,23 @@
 "use client";
 
-import { AlertTriangle, Check } from "lucide-react";
+import { AlertTriangle, Check, Languages } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { isContrastAcceptable } from "@/lib/utils";
 
-export default function AppearanceForm() {
+export default function AppearanceForm({ initialPreferences }) {
+  const router = useRouter();
   const t = useTranslations("Settings.appearance");
+  const tLang = useTranslations("Settings.language");
   const tCommon = useTranslations("Common");
   const { theme, setTheme, primaryColor, setPrimaryColor } = useTheme();
   const [localTheme, setLocalTheme] = useState(theme);
   const [localColor, setLocalColor] = useState(primaryColor);
+  const [localLanguage, setLocalLanguage] = useState(
+    initialPreferences?.language || "de",
+  );
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -27,7 +33,7 @@ export default function AppearanceForm() {
   const textColor = localTheme === "light" ? "#000000" : "#ffffff";
 
   const isContrastOk =
-    isContrastAcceptable(localColor, bgColor) &&
+    isContrastAcceptable(localColor, bgColor, 3.0) &&
     isContrastAcceptable(localColor, textColor, 3.0);
 
   const handleSave = async () => {
@@ -37,12 +43,17 @@ export default function AppearanceForm() {
       const res = await fetch("/api/user/preferences", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ theme: localTheme, primaryColor: localColor }),
+        body: JSON.stringify({
+          theme: localTheme,
+          primaryColor: localColor,
+          language: localLanguage,
+        }),
       });
       if (res.ok) {
         setTheme(localTheme);
         setPrimaryColor(localColor);
         setSaved(true);
+        router.refresh();
         setTimeout(() => setSaved(false), 3000);
       }
     } catch (error) {
@@ -59,6 +70,34 @@ export default function AppearanceForm() {
         <p className="text-sm text-muted-foreground mb-6">{t("description")}</p>
 
         <div className="space-y-8 bg-sidebar border border-sidebar-border rounded-2xl p-8">
+          {/* Language selection */}
+          <div>
+            <label
+              htmlFor="language"
+              className="block text-sm font-medium mb-4"
+            >
+              {tLang("label")}
+            </label>
+            <div className="relative">
+              <select
+                id="language"
+                name="language"
+                value={localLanguage}
+                onChange={(e) => setLocalLanguage(e.target.value)}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none"
+              >
+                <option value="de">{tLang("german")}</option>
+                <option value="de-als">{tLang("swabian")}</option>
+                <option value="en">{tLang("english")}</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                <Languages size={16} className="text-muted-foreground" />
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-border" />
+
           {/* Theme Mode */}
           <div>
             <label
