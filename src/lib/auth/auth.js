@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { jwtVerify, SignJWT } from "jose";
 import { db } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { userPreferences, users } from "@/lib/db/schema";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -17,11 +17,19 @@ export async function loginUser(email, password) {
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return null;
 
+  const [prefs] = await db
+    .select()
+    .from(userPreferences)
+    .where(eq(userPreferences.userId, user.id))
+    .limit(1);
+
   const token = await new SignJWT({
     sub: user.id,
     email: user.email,
     isAdmin: user.isAdmin,
-    language: user.language,
+    language: prefs?.language || user.language,
+    theme: prefs?.theme || "dark",
+    primaryColor: prefs?.primaryColor || "#7c3aed",
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")

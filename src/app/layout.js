@@ -3,6 +3,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { getSession } from "@/lib/auth/session";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,12 +24,23 @@ export async function generateMetadata() {
 export default async function RootLayout({ children }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const session = await getSession();
+
+  const initialPreferences = {
+    theme: session?.theme || "dark",
+    primaryColor: session?.primaryColor || "#7c3aed",
+  };
 
   return (
-    <html lang={locale} className={`${inter.variable} dark h-full`}>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${initialPreferences.theme} h-full`}
+    >
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <ThemeProvider initialPreferences={initialPreferences}>
+            {children}
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
       <SpeedInsights />

@@ -1,6 +1,7 @@
 "use client";
 import { Check, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useTheme } from "@/components/layout/ThemeProvider";
 
 export default function SaveButton({
   pending,
@@ -12,6 +13,7 @@ export default function SaveButton({
   type = "submit",
 }) {
   const t = useTranslations("Common");
+  const { activeEffects } = useTheme();
   const isPending = pending || loading;
   const isSuccess = state?.ok === true;
   const isError = state?.ok === false;
@@ -29,7 +31,7 @@ export default function SaveButton({
             isError
               ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
               : "bg-primary text-primary-foreground hover:bg-primary/90"
-          }`}
+          } ${activeEffects.showPride ? "effect-pride-button" : ""} ${activeEffects.showSnow ? "effect-snow-button" : ""}`}
       >
         {isPending
           ? t("saving")

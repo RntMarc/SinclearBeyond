@@ -1,0 +1,190 @@
+"use client";
+
+import { AlertTriangle, Check } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { useTheme } from "@/components/layout/ThemeProvider";
+import { isContrastAcceptable } from "@/lib/utils";
+
+export default function AppearanceForm() {
+  const t = useTranslations("Settings.appearance");
+  const tCommon = useTranslations("Common");
+  const { theme, setTheme, primaryColor, setPrimaryColor } = useTheme();
+  const [localTheme, setLocalTheme] = useState(theme);
+  const [localColor, setLocalColor] = useState(primaryColor);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const suggestedColors = {
+    light: ["#B8860B", "#00008B", "#006400", "#4B0082"], // Darker yellow, blue, green, violet
+    dark: ["#FFFFE0", "#ADD8E6", "#90EE90", "#FFC0CB"], // Lighter yellow, blue, green, pink
+  };
+
+  const currentSuggested =
+    localTheme === "light" ? suggestedColors.light : suggestedColors.dark;
+
+  const bgColor = localTheme === "light" ? "#ffffff" : "#141414"; // Simplified from oklch
+  const textColor = localTheme === "light" ? "#000000" : "#ffffff";
+
+  const isContrastOk =
+    isContrastAcceptable(localColor, bgColor) &&
+    isContrastAcceptable(localColor, textColor, 3.0);
+
+  const handleSave = async () => {
+    if (!isContrastOk) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/user/preferences", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ theme: localTheme, primaryColor: localColor }),
+      });
+      if (res.ok) {
+        setTheme(localTheme);
+        setPrimaryColor(localColor);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      }
+    } catch (error) {
+      console.error("Failed to save preferences", error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-10">
+      <section>
+        <h2 className="text-xl font-bold mb-2">{t("title")}</h2>
+        <p className="text-sm text-muted-foreground mb-6">{t("description")}</p>
+
+        <div className="space-y-8 bg-sidebar border border-sidebar-border rounded-2xl p-8">
+          {/* Theme Mode */}
+          <div>
+            <label
+              htmlFor="theme-mode"
+              className="block text-sm font-medium mb-4"
+            >
+              {t("themeLabel")}
+            </label>
+            <div id="theme-mode" className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setLocalTheme("light")}
+                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                  localTheme === "light"
+                    ? "border-primary bg-primary/5"
+                    : "border-transparent bg-background hover:bg-muted"
+                }`}
+              >
+                <div className="w-full h-20 bg-white rounded-md border border-gray-200 flex flex-col p-2 gap-2">
+                  <div className="h-2 w-1/2 bg-gray-200 rounded" />
+                  <div className="h-4 w-full bg-blue-500 rounded" />
+                </div>
+                <span className="text-sm font-medium">{t("light")}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLocalTheme("dark")}
+                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                  localTheme === "dark"
+                    ? "border-primary bg-primary/5"
+                    : "border-transparent bg-background hover:bg-muted"
+                }`}
+              >
+                <div className="w-full h-20 bg-gray-900 rounded-md border border-gray-800 flex flex-col p-2 gap-2">
+                  <div className="h-2 w-1/2 bg-gray-700 rounded" />
+                  <div className="h-4 w-full bg-blue-600 rounded" />
+                </div>
+                <span className="text-sm font-medium">{t("dark")}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Primary Color */}
+          <div className="space-y-4">
+            <label
+              htmlFor="primary-color"
+              className="block text-sm font-medium"
+            >
+              {t("primaryColorLabel")}
+            </label>
+
+            <div id="primary-color" className="flex flex-wrap gap-3">
+              {currentSuggested.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setLocalColor(color)}
+                  className="w-10 h-10 rounded-full border-2 border-background ring-2 ring-transparent hover:ring-muted-foreground transition-all flex items-center justify-center"
+                  style={{
+                    backgroundColor: color,
+                    boxShadow:
+                      localColor === color
+                        ? "0 0 0 2px var(--color-primary)"
+                        : "none",
+                  }}
+                >
+                  {localColor === color && (
+                    <Check
+                      size={16}
+                      className={
+                        isContrastAcceptable(color, "#ffffff")
+                          ? "text-black"
+                          : "text-white"
+                      }
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground mb-2">
+                  {t("customColor")}
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    id="primary-color-picker"
+                    type="color"
+                    value={localColor}
+                    onChange={(e) => setLocalColor(e.target.value)}
+                    className="w-10 h-10 rounded cursor-pointer bg-transparent"
+                  />
+                  <input
+                    id="primary-color-hex"
+                    type="text"
+                    value={localColor}
+                    onChange={(e) => setLocalColor(e.target.value)}
+                    className="flex-1 px-3 py-2 bg-background border border-input rounded-lg text-sm font-mono"
+                    placeholder="#000000"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {!isContrastOk && (
+              <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-xs">
+                <AlertTriangle size={14} />
+                {t("contrastError")}
+              </div>
+            )}
+          </div>
+
+          <div className="pt-4 border-t border-border">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving || !isContrastOk}
+              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+            >
+              {saving ? "..." : saved ? <Check size={16} /> : t("save")}
+              {saved && tCommon("saved")}
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

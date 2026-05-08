@@ -378,7 +378,20 @@
       "profile": "Profil",
       "contacts": "Kontakte",
       "login": "Login",
+      "appearance": "Anzeige",
       "language": "Sprache"
+    },
+    "appearance": {
+      "title": "Anzeige",
+      "description": "Passe das Design von Sinclear Beyond nach deinen Wünschen an.",
+      "themeLabel": "Design-Modus",
+      "light": "Helles Design",
+      "dark": "Dunkles Design",
+      "primaryColorLabel": "Primärfarbe",
+      "suggestedColors": "Vorgeschlagene Farben",
+      "customColor": "Eigene Farbe",
+      "contrastError": "Diese Farbe ist zu ähnlich zur Hintergrund- oder Textfarbe und daher nicht erlaubt.",
+      "save": "Design speichern"
     },
     "language": {
       "title": "Sprache",

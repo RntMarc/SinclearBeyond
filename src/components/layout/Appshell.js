@@ -17,10 +17,13 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import LogoutButton from "@/components/auth/LogoutButton";
+import SnowEffect from "@/components/layout/SnowEffect";
+import { useTheme } from "@/components/layout/ThemeProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function AppShell({ children, user, session }) {
   const t = useTranslations("Navigation");
+  const { activeEffects } = useTheme();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isMobile = useIsMobile();
@@ -135,7 +138,10 @@ export default function AppShell({ children, user, session }) {
         </div>
 
         {/* flex-1 + overflow-auto: scrollable for normal pages, fillable for fullscreen ones */}
-        <main className="flex-1 flex flex-col min-h-0 overflow-auto">
+        <main
+          className={`flex-1 flex flex-col min-h-0 overflow-auto relative ${activeEffects.showPride ? "effect-pride-banner" : ""} ${activeEffects.showSnow ? "effect-snow-container" : ""}`}
+        >
+          {activeEffects.showSnow && <SnowEffect />}
           {children}
         </main>
       </div>

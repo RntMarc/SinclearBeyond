@@ -1,8 +1,8 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import BirthdayModal from "@/components/birthdays/BirthdayModal";
 import EventDetailModal from "@/components/calendar/EventDetailModal";

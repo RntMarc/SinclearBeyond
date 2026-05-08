@@ -1,8 +1,9 @@
 "use client";
 
-import { Key, User, Users } from "lucide-react";
+import { Key, Palette, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import AppearanceForm from "@/components/profile/AppearanceForm";
 import CloseFriendsManager from "@/components/profile/CloseFriendsManager";
 import EmailChangeForm from "@/components/profile/EmailChangeForm";
 import PasskeyManager from "@/components/profile/PasskeyManager";
@@ -23,6 +24,7 @@ export default function EinstellungenClient({
   const tabs = [
     { id: "profil", label: t("tabs.profile"), icon: User },
     { id: "kontakte", label: t("tabs.contacts"), icon: Users },
+    { id: "appearance", label: t("tabs.appearance"), icon: Palette },
     { id: "login", label: t("tabs.login"), icon: Key },
   ];
 
@@ -74,6 +76,7 @@ export default function EinstellungenClient({
             {activeTab === "kontakte" && (
               <CloseFriendsManager initialFriends={closeFriends} />
             )}
+            {activeTab === "appearance" && <AppearanceForm />}
             {activeTab === "login" && (
               <div className="space-y-10">
                 <EmailChangeForm currentEmail={user.email} />
