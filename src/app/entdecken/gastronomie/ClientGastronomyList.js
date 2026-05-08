@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Star, Utensils, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Star, Utensils } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import AddPlaceModal from "@/components/discover/AddPlaceModal";
 
 export default function ClientGastronomyList({ initialPlaces }) {
@@ -34,6 +34,7 @@ export default function ClientGastronomyList({ initialPlaces }) {
             </div>
           </div>
           <button
+            type="button"
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
           >
@@ -95,6 +96,7 @@ export default function ClientGastronomyList({ initialPlaces }) {
                   Noch keine Restaurants oder Cafés eingetragen.
                 </p>
                 <button
+                  type="button"
                   onClick={() => setShowAddModal(true)}
                   className="px-6 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold"
                 >

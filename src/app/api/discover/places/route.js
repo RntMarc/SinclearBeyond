@@ -87,7 +87,7 @@ export async function POST(req) {
       address,
       latitude: latitude ? parseFloat(latitude) : null,
       longitude: longitude ? parseFloat(longitude) : null,
-      osmId: osmId ? parseInt(osmId) : null,
+      osmId: osmId ? parseInt(osmId, 10) : null,
       osmType: osmType || null,
       phone,
       website,
@@ -111,7 +111,7 @@ export async function POST(req) {
         id: crypto.randomUUID(),
         placeId,
         userId: session.sub,
-        rating: parseInt(rating),
+        rating: parseInt(rating, 10),
         comment,
         createdAt: now,
       });

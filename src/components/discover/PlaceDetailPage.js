@@ -1,7 +1,5 @@
 "use client";
 
-import ReviewModal from "@/components/discover/ReviewModal";
-import SimpleOSM from "@/components/discover/SimpleOSM";
 import {
   ArrowLeft,
   Bookmark,
@@ -11,9 +9,9 @@ import {
   Mail,
   MapPin,
   Phone,
+  Plus,
   RefreshCcw,
   Share2,
-  Plus,
   Star,
   Trash2,
   TreePine,
@@ -23,7 +21,9 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import ReviewModal from "@/components/discover/ReviewModal";
+import SimpleOSM from "@/components/discover/SimpleOSM";
 
 export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const t = useTranslations("Discover");
@@ -38,7 +38,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const router = useRouter();
 
-  async function loadPlace() {
+  const loadPlace = useCallback(async () => {
     try {
       const res = await fetch(`/api/discover/places/${id}`);
       if (!res.ok) throw new Error(t("errorUpdate"));
@@ -56,11 +56,11 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [id, t]);
 
   useEffect(() => {
     loadPlace();
-  }, [id]);
+  }, [loadPlace]);
 
   async function toggleBookmark() {
     setBookmarkLoading(true);
@@ -89,7 +89,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-      } catch (err) {
+      } catch (_err) {
         copyToClipboard();
       }
     } else {
@@ -115,7 +115,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
         const data = await res.json();
         alert(data.error);
       }
-    } catch (err) {
+    } catch (_err) {
       alert(t("errorUpdate"));
     }
   }
@@ -129,7 +129,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
       if (res.ok) {
         loadPlace();
       }
-    } catch (err) {
+    } catch (_err) {
       alert(t("errorUpdate"));
     }
   }
@@ -207,6 +207,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
         </div>
         <div className="flex items-center gap-1">
           <button
+            type="button"
             onClick={sharePlace}
             className="p-2 hover:bg-muted rounded-full transition-colors relative"
             title={t("share")}
@@ -221,6 +222,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
             )}
           </button>
           <button
+            type="button"
             onClick={toggleBookmark}
             disabled={bookmarkLoading}
             className={`p-2 hover:bg-muted rounded-full transition-colors ${bookmarked ? "text-primary" : ""}`}
@@ -230,6 +232,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
           </button>
           {(place.creatorId === userId || isAdmin) && (
             <button
+              type="button"
               onClick={deletePlace}
               className="p-2 hover:bg-muted rounded-full transition-colors text-destructive"
               title="Löschen"
@@ -290,6 +293,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                       </p>
                     </div>
                     <button
+                      type="button"
                       onClick={refreshFromOSM}
                       disabled={updating}
                       className="p-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50 transition-all"
@@ -309,12 +313,14 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
               {/* Tabs Switcher for Mobile */}
               <div className="flex lg:hidden border-b border-border">
                 <button
+                  type="button"
                   onClick={() => setActiveTab("info")}
                   className={`flex-1 py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === "info" ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
                 >
                   {t("information")}
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveTab("reviews")}
                   className={`flex-1 py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === "reviews" ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
                 >
@@ -401,18 +407,22 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                       )}
                       {place.openingHours && (
                         <div className="p-4 bg-muted/30 rounded-xl">
-                          <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+                          <p className="text-[10px] uppercase font-bold text-muted-foreground mb-3">
                             {t("openingHours")}
                           </p>
                           {place.formattedOpeningHours
-                            ? <div className="space-y-1 mt-2">
-                                {place.formattedOpeningHours.map((day, idx) => (
+                            ? <div className="space-y-2">
+                                {place.formattedOpeningHours.map((day) => (
                                   <div
-                                    key={idx}
-                                    className={`flex justify-between text-sm ${day.isToday ? "font-bold text-primary" : ""}`}
+                                    key={day.name}
+                                    className={`flex justify-between items-center text-sm ${day.isToday ? "font-bold text-primary bg-primary/5 -mx-2 px-2 py-1 rounded-lg" : "text-muted-foreground/80"}`}
                                   >
-                                    <span>{day.name}</span>
-                                    <span>{day.times}</span>
+                                    <span className="w-24 shrink-0">
+                                      {day.name}
+                                    </span>
+                                    <span className="text-right">
+                                      {day.times}
+                                    </span>
                                   </div>
                                 ))}
                               </div>
@@ -442,6 +452,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                     {t("reviews")}
                   </h2>
                   <button
+                    type="button"
                     onClick={() => setShowReviewModal(true)}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-xs font-bold rounded-lg hover:bg-primary/20 transition-colors"
                   >
@@ -500,6 +511,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                             {(review.userId === userId || isAdmin) && (
                               <div className="pt-2 flex justify-end">
                                 <button
+                                  type="button"
                                   onClick={() => deleteReview(review.id)}
                                   className="text-[10px] uppercase font-bold text-destructive hover:underline"
                                 >

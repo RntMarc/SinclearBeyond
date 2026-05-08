@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { formatAddress, translateCuisine } from "@/lib/discover/utils";
+import { formatAddress } from "@/lib/discover/utils";
 
 export async function GET(req) {
   const session = await getSession();
@@ -37,7 +37,7 @@ export async function GET(req) {
         item.extratags?.website || item.extratags?.["contact:website"] || "",
       email: item.extratags?.email || item.extratags?.["contact:email"] || "",
       openingHours: item.extratags?.opening_hours || "",
-      cuisine: translateCuisine(item.extratags?.cuisine),
+      cuisine: item.extratags?.cuisine || "",
       type: item.type,
       class: item.class,
     }));

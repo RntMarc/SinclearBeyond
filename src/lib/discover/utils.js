@@ -6,7 +6,7 @@ export const CUISINE_MAPPING = {
   arab: "arabisch",
   argentinian: "argentinisch",
   armenian: "armenisch",
-  asian: "asiatisch",
+  asian: "Asiatisch",
   australian: "australisch",
   austrian: "österreichisch",
   balkan: "balkanesisch",
@@ -262,7 +262,6 @@ export function formatOpeningHours(ohString, locale = "de") {
   try {
     const opening_hours = require("opening_hours");
     const oh = new opening_hours(ohString);
-    const now = new Date();
     const days = [];
     const dayNames = {
       de: [
@@ -290,10 +289,10 @@ export function formatOpeningHours(ohString, locale = "de") {
     // Let's iterate through the next 7 days starting from last Monday or something?
     // Easier: get intervals for each day of the current week.
 
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    const now_for_today = new Date();
+    const dayOfWeek = now_for_today.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    const monday = new Date(now_for_today);
+    monday.setDate(now_for_today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
     monday.setHours(0, 0, 0, 0);
 
     for (let i = 0; i < 7; i++) {
@@ -302,17 +301,38 @@ export function formatOpeningHours(ohString, locale = "de") {
       const nextDate = new Date(date);
       nextDate.setDate(date.getDate() + 1);
 
+      // getOpenIntervals might return intervals that cross midnight.
+      // We want to be careful and only show what's for THIS day.
       const intervals = oh.getOpenIntervals(date, nextDate);
-      const times = intervals.map((interval) => {
+      const times = [];
+
+      for (const interval of intervals) {
         const start = interval[0];
         const end = interval[1];
-        return `${start.getHours().toString().padStart(2, "0")}:${start.getMinutes().toString().padStart(2, "0")} - ${end.getHours().toString().padStart(2, "0")}:${end.getMinutes().toString().padStart(2, "0")}`;
-      });
+
+        // If it starts before our date or ends after nextDate, we clip it for display
+        const displayStart = start < date ? date : start;
+        const displayEnd = end > nextDate ? nextDate : end;
+
+        const startStr = `${displayStart.getHours().toString().padStart(2, "0")}:${displayStart.getMinutes().toString().padStart(2, "0")}`;
+        const endStr = `${displayEnd.getHours().toString().padStart(2, "0")}:${displayEnd.getMinutes().toString().padStart(2, "0")}`;
+
+        times.push(`${startStr} - ${endStr}`);
+      }
+
+      const closedLabel = {
+        de: "Geschlossen",
+        en: "Closed",
+        "de-als": "Zua",
+      };
 
       days.push({
         name: dayNames[locale] ? dayNames[locale][i] : dayNames.de[i],
-        times: times.length > 0 ? times.join(", ") : "Geschlossen",
-        isToday: date.toDateString() === today.toDateString(),
+        times:
+          times.length > 0
+            ? times.join(", ")
+            : closedLabel[locale] || closedLabel.de,
+        isToday: date.toDateString() === now_for_today.toDateString(),
       });
     }
 
