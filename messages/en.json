@@ -330,7 +330,20 @@
       "profile": "Profile",
       "contacts": "Contacts",
       "login": "Login",
+      "appearance": "Appearance",
       "language": "Language"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customise the design of Sinclear Beyond to your liking.",
+      "themeLabel": "Design Mode",
+      "light": "Light Design",
+      "dark": "Dark Design",
+      "primaryColorLabel": "Primary Colour",
+      "suggestedColors": "Suggested Colours",
+      "customColor": "Custom Colour",
+      "contrastError": "This colour is too similar to the background or text colour and is therefore not allowed.",
+      "save": "Save Design"
     },
     "language": {
       "title": "Language",

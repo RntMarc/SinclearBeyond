@@ -330,7 +330,20 @@
       "profile": "Profil",
       "contacts": "Kondagde",
       "login": "Login",
+      "appearance": "Anzeig",
       "language": "Schbrõch"
+    },
+    "appearance": {
+      "title": "Anzeig",
+      "description": "Mach Sinclear Beyond so, wia's dir gfällt.",
+      "themeLabel": "Ausseha",
+      "light": "Hell",
+      "dark": "Donkel",
+      "primaryColorLabel": "Hauptfarb",
+      "suggestedColors": "Farba, die mir gfället",
+      "customColor": "Oigene Farb",
+      "contrastError": "Die Farb isch em Hendergrond z'ähnlich ond drom net erlaubt.",
+      "save": "Ausseha schbeichera"
     },
     "language": {
       "title": "Schbrõch",

@@ -1,8 +1,8 @@
-import { and, desc, eq, inArray, lte, gte, or } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte, or } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import AppShell from "@/components/layout/Appshell";
 import HomeClient from "@/components/home/HomeClient";
+import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import {
@@ -15,8 +15,8 @@ import {
   travelTrips,
   users,
 } from "@/lib/db/schema";
-import { getBirthdays } from "@/lib/profile/birthdays";
 import { getUnsplashPhotos } from "@/lib/photos/unsplash";
+import { getBirthdays } from "@/lib/profile/birthdays";
 
 export default async function HomePage() {
   const t = await getTranslations("Home");

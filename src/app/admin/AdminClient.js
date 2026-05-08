@@ -1,14 +1,24 @@
 "use client";
 
-import { Hotel, Plane, Plus, Users, Webhook, Wrench } from "lucide-react";
+import {
+  Hotel,
+  Palette,
+  Plane,
+  Plus,
+  Users,
+  Webhook,
+  Wrench,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import AppShell from "@/components/layout/Appshell";
+import { useTheme } from "@/components/layout/ThemeProvider";
 import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";
 import AccommodationFormModal from "@/components/travel/AccommodationFormModal";
 import TripAdminModal from "@/components/travel/TripAdminModal";
 import TripFormModal from "@/components/travel/TripFormModal";
 
 export default function AdminPage({ user, session }) {
+  const { adminEffectsEnabled, setAdminEffectsEnabled } = useTheme();
   const [activeTab, setActiveTab] = useState("reisen");
   const [showTripModal, setShowTripModal] = useState(false);
   const [showAccommodationModal, setShowAccommodationModal] = useState(false);
@@ -44,6 +54,7 @@ export default function AdminPage({ user, session }) {
     { id: "reisen", label: "Reisen", icon: Plane },
     { id: "users", label: "Nutzer", icon: Users },
     { id: "webhooks", label: "Webhooks", icon: Webhook },
+    { id: "system", label: "System", icon: Palette },
   ];
 
   return (
@@ -192,6 +203,41 @@ export default function AdminPage({ user, session }) {
                     : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
                         Keine Unterkünfte vorhanden.
                       </div>}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "system" && (
+          <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8">
+            <h2 className="text-xl font-light mb-6 flex items-center gap-2">
+              <Palette className="text-primary" size={20} />
+              System-Einstellungen (Temporär)
+            </h2>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 bg-background border border-border rounded-xl">
+                <div>
+                  <h3 className="font-medium text-sm">
+                    Saisonale Effekte erzwingen
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Aktiviert Pride- und Schnee-Effekte unabhängig vom aktuellen
+                    Datum (nur für dich sichtbar).
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAdminEffectsEnabled(!adminEffectsEnabled)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    adminEffectsEnabled ? "bg-primary" : "bg-muted"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      adminEffectsEnabled ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
             </div>
           </div>

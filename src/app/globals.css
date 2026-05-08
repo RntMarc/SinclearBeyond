@@ -35,7 +35,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
+  --color-primary: var(--primary-custom, var(--primary));
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -125,6 +125,12 @@
 }
 
 @layer base {
+  :root {
+    --primary-custom: oklch(0.491 0.27 292.581);
+  }
+  .dark {
+    --primary-custom: oklch(0.432 0.232 292.759);
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -133,5 +139,90 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* Seasonal Effects */
+.effect-pride-banner {
+  position: relative;
+}
+.effect-pride-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 0, 0, 0.05),
+    rgba(255, 165, 0, 0.05),
+    rgba(255, 255, 0, 0.05),
+    rgba(0, 128, 0, 0.05),
+    rgba(0, 0, 255, 0.05),
+    rgba(75, 0, 130, 0.05),
+    rgba(238, 130, 238, 0.05)
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+.effect-pride-button:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.2),
+    rgba(255, 165, 0, 0.2),
+    rgba(255, 255, 0, 0.2),
+    rgba(0, 128, 0, 0.2),
+    rgba(0, 0, 255, 0.2),
+    rgba(75, 0, 130, 0.2),
+    rgba(238, 130, 238, 0.2)
+  ) !important;
+}
+
+.effect-snow-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.effect-snow-particle {
+  position: absolute;
+  top: -10px;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.8;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) translateX(20px);
+  }
+}
+
+.effect-snow-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.effect-snow-button:hover::before {
+  content: "❄";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  animation: snow-button-fall 2s linear infinite;
+  opacity: 0.5;
+  color: white;
+}
+
+@keyframes snow-button-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(60px) rotate(360deg);
+    opacity: 0;
   }
 }
