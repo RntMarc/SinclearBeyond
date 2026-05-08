@@ -15,6 +15,24 @@ Each page should feature a prominent header section:
     - A subtitle/breadcrumb indicator using `text-xs font-bold uppercase tracking-widest text-primary`.
     - A main title (`h1`) using `text-3xl md:text-4xl font-black tracking-tight`.
 
+## Sub-Pages (Secondary Pages)
+
+Sub-pages (like `/entdecken/gastronomie`) use a more compact header design to prioritize content and provide easy navigation back to the parent section.
+
+### Sub-Page Header
+- **Background**: Same as main header (`bg-card`, `border-b`).
+- **Padding**: `px-6 py-6` (consistent across all screen sizes).
+- **Back Button**:
+    - A `Link` component pointing to the parent page.
+    - Styling: `p-2 hover:bg-muted rounded-full transition-colors`.
+    - Icon: `ArrowLeft` (size 20).
+- **Typography**:
+    - **Subtitle**: `text-[10px] font-bold uppercase tracking-widest text-primary`.
+    - **Main Title**: `text-xl font-black`.
+- **Layout**:
+    - Uses `flex items-center gap-4` for the back button and title group.
+    - Title group uses `space-y-0.5`.
+
 ### Main Content area
 - **Container**: `flex-1 overflow-y-auto p-6 md:p-10`.
 - **Max Width**: Inner content should be wrapped in `max-w-5xl mx-auto`.
