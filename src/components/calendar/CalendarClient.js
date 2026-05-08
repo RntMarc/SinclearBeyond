@@ -22,13 +22,13 @@ import {
   sortEvents,
 } from "@/lib/calendar/calendarUtils";
 
-export default function KalenderClient({ userId }) {
+export default function KalenderClient({ userId, initialView = "month" }) {
   const t = useTranslations("Calendar");
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState("month"); // 'month', 'week', 'day', 'agenda'
+  const [viewMode, setViewMode] = useState(initialView); // 'month', 'week', 'day', 'agenda'
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [dayEventsModal, setDayEventsModal] = useState(null); // { date, events }
   const [formModal, setFormModal] = useState(null); // null | { mode: "create"|"edit", event }

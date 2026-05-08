@@ -90,7 +90,12 @@
   "Home": {
     "subtitle": "Doin Blatz",
     "welcome": "Griaß di, {name}.",
-    "description": "Schee, dass dõ bisch bei Sinclear Beyond."
+    "description": "Schee, dass dõ bisch bei Sinclear Beyond.",
+    "upcomingEvents": "Events die bald kommet",
+    "upcomingTrips": "Reisa die bald geit",
+    "upcomingBirthdays": "Geburtsdag die bald send",
+    "latestPosts": "S'neieschte em Feed",
+    "latestPhotos": "S'neieschte bei de Bildla"
   },
   "LandingPage": {
     "badge": "Community-Pladdform",

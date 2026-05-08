@@ -292,7 +292,9 @@ export function formatOpeningHours(ohString, locale = "de") {
     const now_for_today = new Date();
     const dayOfWeek = now_for_today.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
     const monday = new Date(now_for_today);
-    monday.setDate(now_for_today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    monday.setDate(
+      now_for_today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1),
+    );
     monday.setHours(0, 0, 0, 0);
 
     for (let i = 0; i < 7; i++) {
