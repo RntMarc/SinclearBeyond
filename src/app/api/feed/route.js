@@ -34,6 +34,7 @@ export async function GET(req) {
     .from(closeFriends)
     .where(eq(closeFriends.userId, userId));
   const myCloseFriendIds = myCloseFriends.map((r) => r.friendId);
+  const myCloseFriendIdsSet = new Set(myCloseFriendIds);
 
   // Visibility rules:
   // - Public (visibility = 1): always visible
@@ -84,7 +85,10 @@ export async function GET(req) {
 
   const result = rows.map((row) => ({
     ...row.post,
-    user: row.user,
+    user: {
+      ...row.user,
+      isCloseFriend: myCloseFriendIdsSet.has(row.user.id),
+    },
     canEdit: row.post.userId === userId,
   }));
 

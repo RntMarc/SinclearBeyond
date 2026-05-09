@@ -83,10 +83,12 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
                 <span className="font-semibold text-sm">
                   {post.user.displayName}
                 </span>
+                {post.user.isCloseFriend && (
+                  <Heart size={14} className="fill-primary text-primary" />
+                )}
                 {post.visibility === 2 && (
-                  <Heart
-                    size={12}
-                    className="text-emerald-500 fill-emerald-500"
+                  <div
+                    className="w-2 h-2 rounded-full bg-emerald-500"
                     title="Nur enge Kontakte"
                   />
                 )}

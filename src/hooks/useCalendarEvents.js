@@ -55,6 +55,7 @@ export function useCalendarEvents() {
             startAt: date.toISOString(),
             allDay: 1,
             originalBirthday: b.birthday,
+            isCloseFriend: b.isCloseFriend,
           });
         }
       }

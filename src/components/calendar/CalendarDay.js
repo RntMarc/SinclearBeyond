@@ -1,5 +1,5 @@
 "use client";
-import { Cake, Plane } from "lucide-react";
+import { Cake, Heart, Plane } from "lucide-react";
 import { isSameDay } from "@/lib/calendar/calendarUtils";
 
 export default function CalendarDay({
@@ -55,6 +55,9 @@ export default function CalendarDay({
               >
                 {isTrip && <Plane size={10} className="shrink-0" />}
                 {isBirthday && <Cake size={10} className="shrink-0" />}
+                {ev.isCloseFriend && (
+                  <Heart size={10} className="shrink-0 fill-current" />
+                )}
                 {!ev.allDay && (
                   <span className="opacity-70 mr-0.5">
                     {new Date(ev.startAt).toLocaleTimeString("de-DE", {

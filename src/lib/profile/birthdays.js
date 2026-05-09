@@ -20,31 +20,41 @@ export async function getBirthdays() {
     })
     .from(users);
 
-  // 2. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat
+  // 2. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat (für Sichtbarkeit)
   const whoMarkedMeAsCloseFriend = await db
     .select({ userId: closeFriends.userId })
     .from(closeFriends)
     .where(eq(closeFriends.friendId, currentUserId));
 
-  const closeFriendIds = new Set(whoMarkedMeAsCloseFriend.map((f) => f.userId));
+  const visibilityCloseFriendIds = new Set(
+    whoMarkedMeAsCloseFriend.map((f) => f.userId),
+  );
+
+  // 3. CloseFriends abrufen, die ICH markiert habe (für Herzchen-Symbol und Sortierung)
+  const iMarkedAsCloseFriend = await db
+    .select({ friendId: closeFriends.friendId })
+    .from(closeFriends)
+    .where(eq(closeFriends.userId, currentUserId));
+
+  const myCloseFriendIds = new Set(iMarkedAsCloseFriend.map((f) => f.friendId));
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // 3. Daten filtern und berechnen
+  // 4. Daten filtern und berechnen
   const birthdayUsers = allUsers
     .filter((user) => {
       if (!user.birthday) return false;
       if (user.id === currentUserId) return true;
 
       const visibility = user.birthdayVisibility;
-      const isCloseFriend = closeFriendIds.has(user.id);
+      const allowsMePrivateInfo = visibilityCloseFriendIds.has(user.id);
 
-      return visibility === 1 || (visibility === 2 && isCloseFriend);
+      return visibility === 1 || (visibility === 2 && allowsMePrivateInfo);
     })
     .map((user) => {
       const bday = new Date(user.birthday);
-      const isCloseFriend = closeFriendIds.has(user.id);
+      const isCloseFriend = myCloseFriendIds.has(user.id);
 
       // Nächsten Geburtstag berechnen
       const nextBday = new Date(

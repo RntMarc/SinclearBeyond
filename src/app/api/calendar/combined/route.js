@@ -86,20 +86,31 @@ export async function GET() {
     .from(closeFriends)
     .where(eq(closeFriends.friendId, userId));
 
-  const closeFriendIds = new Set(whoMarkedMeAsCloseFriend.map((f) => f.userId));
+  const visibilityCloseFriendIds = new Set(
+    whoMarkedMeAsCloseFriend.map((f) => f.userId),
+  );
+
+  // 5. CloseFriends abrufen, die ICH markiert habe (für Herzchen-Symbol)
+  const iMarkedAsCloseFriend = await db
+    .select({ friendId: closeFriends.friendId })
+    .from(closeFriends)
+    .where(eq(closeFriends.userId, userId));
+
+  const myCloseFriendIds = new Set(iMarkedAsCloseFriend.map((f) => f.friendId));
 
   const birthdays = allUsersWithBirthday
     .filter((u) => {
       if (!u.birthday) return false;
       if (u.id === userId) return true;
       const visibility = u.birthdayVisibility;
-      const isCloseFriend = closeFriendIds.has(u.id);
-      return visibility === 1 || (visibility === 2 && isCloseFriend);
+      const allowsMePrivateInfo = visibilityCloseFriendIds.has(u.id);
+      return visibility === 1 || (visibility === 2 && allowsMePrivateInfo);
     })
     .map((u) => ({
       id: u.id,
       displayName: u.displayName,
       birthday: u.birthday,
+      isCloseFriend: myCloseFriendIds.has(u.id),
     }));
 
   return NextResponse.json({
