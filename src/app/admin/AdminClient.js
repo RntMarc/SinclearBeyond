@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Banknote,
   Hotel,
   Palette,
   Plane,
@@ -9,7 +10,8 @@ import {
   Webhook,
   Wrench,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import SubscriptionFormModal from "@/components/admin/SubscriptionFormModal";
 import AppShell from "@/components/layout/Appshell";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";
@@ -22,23 +24,34 @@ export default function AdminPage({ user, session }) {
   const [activeTab, setActiveTab] = useState("reisen");
   const [showTripModal, setShowTripModal] = useState(false);
   const [showAccommodationModal, setShowAccommodationModal] = useState(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [trips, setTrips] = useState([]);
   const [accommodations, setAccommodations] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
+  const hasSubs = useMemo(
+    () => subscriptions.some((s) => s.isParticipant),
+    [subscriptions],
+  );
   const [editingTrip, setEditingTrip] = useState(null);
   const [editingAccommodation, setEditingAccommodation] = useState(null);
+  const [editingSubscription, setEditingSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [tripsRes, accommodationsRes] = await Promise.all([
-        fetch("/api/reisen/data"),
-        fetch("/api/travel/accommodations"),
-      ]);
+      const [tripsRes, accommodationsRes, subscriptionsRes] = await Promise.all(
+        [
+          fetch("/api/reisen/data"),
+          fetch("/api/travel/accommodations"),
+          fetch("/api/subscriptions"),
+        ],
+      );
 
       if (tripsRes.ok) setTrips(await tripsRes.json());
       if (accommodationsRes.ok)
         setAccommodations(await accommodationsRes.json());
+      if (subscriptionsRes.ok) setSubscriptions(await subscriptionsRes.json());
     } catch (error) {
       console.error("Error fetching admin data:", error);
     } finally {
@@ -52,13 +65,14 @@ export default function AdminPage({ user, session }) {
 
   const tabs = [
     { id: "reisen", label: "Reisen", icon: Plane },
+    { id: "subscriptions", label: "Abos", icon: Banknote },
     { id: "users", label: "Nutzer", icon: Users },
     { id: "webhooks", label: "Webhooks", icon: Webhook },
     { id: "system", label: "System", icon: Palette },
   ];
 
   return (
-    <AppShell user={user} session={session}>
+    <AppShell user={{ ...user, hasSubscriptions: hasSubs }} session={session}>
       <div className="flex flex-col h-full bg-background">
         <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
           <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -72,6 +86,15 @@ export default function AdminPage({ user, session }) {
             </div>
 
             <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setShowSubscriptionModal(true)}
+                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+              >
+                <Banknote size={18} />
+                Abo anlegen
+              </button>
+
               <button
                 type="button"
                 onClick={() => setShowAccommodationModal(true)}
@@ -115,6 +138,61 @@ export default function AdminPage({ user, session }) {
             </div>
 
             {/* Tab Content */}
+            {activeTab === "subscriptions" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-light flex items-center gap-2">
+                    <Banknote className="text-primary" size={20} />
+                    Abonnements
+                  </h2>
+                  <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                    {subscriptions.length}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {loading
+                    ? <div className="animate-pulse space-y-3 col-span-full">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-20 bg-muted rounded-xl" />
+                        ))}
+                      </div>
+                    : subscriptions.length > 0
+                      ? subscriptions.map((sub) => (
+                          <div
+                            key={sub.id}
+                            className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                          >
+                            <div>
+                              <h3 className="font-medium text-sm">
+                                {sub.name}
+                              </h3>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(
+                                  sub.billingPeriodStart,
+                                ).toLocaleDateString("de-DE")}{" "}
+                                –{" "}
+                                {new Date(
+                                  sub.billingPeriodEnd,
+                                ).toLocaleDateString("de-DE")}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setEditingSubscription(sub)}
+                              className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              <Wrench size={18} />
+                            </button>
+                          </div>
+                        ))
+                      : <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                          Keine Abonnements vorhanden.
+                        </div>}
+                </div>
+              </div>
+            )}
+
             {activeTab === "reisen" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Reisen Spalte */}
@@ -291,6 +369,21 @@ export default function AdminPage({ user, session }) {
           <TripAdminModal
             trip={editingTrip}
             onClose={() => setEditingTrip(null)}
+            onUpdated={fetchData}
+          />
+        )}
+
+        {showSubscriptionModal && (
+          <SubscriptionFormModal
+            onClose={() => setShowSubscriptionModal(false)}
+            onCreated={fetchData}
+          />
+        )}
+
+        {editingSubscription && (
+          <SubscriptionFormModal
+            subscription={editingSubscription}
+            onClose={() => setEditingSubscription(null)}
             onUpdated={fetchData}
           />
         )}

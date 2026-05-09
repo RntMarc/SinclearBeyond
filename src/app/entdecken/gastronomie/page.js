@@ -1,14 +1,14 @@
 import { eq, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { db } from "@/lib/db/db";
 import { discoverPlaces, discoverReviews } from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
 import ClientGastronomyList from "./ClientGastronomyList";
 
 export default async function GastronomyListPage() {
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login?callbackUrl=/entdecken/gastronomie");
 
   const data = await getProfileData(session);

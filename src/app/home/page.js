@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import HomeClient from "@/components/home/HomeClient";
 import AppShell from "@/components/layout/Appshell";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { db } from "@/lib/db/db";
 import {
   closeFriends,
@@ -20,7 +20,7 @@ import { getBirthdays } from "@/lib/profile/birthdays";
 
 export default async function HomePage() {
   const t = await getTranslations("Home");
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login");
 
   const userId = session.sub;
@@ -191,8 +191,22 @@ export default async function HomePage() {
     })),
   ].sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
 
+  const userSubs = await db
+    .select({ id: subscriptionRelations.id })
+    .from(subscriptionRelations)
+    .where(
+      and(
+        eq(subscriptionRelations.userId, userId),
+        eq(subscriptionRelations.isUser, 1),
+      ),
+    )
+    .limit(1);
+
   return (
-    <AppShell user={user} session={session}>
+    <AppShell
+      user={{ ...user, hasSubscriptions: userSubs.length > 0 }}
+      session={session}
+    >
       <div className="flex flex-col min-h-full bg-background">
         <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
           <div className="max-w-5xl mx-auto">
