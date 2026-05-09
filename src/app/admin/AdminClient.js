@@ -13,6 +13,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import SubscriptionFormModal from "@/components/admin/SubscriptionFormModal";
 import AppShell from "@/components/layout/Appshell";
+import PageHeader from "@/components/layout/PageHeader";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";
 import AccommodationFormModal from "@/components/travel/AccommodationFormModal";
@@ -74,47 +75,34 @@ export default function AdminPage({ user, session }) {
   return (
     <AppShell user={{ ...user, hasSubscriptions: hasSubs }} session={session}>
       <div className="flex flex-col h-full bg-background">
-        <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-1">
-              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
-                Verwaltung
-              </p>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                Admin-Panel
-              </h1>
-            </div>
+        <PageHeader subtitle="Verwaltung" title="Admin-Panel">
+          <button
+            type="button"
+            onClick={() => setShowSubscriptionModal(true)}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+          >
+            <Banknote size={18} />
+            Abo anlegen
+          </button>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => setShowSubscriptionModal(true)}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
-              >
-                <Banknote size={18} />
-                Abo anlegen
-              </button>
+          <button
+            type="button"
+            onClick={() => setShowAccommodationModal(true)}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+          >
+            <Hotel size={18} />
+            Unterkunft anlegen
+          </button>
 
-              <button
-                type="button"
-                onClick={() => setShowAccommodationModal(true)}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
-              >
-                <Hotel size={18} />
-                Unterkunft anlegen
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowTripModal(true)}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
-              >
-                <Plus size={18} />
-                Reise anlegen
-              </button>
-            </div>
-          </div>
-        </header>
+          <button
+            type="button"
+            onClick={() => setShowTripModal(true)}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
+          >
+            <Plus size={18} />
+            Reise anlegen
+          </button>
+        </PageHeader>
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">

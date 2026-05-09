@@ -285,7 +285,7 @@ export const feedbackVotes = mysqlTable("FeedbackVote", {
   userId: varchar("userId", { length: 191 }).notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
-  
+
 // ── Subscriptions ─────────────────────────────────────────────────────────────
 
 export const subscriptions = mysqlTable("Subscription", {

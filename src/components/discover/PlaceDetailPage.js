@@ -24,6 +24,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import ReviewModal from "@/components/discover/ReviewModal";
 import SimpleOSM from "@/components/discover/SimpleOSM";
+import SubPageHeader from "@/components/layout/SubPageHeader";
 
 export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const t = useTranslations("Discover");
@@ -186,66 +187,47 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
 
   return (
     <div className="flex flex-col h-full bg-background overflow-hidden">
-      {/* Mobile Header / Actions */}
-      <header className="px-6 py-6 border-b border-border bg-card shrink-0 sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link
-              href={`/entdecken/${place.category === "gastronomy" ? "gastronomie" : place.category}`}
-              className="p-2 hover:bg-muted rounded-full transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2 text-primary">
-                {place.category === "gastronomy"
-                  ? <Utensils size={10} />
-                  : <TreePine size={10} />}
-                <span className="text-[10px] font-bold uppercase tracking-widest">
-                  {t(`categories.${place.category}`)}
-                </span>
-              </div>
-              <h1 className="text-xl font-black">{place.name}</h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={sharePlace}
-              className="p-2 hover:bg-muted rounded-full transition-colors relative"
-              title={t("share")}
-            >
-              {copied
-                ? <Check size={20} className="text-green-500" />
-                : <Share2 size={20} />}
-              {copied && (
-                <span className="absolute -bottom-8 right-0 bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-lg border border-border whitespace-nowrap animate-in fade-in zoom-in duration-200">
-                  {t("linkCopied")}
-                </span>
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={toggleBookmark}
-              disabled={bookmarkLoading}
-              className={`p-2 hover:bg-muted rounded-full transition-colors ${bookmarked ? "text-primary" : ""}`}
-              title={t("bookmarks")}
-            >
-              <Bookmark size={20} fill={bookmarked ? "currentColor" : "none"} />
-            </button>
-            {(place.creatorId === userId || isAdmin) && (
-              <button
-                type="button"
-                onClick={deletePlace}
-                className="p-2 hover:bg-muted rounded-full transition-colors text-destructive"
-                title="Löschen"
-              >
-                <Trash2 size={20} />
-              </button>
-            )}
-          </div>
-        </div>
-      </header>
+      <SubPageHeader
+        backHref={`/entdecken/${place.category === "gastronomy" ? "gastronomie" : place.category}`}
+        subtitle={t(`categories.${place.category}`)}
+        title={place.name}
+        icon={place.category === "gastronomy" ? Utensils : TreePine}
+      >
+        <button
+          type="button"
+          onClick={sharePlace}
+          className="p-2 hover:bg-muted rounded-full transition-colors relative"
+          title={t("share")}
+        >
+          {copied
+            ? <Check size={20} className="text-green-500" />
+            : <Share2 size={20} />}
+          {copied && (
+            <span className="absolute -bottom-8 right-0 bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-lg border border-border whitespace-nowrap animate-in fade-in zoom-in duration-200">
+              {t("linkCopied")}
+            </span>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={toggleBookmark}
+          disabled={bookmarkLoading}
+          className={`p-2 hover:bg-muted rounded-full transition-colors ${bookmarked ? "text-primary" : ""}`}
+          title={t("bookmarks")}
+        >
+          <Bookmark size={20} fill={bookmarked ? "currentColor" : "none"} />
+        </button>
+        {(place.creatorId === userId || isAdmin) && (
+          <button
+            type="button"
+            onClick={deletePlace}
+            className="p-2 hover:bg-muted rounded-full transition-colors text-destructive"
+            title="Löschen"
+          >
+            <Trash2 size={20} />
+          </button>
+        )}
+      </SubPageHeader>
 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-6xl mx-auto p-4 md:p-10">

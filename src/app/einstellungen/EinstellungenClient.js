@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import AppearanceForm from "@/components/profile/AppearanceForm";
 import CloseFriendsManager from "@/components/profile/CloseFriendsManager";
 import EmailChangeForm from "@/components/profile/EmailChangeForm";
+import PageHeader from "@/components/layout/PageHeader";
 import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
 
@@ -37,16 +38,7 @@ export default function EinstellungenClient({
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
-            {t("title")}
-          </p>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-            {user.displayName}
-          </h1>
-        </div>
-      </header>
+      <PageHeader subtitle={t("title")} title={user.displayName} />
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-5xl mx-auto">
