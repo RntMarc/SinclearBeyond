@@ -38,7 +38,8 @@
     "logout": "Abmelda",
     "closeMenu": "Menü zuamacha",
     "openMenu": "Menü uffmacha",
-    "discover": "Entdegga"
+    "discover": "Entdegga",
+    "subscriptions": "Abos"
   },
   "Auth": {
     "login": "Neigauda",
@@ -322,6 +323,34 @@
         "generic": "A Fähler isch bassiert.",
         "connection": "Verbindongsfähler. Komm net ins Netz."
       }
+    }
+  },
+  "Subscriptions": {
+    "title": "Abos",
+    "subtitle": "Zemma zahla",
+    "noSubscriptions": "Du bisch grad bei koim Abo dabei.",
+    "basePrice": "Ganza Preis",
+    "pricePerHead": "Preis pro Nas",
+    "period": "Zeitraum",
+    "members": "Leit",
+    "paid": "Bezahlt",
+    "pending": "Fählt no",
+    "admin": {
+      "title": "Abos verwalda",
+      "newSubscription": "Abo neimacha",
+      "editSubscription": "Abo bearbeida",
+      "name": "Name (z.B. Spotify)",
+      "billingPeriodStart": "Von",
+      "billingPeriodEnd": "Bis",
+      "basePrice": "Ganza Preis",
+      "members": "Leit",
+      "addMember": "No oin dazua dõa",
+      "isUser": "Isch oiner vo uns",
+      "userName": "Nama (wenn mr en net kennet)",
+      "hasPaid": "Bezahlt",
+      "selectUser": "Oin raussuacha...",
+      "deleteSubscription": "Abo lescha",
+      "deleteConfirm": "Willsch des Abo wirklich lescha?"
     }
   },
   "Settings": {

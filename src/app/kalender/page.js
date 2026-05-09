@@ -3,13 +3,13 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import KalenderClient from "@/components/calendar/CalendarClient";
 import AppShell from "@/components/layout/Appshell";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 
 export default async function KalenderPage({ searchParams }) {
   const t = await getTranslations("Calendar");
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login");
 
   const [user] = await db

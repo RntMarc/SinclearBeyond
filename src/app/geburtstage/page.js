@@ -2,13 +2,13 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import BirthdayList from "@/components/birthdays/BirthdayList";
 import AppShell from "@/components/layout/Appshell";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getBirthdays } from "@/lib/profile/birthdays";
 import { getProfileData } from "@/lib/profile/profile";
 
 export default async function GeburtstagePage() {
   const t = await getTranslations("Birthdays");
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login");
   const data = await getProfileData(session);
   if (!data) redirect("/login");

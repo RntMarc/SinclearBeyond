@@ -1,5 +1,6 @@
 "use client";
 import {
+  Banknote,
   Calendar,
   Camera,
   Compass,
@@ -38,6 +39,12 @@ export default function AppShell({ children, user, session }) {
     { href: "/fotos", label: t("photos"), icon: Camera },
     { href: "/einstellungen", label: t("settings"), icon: Settings },
   ];
+
+  const subscriptionNavItem = {
+    href: "/abos",
+    label: t("subscriptions"),
+    icon: Banknote,
+  };
 
   const adminNavItem = { href: "/admin", label: t("admin"), icon: Lock };
 
@@ -83,6 +90,9 @@ export default function AppShell({ children, user, session }) {
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {[
             ...navItems,
+            ...(user?.hasSubscriptions || session?.hasSubscriptions
+              ? [subscriptionNavItem]
+              : []),
             ...(user?.isAdmin || session?.isAdmin ? [adminNavItem] : []),
           ].map(({ href, label, icon: Icon }) => {
             const active = pathname.startsWith(href);

@@ -4,14 +4,14 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import TripDashboard from "@/components/travel/TripDashboard";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
 import { getTripById } from "@/lib/travel/trips";
 
 export default async function TripDetailPage({ params }) {
   const t = await getTranslations("Travel");
   const { id } = await params;
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login");
 
   const profileData = await getProfileData(session);
