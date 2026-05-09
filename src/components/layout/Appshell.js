@@ -8,6 +8,7 @@ import {
   Lock,
   Map as MapIcon,
   Menu,
+  MessageSquarePlus,
   Settings,
   SquarePlay,
   Users,
@@ -37,6 +38,7 @@ export default function AppShell({ children, user, session }) {
     { href: "/geburtstage", label: t("birthdays"), icon: Gift },
     { href: "/kontakte", label: t("contacts"), icon: Users },
     { href: "/fotos", label: t("photos"), icon: Camera },
+    { href: "/feedback", label: t("feedback"), icon: MessageSquarePlus },
     { href: "/einstellungen", label: t("settings"), icon: Settings },
   ];
 

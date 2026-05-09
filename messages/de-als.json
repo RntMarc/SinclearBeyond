@@ -39,6 +39,7 @@
     "closeMenu": "Menü zuamacha",
     "openMenu": "Menü uffmacha",
     "discover": "Entdegga",
+    "feedback": "Feedback"
     "subscriptions": "Abos"
   },
   "Auth": {
@@ -495,5 +496,29 @@
       "passkeyModalTitle": "Passkey a Nama gäba",
       "passkeyModalDesc": "Gib dem Passkey an Nama, damit en schbäder wiederkennsch (z.B. \"Moi iPhone\")."
     }
+  },
+  "Feedback": {
+    "title": "Feedback & Vorschläg",
+    "subtitle": "Mitmacha",
+    "generalFeedback": "Allgemeines Feedback",
+    "generalFeedbackDesc": "Hosch ebbes zu saga, Lob oder Kritik am Projekt? Schreib uns hier a Nõchricht.",
+    "feedbackPlaceholder": "Dein Senf an uns...",
+    "sendFeedback": "Feedback abschicken",
+    "feedbackSuccess": "Doi Feedback isch komma. Vergelts Gott!",
+    "suggestions": "Was no fehlt",
+    "suggestionsDesc": "Welche Sacha fehlet dir no? Hier kasch nuie Ideea neischreiba und über Vorschläg von andere abstimma.",
+    "newSuggestion": "Was neischreiba",
+    "suggestionTitle": "Wie dr Vorschlag hoißt",
+    "suggestionTitlePlaceholder": "z.B. Memes-Seite",
+    "suggestionDescription": "Beschreibong",
+    "suggestionDescriptionPlaceholder": "Schreib mal genauer, was de meinsch...",
+    "submitSuggestion": "Vorschlag schbeichera",
+    "suggestionSuccess": "Doi Vorschlag isch gschbeicheret.",
+    "upvote": "Upvote",
+    "upvotes": "{count} {count, plural, =1 {Stimm} other {Stimm}}",
+    "noSuggestions": "No koine Vorschläg dõ. Fang halt mal o!",
+    "deleteConfirm": "Den Vorschlag wirklich lescha?",
+    "editSuggestion": "Vorschlag bearbeida",
+    "updateSuggestion": "Vorschlag agtualisiera"
   }
 }

@@ -39,6 +39,7 @@
     "closeMenu": "Menü schließen",
     "openMenu": "Menü öffnen",
     "discover": "Entdecken",
+    "feedback": "Feedback"
     "subscriptions": "Abonnements"
   },
   "Auth": {
@@ -495,5 +496,29 @@
       "passkeyModalTitle": "Passkey benennen",
       "passkeyModalDesc": "Gib diesem Passkey einen Namen, damit du ihn später wiedererkennst (z.B. \"Mein iPhone\")."
     }
+  },
+  "Feedback": {
+    "title": "Feedback & Vorschläge",
+    "subtitle": "Mitgestalten",
+    "generalFeedback": "Allgemeines Feedback",
+    "generalFeedbackDesc": "Hast du Anmerkungen, Lob oder Kritik zum Projekt? Schreib uns hier eine Nachricht.",
+    "feedbackPlaceholder": "Deine Nachricht an uns...",
+    "sendFeedback": "Feedback senden",
+    "feedbackSuccess": "Dein Feedback wurde erfolgreich gesendet. Vielen Dank!",
+    "suggestions": "Funktionsvorschläge",
+    "suggestionsDesc": "Welche Funktionen fehlen dir noch? Hier kannst du neue Ideen einreichen und über Vorschläge anderer abstimmen.",
+    "newSuggestion": "Vorschlag einreichen",
+    "suggestionTitle": "Titel des Vorschlags",
+    "suggestionTitlePlaceholder": "z.B. Memes-Seite",
+    "suggestionDescription": "Beschreibung",
+    "suggestionDescriptionPlaceholder": "Beschreibe deine Idee etwas genauer...",
+    "submitSuggestion": "Vorschlag speichern",
+    "suggestionSuccess": "Dein Vorschlag wurde erfolgreich gespeichert.",
+    "upvote": "Upvote",
+    "upvotes": "{count} {count, plural, =1 {Stimme} other {Stimmen}}",
+    "noSuggestions": "Noch keine Vorschläge vorhanden. Mach den ersten Schritt!",
+    "deleteConfirm": "Diesen Vorschlag wirklich löschen?",
+    "editSuggestion": "Vorschlag bearbeiten",
+    "updateSuggestion": "Vorschlag aktualisieren"
   }
 }
