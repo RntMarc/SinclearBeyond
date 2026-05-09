@@ -30,11 +30,8 @@ export default function AppearanceForm({ initialPreferences }) {
     localTheme === "light" ? suggestedColors.light : suggestedColors.dark;
 
   const bgColor = localTheme === "light" ? "#ffffff" : "#141414"; // Simplified from oklch
-  const textColor = localTheme === "light" ? "#000000" : "#ffffff";
 
-  const isContrastOk =
-    isContrastAcceptable(localColor, bgColor, 3.0) &&
-    isContrastAcceptable(localColor, textColor, 3.0);
+  const isContrastOk = isContrastAcceptable(localColor, bgColor, 2.1);
 
   const handleSave = async () => {
     if (!isContrastOk) return;
