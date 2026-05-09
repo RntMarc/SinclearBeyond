@@ -23,7 +23,7 @@ export default function ClientGastronomyList({ initialPlaces }) {
             </Link>
             <div className="space-y-0.5">
               <div className="flex items-center gap-2 text-primary">
-                <Utensils size={14} />
+                <Utensils size={10} />
                 <span className="text-[10px] font-bold uppercase tracking-widest">
                   {t("subtitle")}
                 </span>

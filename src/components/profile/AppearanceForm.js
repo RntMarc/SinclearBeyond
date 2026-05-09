@@ -23,7 +23,7 @@ export default function AppearanceForm({ initialPreferences }) {
 
   const suggestedColors = {
     light: ["#B8860B", "#00008B", "#006400", "#4B0082"], // Darker yellow, blue, green, violet
-    dark: ["#FFFFE0", "#ADD8E6", "#90EE90", "#FFC0CB"], // Lighter yellow, blue, green, pink
+    dark: ["#B8860B", "#00008B", "#006400", "#4B0082"], // Also darker for dark mode as requested
   };
 
   const currentSuggested =
@@ -31,7 +31,10 @@ export default function AppearanceForm({ initialPreferences }) {
 
   const bgColor = localTheme === "light" ? "#ffffff" : "#141414"; // Simplified from oklch
 
-  const isContrastOk = isContrastAcceptable(localColor, bgColor, 2.1);
+  // Background contrast remains at 2.1, but text contrast (on white) must be 4.5
+  const isBgContrastOk = isContrastAcceptable(localColor, bgColor, 2.1);
+  const isTextContrastOk = isContrastAcceptable(localColor, "#ffffff", 4.5);
+  const isContrastOk = isBgContrastOk && isTextContrastOk;
 
   const handleSave = async () => {
     if (!isContrastOk) return;
