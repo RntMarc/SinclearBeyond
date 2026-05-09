@@ -22,8 +22,8 @@ export default function AppearanceForm({ initialPreferences }) {
   const [saved, setSaved] = useState(false);
 
   const suggestedColors = {
-    light: ["#B8860B", "#00008B", "#006400", "#4B0082"], // Darker yellow, blue, green, violet
-    dark: ["#B8860B", "#00008B", "#006400", "#4B0082"], // Also darker for dark mode as requested
+    light: ["#86680e", "#3568cc", "#0a7e0a", "#a42be0"], // Gold, Blue, Green, Violet
+    dark: ["#8c7328", "#216bfe", "#0b890b", "#b22ff4"], // Gold, Blue, Green, Violet
   };
 
   const currentSuggested =
