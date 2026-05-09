@@ -10,6 +10,7 @@ import {
   eventPermissions,
   events,
   feedPosts,
+  subscriptionRelations,
   travelEvents,
   travelRelations,
   travelTrips,
