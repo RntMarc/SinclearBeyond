@@ -79,7 +79,7 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
             headers: {
               Authorization: `Client-ID ${UNSPLASH_API_KEY}`,
             },
-            next: { revalidate: 86400 }, // Cache for 24 hours
+            next: { revalidate: 3600 }, // Cache for 1 hour
           },
         );
 

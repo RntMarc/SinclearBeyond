@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import HomeClient from "@/components/home/HomeClient";
 import AppShell from "@/components/layout/Appshell";
+import PageHeader from "@/components/layout/PageHeader";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { db } from "@/lib/db/db";
 import {
@@ -159,7 +160,7 @@ export default async function HomePage() {
   const allPhotos = await getUnsplashPhotos({ page: 1, perPage: 20 });
   const latestPhotos =
     allPhotos
-      ?.filter((p) => p.createdAt >= sevenDaysAgo.getTime())
+      ?.filter((p) => new Date(p.createdAt).getTime() >= sevenDaysAgo.getTime())
       .slice(0, 10) || [];
 
   // Combine Events, Trips, TravelEvents if necessary?
@@ -209,17 +210,11 @@ export default async function HomePage() {
       session={session}
     >
       <div className="flex flex-col min-h-full bg-background">
-        <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
-          <div className="max-w-5xl mx-auto">
-            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
-              {t("subtitle")}
-            </p>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-              {t("welcome", { name: user?.displayName ?? session.email })}
-            </h1>
-            <p className="text-muted-foreground mt-2">{t("description")}</p>
-          </div>
-        </header>
+        <PageHeader
+          subtitle={t("subtitle")}
+          title={t("welcome", { name: user?.displayName ?? session.email })}
+          description={t("description")}
+        />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">

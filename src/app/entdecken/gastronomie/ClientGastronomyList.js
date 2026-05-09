@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import AddPlaceModal from "@/components/discover/AddPlaceModal";
+import SubPageHeader from "@/components/layout/SubPageHeader";
 
 export default function ClientGastronomyList({ initialPlaces }) {
   const t = useTranslations("Discover");
@@ -12,37 +13,21 @@ export default function ClientGastronomyList({ initialPlaces }) {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <header className="px-6 py-6 border-b border-border bg-card shrink-0">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/entdecken"
-              className="p-2 hover:bg-muted rounded-full transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2 text-primary">
-                <Utensils size={10} />
-                <span className="text-[10px] font-bold uppercase tracking-widest">
-                  {t("subtitle")}
-                </span>
-              </div>
-              <h1 className="text-xl font-black">
-                {t("categories.gastronomy")}
-              </h1>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
-          >
-            <Plus size={16} />
-            {t("addPlace")}
-          </button>
-        </div>
-      </header>
+      <SubPageHeader
+        backHref="/entdecken"
+        subtitle={t("subtitle")}
+        title={t("categories.gastronomy")}
+        icon={Utensils}
+      >
+        <button
+          type="button"
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
+        >
+          <Plus size={16} />
+          {t("addPlace")}
+        </button>
+      </SubPageHeader>
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-5xl mx-auto">

@@ -1,8 +1,7 @@
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
+import SubPageHeader from "@/components/layout/SubPageHeader";
 import TripDashboard from "@/components/travel/TripDashboard";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
@@ -37,22 +36,11 @@ export default async function TripDetailPage({ params }) {
   return (
     <AppShell user={profileData.user} session={session}>
       <div className="flex flex-col h-full bg-background">
-        <header className="px-6 py-6 bg-card border-b border-border shrink-0">
-          <div className="max-w-5xl mx-auto flex items-center gap-4">
-            <Link
-              href="/reisen"
-              className="p-2 hover:bg-muted rounded-full transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div className="space-y-0.5">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                {t("detailsTitle")}
-              </p>
-              <h1 className="text-xl font-black">{trip.name}</h1>
-            </div>
-          </div>
-        </header>
+        <SubPageHeader
+          backHref="/reisen"
+          subtitle={t("detailsTitle")}
+          title={trip.name}
+        />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">

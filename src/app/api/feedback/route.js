@@ -44,7 +44,14 @@ export async function GET(req) {
         feedbackVotes,
         eq(feedbackSuggestions.id, feedbackVotes.suggestionId),
       )
-      .groupBy(feedbackSuggestions.id)
+      .groupBy(
+        feedbackSuggestions.id,
+        feedbackSuggestions.userId,
+        feedbackSuggestions.title,
+        feedbackSuggestions.description,
+        feedbackSuggestions.createdAt,
+        feedbackSuggestions.updatedAt,
+      )
       .orderBy(desc(sql`upvotes`), desc(feedbackSuggestions.createdAt));
 
     return NextResponse.json(suggestions);

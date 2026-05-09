@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import FeedbackForm from "@/components/feedback/FeedbackForm";
 import SuggestionForm from "@/components/feedback/SuggestionForm";
 import SuggestionList from "@/components/feedback/SuggestionList";
+import PageHeader from "@/components/layout/PageHeader";
 
 export default function FeedbackClient({ user }) {
   const t = useTranslations("Feedback");
@@ -59,17 +60,15 @@ export default function FeedbackClient({ user }) {
 
   return (
     <>
-      <header className="bg-card border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-8 md:px-10 md:py-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary mb-1 block">
-            {t("subtitle")}
-          </span>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight flex items-center gap-3">
+      <PageHeader
+        subtitle={t("subtitle")}
+        title={
+          <span className="flex items-center gap-3">
             <MessageSquarePlus className="text-primary" size={32} />
             {t("title")}
-          </h1>
-        </div>
-      </header>
+          </span>
+        }
+      />
 
       <main className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-5xl mx-auto space-y-12">
