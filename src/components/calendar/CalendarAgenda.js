@@ -1,5 +1,5 @@
 "use client";
-import { Cake, ChevronDown, Plane } from "lucide-react";
+import { Cake, ChevronDown, Heart, Plane } from "lucide-react";
 import { useState } from "react";
 import { isEventOnDay, sortEvents } from "@/lib/calendar/calendarUtils";
 
@@ -127,6 +127,12 @@ export default function CalendarAgenda({ eventList, onEventClick }) {
                             <Cake size={16} className="text-birthday" />
                           )}
                           {ev.title}
+                          {ev.isCloseFriend && (
+                            <Heart
+                              size={14}
+                              className="fill-primary text-primary"
+                            />
+                          )}
                         </div>
                         {ev.description && (
                           <div className="text-sm text-muted-foreground truncate">

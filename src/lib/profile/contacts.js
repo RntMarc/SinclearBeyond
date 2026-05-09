@@ -24,22 +24,33 @@ export async function getContacts() {
   // 3. SocialInformationen abrufen
   const allSocialInfos = await db.select().from(socialInfo);
 
-  // 4. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat
+  // 4. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat (für Sichtbarkeit)
   const whoMarkedMeAsCloseFriend = await db
     .select({ userId: closeFriends.userId })
     .from(closeFriends)
     .where(eq(closeFriends.friendId, currentUserId));
 
-  const closeFriendIds = new Set(whoMarkedMeAsCloseFriend.map((f) => f.userId));
+  const visibilityCloseFriendIds = new Set(
+    whoMarkedMeAsCloseFriend.map((f) => f.userId),
+  );
 
-  // 4. Daten zusammenführen und filtern
+  // 5. CloseFriends abrufen, die ICH markiert habe (für Herzchen-Symbol und Sortierung)
+  const iMarkedAsCloseFriend = await db
+    .select({ friendId: closeFriends.friendId })
+    .from(closeFriends)
+    .where(eq(closeFriends.userId, currentUserId));
+
+  const myCloseFriendIds = new Set(iMarkedAsCloseFriend.map((f) => f.friendId));
+
+  // 6. Daten zusammenführen und filtern
   const contacts = allUsers
     .map((user) => {
-      if (user.id === currentUserId) return null; // Sich selbst nicht anzeigen? Meistens erwünscht, aber ich filtere es mal raus oder markiere es.
+      if (user.id === currentUserId) return null;
 
       const info = allContactInfos.find((i) => i.userId === user.id);
       const social = allSocialInfos.find((i) => i.userId === user.id);
-      const isCloseFriend = closeFriendIds.has(user.id);
+      const isCloseFriend = myCloseFriendIds.has(user.id);
+      const allowsMePrivateInfo = visibilityCloseFriendIds.has(user.id);
 
       const filteredInfo = {};
       if (info) {
@@ -53,7 +64,7 @@ export async function getContacts() {
 
         fields.forEach(({ key, vis }) => {
           const visibility = info[vis];
-          if (visibility === 1 || (visibility === 2 && isCloseFriend)) {
+          if (visibility === 1 || (visibility === 2 && allowsMePrivateInfo)) {
             filteredInfo[key] = info[key];
           } else {
             filteredInfo[key] = null;
@@ -75,7 +86,7 @@ export async function getContacts() {
 
         socialFields.forEach(({ key, vis }) => {
           const visibility = social[vis];
-          if (visibility === 1 || (visibility === 2 && isCloseFriend)) {
+          if (visibility === 1 || (visibility === 2 && allowsMePrivateInfo)) {
             filteredSocial[key] = social[key];
           } else {
             filteredSocial[key] = null;
