@@ -39,5 +39,6 @@ export const config = {
     "/fotos/:path*",
     "/admin/:path*",
     "/entdecken/:path*",
+    "/feedback/:path*",
   ],
 };

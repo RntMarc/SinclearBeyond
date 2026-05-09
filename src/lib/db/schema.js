@@ -266,3 +266,21 @@ export const discoverBookmarks = mysqlTable("DiscoverBookmark", {
   placeId: varchar("placeId", { length: 191 }).notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
+
+// ── Feedback ──────────────────────────────────────────────────────────────────
+
+export const feedbackSuggestions = mysqlTable("FeedbackSuggestion", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const feedbackVotes = mysqlTable("FeedbackVote", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  suggestionId: varchar("suggestionId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
