@@ -1,5 +1,6 @@
 import {
   bigint,
+  date,
   datetime,
   double,
   longtext,
@@ -283,4 +284,22 @@ export const feedbackVotes = mysqlTable("FeedbackVote", {
   suggestionId: varchar("suggestionId", { length: 191 }).notNull(),
   userId: varchar("userId", { length: 191 }).notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  
+// ── Subscriptions ─────────────────────────────────────────────────────────────
+
+export const subscriptions = mysqlTable("Subscription", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  billingPeriodStart: date("billingPeriodStart").notNull(),
+  billingPeriodEnd: date("billingPeriodEnd").notNull(),
+  basePrice: double("basePrice").notNull(),
+});
+
+export const subscriptionRelations = mysqlTable("SubscriptionRelation", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  subscriptionId: varchar("subscriptionId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }),
+  isUser: tinyint("isUser").notNull().default(1),
+  userName: varchar("userName", { length: 255 }),
+  hasPaid: tinyint("hasPaid").notNull().default(0),
 });

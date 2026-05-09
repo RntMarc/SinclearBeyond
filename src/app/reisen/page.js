@@ -2,13 +2,13 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import TripList from "@/components/travel/TripList";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
 import { getTrips } from "@/lib/travel/trips";
 
 export default async function ReisenPage() {
   const t = await getTranslations("Travel");
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login");
   const data = await getProfileData(session);
   if (!data) redirect("/login");

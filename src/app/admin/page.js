@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
 import AdminClient from "./AdminClient";
 
 export default async function AdminPage() {
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login");
   if (!session.isAdmin) redirect("/home");
 

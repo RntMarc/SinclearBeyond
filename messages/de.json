@@ -40,6 +40,7 @@
     "openMenu": "Menü öffnen",
     "discover": "Entdecken",
     "feedback": "Feedback"
+    "subscriptions": "Abonnements"
   },
   "Auth": {
     "login": "Login",
@@ -372,6 +373,34 @@
     "yourRating": "Deine Bewertung",
     "commentOptional": "Kommentar (Optional)",
     "savePlace": "Ort hinzufügen & speichern"
+  },
+  "Subscriptions": {
+    "title": "Abonnements",
+    "subtitle": "Geteilte Kosten",
+    "noSubscriptions": "Du bist derzeit in keinem geteilten Abonnement hinterlegt.",
+    "basePrice": "Grundpreis",
+    "pricePerHead": "Preis pro Kopf",
+    "period": "Zeitraum",
+    "members": "Mitglieder",
+    "paid": "Bezahlt",
+    "pending": "Ausstehend",
+    "admin": {
+      "title": "Abonnements verwalten",
+      "newSubscription": "Abo anlegen",
+      "editSubscription": "Abo bearbeiten",
+      "name": "Name (z.B. Spotify)",
+      "billingPeriodStart": "Zeitraum von",
+      "billingPeriodEnd": "Zeitraum bis",
+      "basePrice": "Grundpreis",
+      "members": "Mitglieder",
+      "addMember": "Mitglied hinzufügen",
+      "isUser": "Ist Projekt-Nutzer",
+      "userName": "Name (wenn kein Nutzer)",
+      "hasPaid": "Bezahlt",
+      "selectUser": "Nutzer auswählen...",
+      "deleteSubscription": "Abonnement löschen",
+      "deleteConfirm": "Möchtest du dieses Abonnement wirklich löschen?"
+    }
   },
   "Settings": {
     "title": "Einstellungen",

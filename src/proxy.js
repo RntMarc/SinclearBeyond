@@ -40,5 +40,6 @@ export const config = {
     "/admin/:path*",
     "/entdecken/:path*",
     "/feedback/:path*",
+    "/abos/:path*",
   ],
 };

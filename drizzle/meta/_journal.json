@@ -127,6 +127,13 @@
       "when": 1778283729588,
       "tag": "0017_blue_chamber",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1778364873434,
+      "tag": "0018_short_purifiers",
+      "breakpoints": true
     }
   ]
 }

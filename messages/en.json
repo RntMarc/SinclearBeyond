@@ -40,6 +40,7 @@
     "openMenu": "Open menu",
     "discover": "Discover",
     "feedback": "Feedback"
+    "subscriptions": "Subscriptions"
   },
   "Auth": {
     "login": "Login",
@@ -323,6 +324,34 @@
         "generic": "An error occurred.",
         "connection": "Connection error."
       }
+    }
+  },
+  "Subscriptions": {
+    "title": "Subscriptions",
+    "subtitle": "Shared Costs",
+    "noSubscriptions": "You are not currently part of any shared subscriptions.",
+    "basePrice": "Base Price",
+    "pricePerHead": "Price per Head",
+    "period": "Period",
+    "members": "Members",
+    "paid": "Paid",
+    "pending": "Pending",
+    "admin": {
+      "title": "Manage Subscriptions",
+      "newSubscription": "Create Subscription",
+      "editSubscription": "Edit Subscription",
+      "name": "Name (e.g. Spotify)",
+      "billingPeriodStart": "From",
+      "billingPeriodEnd": "To",
+      "basePrice": "Base Price",
+      "members": "Members",
+      "addMember": "Add Member",
+      "isUser": "Is Project User",
+      "userName": "Name (if not a user)",
+      "hasPaid": "Paid",
+      "selectUser": "Select user...",
+      "deleteSubscription": "Delete Subscription",
+      "deleteConfirm": "Are you sure you want to delete this subscription?"
     }
   },
   "Settings": {

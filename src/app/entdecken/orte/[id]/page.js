@@ -1,11 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import PlaceDetailPage from "@/components/discover/PlaceDetailPage";
 import AppShell from "@/components/layout/Appshell";
-import { getSession } from "@/lib/auth/session";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
 
 export default async function Page({ params }) {
-  const session = await getSession();
+  const session = await getSessionWithSubs();
   if (!session) redirect("/login?callbackUrl=/entdecken");
 
   const data = await getProfileData(session);

@@ -1,22 +1,38 @@
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
-import PhotoGrid from "@/components/photos/PhotoGrid";
+import AbosClient from "@/components/subscriptions/AbosClient";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { getUnsplashPhotos } from "@/lib/photos/unsplash";
-import { getProfileData } from "@/lib/profile/profile";
+import { db } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
+import { getSubscriptions } from "@/lib/subscriptions";
 
-export default async function FotosPage() {
-  const t = await getTranslations("Photos");
+export default async function AbosPage() {
+  const t = await getTranslations("Subscriptions");
   const session = await getSessionWithSubs();
   if (!session) redirect("/login");
-  const profile = await getProfileData(session);
-  if (!profile) redirect("/login");
-  const initialPhotos = await getUnsplashPhotos({ page: 1, perPage: 10 });
+
+  const userId = session.sub;
+
+  const [user] = await db
+    .select({
+      displayName: users.displayName,
+      email: users.email,
+      isAdmin: users.isAdmin,
+    })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  const subscriptions = await getSubscriptions();
 
   return (
-    <AppShell user={profile.user} session={session}>
-      <div className="flex flex-col h-full bg-background">
+    <AppShell
+      user={{ ...user, hasSubscriptions: subscriptions.length > 0 }}
+      session={session}
+    >
+      <div className="flex flex-col min-h-full bg-background">
         <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
           <div className="max-w-5xl mx-auto">
             <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
@@ -30,7 +46,7 @@ export default async function FotosPage() {
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">
-            <PhotoGrid initialPhotos={initialPhotos} />
+            <AbosClient initialSubscriptions={subscriptions} />
           </div>
         </div>
       </div>
