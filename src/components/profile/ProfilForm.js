@@ -6,6 +6,7 @@ import ContactField from "@/components/profile/ContactField";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
 import { saveProfile } from "@/lib/profile/profile";
+import { formatBirthday } from "@/lib/dateUtils";
 
 export default function ProfilForm({ user, contact, social }) {
   const t = useTranslations("Settings");
@@ -124,9 +125,7 @@ export default function ProfilForm({ user, contact, social }) {
     twitchVisibility: social?.twitchVisibility ?? 1,
   });
 
-  const birthdayValue = user.birthday
-    ? new Date(user.birthday).toISOString().split("T")[0]
-    : "";
+  const birthdayValue = formatBirthday(user.birthday);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");

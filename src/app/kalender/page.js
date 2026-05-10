@@ -27,7 +27,11 @@ export default async function KalenderPage({ searchParams }) {
         <PageHeader subtitle={t("subtitle")} title={t("title")} />
 
         <div className="flex-1 overflow-hidden flex flex-col">
-          <KalenderClient userId={session.sub} initialView={view} />
+          <KalenderClient
+            userId={session.sub}
+            initialView={view}
+            timezone={session.timezone}
+          />
         </div>
       </div>
     </AppShell>

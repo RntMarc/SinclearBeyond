@@ -375,16 +375,17 @@
       "suggestedColors": "Farba, die mir gfället",
       "customColor": "Oigene Farb",
       "contrastError": "Die Farb isch em Hendergrond z'ähnlich ond drom net erlaubt.",
-      "save": "Ausseha schbeichera"
+      "save": "Ausseha schbeichera",
+      "timezoneLabel": "Zeitzon"
     },
     "language": {
-      "title": "Schbrõch",
-      "description": "Wähl doi Schbrõch fürs Ogsicht aus.",
+      "title": "Schbrõch & Zeitzon",
+      "description": "Wähl doi Schbrõch ond Zeitzon fürs Ogsicht aus.",
       "label": "Schbrõch raussuacha",
       "german": "Hochdeitsch",
       "swabian": "Schwäbisch",
       "english": "Englisch",
-      "save": "Schbrõch schbeichera"
+      "save": "Aischtellonga schbeichera"
     },
     "profile": {
       "changeImage": "Ändera",

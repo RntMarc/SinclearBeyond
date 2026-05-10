@@ -3,19 +3,21 @@
 import { Trash2, X } from "lucide-react";
 import { useState } from "react";
 import SaveButton from "@/components/SaveButton";
+import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 
 export default function TravelEventFormModal({
   event,
   tripId,
   onClose,
   onUpdated,
+  timezone,
 }) {
   const [form, setForm] = useState(
     event
       ? {
           ...event,
-          start: new Date(event.start).toISOString().slice(0, 16),
-          end: new Date(event.end).toISOString().slice(0, 16),
+          start: toLocalDatetimeValue(event.start, timezone),
+          end: toLocalDatetimeValue(event.end, timezone),
         }
       : {
           tripId,
@@ -47,10 +49,16 @@ export default function TravelEventFormModal({
     const method = event ? "PATCH" : "POST";
 
     try {
+      const payload = {
+        ...form,
+        start: toUTCISOString(form.start, timezone),
+        end: toUTCISOString(form.end, timezone),
+      };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {

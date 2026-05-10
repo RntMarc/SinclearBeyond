@@ -2,7 +2,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import EventForm from "@/components/calendar/EventForm";
-import { toLocalDatetimeValue } from "@/lib/calendar/calendarUtils";
+import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 
 const EMPTY_FORM = {
   title: "",
@@ -22,6 +22,7 @@ export default function EventFormModal({
   onClose,
   onCreated,
   onUpdated,
+  timezone,
 }) {
   const [form, setForm] = useState(() => {
     if (mode === "create" && event) {
@@ -31,8 +32,8 @@ export default function EventFormModal({
       end.setHours(11, 0, 0, 0);
       return {
         ...EMPTY_FORM,
-        startAt: toLocalDatetimeValue(start),
-        endAt: toLocalDatetimeValue(end),
+        startAt: toLocalDatetimeValue(start, timezone),
+        endAt: toLocalDatetimeValue(end, timezone),
       };
     }
     if (mode === "edit" && event) {
@@ -43,8 +44,8 @@ export default function EventFormModal({
         description: event.description || "",
         startAt: event.allDay
           ? startDate.toISOString().slice(0, 10)
-          : toLocalDatetimeValue(startDate),
-        endAt: endDate ? toLocalDatetimeValue(endDate) : "",
+          : toLocalDatetimeValue(startDate, timezone),
+        endAt: endDate ? toLocalDatetimeValue(endDate, timezone) : "",
         allDay: Boolean(event.allDay),
         isPublic: event.isPublic === undefined ? true : Boolean(event.isPublic),
         permissions: event.permissions ?? [],
@@ -60,9 +61,13 @@ export default function EventFormModal({
       title: form.title,
       description: form.description || null,
       startAt: form.allDay
-        ? `${form.startAt.slice(0, 10)}T00:00:00`
-        : form.startAt,
-      endAt: form.endAt || null,
+        ? `${form.startAt.slice(0, 10)}T00:00:00.000Z`
+        : toUTCISOString(form.startAt, timezone),
+      endAt: form.allDay
+        ? form.endAt
+          ? `${form.endAt.slice(0, 10)}T23:59:59.999Z`
+          : null
+        : toUTCISOString(form.endAt, timezone),
       allDay: form.allDay,
       isPublic: form.isPublic,
       permissions: form.permissions.map(({ userId, canView, canEdit }) => ({

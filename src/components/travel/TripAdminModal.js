@@ -2,15 +2,20 @@
 import { Calendar, MapPin, Plus, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import Notification from "@/components/Notification";
-import { toLocalDatetimeValue } from "@/lib/calendar/calendarUtils";
+import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 import TravelEventFormModal from "./TravelEventFormModal";
 
-export default function TripAdminModal({ trip, onClose, onUpdated }) {
+export default function TripAdminModal({
+  trip,
+  onClose,
+  onUpdated,
+  timezone,
+}) {
   const [form, setForm] = useState({
     name: trip.name,
     description: trip.description || "",
-    start: toLocalDatetimeValue(new Date(trip.start)),
-    end: toLocalDatetimeValue(new Date(trip.end)),
+    start: toLocalDatetimeValue(trip.start, timezone),
+    end: toLocalDatetimeValue(trip.end, timezone),
   });
   const [participants, setParticipants] = useState([]);
   const [events, setEvents] = useState([]);
@@ -51,10 +56,17 @@ export default function TripAdminModal({ trip, onClose, onUpdated }) {
   async function handleUpdateTrip(e) {
     e.preventDefault();
     setLoading(true);
+
+    const payload = {
+      ...form,
+      start: toUTCISOString(form.start, timezone),
+      end: toUTCISOString(form.end, timezone),
+    };
+
     const res = await fetch(`/api/travel/trips/${trip.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
     setLoading(false);
     if (res.ok) {
@@ -372,6 +384,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated }) {
             fetchData();
             onUpdated();
           }}
+          timezone={timezone}
         />
       )}
 

@@ -3,9 +3,11 @@
 import { AlertTriangle, Check, Languages } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { isContrastAcceptable } from "@/lib/utils";
+
+const timezones = Intl.supportedValuesOf("timeZone");
 
 export default function AppearanceForm({ initialPreferences }) {
   const router = useRouter();
@@ -18,7 +20,17 @@ export default function AppearanceForm({ initialPreferences }) {
   const [localLanguage, setLocalLanguage] = useState(
     initialPreferences?.language || "de",
   );
+  const [localTimezone, setLocalTimezone] = useState(
+    initialPreferences?.timezone || "",
+  );
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!localTimezone) {
+      setLocalTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    }
+  }, [localTimezone]);
+
   const [saved, setSaved] = useState(false);
 
   const suggestedColors = {
@@ -47,6 +59,7 @@ export default function AppearanceForm({ initialPreferences }) {
           theme: localTheme,
           primaryColor: localColor,
           language: localLanguage,
+          timezone: localTimezone,
         }),
       });
       if (res.ok) {
@@ -71,28 +84,52 @@ export default function AppearanceForm({ initialPreferences }) {
 
         <div className="space-y-8 bg-sidebar border border-sidebar-border rounded-2xl p-8">
           {/* Language selection */}
-          <div>
-            <label
-              htmlFor="language"
-              className="block text-sm font-medium mb-4"
-            >
-              {tLang("label")}
-            </label>
-            <div className="relative">
-              <select
-                id="language"
-                name="language"
-                value={localLanguage}
-                onChange={(e) => setLocalLanguage(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label
+                htmlFor="language"
+                className="block text-sm font-medium mb-4"
               >
-                <option value="de">{tLang("german")}</option>
-                <option value="de-als">{tLang("swabian")}</option>
-                <option value="en">{tLang("english")}</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <Languages size={16} className="text-muted-foreground" />
+                {tLang("label")}
+              </label>
+              <div className="relative">
+                <select
+                  id="language"
+                  name="language"
+                  value={localLanguage}
+                  onChange={(e) => setLocalLanguage(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none"
+                >
+                  <option value="de">{tLang("german")}</option>
+                  <option value="de-als">{tLang("swabian")}</option>
+                  <option value="en">{tLang("english")}</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <Languages size={16} className="text-muted-foreground" />
+                </div>
               </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="timezone"
+                className="block text-sm font-medium mb-4"
+              >
+                {t("timezoneLabel")}
+              </label>
+              <select
+                id="timezone"
+                name="timezone"
+                value={localTimezone}
+                onChange={(e) => setLocalTimezone(e.target.value)}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+              >
+                {timezones.map((tz) => (
+                  <option key={tz} value={tz}>
+                    {tz}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

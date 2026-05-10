@@ -27,7 +27,7 @@ export async function POST(req) {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { theme, primaryColor, language } = await req.json();
+  const { theme, primaryColor, language, timezone } = await req.json();
 
   const [existing] = await db
     .select()
@@ -42,6 +42,7 @@ export async function POST(req) {
         theme: theme ?? existing.theme,
         primaryColor: primaryColor ?? existing.primaryColor,
         language: language ?? existing.language,
+        timezone: timezone ?? existing.timezone,
       })
       .where(eq(userPreferences.userId, session.sub));
   } else {
@@ -51,6 +52,7 @@ export async function POST(req) {
       theme: theme ?? "dark",
       primaryColor: primaryColor ?? "#7c3aed",
       language: language ?? "de",
+      timezone: timezone ?? null,
     });
   }
 
@@ -72,6 +74,7 @@ export async function POST(req) {
     theme: theme ?? session.theme,
     primaryColor: primaryColor ?? session.primaryColor,
     language: language ?? session.language,
+    timezone: timezone ?? session.timezone,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")

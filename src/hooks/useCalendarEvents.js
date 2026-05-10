@@ -44,8 +44,11 @@ export function useCalendarEvents() {
         const bday = new Date(b.birthday);
         // Add for previous, current and next 5 years to cover typical calendar usage
         for (let year = currentYear - 1; year <= currentYear + 5; year++) {
-          const date = new Date(year, bday.getMonth(), bday.getDate(), 0, 0, 0);
-          const age = year - bday.getFullYear();
+          // Use Date.UTC to ensure it stays on the same day globally
+          const date = new Date(
+            Date.UTC(year, bday.getUTCMonth(), bday.getUTCDate(), 0, 0, 0),
+          );
+          const age = year - bday.getUTCFullYear();
           combined.push({
             id: `birthday-${b.id}-${year}`,
             userId: b.id,
