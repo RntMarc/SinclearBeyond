@@ -36,10 +36,8 @@ export function isSameDay(a, b) {
   );
 }
 
-export function toLocalDatetimeValue(date) {
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
+// Re-export from central dateUtils
+export { toLocalDatetimeValue } from "@/lib/dateUtils";
 
 export function getStartOfWeek(date) {
   const d = new Date(date);
@@ -59,21 +57,32 @@ export function addDays(date, days) {
 export function isEventOnDay(event, date) {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
-  const dTime = d.getTime();
 
   const start = new Date(event.startAt);
+  const end = event.endAt ? new Date(event.endAt) : start;
+
+  if (event.allDay) {
+    // For all-day events, compare year/month/day in UTC
+    const dUTC = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+
+    const sUTC = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()));
+    const eUTC = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()));
+
+    return dUTC.getTime() >= sUTC.getTime() && dUTC.getTime() <= eUTC.getTime();
+  }
+
+  // For timed events, compare local timestamps
+  const dTime = d.getTime();
   const s = new Date(start);
   s.setHours(0, 0, 0, 0);
   const sTime = s.getTime();
 
-  const end = event.endAt ? new Date(event.endAt) : start;
   const e = new Date(end);
   e.setHours(0, 0, 0, 0);
   let eTime = e.getTime();
 
   // If end time is exactly midnight and it's not the same as start day,
   // it usually means it ends at the very beginning of that day (not inclusive).
-  // E.g. Jan 1st 00:00 to Jan 2nd 00:00 is just Jan 1st.
   if (
     end.getHours() === 0 &&
     end.getMinutes() === 0 &&

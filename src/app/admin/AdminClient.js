@@ -343,6 +343,7 @@ export default function AdminPage({ user, session }) {
           <TripFormModal
             onClose={() => setShowTripModal(false)}
             onCreated={fetchData}
+            timezone={session.timezone}
           />
         )}
 
@@ -358,6 +359,7 @@ export default function AdminPage({ user, session }) {
             trip={editingTrip}
             onClose={() => setEditingTrip(null)}
             onUpdated={fetchData}
+            timezone={session.timezone}
           />
         )}
 

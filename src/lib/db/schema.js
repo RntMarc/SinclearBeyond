@@ -41,6 +41,7 @@ export const userPreferences = mysqlTable("UserPreferences", {
   primaryColor: varchar("primaryColor", { length: 7 })
     .notNull()
     .default("#7c3aed"),
+  timezone: varchar("timezone", { length: 191 }),
 });
 
 export const closeFriends = mysqlTable("CloseFriend", {

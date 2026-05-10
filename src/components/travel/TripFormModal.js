@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import TripForm from "@/components/travel/TripForm";
+import { toUTCISOString } from "@/lib/dateUtils";
 
 const EMPTY_FORM = {
   name: "",
@@ -12,7 +13,7 @@ const EMPTY_FORM = {
   end: "",
 };
 
-export default function TripFormModal({ onClose, onCreated }) {
+export default function TripFormModal({ onClose, onCreated, timezone }) {
   const t = useTranslations("Travel");
   const tc = useTranslations("Common");
   const [form, setForm] = useState(EMPTY_FORM);
@@ -25,10 +26,16 @@ export default function TripFormModal({ onClose, onCreated }) {
     setSaving(true);
 
     try {
+      const payload = {
+        ...form,
+        start: toUTCISOString(form.start, timezone),
+        end: toUTCISOString(form.end, timezone),
+      };
+
       const res = await fetch("/api/travel/trips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       setSaving(false);
@@ -69,6 +76,7 @@ export default function TripFormModal({ onClose, onCreated }) {
           formError={formError}
           onSubmit={handleSubmit}
           onCancel={onClose}
+          timezone={timezone}
         />
       </div>
     </div>

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { formatBirthday } from "@/lib/dateUtils";
 
 export default function SubscriptionFormModal({
   subscription,
@@ -26,14 +27,10 @@ export default function SubscriptionFormModal({
 
   const [name, setName] = useState(subscription?.name || "");
   const [billingPeriodStart, setBillingPeriodStart] = useState(
-    subscription?.billingPeriodStart
-      ? new Date(subscription.billingPeriodStart).toISOString().split("T")[0]
-      : "",
+    formatBirthday(subscription?.billingPeriodStart),
   );
   const [billingPeriodEnd, setBillingPeriodEnd] = useState(
-    subscription?.billingPeriodEnd
-      ? new Date(subscription.billingPeriodEnd).toISOString().split("T")[0]
-      : "",
+    formatBirthday(subscription?.billingPeriodEnd),
   );
   const [basePrice, setBasePrice] = useState(
     subscription?.basePrice?.toString() || "",

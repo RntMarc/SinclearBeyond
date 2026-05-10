@@ -375,16 +375,17 @@
       "suggestedColors": "Suggested Colours",
       "customColor": "Custom Colour",
       "contrastError": "This colour is too similar to the background or text colour and is therefore not allowed.",
-      "save": "Save Design"
+      "save": "Save Design",
+      "timezoneLabel": "Timezone"
     },
     "language": {
-      "title": "Language",
-      "description": "Choose your preferred language for the user interface.",
+      "title": "Language & Timezone",
+      "description": "Choose your preferred language and timezone for the user interface.",
       "label": "Select language",
       "german": "German",
       "swabian": "German (Swabian)",
       "english": "English",
-      "save": "Save language"
+      "save": "Save settings"
     },
     "profile": {
       "changeImage": "Change",

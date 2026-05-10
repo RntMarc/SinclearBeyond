@@ -423,16 +423,17 @@
       "suggestedColors": "Vorgeschlagene Farben",
       "customColor": "Eigene Farbe",
       "contrastError": "Diese Farbe ist zu ähnlich zur Hintergrund- oder Textfarbe und daher nicht erlaubt.",
-      "save": "Design speichern"
+      "save": "Design speichern",
+      "timezoneLabel": "Zeitzone"
     },
     "language": {
-      "title": "Sprache",
-      "description": "Wähle deine bevorzugte Sprache für die Benutzeroberfläche.",
+      "title": "Sprache & Zeitzone",
+      "description": "Wähle deine bevorzugte Sprache und Zeitzone für die Benutzeroberfläche.",
       "label": "Sprache wählen",
       "german": "Deutsch",
       "swabian": "Deutsch (Schwäbisch)",
       "english": "Englisch",
-      "save": "Sprache speichern"
+      "save": "Einstellungen speichern"
     },
     "profile": {
       "changeImage": "Ändern",

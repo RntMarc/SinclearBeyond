@@ -22,7 +22,11 @@ import {
   sortEvents,
 } from "@/lib/calendar/calendarUtils";
 
-export default function KalenderClient({ userId, initialView = "month" }) {
+export default function KalenderClient({
+  userId,
+  initialView = "month",
+  timezone,
+}) {
   const t = useTranslations("Calendar");
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -209,6 +213,7 @@ export default function KalenderClient({ userId, initialView = "month" }) {
           onClose={() => setFormModal(null)}
           onCreated={addEvent}
           onUpdated={updateEvent}
+          timezone={timezone}
         />
       )}
     </div>
