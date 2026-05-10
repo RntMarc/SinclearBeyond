@@ -44,8 +44,8 @@ export default function AppearanceForm({ initialPreferences }) {
   // Derive dynamic background color for contrast calculation (following globals.css logic)
   const bgColor =
     localTheme === "light"
-      ? mixColors(localColor, "#ffffff", 2) // color-mix(in oklch, var(--primary-custom), white 98%)
-      : mixColors(localColor, "#000000", 6); // color-mix(in oklch, var(--primary-custom), black 94%)
+      ? mixColors(localColor, "#ffffff", 5) // color-mix(in oklch, var(--primary-custom), white 95%)
+      : mixColors(localColor, "#000000", 10); // color-mix(in oklch, var(--primary-custom), black 90%)
 
   // Background contrast remains at 2.1, but text contrast (on white) must be 4.5
   const isBgContrastOk = isContrastAcceptable(localColor, bgColor, 2.1);

@@ -53,19 +53,19 @@
 
 :root {
   --primary-custom: oklch(0.491 0.27 292.581);
-  --background: color-mix(in oklch, var(--primary-custom), white 98%);
+  --background: color-mix(in oklch, var(--primary-custom), white 95%);
   --foreground: oklch(0.145 0.008 326);
-  --card: color-mix(in oklch, var(--primary-custom), white 96%);
+  --card: color-mix(in oklch, var(--primary-custom), white 92%);
   --card-foreground: oklch(0.145 0.008 326);
-  --popover: color-mix(in oklch, var(--primary-custom), white 96%);
+  --popover: color-mix(in oklch, var(--primary-custom), white 92%);
   --popover-foreground: oklch(0.145 0.008 326);
   --primary: var(--primary-custom);
   --primary-foreground: oklch(0.969 0.016 293.756);
-  --secondary: color-mix(in oklch, var(--primary-custom), white 90%);
+  --secondary: color-mix(in oklch, var(--primary-custom), white 85%);
   --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: color-mix(in oklch, var(--primary-custom), white 92%);
+  --muted: color-mix(in oklch, var(--primary-custom), white 88%);
   --muted-foreground: oklch(0.542 0.034 322.5);
-  --accent: color-mix(in oklch, var(--primary-custom), white 92%);
+  --accent: color-mix(in oklch, var(--primary-custom), white 88%);
   --accent-foreground: oklch(0.212 0.019 322.12);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.145 0.008 326 / 10%);
@@ -77,11 +77,11 @@
   --chart-4: oklch(0.491 0.27 292.581);
   --chart-5: oklch(0.432 0.232 292.759);
   --radius: 0.625rem;
-  --sidebar: color-mix(in oklch, var(--primary-custom), white 98.5%);
+  --sidebar: color-mix(in oklch, var(--primary-custom), white 96%);
   --sidebar-foreground: oklch(0.145 0.008 326);
   --sidebar-primary: var(--primary-custom);
   --sidebar-primary-foreground: oklch(0.969 0.016 293.756);
-  --sidebar-accent: color-mix(in oklch, var(--primary-custom), white 92%);
+  --sidebar-accent: color-mix(in oklch, var(--primary-custom), white 88%);
   --sidebar-accent-foreground: oklch(0.212 0.019 322.12);
   --sidebar-border: oklch(0.145 0.008 326 / 10%);
   --sidebar-ring: var(--primary-custom);
@@ -91,19 +91,19 @@
 
 .dark {
   --primary-custom: oklch(0.432 0.232 292.759);
-  --background: color-mix(in oklch, var(--primary-custom), black 94%);
+  --background: color-mix(in oklch, var(--primary-custom), black 90%);
   --foreground: oklch(0.985 0 0);
-  --card: color-mix(in oklch, var(--primary-custom), black 90%);
+  --card: color-mix(in oklch, var(--primary-custom), black 82%);
   --card-foreground: oklch(0.985 0 0);
-  --popover: color-mix(in oklch, var(--primary-custom), black 90%);
+  --popover: color-mix(in oklch, var(--primary-custom), black 82%);
   --popover-foreground: oklch(0.985 0 0);
   --primary: var(--primary-custom);
   --primary-foreground: oklch(0.969 0.016 293.756);
-  --secondary: color-mix(in oklch, var(--primary-custom), black 80%);
+  --secondary: color-mix(in oklch, var(--primary-custom), black 75%);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: color-mix(in oklch, var(--primary-custom), black 86%);
+  --muted: color-mix(in oklch, var(--primary-custom), black 80%);
   --muted-foreground: oklch(0.711 0.019 323.02);
-  --accent: color-mix(in oklch, var(--primary-custom), black 86%);
+  --accent: color-mix(in oklch, var(--primary-custom), black 80%);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
@@ -114,11 +114,11 @@
   --chart-3: oklch(0.541 0.281 293.009);
   --chart-4: oklch(0.491 0.27 292.581);
   --chart-5: oklch(0.432 0.232 292.759);
-  --sidebar: color-mix(in oklch, var(--primary-custom), black 90%);
+  --sidebar: color-mix(in oklch, var(--primary-custom), black 82%);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: var(--primary-custom);
   --sidebar-primary-foreground: oklch(0.969 0.016 293.756);
-  --sidebar-accent: color-mix(in oklch, var(--primary-custom), black 86%);
+  --sidebar-accent: color-mix(in oklch, var(--primary-custom), black 80%);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: var(--primary-custom);
