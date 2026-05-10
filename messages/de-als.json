@@ -521,6 +521,16 @@
     "noSuggestions": "No koine Vorschläg dõ. Fang halt mal o!",
     "deleteConfirm": "Den Vorschlag wirklich lescha?",
     "editSuggestion": "Vorschlag bearbeida",
-    "updateSuggestion": "Vorschlag agtualisiera"
+    "updateSuggestion": "Vorschlag agtualisiera",
+    "status": {
+      "submitted": "Eigreicht",
+      "planned": "Blant",
+      "next": "Als nächschts",
+      "in_progress": "Am wergla",
+      "done": "Fertig",
+      "cancelled": "Abbrocha",
+      "rejected": "Abglehnt",
+      "later": "Schbäder"
+    }
   }
 }

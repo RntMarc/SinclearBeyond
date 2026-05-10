@@ -45,6 +45,21 @@ export default function FeedbackClient({ user }) {
     }
   };
 
+  const handleStatusChange = async (id, status) => {
+    try {
+      const res = await fetch(`/api/feedback/suggestions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        fetchSuggestions();
+      }
+    } catch (err) {
+      console.error("Error updating status:", err);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       const res = await fetch(`/api/feedback/suggestions/${id}`, {
@@ -91,10 +106,11 @@ export default function FeedbackClient({ user }) {
                 </div>
               : <SuggestionList
                   suggestions={suggestions}
-                  currentUserId={user?.id}
+                  user={user}
                   onVote={handleVote}
                   onDelete={handleDelete}
                   onEdit={setEditingSuggestion}
+                  onStatusChange={handleStatusChange}
                 />}
           </section>
         </div>

@@ -31,6 +31,7 @@ export async function GET(req) {
         userId: feedbackSuggestions.userId,
         title: feedbackSuggestions.title,
         description: feedbackSuggestions.description,
+        status: feedbackSuggestions.status,
         createdAt: feedbackSuggestions.createdAt,
         updatedAt: feedbackSuggestions.updatedAt,
         upvotes: sql`count(${feedbackVotes.id})`.mapWith(Number),
@@ -49,6 +50,7 @@ export async function GET(req) {
         feedbackSuggestions.userId,
         feedbackSuggestions.title,
         feedbackSuggestions.description,
+        feedbackSuggestions.status,
         feedbackSuggestions.createdAt,
         feedbackSuggestions.updatedAt,
       )

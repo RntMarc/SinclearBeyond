@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth/auth";
 import { db } from "@/lib/db/db";
-import { feedbackVotes } from "@/lib/db/schema";
+import { feedbackSuggestions, feedbackVotes } from "@/lib/db/schema";
 
 export async function POST(req, { params }) {
   const { id } = await params;
@@ -13,6 +13,23 @@ export async function POST(req, { params }) {
   try {
     const payload = await verifyToken(token);
     const userId = payload.sub;
+
+    const [suggestion] = await db
+      .select()
+      .from(feedbackSuggestions)
+      .where(eq(feedbackSuggestions.id, id))
+      .limit(1);
+
+    if (!suggestion)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    // Voting frozen for done, cancelled, rejected
+    if (["done", "cancelled", "rejected"].includes(suggestion.status)) {
+      return NextResponse.json(
+        { error: "Voting is frozen for this suggestion" },
+        { status: 400 },
+      );
+    }
 
     // Check if already upvoted
     const [existingVote] = await db

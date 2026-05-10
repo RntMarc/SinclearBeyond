@@ -2,7 +2,7 @@ import { and, eq, ne, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth/auth";
 import { db } from "@/lib/db/db";
-import { feedbackSuggestions, feedbackVotes } from "@/lib/db/schema";
+import { feedbackSuggestions, feedbackVotes, users } from "@/lib/db/schema";
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
@@ -13,10 +13,15 @@ export async function PATCH(req, { params }) {
   try {
     const payload = await verifyToken(token);
     const userId = payload.sub;
-    const { title, description } = await req.json();
 
-    if (!title)
-      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    const body = await req.json();
+    const { title, description, status } = body;
 
     const [suggestion] = await db
       .select()
@@ -26,8 +31,22 @@ export async function PATCH(req, { params }) {
 
     if (!suggestion)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    // Admin can update status
+    if (user?.isAdmin && status && status !== suggestion.status) {
+      await db
+        .update(feedbackSuggestions)
+        .set({ status, updatedAt: new Date() })
+        .where(eq(feedbackSuggestions.id, id));
+
+      return NextResponse.json({ success: true });
+    }
+
     if (suggestion.userId !== userId)
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    if (!title)
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
 
     // Check if there are any upvotes from other users
     const [votes] = await db
