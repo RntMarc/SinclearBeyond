@@ -158,10 +158,18 @@ export default async function HomePage() {
   // We'll wrap the Unsplash fetch in a revalidate cache if possible, or just use the lib function.
   // Note: Unsplash API query might not support "since 7 days ago" easily, so we filter the result.
   const allPhotos = await getUnsplashPhotos({ page: 1, perPage: 20 });
+  console.log(`[Home] allPhotos count: ${allPhotos?.length}`);
   const latestPhotos =
     allPhotos
-      ?.filter((p) => new Date(p.createdAt).getTime() >= sevenDaysAgo.getTime())
+      ?.filter((p) => {
+        const photoDate = new Date(p.createdAt).getTime();
+        const isRecent = photoDate >= sevenDaysAgo.getTime();
+        return isRecent;
+      })
       .slice(0, 10) || [];
+  console.log(
+    `[Home] latestPhotos (last 7 days) count: ${latestPhotos.length}`,
+  );
 
   // Combine Events, Trips, TravelEvents if necessary?
   // User asked for "Events", "Trips", "Birthdays", "Posts", "Photos".

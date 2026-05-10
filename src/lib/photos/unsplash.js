@@ -59,7 +59,10 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
 
   console.log("[Unsplash] handles:", handles);
 
-  if (handles.length === 0) return [];
+  if (handles.length === 0) {
+    console.log("[Unsplash] No handles with Unsplash found or visible.");
+    return [];
+  }
 
   // 2. Fetch photos for each handle
   // Note: Unsplash API doesn't have a "get photos from multiple users" endpoint in one go.
@@ -86,6 +89,9 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
         if (!res.ok) return [];
 
         const photos = await res.json();
+        console.log(
+          `[Unsplash] Fetched ${photos.length} photos for handle ${handle}`,
+        );
         return photos.map((p) => ({
           id: p.id,
           url: p.urls.regular,

@@ -229,6 +229,8 @@
     "photoBy": "Photo by"
   },
   "Calendar": {
+    "title": "Calendar",
+    "subtitle": "Events & Planning",
     "agenda": "Agenda",
     "today": "Today",
     "newEntry": "New Entry",

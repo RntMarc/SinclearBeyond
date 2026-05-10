@@ -52,7 +52,10 @@ export async function GET(req) {
         feedbackSuggestions.createdAt,
         feedbackSuggestions.updatedAt,
       )
-      .orderBy(desc(sql`upvotes`), desc(feedbackSuggestions.createdAt));
+      .orderBy(
+        desc(sql`count(${feedbackVotes.id})`),
+        desc(feedbackSuggestions.createdAt),
+      );
 
     return NextResponse.json(suggestions);
   } catch (error) {
