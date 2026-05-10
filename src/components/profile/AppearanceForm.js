@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/layout/ThemeProvider";
-import { isContrastAcceptable } from "@/lib/utils";
+import { isContrastAcceptable, mixColors } from "@/lib/utils";
 
 const timezones = Intl.supportedValuesOf("timeZone");
 
@@ -41,7 +41,11 @@ export default function AppearanceForm({ initialPreferences }) {
   const currentSuggested =
     localTheme === "light" ? suggestedColors.light : suggestedColors.dark;
 
-  const bgColor = localTheme === "light" ? "#ffffff" : "#141414"; // Simplified from oklch
+  // Derive dynamic background color for contrast calculation (following globals.css logic)
+  const bgColor =
+    localTheme === "light"
+      ? mixColors(localColor, "#ffffff", 2) // color-mix(in oklch, var(--primary-custom), white 98%)
+      : mixColors(localColor, "#000000", 6); // color-mix(in oklch, var(--primary-custom), black 94%)
 
   // Background contrast remains at 2.1, but text contrast (on white) must be 4.5
   const isBgContrastOk = isContrastAcceptable(localColor, bgColor, 2.1);

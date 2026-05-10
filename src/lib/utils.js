@@ -58,3 +58,26 @@ export function getContrastRatio(color1, color2) {
 export function isContrastAcceptable(color, background, threshold = 4.5) {
   return getContrastRatio(color, background) >= threshold;
 }
+
+/**
+ * Mixes two colors in RGB space (simplified approximation of color-mix in oklch).
+ * @param {string} color1 Hex color
+ * @param {string} color2 Hex color
+ * @param {number} weight Percentage of color1 (0 to 100)
+ * @returns {string} Hex color
+ */
+export function mixColors(color1, color2, weight) {
+  const p = weight / 100;
+  const rgb1 = color1
+    .replace(/^#/, "")
+    .match(/.{2}/g)
+    .map((x) => parseInt(x, 16));
+  const rgb2 = color2
+    .replace(/^#/, "")
+    .match(/.{2}/g)
+    .map((x) => parseInt(x, 16));
+
+  const mixed = rgb1.map((c1, i) => Math.round(c1 * p + rgb2[i] * (1 - p)));
+
+  return `#${mixed.map((x) => x.toString(16).padStart(2, "0")).join("")}`;
+}
