@@ -77,6 +77,7 @@ export async function getTripById(id) {
         id: users.id,
         displayName: users.displayName,
         email: users.email,
+        image: users.image,
       },
       accommodation: travelAccommodations,
     })

@@ -15,6 +15,7 @@ export async function getContacts() {
       id: users.id,
       displayName: users.displayName,
       email: users.email,
+      image: users.image,
     })
     .from(users);
 

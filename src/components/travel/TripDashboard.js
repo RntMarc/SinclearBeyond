@@ -3,6 +3,7 @@
 import { Calendar, ChevronDown, Info, MapPin, Users } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import Avatar from "@/components/Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 function StatusBadge({ isActive, isUpcoming, isPast }) {
@@ -207,9 +208,7 @@ export default function TripDashboard({ trip }) {
               key={p.id}
               className="flex items-center gap-3 p-3 bg-background border border-sidebar-border rounded-xl"
             >
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
-                {p.displayName?.[0]?.toUpperCase()}
-              </div>
+              <Avatar src={p.image} displayName={p.displayName} size="sm" />
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
                   {p.displayName}

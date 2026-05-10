@@ -22,6 +22,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import Avatar from "@/components/Avatar";
 import ReviewModal from "@/components/discover/ReviewModal";
 import SimpleOSM from "@/components/discover/SimpleOSM";
 import SubPageHeader from "@/components/layout/SubPageHeader";
@@ -457,18 +458,12 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                {review.userImage
-                                  ? <img
-                                      src={review.userImage}
-                                      alt=""
-                                      className="w-8 h-8 rounded-full bg-muted object-cover"
-                                    />
-                                  : <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                                      <UserIcon
-                                        size={14}
-                                        className="text-muted-foreground"
-                                      />
-                                    </div>}
+                                <Avatar
+                                  src={review.userImage}
+                                  displayName={review.userDisplayName}
+                                  size="sm"
+                                  fallbackIcon={UserIcon}
+                                />
                                 <div className="min-w-0">
                                   <p className="text-xs font-bold truncate">
                                     {review.userDisplayName}
