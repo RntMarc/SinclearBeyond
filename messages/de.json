@@ -522,6 +522,16 @@
     "noSuggestions": "Noch keine Vorschläge vorhanden. Mach den ersten Schritt!",
     "deleteConfirm": "Diesen Vorschlag wirklich löschen?",
     "editSuggestion": "Vorschlag bearbeiten",
-    "updateSuggestion": "Vorschlag aktualisieren"
+    "updateSuggestion": "Vorschlag aktualisieren",
+    "status": {
+      "submitted": "Eingereicht",
+      "planned": "Geplant",
+      "next": "Als nächstes",
+      "in_progress": "In Bearbeitung",
+      "done": "Fertig",
+      "cancelled": "Abgebrochen",
+      "rejected": "Abgelehnt",
+      "later": "Später"
+    }
   }
 }

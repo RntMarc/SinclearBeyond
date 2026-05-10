@@ -2,7 +2,7 @@
   "version": "5",
   "dialect": "mysql",
   "id": "98414303-4904-41b2-ad8f-6b28c400ed75",
-  "prevId": "d657eaee-d7be-4d6d-9c09-d87009593c01",
+  "prevId": "158b27f0-6101-49bc-bf8e-6bff1c6018da",
   "tables": {
     "CloseFriend": {
       "name": "CloseFriend",
@@ -750,6 +750,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('submitted','planned','next','in_progress','done','cancelled','rejected','later')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'submitted'"
         },
         "createdAt": {
           "name": "createdAt",

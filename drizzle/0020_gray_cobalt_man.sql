@@ -1,0 +1,1 @@
+ALTER TABLE `FeedbackSuggestion` ADD `status` enum('submitted','planned','next','in_progress','done','cancelled','rejected','later') DEFAULT 'submitted' NOT NULL;
