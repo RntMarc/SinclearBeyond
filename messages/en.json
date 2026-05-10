@@ -473,7 +473,17 @@
     "noSuggestions": "No suggestions yet. Take the first step!",
     "deleteConfirm": "Really delete this suggestion?",
     "editSuggestion": "Edit Suggestion",
-    "updateSuggestion": "Update Suggestion"
+    "updateSuggestion": "Update Suggestion",
+    "status": {
+      "submitted": "Submitted",
+      "planned": "Planned",
+      "next": "Next",
+      "in_progress": "In Progress",
+      "done": "Done",
+      "cancelled": "Cancelled",
+      "rejected": "Rejected",
+      "later": "Later"
+    }
   },
   "Discover": {
     "title": "Local Explorer Guide",

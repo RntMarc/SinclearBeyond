@@ -141,6 +141,13 @@
       "when": 1778367925196,
       "tag": "0019_messy_santa_claus",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1778441990630,
+      "tag": "0020_gray_cobalt_man",
+      "breakpoints": true
     }
   ]
 }

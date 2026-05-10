@@ -275,6 +275,18 @@ export const feedbackSuggestions = mysqlTable("FeedbackSuggestion", {
   userId: varchar("userId", { length: 191 }).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
+  status: mysqlEnum("status", [
+    "submitted",
+    "planned",
+    "next",
+    "in_progress",
+    "done",
+    "cancelled",
+    "rejected",
+    "later",
+  ])
+    .notNull()
+    .default("submitted"),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
 });
