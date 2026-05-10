@@ -2,6 +2,7 @@
 import { ChevronRight, Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import Avatar from "@/components/Avatar";
 import ContactModal from "./ContactModal";
 
 export default function ContactList({ initialContacts }) {
@@ -22,13 +23,12 @@ export default function ContactList({ initialContacts }) {
         {initialContacts.map((contact) => (
           <button
             key={contact.id}
+            type="button"
             onClick={() => setSelectedContact(contact)}
             className="flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-xl transition-all group text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
-                {contact.displayName?.[0]?.toUpperCase() || "?"}
-              </div>
+              <Avatar src={contact.image} displayName={contact.displayName} />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-foreground">

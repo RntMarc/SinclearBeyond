@@ -18,6 +18,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
 import SnowEffect from "@/components/layout/SnowEffect";
 import { useTheme } from "@/components/layout/ThemeProvider";
@@ -114,9 +115,16 @@ export default function AppShell({ children, user, session }) {
         </nav>
 
         <div className="px-4 py-4 border-t border-sidebar-border flex items-center justify-between gap-2 shrink-0">
-          <span className="text-xs text-muted-foreground truncate min-w-0">
-            {user?.displayName ?? session?.email}
-          </span>
+          <div className="flex items-center gap-3 min-w-0">
+            <Avatar
+              src={user?.image}
+              displayName={user?.displayName || session?.email}
+              size="sm"
+            />
+            <span className="text-xs text-muted-foreground truncate">
+              {user?.displayName ?? session?.email}
+            </span>
+          </div>
           <LogoutButton />
         </div>
       </aside>

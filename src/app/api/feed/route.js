@@ -76,6 +76,7 @@ export async function GET(req) {
       user: {
         id: users.id,
         displayName: users.displayName,
+        image: users.image,
       },
     })
     .from(feedPosts)

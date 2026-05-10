@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import Avatar from "@/components/Avatar";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
@@ -75,9 +76,11 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20 shrink-0">
-              <Icon size={20} />
-            </div>
+            <Avatar
+              src={post.user.image}
+              displayName={post.user.displayName}
+              fallbackIcon={Icon}
+            />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-sm">

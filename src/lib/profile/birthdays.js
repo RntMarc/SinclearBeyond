@@ -15,6 +15,7 @@ export async function getBirthdays() {
       id: users.id,
       displayName: users.displayName,
       email: users.email,
+      image: users.image,
       birthday: users.birthday,
       birthdayVisibility: users.birthdayVisibility,
     })
