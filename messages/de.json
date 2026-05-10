@@ -229,6 +229,8 @@
     "photoBy": "Foto von"
   },
   "Calendar": {
+    "title": "Kalender",
+    "subtitle": "Termine & Planung",
     "agenda": "Agenda",
     "today": "Heute",
     "newEntry": "Neuer Eintrag",
