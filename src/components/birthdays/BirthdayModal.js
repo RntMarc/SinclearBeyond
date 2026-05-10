@@ -1,6 +1,7 @@
 "use client";
 import { Calendar, Gift, Heart, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Avatar from "@/components/Avatar";
 
 export default function BirthdayModal({ user, onClose }) {
   const t = useTranslations("Birthdays");
@@ -26,9 +27,12 @@ export default function BirthdayModal({ user, onClose }) {
             <X size={18} />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground text-2xl font-semibold shadow-lg border-4 border-sidebar">
-              {user.displayName?.[0]?.toUpperCase() || "?"}
-            </div>
+            <Avatar
+              src={user.image}
+              displayName={user.displayName}
+              size="xl"
+              className="rounded-2xl shadow-lg border-4 border-sidebar !w-16 !h-16"
+            />
             <div className="mb-1">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 {user.displayName}

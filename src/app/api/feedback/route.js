@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { verifyToken } from "@/lib/auth/auth";
 import { db } from "@/lib/db/db";
-import { feedbackSuggestions, feedbackVotes } from "@/lib/db/schema";
+import { feedbackSuggestions, feedbackVotes, users } from "@/lib/db/schema";
 
 const transport = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -29,6 +29,8 @@ export async function GET(req) {
       .select({
         id: feedbackSuggestions.id,
         userId: feedbackSuggestions.userId,
+        userDisplayName: users.displayName,
+        userImage: users.image,
         title: feedbackSuggestions.title,
         description: feedbackSuggestions.description,
         status: feedbackSuggestions.status,
@@ -41,6 +43,7 @@ export async function GET(req) {
           ),
       })
       .from(feedbackSuggestions)
+      .leftJoin(users, eq(feedbackSuggestions.userId, users.id))
       .leftJoin(
         feedbackVotes,
         eq(feedbackSuggestions.id, feedbackVotes.suggestionId),
@@ -48,6 +51,8 @@ export async function GET(req) {
       .groupBy(
         feedbackSuggestions.id,
         feedbackSuggestions.userId,
+        users.displayName,
+        users.image,
         feedbackSuggestions.title,
         feedbackSuggestions.description,
         feedbackSuggestions.status,

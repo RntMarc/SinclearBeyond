@@ -1,6 +1,7 @@
 "use client";
 import { Edit2, ThumbsUp, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Avatar from "@/components/Avatar";
 
 const STATUS_COLORS = {
   submitted: "bg-blue-500/10 text-blue-500 border-blue-500/20",
@@ -77,7 +78,17 @@ export default function SuggestionList({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Avatar
+                  src={suggestion.userImage}
+                  displayName={suggestion.userDisplayName}
+                  size="xs"
+                />
+                <span className="text-xs font-medium text-muted-foreground">
+                  {suggestion.userDisplayName}
+                </span>
+              </div>
               <div className="flex items-center gap-3 mb-1">
                 <h3 className="text-lg font-bold leading-tight truncate">
                   {suggestion.title}

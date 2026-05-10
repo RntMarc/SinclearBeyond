@@ -3,6 +3,7 @@
 import {
   Banknote,
   Hotel,
+  Lock,
   Palette,
   Plane,
   Plus,
@@ -75,7 +76,7 @@ export default function AdminPage({ user, session }) {
   return (
     <AppShell user={{ ...user, hasSubscriptions: hasSubs }} session={session}>
       <div className="flex flex-col h-full bg-background">
-        <PageHeader subtitle="Verwaltung" title="Admin-Panel">
+        <PageHeader subtitle="Verwaltung" title="Admin-Panel" icon={Lock}>
           <button
             type="button"
             onClick={() => setShowSubscriptionModal(true)}

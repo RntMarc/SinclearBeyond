@@ -2,6 +2,7 @@
 import { Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import Avatar from "@/components/Avatar";
 
 export default function PermissionEditor({
   allUsers,
@@ -25,6 +26,7 @@ export default function PermissionEditor({
       {
         userId: user.id,
         displayName: user.displayName,
+        image: user.image,
         canView: true,
         canEdit: false,
       },
@@ -93,8 +95,9 @@ export default function PermissionEditor({
             <tbody className="divide-y divide-border">
               {permissions.map((p) => (
                 <tr key={p.userId}>
-                  <td className="px-3 py-2 text-foreground truncate max-w-[120px]">
-                    {p.displayName}
+                  <td className="px-3 py-2 text-foreground flex items-center gap-2 truncate max-w-[160px]">
+                    <Avatar src={p.image} displayName={p.displayName} size="xs" />
+                    <span className="truncate">{p.displayName}</span>
                   </td>
                   {!isPublic && (
                     <td className="px-2 py-2 text-center">

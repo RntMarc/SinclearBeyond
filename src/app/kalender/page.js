@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { Calendar } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import KalenderClient from "@/components/calendar/CalendarClient";
@@ -24,7 +25,11 @@ export default async function KalenderPage({ searchParams }) {
   return (
     <AppShell user={user} session={session}>
       <div className="flex flex-col h-full bg-background">
-        <PageHeader subtitle={t("subtitle")} title={t("title")} />
+        <PageHeader
+          subtitle={t("subtitle")}
+          title={t("title")}
+          icon={Calendar}
+        />
 
         <div className="flex-1 overflow-hidden flex flex-col">
           <KalenderClient

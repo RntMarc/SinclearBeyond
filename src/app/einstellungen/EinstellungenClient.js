@@ -1,6 +1,6 @@
 "use client";
 
-import { Key, Palette, User, Users } from "lucide-react";
+import { Key, Palette, Settings, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import AppearanceForm from "@/components/profile/AppearanceForm";
@@ -38,7 +38,11 @@ export default function EinstellungenClient({
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <PageHeader subtitle={t("title")} title={user.displayName} />
+      <PageHeader
+        subtitle={t("title")}
+        title={user.displayName}
+        icon={Settings}
+      />
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-5xl mx-auto">
