@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { Banknote } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
@@ -34,7 +35,11 @@ export default async function AbosPage() {
       session={session}
     >
       <div className="flex flex-col min-h-full bg-background">
-        <PageHeader subtitle={t("subtitle")} title={t("title")} />
+        <PageHeader
+          subtitle={t("subtitle")}
+          title={t("title")}
+          icon={Banknote}
+        />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">

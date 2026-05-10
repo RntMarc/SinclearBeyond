@@ -1,7 +1,8 @@
 "use client";
-import { Trash2, Upload, User } from "lucide-react";
+import { Trash2, Upload } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef, useState } from "react";
+import Avatar from "@/components/Avatar";
 import ContactField from "@/components/profile/ContactField";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
@@ -174,15 +175,12 @@ export default function ProfilForm({ user, contact, social }) {
 
       <div className="flex flex-col items-center gap-4 mb-8">
         <div className="relative group">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-sidebar-border bg-muted flex items-center justify-center">
-            {imagePreview
-              ? <img
-                  src={imagePreview}
-                  alt={t("profile.imagePreviewAlt")}
-                  className="w-full h-full object-cover"
-                />
-              : <User size={48} className="text-muted-foreground" />}
-          </div>
+          <Avatar
+            src={imagePreview}
+            displayName={user.displayName}
+            size="xl"
+            className="!w-32 !h-32 border-4 border-sidebar-border"
+          />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}

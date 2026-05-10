@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import Avatar from "@/components/Avatar";
 import BirthdayModal from "@/components/birthdays/BirthdayModal";
 import EventDetailModal from "@/components/calendar/EventDetailModal";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
@@ -27,7 +28,7 @@ export default function HomeClient({
   const hasPhotos = latestPhotos.length > 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+    <div className="columns-1 md:columns-2 gap-6 md:gap-10">
       {/* Upcoming Events */}
       {hasEvents && (
         <Section
@@ -119,9 +120,11 @@ export default function HomeClient({
               className="w-full text-left p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
-                  {user.displayName?.[0]?.toUpperCase()}
-                </div>
+                <Avatar
+                  src={user.image}
+                  displayName={user.displayName}
+                  size="sm"
+                />
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">
                     {user.displayName}
@@ -198,7 +201,7 @@ export default function HomeClient({
 
 function Section({ title, href, children, className = "" }) {
   return (
-    <section className="flex flex-col">
+    <section className="flex flex-col break-inside-avoid mb-10">
       <Link
         href={href}
         className="group flex items-center justify-between mb-6 hover:text-primary transition-colors"

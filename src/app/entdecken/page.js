@@ -36,7 +36,11 @@ export default async function DiscoverPage() {
   return (
     <AppShell user={user} session={session}>
       <div className="flex flex-col h-full bg-background">
-        <PageHeader subtitle={t("subtitle")} title={t("title")} />
+        <PageHeader
+          subtitle={t("subtitle")}
+          title={t("title")}
+          icon={Compass}
+        />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto space-y-12">

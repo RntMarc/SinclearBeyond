@@ -1,4 +1,10 @@
-export default function PageHeader({ subtitle, title, description, children }) {
+export default function PageHeader({
+  subtitle,
+  title,
+  description,
+  children,
+  icon: Icon,
+}) {
   return (
     <header className="px-6 py-8 md:px-10 md:py-12 bg-card border-b border-border shrink-0">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -8,7 +14,8 @@ export default function PageHeader({ subtitle, title, description, children }) {
               {subtitle}
             </p>
           )}
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight flex items-center gap-3">
+            {Icon && <Icon className="text-primary" size={36} />}
             {title}
           </h1>
           {description && (

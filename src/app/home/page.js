@@ -1,4 +1,5 @@
 import { and, desc, eq, gte, inArray, lte, or } from "drizzle-orm";
+import { Home } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import HomeClient from "@/components/home/HomeClient";
@@ -222,6 +223,7 @@ export default async function HomePage() {
           subtitle={t("subtitle")}
           title={t("welcome", { name: user?.displayName ?? session.email })}
           description={t("description")}
+          icon={Home}
         />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">

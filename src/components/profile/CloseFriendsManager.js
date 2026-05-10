@@ -1,8 +1,9 @@
 "use client";
 
-import { Search, User, UserPlus, X } from "lucide-react";
+import { Search, UserPlus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import Avatar from "@/components/Avatar";
 import { addCloseFriend, removeCloseFriend } from "@/lib/profile/closeFriends";
 
 export default function CloseFriendsManager({ initialFriends }) {
@@ -85,15 +86,11 @@ export default function CloseFriendsManager({ initialFriends }) {
                 className="flex items-center justify-between px-4 py-3 hover:bg-sidebar-accent/50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
-                    {user.image
-                      ? <img
-                          src={user.image}
-                          alt={user.displayName}
-                          className="w-full h-full object-cover"
-                        />
-                      : <User size={16} className="text-muted-foreground" />}
-                  </div>
+                  <Avatar
+                    src={user.image}
+                    displayName={user.displayName}
+                    size="sm"
+                  />
                   <span className="text-sm font-medium">
                     {user.displayName}
                   </span>
@@ -128,15 +125,7 @@ export default function CloseFriendsManager({ initialFriends }) {
                   className="flex items-center justify-between p-3 bg-sidebar border border-sidebar-border rounded-xl"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
-                      {friend.image
-                        ? <img
-                            src={friend.image}
-                            alt={friend.displayName}
-                            className="w-full h-full object-cover"
-                          />
-                        : <User size={20} className="text-muted-foreground" />}
-                    </div>
+                    <Avatar src={friend.image} displayName={friend.displayName} />
                     <span className="text-sm font-medium">
                       {friend.displayName}
                     </span>
