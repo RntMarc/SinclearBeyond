@@ -1,10 +1,8 @@
-import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
+import { createSessionToken } from "@/lib/auth/auth";
 import { verifyAuthentication } from "@/lib/auth/passkey";
-
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function POST(req) {
   const t = await getTranslations("Common");
@@ -15,14 +13,7 @@ export async function POST(req) {
     if (result.verified) {
       const { user } = result;
 
-      const jwt = await new SignJWT({
-        sub: user.id,
-        email: user.email,
-        isAdmin: user.isAdmin,
-      })
-        .setProtectedHeader({ alg: "HS256" })
-        .setExpirationTime("7d")
-        .sign(secret);
+      const jwt = await createSessionToken(user);
 
       const cookieStore = await cookies();
       cookieStore.set("session", jwt, {

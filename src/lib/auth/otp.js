@@ -1,11 +1,9 @@
 import crypto from "node:crypto";
 import { and, eq, gt, isNull, lt } from "drizzle-orm";
-import { SignJWT } from "jose";
 import { sendOtpEmail } from "@/lib/auth/email";
+import { createSessionToken } from "@/lib/auth/auth";
 import { db } from "@/lib/db/db";
 import { otpTokens, users } from "@/lib/db/schema";
-
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 async function purgeExpiredTokens() {
   await db.delete(otpTokens).where(lt(otpTokens.expiresAt, new Date()));
@@ -75,14 +73,7 @@ export async function verifyOtp(email, code) {
     .limit(1);
   if (!user) return { ok: false, error: "user_not_found" };
 
-  const jwt = await new SignJWT({
-    sub: user.id,
-    email: user.email,
-    isAdmin: user.isAdmin,
-  })
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("7d")
-    .sign(secret);
+  const jwt = await createSessionToken(user);
 
   return {
     ok: true,
