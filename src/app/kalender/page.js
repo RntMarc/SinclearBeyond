@@ -15,7 +15,11 @@ export default async function KalenderPage({ searchParams }) {
   if (!session) redirect("/login");
 
   const [user] = await db
-    .select({ displayName: users.displayName, email: users.email })
+    .select({
+      displayName: users.displayName,
+      email: users.email,
+      image: users.image,
+    })
     .from(users)
     .where(eq(users.id, session.sub))
     .limit(1);

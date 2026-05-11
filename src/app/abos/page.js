@@ -21,6 +21,7 @@ export default async function AbosPage() {
     .select({
       displayName: users.displayName,
       email: users.email,
+      image: users.image,
       isAdmin: users.isAdmin,
     })
     .from(users)

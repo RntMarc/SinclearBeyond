@@ -18,6 +18,7 @@ export default async function FeedbackPage() {
       id: users.id,
       displayName: users.displayName,
       email: users.email,
+      image: users.image,
       isAdmin: users.isAdmin,
     })
     .from(users)

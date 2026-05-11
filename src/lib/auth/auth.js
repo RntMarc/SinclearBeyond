@@ -30,6 +30,7 @@ export async function loginUser(email, password) {
     language: prefs?.language || "de",
     theme: prefs?.theme || "dark",
     primaryColor: prefs?.primaryColor || "#7c3aed",
+    timezone: prefs?.timezone || null,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
