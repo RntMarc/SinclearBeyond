@@ -136,6 +136,7 @@ export default async function HomePage() {
       user: {
         id: users.id,
         displayName: users.displayName,
+        image: users.image,
       },
     })
     .from(feedPosts)
