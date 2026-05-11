@@ -50,8 +50,11 @@ export default async function ReviewsPage() {
                   </div>
                 </Link>
 
-                <div className="group p-6 bg-card/50 border border-border rounded-2xl opacity-60 flex items-center gap-4 cursor-not-allowed">
-                  <div className="w-12 h-12 rounded-xl bg-muted text-muted-foreground flex items-center justify-center shrink-0">
+                <Link
+                  href="/kritik/filme"
+                  className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <Clapperboard size={24} />
                   </div>
                   <div>
@@ -60,10 +63,13 @@ export default async function ReviewsPage() {
                       {t("moviesDesc")}
                     </p>
                   </div>
-                </div>
+                </Link>
 
-                <div className="group p-6 bg-card/50 border border-border rounded-2xl opacity-60 flex items-center gap-4 cursor-not-allowed">
-                  <div className="w-12 h-12 rounded-xl bg-muted text-muted-foreground flex items-center justify-center shrink-0">
+                <Link
+                  href="/kritik/musik"
+                  className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <Music size={24} />
                   </div>
                   <div>
@@ -72,7 +78,7 @@ export default async function ReviewsPage() {
                       {t("musicDesc")}
                     </p>
                   </div>
-                </div>
+                </Link>
               </div>
             </section>
           </div>

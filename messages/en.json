@@ -495,10 +495,11 @@
     "games": "Games",
     "gamesDesc": "Computer games, consoles and more",
     "movies": "Movies",
-    "moviesDesc": "Coming soon",
+    "moviesSubtitle": "Cinema & Streaming",
+    "moviesDesc": "Blockbusters, series and classics",
     "music": "Music",
-    "musicDesc": "Coming soon",
-    "searchPlaceholder": "Search game...",
+    "musicSubtitle": "Albums & Artists",
+    "musicDesc": "Your favorite music and new discoveries",
     "addReview": "Add Review",
     "noReviews": "No reviews yet.",
     "rating": "Rating",
@@ -519,10 +520,12 @@
       "other_emulator": "Other (Emulator)"
     },
     "search": {
-      "placeholder": "Search for games...",
-      "noResults": "No games found.",
+      "gamePlaceholder": "Search for games...",
+      "moviePlaceholder": "Search for movies...",
+      "musicPlaceholder": "Search for albums...",
+      "noResults": "No entries found.",
       "import": "Import",
-      "moreResults": "Search for more games"
+      "moreResults": "Search for more entries"
     }
   },
   "Discover": {

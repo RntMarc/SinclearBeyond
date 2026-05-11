@@ -569,10 +569,11 @@
     "games": "Spiele",
     "gamesDesc": "Computerspiele, Konsolen und mehr",
     "movies": "Filme",
-    "moviesDesc": "Bald verfügbar",
+    "moviesSubtitle": "Kino & Streaming",
+    "moviesDesc": "Blockbuster, Serien und Klassiker",
     "music": "Musik",
-    "musicDesc": "Bald verfügbar",
-    "searchPlaceholder": "Spiel suchen...",
+    "musicSubtitle": "Alben & Künstler",
+    "musicDesc": "Deine Lieblingsmusik und Neuentdeckungen",
     "addReview": "Bewertung abgeben",
     "noReviews": "Noch keine Bewertungen vorhanden.",
     "rating": "Bewertung",
@@ -593,10 +594,12 @@
       "other_emulator": "Sonstige (Emulator)"
     },
     "search": {
-      "placeholder": "Nach Spielen suchen...",
-      "noResults": "Keine Spiele gefunden.",
+      "gamePlaceholder": "Nach Spielen suchen...",
+      "moviePlaceholder": "Nach Filmen suchen...",
+      "musicPlaceholder": "Nach Alben suchen...",
+      "noResults": "Keine Einträge gefunden.",
       "import": "Übernehmen",
-      "moreResults": "Nach mehr Spielen suchen"
+      "moreResults": "Nach mehr Einträgen suchen"
     }
   }
 }
