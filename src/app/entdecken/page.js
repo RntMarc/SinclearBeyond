@@ -6,7 +6,11 @@ import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { db } from "@/lib/db/db";
-import { discoverBookmarks, discoverPlaces, discoverReviews } from "@/lib/db/schema";
+import {
+  discoverBookmarks,
+  discoverPlaces,
+  discoverReviews,
+} from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
 import DiscoverClient from "./DiscoverClient";
 import { sql } from "drizzle-orm";

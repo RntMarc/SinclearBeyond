@@ -9,9 +9,8 @@ export default function OpeningStatusBadge({ status, size = "sm" }) {
 
   const isOpen = status === "open" || status === "closes_soon";
 
-  const sizeClasses = size === "xs"
-    ? "px-1.5 py-0.5 text-[8px]"
-    : "px-2 py-1 text-[10px]";
+  const sizeClasses =
+    size === "xs" ? "px-1.5 py-0.5 text-[8px]" : "px-2 py-1 text-[10px]";
 
   return (
     <div

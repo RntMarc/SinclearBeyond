@@ -65,8 +65,12 @@ export function isEventOnDay(event, date) {
     // For all-day events, compare year/month/day in UTC
     const dUTC = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
 
-    const sUTC = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()));
-    const eUTC = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()));
+    const sUTC = new Date(
+      Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()),
+    );
+    const eUTC = new Date(
+      Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()),
+    );
 
     return dUTC.getTime() >= sUTC.getTime() && dUTC.getTime() <= eUTC.getTime();
   }

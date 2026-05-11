@@ -40,16 +40,18 @@ export default function DiscoverSearchModal({ onClose }) {
 
       <div
         className={`relative w-full max-w-3xl transition-all duration-200 ${
-          isClosing ? "opacity-0 scale-95 -translate-y-4" : "opacity-100 scale-100 translate-y-0"
+          isClosing
+            ? "opacity-0 scale-95 -translate-y-4"
+            : "opacity-100 scale-100 translate-y-0"
         }`}
       >
         <div className="absolute -top-12 right-0">
-            <button
-                onClick={handleClose}
-                className="p-2 bg-card border border-border rounded-full hover:bg-accent transition-colors text-muted-foreground"
-            >
-                <X size={20} />
-            </button>
+          <button
+            onClick={handleClose}
+            className="p-2 bg-card border border-border rounded-full hover:bg-accent transition-colors text-muted-foreground"
+          >
+            <X size={20} />
+          </button>
         </div>
         <DiscoverSearch onSearch={handleSearch} />
       </div>
