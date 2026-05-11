@@ -6,6 +6,7 @@ import {
   Check,
   Clock,
   Globe,
+  Info,
   Mail,
   MapPin,
   Phone,
@@ -26,11 +27,13 @@ import { Search } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import ReviewModal from "@/components/discover/ReviewModal";
 import SimpleOSM from "@/components/discover/SimpleOSM";
+import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 import DiscoverSearchModal from "@/components/discover/DiscoverSearchModal";
 
 export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const t = useTranslations("Discover");
+  const tc = useTranslations("Common");
   const [place, setPlace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -41,6 +44,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const [updating, setUpdating] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showOSMInfo, setShowOSMInfo] = useState(false);
   const router = useRouter();
 
   const loadPlace = useCallback(async () => {
@@ -404,9 +408,24 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                       )}
                       {place.openingHours && (
                         <div className="p-4 bg-muted/30 rounded-xl">
-                          <p className="text-[10px] uppercase font-bold text-muted-foreground mb-3">
-                            {t("openingHours")}
-                          </p>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <p className="text-[10px] uppercase font-bold text-muted-foreground">
+                                {t("openingHours")}
+                              </p>
+                              <OpeningStatusBadge
+                                status={place.openingStatus}
+                                size="xs"
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setShowOSMInfo(true)}
+                              className="text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              <Info size={14} />
+                            </button>
+                          </div>
                           {place.formattedOpeningHours
                             ? <div className="space-y-2">
                                 {place.formattedOpeningHours.map((day) => (
@@ -423,7 +442,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                                   </div>
                                 ))}
                               </div>
-                            : <p className="text-sm whitespace-pre-line">
+                            : <p className="text-sm whitespace-pre-line font-mono bg-background/50 p-2 rounded border border-border/50">
                                 {place.openingHours}
                               </p>}
                         </div>
@@ -532,6 +551,29 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
 
       {showSearchModal && (
         <DiscoverSearchModal onClose={() => setShowSearchModal(false)} />
+      )}
+
+      {showOSMInfo && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-primary">
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <Info size={24} />
+              </div>
+              <h3 className="font-bold text-lg">{t("osmInfoTitle")}</h3>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {t("osmInfoText")}
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowOSMInfo(false)}
+              className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold hover:opacity-90 transition-opacity"
+            >
+              {tc("ok")}
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

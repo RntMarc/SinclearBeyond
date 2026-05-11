@@ -9,7 +9,11 @@ import {
   discoverReviews,
   users,
 } from "@/lib/db/schema";
-import { formatOpeningHours, translateCuisine } from "@/lib/discover/utils";
+import {
+  formatOpeningHours,
+  getOpeningStatus,
+  translateCuisine,
+} from "@/lib/discover/utils";
 
 export async function GET(_req, { params }) {
   const session = await getSession();
@@ -65,6 +69,7 @@ export async function GET(_req, { params }) {
       },
       reviews,
       needsUpdate,
+      openingStatus: getOpeningStatus(place.openingHours),
       formattedOpeningHours: formatOpeningHours(place.openingHours),
     });
   } catch (error) {

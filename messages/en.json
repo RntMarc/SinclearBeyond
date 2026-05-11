@@ -10,6 +10,7 @@
     "error": "Error",
     "delete": "Delete",
     "cancel": "Cancel",
+    "ok": "Understood",
     "add": "Add",
     "search": "Search...",
     "loading": "Loading...",
@@ -520,6 +521,39 @@
     "successAdded": "Place added successfully.",
     "successDeleted": "Place deleted successfully.",
     "errorUpdate": "Error updating data.",
-    "linkCopied": "Link copied to clipboard."
+    "linkCopied": "Link copied to clipboard.",
+    "osmInfoTitle": "Information about opening hours",
+    "osmInfoText": "The opening hours shown here are obtained from OpenStreetMap and maintained by volunteers. They may therefore be outdated or incomplete. If in doubt, it is advisable to check the official website or call.",
+    "addPlaceTitle": "Add new place",
+    "step1": "Step 1: Find place",
+    "step1Desc": "Search in OpenStreetMap for the place you want to add.",
+    "searchButton": "Search",
+    "noResults": "No results found. Try a different search term.",
+    "step2": "Step 2: Complete details",
+    "step2Desc": "Submit your first review and confirm the category.",
+    "changePlace": "Choose another place",
+    "categoryLabel": "Category",
+    "yourRating": "Your rating",
+    "commentOptional": "Comment (optional)",
+    "savePlace": "Add & save place",
+    "status": {
+      "open": "Open now",
+      "closed": "Closed",
+      "opens_soon": "Opens soon",
+      "closes_soon": "Closes soon"
+    },
+    "search": {
+      "placeholder": "Search for entries...",
+      "modeIn": "In",
+      "modeAround": "Around",
+      "locationPlaceholder": "City, town or address...",
+      "radiusLabel": "Radius",
+      "radiusUnit": "km",
+      "useCurrentLocation": "Use my location",
+      "noResults": "No entries found.",
+      "moreResults": "Search for more entries",
+      "map": "Map",
+      "list": "List"
+    }
   }
 }

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, useMemo, useRef } from "react";
 import DiscoverSearch from "@/components/discover/DiscoverSearch";
 import dynamic from "next/dynamic";
+import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 
 const ResultsMap = dynamic(() => import("./ResultsMap"), {
   ssr: false,
@@ -231,6 +232,10 @@ export default function DiscoverClient({ initialRandomPlaces, bookmarks }) {
                         <span className="text-[8px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
                           {t(`categories.${place.category}`)}
                         </span>
+                        <OpeningStatusBadge
+                          status={place.openingStatus}
+                          size="xs"
+                        />
                       </div>
                     </div>
                     <div className="flex items-center gap-1 text-orange-500 shrink-0">
@@ -279,16 +284,22 @@ function PlaceCard({ place, t }) {
                       </span>
                     </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 text-orange-500">
-            <Star size={16} fill={place.avgRating ? "currentColor" : "none"} />
-            <span className="text-sm font-bold">
-              {place.avgRating ? Number(place.avgRating).toFixed(1) : "-"}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-orange-500">
+              <Star
+                size={16}
+                fill={place.avgRating ? "currentColor" : "none"}
+              />
+              <span className="text-sm font-bold">
+                {place.avgRating ? Number(place.avgRating).toFixed(1) : "-"}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              ({place.reviewCount} {t("reviews")})
             </span>
           </div>
-          <span className="text-xs text-muted-foreground">
-            ({place.reviewCount} {t("reviews")})
-          </span>
+          <OpeningStatusBadge status={place.openingStatus} size="xs" />
         </div>
       </div>
     </Link>
