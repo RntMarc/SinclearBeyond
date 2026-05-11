@@ -570,6 +570,7 @@
     "musicSubtitle": "Alba & Künschtler",
     "musicDesc": "Doi Lieblingsmugg ond Neientdeggonga",
     "addReview": "Bewertong abgäba",
+    "latestReviews": "Neieschte Bewertonga",
     "noReviews": "No koine Bewertonga dõ.",
     "rating": "Bewertong",
     "comment": "Doin Senf",
@@ -588,11 +589,16 @@
       "web": "Web",
       "other_emulator": "Sonschtiges (Emulator)"
     },
+    "shareText": "Gugg mol, was i über {title} uf Sinclear Beyond gschrieba han!",
+    "linkCopied": "Link isch gschbeicheret!",
     "search": {
       "gamePlaceholder": "Nach Schbiele suacha...",
       "moviePlaceholder": "Nach Film suacha...",
       "musicPlaceholder": "Nach Alba suacha...",
       "noResults": "Nix gfonda.",
+      "gameEmptyHint": "Suach oba nach ma Schbiel, om die erschte Bewertong abzgäba.",
+      "movieEmptyHint": "Suach oba nach ma Film, om die erschte Bewertong abzgäba.",
+      "musicEmptyHint": "Suach oba nach Mugg, om die erschte Bewertong abzgäba.",
       "import": "Übernehma",
       "moreResults": "Nach meh Sacha suacha"
     }

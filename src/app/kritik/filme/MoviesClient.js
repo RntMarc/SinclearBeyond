@@ -28,7 +28,7 @@ export default function MoviesClient({ initialMovies }) {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold mb-6">Neueste Bewertungen</h2>
+            <h2 className="text-lg font-bold mb-6">{t("latestReviews")}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {movies.map((movie) => (
                 <MovieCard key={movie.id} movie={movie} t={t} />
@@ -44,8 +44,7 @@ export default function MoviesClient({ initialMovies }) {
                   </div>
                   <p className="text-muted-foreground">{ts("noResults")}</p>
                   <p className="text-xs text-muted-foreground/60 mt-2">
-                    Suche oben nach einem Film, um die erste Bewertung
-                    abzugeben.
+                    {ts("movieEmptyHint")}
                   </p>
                 </div>
               )}

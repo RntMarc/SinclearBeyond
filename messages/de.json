@@ -575,6 +575,7 @@
     "musicSubtitle": "Alben & Künstler",
     "musicDesc": "Deine Lieblingsmusik und Neuentdeckungen",
     "addReview": "Bewertung abgeben",
+    "latestReviews": "Neueste Bewertungen",
     "noReviews": "Noch keine Bewertungen vorhanden.",
     "rating": "Bewertung",
     "comment": "Kommentar",
@@ -593,11 +594,16 @@
       "web": "Web",
       "other_emulator": "Sonstige (Emulator)"
     },
+    "shareText": "Schau dir meine Bewertung zu {title} auf Sinclear Beyond an!",
+    "linkCopied": "Link in die Zwischenablage kopiert!",
     "search": {
       "gamePlaceholder": "Nach Spielen suchen...",
       "moviePlaceholder": "Nach Filmen suchen...",
       "musicPlaceholder": "Nach Alben suchen...",
       "noResults": "Keine Einträge gefunden.",
+      "gameEmptyHint": "Suche oben nach einem Spiel, um die erste Bewertung abzugeben.",
+      "movieEmptyHint": "Suche oben nach einem Film, um die erste Bewertung abzugeben.",
+      "musicEmptyHint": "Suche oben nach Musik, um die erste Bewertung abzugeben.",
       "import": "Übernehmen",
       "moreResults": "Nach mehr Einträgen suchen"
     }

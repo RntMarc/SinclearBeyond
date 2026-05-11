@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -64,18 +64,41 @@ export async function POST(req) {
       );
     }
 
-    const id = crypto.randomUUID();
     const now = new Date();
 
-    await db.insert(mediaReviews).values({
-      id,
-      itemId,
-      userId: session.sub,
-      rating: parseInt(rating, 10),
-      comment,
-      platform,
-      createdAt: now,
-    });
+    // Check if review already exists from this user for this item
+    const [existingReview] = await db
+      .select()
+      .from(mediaReviews)
+      .where(
+        and(eq(mediaReviews.itemId, itemId), eq(mediaReviews.userId, session.sub)),
+      )
+      .limit(1);
+
+    let id = existingReview?.id;
+
+    if (existingReview) {
+      await db
+        .update(mediaReviews)
+        .set({
+          rating: parseInt(rating, 10),
+          comment,
+          platform,
+          createdAt: now, // Update date to show it was refreshed
+        })
+        .where(eq(mediaReviews.id, existingReview.id));
+    } else {
+      id = crypto.randomUUID();
+      await db.insert(mediaReviews).values({
+        id,
+        itemId,
+        userId: session.sub,
+        rating: parseInt(rating, 10),
+        comment,
+        platform,
+        createdAt: now,
+      });
+    }
 
     // Update the item's updatedAt timestamp
     await db
