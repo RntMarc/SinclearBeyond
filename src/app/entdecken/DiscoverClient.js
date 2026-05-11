@@ -106,7 +106,7 @@ export default function DiscoverClient({ initialRandomPlaces, bookmarks, allPlac
           {/* Global Map */}
           {showGlobalMap && (
             <section className="h-[400px] md:h-[500px] w-full animate-in fade-in zoom-in duration-300">
-              <ResultsMap places={allPlaces} />
+              <ResultsMap places={allPlaces} showNumbers={false} />
             </section>
           )}
 

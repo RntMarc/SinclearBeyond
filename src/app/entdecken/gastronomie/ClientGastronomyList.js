@@ -61,21 +61,26 @@ export default function ClientGastronomyList({ initialPlaces }) {
         <div className="max-w-5xl mx-auto space-y-8">
           {showMap && initialPlaces.length > 0 && (
             <div className="h-[300px] w-full rounded-2xl overflow-hidden border border-border shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
-              <ResultsMap places={initialPlaces} />
+              <ResultsMap places={initialPlaces} showNumbers={true} />
             </div>
           )}
 
           {initialPlaces.length > 0
             ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {initialPlaces.map((place) => (
+                {initialPlaces.map((place, index) => (
                   <Link
                     key={place.id}
                     href={`/entdecken/orte/${place.id}`}
-                    className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
+                    className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col relative"
                   >
+                    {showMap && (
+                      <div className="absolute top-4 right-4 w-7 h-7 rounded-lg bg-orange-500 text-white flex items-center justify-center font-bold text-xs shadow-sm z-10">
+                        {index + 1}
+                      </div>
+                    )}
                     <div className="p-6 space-y-4">
                       <div>
-                        <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
+                        <h3 className="font-bold text-lg group-hover:text-primary transition-colors pr-8">
                           {place.name}
                         </h3>
                         <p className="text-sm text-muted-foreground line-clamp-1">

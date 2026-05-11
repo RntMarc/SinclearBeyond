@@ -23,6 +23,8 @@ export default async function GastronomyListPage() {
       avgRating: sql`AVG(${discoverReviews.rating})`,
       reviewCount: sql`COUNT(${discoverReviews.id})`,
       openingHours: discoverPlaces.openingHours,
+      latitude: discoverPlaces.latitude,
+      longitude: discoverPlaces.longitude,
     })
     .from(discoverPlaces)
     .leftJoin(discoverReviews, eq(discoverPlaces.id, discoverReviews.placeId))
