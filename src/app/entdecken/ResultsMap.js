@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 
-export default function ResultsMap({ places }) {
+export default function ResultsMap({ places, showNumbers = true }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
@@ -41,9 +41,14 @@ export default function ResultsMap({ places }) {
           const lat = parseFloat(place.latitude);
           const lon = parseFloat(place.longitude);
 
+          const categoryColor =
+            place.category === 'gastronomy' ? 'bg-orange-500' :
+            place.category === 'leisure' ? 'bg-green-500' :
+            'bg-primary';
+
           const icon = L.divIcon({
             className: 'custom-div-icon',
-            html: `<div class="w-8 h-8 rounded-full bg-primary text-primary-foreground border-2 border-white shadow-lg flex items-center justify-center font-black text-sm">${places.length > 50 ? '' : index + 1}</div>`,
+            html: `<div class="w-8 h-8 rounded-full ${categoryColor} text-white border-2 border-white shadow-lg flex items-center justify-center font-black text-sm">${showNumbers ? (places.length > 50 ? '' : index + 1) : ''}</div>`,
             iconSize: [32, 32],
             iconAnchor: [16, 32],
           });
