@@ -50,6 +50,17 @@ export default async function DiscoverPage() {
     .orderBy(sql`RAND()`)
     .limit(11);
 
+  const allPlaces = await db
+    .select({
+      id: discoverPlaces.id,
+      name: discoverPlaces.name,
+      address: discoverPlaces.address,
+      latitude: discoverPlaces.latitude,
+      longitude: discoverPlaces.longitude,
+      category: discoverPlaces.category,
+    })
+    .from(discoverPlaces);
+
   return (
     <AppShell user={user} session={session}>
       <div className="flex flex-col h-full bg-background">
@@ -60,7 +71,11 @@ export default async function DiscoverPage() {
         />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
-          <DiscoverClient initialRandomPlaces={randomPlaces} bookmarks={bookmarks} />
+          <DiscoverClient
+            initialRandomPlaces={randomPlaces}
+            bookmarks={bookmarks}
+            allPlaces={allPlaces}
+          />
         </div>
       </div>
     </AppShell>
