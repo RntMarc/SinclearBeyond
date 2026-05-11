@@ -261,7 +261,8 @@ export function formatOpeningHours(ohString, locale = "de") {
 
   try {
     const opening_hours = require("opening_hours");
-    const oh = new opening_hours(ohString);
+    // Mode 2 ignores errors like missing holiday definitions for specific countries
+    const oh = new opening_hours(ohString, null, { mode: 2 });
     const days = [];
     const dayNames = {
       de: [
@@ -341,6 +342,32 @@ export function formatOpeningHours(ohString, locale = "de") {
     return days;
   } catch (e) {
     console.error("Error parsing opening hours:", e);
+    return null;
+  }
+}
+
+export function getOpeningStatus(ohString) {
+  if (!ohString) return null;
+
+  try {
+    const opening_hours = require("opening_hours");
+    const oh = new opening_hours(ohString, null, { mode: 2 });
+    const now = new Date();
+    const isOpen = oh.getState(now);
+    const nextChange = oh.getNextChange(now);
+
+    if (!nextChange) return isOpen ? "open" : "closed";
+
+    const diffMin = (nextChange.getTime() - now.getTime()) / 1000 / 60;
+
+    if (isOpen) {
+      if (diffMin < 60) return "closes_soon";
+      return "open";
+    }
+
+    if (diffMin < 60) return "opens_soon";
+    return "closed";
+  } catch (e) {
     return null;
   }
 }

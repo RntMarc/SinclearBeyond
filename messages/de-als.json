@@ -10,6 +10,7 @@
     "error": "Fähler",
     "delete": "Lescha",
     "cancel": "Abbrecha",
+    "ok": "Verstanda",
     "add": "Dazua dõa",
     "search": "Suacha...",
     "loading": "Ladet grad...",
@@ -475,7 +476,28 @@
       "categoryLabel": "Kategorie",
       "yourRating": "Deine Bewertong",
       "commentOptional": "Doin Senf (wenn de magsch)",
-      "savePlace": "Ort neidõa & schbeichera"
+      "savePlace": "Ort neidõa & schbeichera",
+      "osmInfoTitle": "Information zu de Öffnongszeida",
+      "osmInfoText": "Die Öffnongszeida hier kommet aus OpenStreetMap ond werdet vo Leit in ihrer Freizeit pflegt. Die kennet also au mal ald sei odr net ganz schdemma. Im Zweifel liaber mal auf d'Webseite gucka odr oifach a-rufa.",
+      "status": {
+        "open": "Jetzt offe",
+        "closed": "Zua",
+        "opens_soon": "Macht bald uff",
+        "closes_soon": "Macht bald zua"
+      },
+      "search": {
+        "placeholder": "Nach ebbes suacha...",
+        "modeIn": "In",
+        "modeAround": "Om",
+        "locationPlaceholder": "Stadt, Ort odr Adress...",
+        "radiusLabel": "Radius",
+        "radiusUnit": "km",
+        "useCurrentLocation": "Moi Schtandort hernehma",
+        "noResults": "Nix gfonda.",
+        "moreResults": "Nach meh Sacha suacha",
+        "map": "Kärdle",
+        "list": "Lischd"
+      }
     },
     "login": {
       "title": "Login & Passkeys",

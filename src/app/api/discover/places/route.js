@@ -8,6 +8,7 @@ import {
   discoverPlaces,
   discoverReviews,
 } from "@/lib/db/schema";
+import { getOpeningStatus } from "@/lib/discover/utils";
 
 export async function GET(req) {
   const session = await getSession();
@@ -33,6 +34,7 @@ export async function GET(req) {
         category: discoverPlaces.category,
         latitude: discoverPlaces.latitude,
         longitude: discoverPlaces.longitude,
+        openingHours: discoverPlaces.openingHours,
         avgRating: sql`AVG(${discoverReviews.rating})`,
         reviewCount: sql`COUNT(${discoverReviews.id})`,
       })
@@ -86,7 +88,12 @@ export async function GET(req) {
     }
 
     const places = await query;
-    return NextResponse.json(places);
+    const placesWithStatus = places.map((p) => ({
+      ...p,
+      openingStatus: getOpeningStatus(p.openingHours),
+    }));
+
+    return NextResponse.json(placesWithStatus);
   } catch (error) {
     console.error("[API/Discover/Places] GET Error:", error);
     return NextResponse.json(

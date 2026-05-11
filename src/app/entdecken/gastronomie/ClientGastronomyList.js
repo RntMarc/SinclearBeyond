@@ -7,6 +7,7 @@ import { useState } from "react";
 import AddPlaceModal from "@/components/discover/AddPlaceModal";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 import DiscoverSearchModal from "@/components/discover/DiscoverSearchModal";
+import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 
 export default function ClientGastronomyList({ initialPlaces }) {
   const t = useTranslations("Discover");
@@ -75,11 +76,7 @@ export default function ClientGastronomyList({ initialPlaces }) {
                         </span>
                       </div>
 
-                      {place.openingHours && (
-                        <div className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-md inline-block max-w-full truncate">
-                          {place.openingHours}
-                        </div>
-                      )}
+                      <OpeningStatusBadge status={place.openingStatus} />
                     </div>
                   </Link>
                 ))}
