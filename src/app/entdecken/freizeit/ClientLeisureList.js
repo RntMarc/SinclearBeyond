@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Plus, Star, Utensils, Search, Map as MapIcon } from "lucide-react";
+import { ArrowLeft, Plus, Star, TreePine, Search, Map as MapIcon } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -19,7 +19,7 @@ const ResultsMap = dynamic(() => import("../ResultsMap"), {
   ),
 });
 
-export default function ClientGastronomyList({ initialPlaces }) {
+export default function ClientLeisureList({ initialPlaces }) {
   const t = useTranslations("Discover");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -30,8 +30,8 @@ export default function ClientGastronomyList({ initialPlaces }) {
       <SubPageHeader
         backHref="/entdecken"
         subtitle={t("subtitle")}
-        title={t("categories.gastronomy")}
-        icon={Utensils}
+        title={t("categories.leisure")}
+        icon={TreePine}
       >
         <button
           type="button"
@@ -106,9 +106,9 @@ export default function ClientGastronomyList({ initialPlaces }) {
                 ))}
               </div>
             : <div className="p-20 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
-                <Utensils size={48} className="text-muted-foreground/20 mb-4" />
+                <TreePine size={48} className="text-muted-foreground/20 mb-4" />
                 <p className="text-muted-foreground mb-6">
-                  {t("noGastronomy")}
+                  {t("noLeisure")}
                 </p>
                 <button
                   type="button"
@@ -123,7 +123,7 @@ export default function ClientGastronomyList({ initialPlaces }) {
 
       {showAddModal && (
         <AddPlaceModal
-          initialCategory="gastronomy"
+          initialCategory="leisure"
           onClose={() => setShowAddModal(false)}
         />
       )}

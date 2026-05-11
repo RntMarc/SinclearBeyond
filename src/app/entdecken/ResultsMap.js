@@ -43,7 +43,7 @@ export default function ResultsMap({ places }) {
 
           const icon = L.divIcon({
             className: 'custom-div-icon',
-            html: `<div class="w-8 h-8 rounded-full bg-primary text-primary-foreground border-2 border-white shadow-lg flex items-center justify-center font-black text-sm">${index + 1}</div>`,
+            html: `<div class="w-8 h-8 rounded-full bg-primary text-primary-foreground border-2 border-white shadow-lg flex items-center justify-center font-black text-sm">${places.length > 50 ? '' : index + 1}</div>`,
             iconSize: [32, 32],
             iconAnchor: [16, 32],
           });

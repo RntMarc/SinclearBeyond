@@ -17,7 +17,7 @@ const ResultsMap = dynamic(() => import("./ResultsMap"), {
   ),
 });
 
-export default function DiscoverClient({ initialRandomPlaces, bookmarks }) {
+export default function DiscoverClient({ initialRandomPlaces, bookmarks, allPlaces }) {
   const t = useTranslations("Discover");
   const ts = useTranslations("Discover.search");
 
@@ -25,6 +25,7 @@ export default function DiscoverClient({ initialRandomPlaces, bookmarks }) {
   const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("list"); // "list" or "map"
+  const [showGlobalMap, setShowGlobalMap] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -80,13 +81,35 @@ export default function DiscoverClient({ initialRandomPlaces, bookmarks }) {
   return (
     <div className="max-w-5xl mx-auto space-y-12">
       {/* Search Bar */}
-      <section className="pt-2">
-        <DiscoverSearch onSearch={handleSearch} />
+      <section className="pt-2 flex flex-col md:flex-row gap-4 items-center">
+        <div className="flex-1 w-full">
+          <DiscoverSearch onSearch={handleSearch} />
+        </div>
+        {!isSearching && (
+          <button
+            onClick={() => setShowGlobalMap(!showGlobalMap)}
+            className={`px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shrink-0 w-full md:w-auto justify-center ${
+              showGlobalMap
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "bg-card border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground shadow-sm"
+            }`}
+          >
+            <MapPin size={18} />
+            {showGlobalMap ? t("hideMap") : t("showMap")}
+          </button>
+        )}
       </section>
 
       {/* Results / Categories */}
       {!isSearching ? (
         <>
+          {/* Global Map */}
+          {showGlobalMap && (
+            <section className="h-[400px] md:h-[500px] w-full animate-in fade-in zoom-in duration-300">
+              <ResultsMap places={allPlaces} />
+            </section>
+          )}
+
           {/* Categories */}
           <section>
             <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
@@ -108,8 +131,11 @@ export default function DiscoverClient({ initialRandomPlaces, bookmarks }) {
                 </div>
               </Link>
 
-              <div className="p-6 bg-muted/50 border border-border/50 rounded-2xl flex items-center gap-4 grayscale opacity-60 cursor-not-allowed">
-                <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
+              <Link
+                href="/entdecken/freizeit"
+                className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+              >
+                <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <TreePine size={24} />
                 </div>
                 <div>
@@ -118,7 +144,7 @@ export default function DiscoverClient({ initialRandomPlaces, bookmarks }) {
                     {t("leisureDesc")}
                   </p>
                 </div>
-              </div>
+              </Link>
             </div>
           </section>
 
