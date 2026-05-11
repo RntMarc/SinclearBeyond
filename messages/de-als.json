@@ -564,10 +564,11 @@
     "games": "Schbiele",
     "gamesDesc": "Computerschbiele, Konsola ond so Sacha",
     "movies": "Film",
-    "moviesDesc": "Kommt bald",
+    "moviesSubtitle": "Kino & Schtreaming",
+    "moviesDesc": "Blockbuster, Seria ond Klassiker",
     "music": "Mugg",
-    "musicDesc": "Kommt bald",
-    "searchPlaceholder": "Schbiel suacha...",
+    "musicSubtitle": "Alba & Künschtler",
+    "musicDesc": "Doi Lieblingsmugg ond Neientdeggonga",
     "addReview": "Bewertong abgäba",
     "noReviews": "No koine Bewertonga dõ.",
     "rating": "Bewertong",
@@ -588,10 +589,12 @@
       "other_emulator": "Sonschtiges (Emulator)"
     },
     "search": {
-      "placeholder": "Nach Schbiele suacha...",
-      "noResults": "Koi Schbiel gfonda.",
+      "gamePlaceholder": "Nach Schbiele suacha...",
+      "moviePlaceholder": "Nach Film suacha...",
+      "musicPlaceholder": "Nach Alba suacha...",
+      "noResults": "Nix gfonda.",
       "import": "Übernehma",
-      "moreResults": "Nach meh Schbiele suacha"
+      "moreResults": "Nach meh Sacha suacha"
     }
   }
 }

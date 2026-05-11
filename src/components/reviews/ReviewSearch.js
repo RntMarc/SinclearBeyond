@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
-export default function ReviewSearch({ onSelect }) {
+export default function ReviewSearch({ type = "game" }) {
   const t = useTranslations("Reviews.search");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -31,7 +31,7 @@ export default function ReviewSearch({ onSelect }) {
         setIsOpen(true);
         try {
           const res = await fetch(
-            `/api/kritik/search?q=${encodeURIComponent(query)}`,
+            `/api/kritik/search?q=${encodeURIComponent(query)}&type=${type}`,
           );
           const data = await res.json();
           setResults(data);
@@ -47,7 +47,7 @@ export default function ReviewSearch({ onSelect }) {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, type]);
 
   const handleImport = async (item) => {
     try {
@@ -57,7 +57,12 @@ export default function ReviewSearch({ onSelect }) {
         body: JSON.stringify(item),
       });
       const savedItem = await res.json();
-      router.push(`/kritik/spiele/${savedItem.id}`);
+
+      let target = "/kritik/spiele";
+      if (item.type === "movie") target = "/kritik/filme";
+      if (item.type === "music") target = "/kritik/musik";
+
+      router.push(`${target}/${savedItem.id}`);
     } catch (err) {
       console.error("Import error", err);
     }
@@ -72,7 +77,7 @@ export default function ReviewSearch({ onSelect }) {
         />
         <input
           type="text"
-          placeholder={t("placeholder")}
+          placeholder={t(`${type}Placeholder`)}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length > 2 && setIsOpen(true)}
@@ -91,6 +96,7 @@ export default function ReviewSearch({ onSelect }) {
           <div className="max-h-[400px] overflow-y-auto p-2 space-y-1">
             {results.map((item) => (
               <button
+                type="button"
                 key={item.externalId}
                 onClick={() => handleImport(item)}
                 className="w-full flex items-center gap-4 p-3 hover:bg-muted rounded-xl transition-colors text-left group"
