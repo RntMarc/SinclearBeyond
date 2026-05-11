@@ -27,7 +27,6 @@ export async function GET(req) {
     } else if (type === "music") {
       results = await searchMusic(q);
     }
-
     return NextResponse.json(results);
   } catch (error) {
     console.error("[API/Kritik/Search] Error:", error);
