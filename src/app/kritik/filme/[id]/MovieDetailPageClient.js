@@ -73,6 +73,7 @@ export default function MovieDetailPageClient({
         title={movie.title}
         subtitle={t("movies")}
         backHref="/kritik/filme"
+        icon={Star}
       >
         <button
           type="button"

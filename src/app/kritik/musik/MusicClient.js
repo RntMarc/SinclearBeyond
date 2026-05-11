@@ -19,6 +19,7 @@ export default function MusicClient({ initialMusic }) {
         title={t("music")}
         subtitle={t("musicSubtitle")}
         backHref="/kritik"
+        icon={Star}
       />
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">

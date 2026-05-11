@@ -99,7 +99,9 @@
     "upcomingTrips": "Upcoming Trips",
     "upcomingBirthdays": "Upcoming Birthdays",
     "latestPosts": "Latest Posts",
-    "latestPhotos": "Latest Photos"
+    "latestPhotos": "Latest Photos",
+    "latestMediaReviews": "Latest Reviews",
+    "latestDiscoverReviews": "Latest Discoveries"
   },
   "LandingPage": {
     "badge": "Community Platform",

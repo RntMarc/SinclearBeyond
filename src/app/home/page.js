@@ -9,9 +9,13 @@ import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { db } from "@/lib/db/db";
 import {
   closeFriends,
+  discoverPlaces,
+  discoverReviews,
   eventPermissions,
   events,
   feedPosts,
+  mediaItems,
+  mediaReviews,
   subscriptionRelations,
   travelEvents,
   travelRelations,
@@ -173,6 +177,50 @@ export default async function HomePage() {
     `[Home] latestPhotos (last 7 days) count: ${latestPhotos.length}`,
   );
 
+  // 6. Latest Media Reviews (last 7 days)
+  const latestMediaReviewsRows = await db
+    .select({
+      review: mediaReviews,
+      item: {
+        id: mediaItems.id,
+        title: mediaItems.title,
+        image: mediaItems.image,
+        type: mediaItems.type,
+      },
+      user: {
+        id: users.id,
+        displayName: users.displayName,
+        image: users.image,
+      },
+    })
+    .from(mediaReviews)
+    .innerJoin(mediaItems, eq(mediaReviews.itemId, mediaItems.id))
+    .innerJoin(users, eq(mediaReviews.userId, users.id))
+    .where(gte(mediaReviews.createdAt, sevenDaysAgo))
+    .orderBy(desc(mediaReviews.createdAt))
+    .limit(5);
+
+  // 7. Latest Discover Reviews (last 7 days)
+  const latestDiscoverReviewsRows = await db
+    .select({
+      review: discoverReviews,
+      place: {
+        id: discoverPlaces.id,
+        name: discoverPlaces.name,
+      },
+      user: {
+        id: users.id,
+        displayName: users.displayName,
+        image: users.image,
+      },
+    })
+    .from(discoverReviews)
+    .innerJoin(discoverPlaces, eq(discoverReviews.placeId, discoverPlaces.id))
+    .innerJoin(users, eq(discoverReviews.userId, users.id))
+    .where(gte(discoverReviews.createdAt, sevenDaysAgo))
+    .orderBy(desc(discoverReviews.createdAt))
+    .limit(5);
+
   // Combine Events, Trips, TravelEvents if necessary?
   // User asked for "Events", "Trips", "Birthdays", "Posts", "Photos".
   // Let's also include travelEvents in the events section if they fall in the range.
@@ -235,6 +283,8 @@ export default async function HomePage() {
               upcomingBirthdays={upcomingBirthdays}
               latestPosts={latestPosts}
               latestPhotos={latestPhotos}
+              latestMediaReviews={latestMediaReviewsRows}
+              latestDiscoverReviews={latestDiscoverReviewsRows}
             />
           </div>
         </div>
