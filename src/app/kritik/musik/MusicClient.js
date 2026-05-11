@@ -28,7 +28,7 @@ export default function MusicClient({ initialMusic }) {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold mb-6">Neueste Bewertungen</h2>
+            <h2 className="text-lg font-bold mb-6">{t("latestReviews")}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {music.map((item) => (
                 <MusicCard key={item.id} music={item} t={t} />
@@ -41,7 +41,7 @@ export default function MusicClient({ initialMusic }) {
                   </div>
                   <p className="text-muted-foreground">{ts("noResults")}</p>
                   <p className="text-xs text-muted-foreground/60 mt-2">
-                    Suche oben nach Musik, um die erste Bewertung abzugeben.
+                    {ts("musicEmptyHint")}
                   </p>
                 </div>
               )}

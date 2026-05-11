@@ -116,14 +116,20 @@ export default function SuggestionForm({
           )}
           <SaveButton
             type="submit"
-            status={status}
-            idleText={
+            pending={status === "saving"}
+            state={{
+              ok: status === "saved" ? true : status === "error" ? false : null,
+            }}
+            label={
               editSuggestion ? t("updateSuggestion") : t("submitSuggestion")
             }
-            savingText={commonT("saving")}
-            savedText={t("suggestionSuccess")}
           />
         </div>
+        {status === "saved" && (
+          <p className="text-sm text-green-500 text-center mt-2">
+            {t("suggestionSuccess")}
+          </p>
+        )}
       </form>
     </div>
   );

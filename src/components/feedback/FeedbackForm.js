@@ -50,12 +50,18 @@ export default function FeedbackForm() {
         <div className="flex justify-end">
           <SaveButton
             type="submit"
-            status={status}
-            idleText={t("sendFeedback")}
-            savingText={useTranslations("Common")("saving")}
-            savedText={t("feedbackSuccess")}
+            pending={status === "saving"}
+            state={{
+              ok: status === "saved" ? true : status === "error" ? false : null,
+            }}
+            label={t("sendFeedback")}
           />
         </div>
+        {status === "saved" && (
+          <p className="text-sm text-green-500 text-center mt-2">
+            {t("feedbackSuccess")}
+          </p>
+        )}
       </form>
     </div>
   );

@@ -501,6 +501,7 @@
     "musicSubtitle": "Albums & Artists",
     "musicDesc": "Your favorite music and new discoveries",
     "addReview": "Add Review",
+    "latestReviews": "Latest Reviews",
     "noReviews": "No reviews yet.",
     "rating": "Rating",
     "comment": "Comment",
@@ -519,11 +520,16 @@
       "web": "Web",
       "other_emulator": "Other (Emulator)"
     },
+    "shareText": "Check out my review of {title} on Sinclear Beyond!",
+    "linkCopied": "Link copied to clipboard!",
     "search": {
       "gamePlaceholder": "Search for games...",
       "moviePlaceholder": "Search for movies...",
       "musicPlaceholder": "Search for albums...",
       "noResults": "No entries found.",
+      "gameEmptyHint": "Search for a game above to submit the first review.",
+      "movieEmptyHint": "Search for a movie above to submit the first review.",
+      "musicEmptyHint": "Search for music above to submit the first review.",
       "import": "Import",
       "moreResults": "Search for more entries"
     }

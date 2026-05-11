@@ -25,7 +25,7 @@ export default async function ReviewsPage() {
         <PageHeader
           subtitle={t("subtitle")}
           title={t("title")}
-          icon={Gamepad2}
+          icon={Clapperboard}
         />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
