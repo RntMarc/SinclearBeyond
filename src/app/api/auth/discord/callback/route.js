@@ -1,6 +1,5 @@
 import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
-import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import {
@@ -9,12 +8,11 @@ import {
   getDiscordUserGuilds,
   processDiscordAvatar,
 } from "@/lib/auth/discord";
+import { createSessionToken } from "@/lib/auth/auth";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { contactInfo, users } from "@/lib/db/schema";
 import { validateRelativeCallbackUrl } from "@/lib/utils";
-
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -199,14 +197,11 @@ async function createSessionAndRedirect(
   req,
   callbackUrl,
 ) {
-  const token = await new SignJWT({
-    sub: userId,
+  const token = await createSessionToken({
+    id: userId,
     email: email,
     isAdmin: isAdmin,
-  })
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("7d")
-    .sign(secret);
+  });
 
   const cookieStore = await cookies();
   cookieStore.set("session", token, {
