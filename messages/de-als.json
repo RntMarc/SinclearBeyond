@@ -105,15 +105,15 @@
   },
   "LandingPage": {
     "badge": "Community-Pladdform",
-    "heroTitle": "Zemma semmr <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
+    "heroTitle": "Zemma semmr <italic>Sinclear</italic>.",
     "heroDesc": "Chats, Kalender, Geburtsdag, Kondagde – älles was ma für d'Grupp braucht. An oim Fleck.",
     "ctaStart": "Jetzt loslega",
     "ctaFeatures": "Was des ko ↓",
     "ctaOpenApp": "App uffmacha",
-    "problemStatement": "Discord isch osicher ond wird emmer gschbässiger. Außerhalb verzettelt mr sich uff viele Messenger. Mir brauchet an <em class='italic text-foreground'>oigena Blatz.</em>",
+    "problemStatement": "Discord isch osicher ond wird emmer gschbässiger. Außerhalb verzettelt mr sich uff viele Messenger. Mir brauchet an <italic>oigena Blatz.</italic>",
     "featuresTitle": "Was Sinclear Beyond mitbrengt",
     "readyTitle": "Bisch parat?",
-    "readyDesc": "Sinclear Beyond isch no am wergla.<br/>Es ko mol a Fählerla gäba.",
+    "readyDesc": "Sinclear Beyond isch no am wergla.<br></br>Es ko mol a Fählerla gäba.",
     "footerTitle": "Sinclear Beyond",
     "footerDesc": "Gmacht für a echta Gmoinschaft. Von und für Sinclear.",
     "features": {

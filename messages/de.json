@@ -105,15 +105,15 @@
   },
   "LandingPage": {
     "badge": "Community-Plattform",
-    "heroTitle": "Gemeinsam sind wir <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
+    "heroTitle": "Gemeinsam sind wir <italic>Sinclear</italic>.",
     "heroDesc": "Chats, Kalender, Geburtstage, Kontakte – alles was eine Gruppe zum Überleben braucht. An einem Ort.",
     "ctaStart": "Jetzt starten",
     "ctaFeatures": "Was es kann ↓",
     "ctaOpenApp": "App öffnen",
-    "problemStatement": "Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen <em class='italic text-foreground'>eigenen Ort.</em>",
+    "problemStatement": "Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen <italic>eigenen Ort.</italic>",
     "featuresTitle": "Was Sinclear Beyond mitbringt",
     "readyTitle": "Bereit?",
-    "readyDesc": "Sinclear Beyond ist in aktiver Entwicklung.<br/>Es können Fehler vorkommen.",
+    "readyDesc": "Sinclear Beyond ist in aktiver Entwicklung.<br></br>Es können Fehler vorkommen.",
     "footerTitle": "Sinclear Beyond",
     "footerDesc": "Gebaut für echte Gemeinschaft. Von und für Sinclear.",
     "features": {

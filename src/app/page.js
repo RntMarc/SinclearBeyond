@@ -59,10 +59,15 @@ export default async function Home() {
             {t("badge")}
           </p>
 
-          <h1
-            className="text-5xl md:text-7xl lg:text-8xl font-light leading-[1.05] tracking-tight text-foreground max-w-3xl mb-8"
-            dangerouslySetInnerHTML={{ __html: t("heroTitle") }}
-          />
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-light leading-[1.05] tracking-tight text-foreground max-w-3xl mb-8">
+            {t.rich("heroTitle", {
+              italic: (chunks) => (
+                <em className="italic font-normal text-muted-foreground">
+                  {chunks}
+                </em>
+              ),
+            })}
+          </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-12">
             {t("heroDesc")}
@@ -87,10 +92,13 @@ export default async function Home() {
         {/* Problem statement */}
         <section className="px-6 md:px-12 py-20 border-y border-border/40 bg-card">
           <div className="max-w-3xl mx-auto">
-            <p
-              className="text-2xl md:text-3xl font-light text-muted-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: t("problemStatement") }}
-            />
+            <p className="text-2xl md:text-3xl font-light text-muted-foreground leading-relaxed">
+              {t.rich("problemStatement", {
+                italic: (chunks) => (
+                  <em className="italic text-foreground">{chunks}</em>
+                ),
+              })}
+            </p>
           </div>
         </section>
 
@@ -128,10 +136,11 @@ export default async function Home() {
           <h2 className="text-4xl md:text-5xl font-light text-foreground mb-6">
             {t("readyTitle")}
           </h2>
-          <p
-            className="text-muted-foreground mb-10 max-w-sm mx-auto"
-            dangerouslySetInnerHTML={{ __html: t("readyDesc") }}
-          />
+          <p className="text-muted-foreground mb-10 max-w-sm mx-auto">
+            {t.rich("readyDesc", {
+              br: () => <br />,
+            })}
+          </p>
           <a
             href="/login"
             className="inline-block px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
