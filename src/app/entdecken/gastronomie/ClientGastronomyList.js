@@ -1,15 +1,17 @@
 "use client";
 
-import { ArrowLeft, Plus, Star, Utensils } from "lucide-react";
+import { ArrowLeft, Plus, Star, Utensils, Search } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import AddPlaceModal from "@/components/discover/AddPlaceModal";
 import SubPageHeader from "@/components/layout/SubPageHeader";
+import DiscoverSearchModal from "@/components/discover/DiscoverSearchModal";
 
 export default function ClientGastronomyList({ initialPlaces }) {
   const t = useTranslations("Discover");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -19,6 +21,13 @@ export default function ClientGastronomyList({ initialPlaces }) {
         title={t("categories.gastronomy")}
         icon={Utensils}
       >
+        <button
+          type="button"
+          onClick={() => setShowSearchModal(true)}
+          className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground"
+        >
+          <Search size={20} />
+        </button>
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
@@ -96,6 +105,10 @@ export default function ClientGastronomyList({ initialPlaces }) {
           initialCategory="gastronomy"
           onClose={() => setShowAddModal(false)}
         />
+      )}
+
+      {showSearchModal && (
+        <DiscoverSearchModal onClose={() => setShowSearchModal(false)} />
       )}
     </div>
   );

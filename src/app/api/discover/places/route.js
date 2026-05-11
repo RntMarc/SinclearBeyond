@@ -16,6 +16,13 @@ export async function GET(req) {
 
   const { searchParams } = new URL(req.url);
   const category = searchParams.get("category");
+  const q = searchParams.get("q");
+  const mode = searchParams.get("mode"); // "in" or "around"
+  const lat = searchParams.get("lat");
+  const lon = searchParams.get("lon");
+  const radius = searchParams.get("radius");
+  const random = searchParams.get("random");
+  const locationName = searchParams.get("locationName");
 
   try {
     let query = db
@@ -24,6 +31,8 @@ export async function GET(req) {
         name: discoverPlaces.name,
         address: discoverPlaces.address,
         category: discoverPlaces.category,
+        latitude: discoverPlaces.latitude,
+        longitude: discoverPlaces.longitude,
         avgRating: sql`AVG(${discoverReviews.rating})`,
         reviewCount: sql`COUNT(${discoverReviews.id})`,
       })
@@ -31,8 +40,49 @@ export async function GET(req) {
       .leftJoin(discoverReviews, eq(discoverPlaces.id, discoverReviews.placeId))
       .groupBy(discoverPlaces.id);
 
+    const conditions = [];
+
     if (category) {
-      query = query.where(eq(discoverPlaces.category, category));
+      conditions.push(eq(discoverPlaces.category, category));
+    }
+
+    if (q) {
+      conditions.push(
+        sql`${discoverPlaces.name} LIKE ${`%${q}%`} OR ${discoverPlaces.address} LIKE ${`%${q}%`}`,
+      );
+    }
+
+    if (mode === "around" && lat && lon && radius) {
+      const r = parseFloat(radius);
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lon);
+
+      // Haversine formula for distance in km
+      conditions.push(
+        sql`(6371 * acos(cos(radians(${latitude})) * cos(radians(${discoverPlaces.latitude})) * cos(radians(${discoverPlaces.longitude}) - radians(${longitude})) + sin(radians(${latitude})) * sin(radians(${discoverPlaces.latitude})))) <= ${r}`,
+      );
+    } else if (mode === "in" && lat && lon) {
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lon);
+
+      let inCondition = sql`(6371 * acos(cos(radians(${latitude})) * cos(radians(${discoverPlaces.latitude})) * cos(radians(${discoverPlaces.longitude}) - radians(${longitude})) + sin(radians(${latitude})) * sin(radians(${discoverPlaces.latitude})))) <= 15`;
+
+      if (locationName) {
+        const cityPart = locationName.split(",")[0].trim();
+        inCondition = sql`${inCondition} OR ${discoverPlaces.address} LIKE ${`%${cityPart}%`}`;
+      }
+
+      conditions.push(inCondition);
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(sql`${sql.join(conditions, sql` AND `)}`);
+    }
+
+    if (random) {
+      query = query.orderBy(sql`RAND()`).limit(parseInt(random, 10));
+    } else {
+      query = query.orderBy(sql`${discoverPlaces.name} ASC`);
     }
 
     const places = await query;

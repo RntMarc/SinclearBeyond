@@ -1,14 +1,15 @@
 import { eq } from "drizzle-orm";
-import { Bookmark, Compass, TreePine, Utensils } from "lucide-react";
-import Link from "next/link";
+import { Compass } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { db } from "@/lib/db/db";
-import { discoverBookmarks, discoverPlaces } from "@/lib/db/schema";
+import { discoverBookmarks, discoverPlaces, discoverReviews } from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
+import DiscoverClient from "./DiscoverClient";
+import { sql } from "drizzle-orm";
 
 export default async function DiscoverPage() {
   const t = await getTranslations("Discover");
@@ -33,6 +34,22 @@ export default async function DiscoverPage() {
     .innerJoin(discoverPlaces, eq(discoverBookmarks.placeId, discoverPlaces.id))
     .where(eq(discoverBookmarks.userId, session.sub));
 
+  // Get 11 random places
+  const randomPlaces = await db
+    .select({
+      id: discoverPlaces.id,
+      name: discoverPlaces.name,
+      address: discoverPlaces.address,
+      category: discoverPlaces.category,
+      avgRating: sql`AVG(${discoverReviews.rating})`,
+      reviewCount: sql`COUNT(${discoverReviews.id})`,
+    })
+    .from(discoverPlaces)
+    .leftJoin(discoverReviews, eq(discoverPlaces.id, discoverReviews.placeId))
+    .groupBy(discoverPlaces.id)
+    .orderBy(sql`RAND()`)
+    .limit(11);
+
   return (
     <AppShell user={user} session={session}>
       <div className="flex flex-col h-full bg-background">
@@ -43,81 +60,7 @@ export default async function DiscoverPage() {
         />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
-          <div className="max-w-5xl mx-auto space-y-12">
-            {/* Categories */}
-            <section>
-              <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-                {t("categoriesLabel")}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link
-                  href="/entdecken/gastronomie"
-                  className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <Utensils size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold">{t("categories.gastronomy")}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {t("gastronomyDesc")}
-                    </p>
-                  </div>
-                </Link>
-
-                <div className="p-6 bg-muted/50 border border-border/50 rounded-2xl flex items-center gap-4 grayscale opacity-60 cursor-not-allowed">
-                  <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
-                    <TreePine size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold">{t("categories.leisure")}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {t("leisureDesc")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Bookmarks */}
-            <section>
-              <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-                <Bookmark size={20} className="text-primary" />
-                {t("bookmarks")}
-              </h2>
-              {bookmarks.length > 0
-                ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {bookmarks.map((place) => (
-                      <Link
-                        key={place.id}
-                        href={`/entdecken/orte/${place.id}`}
-                        className="p-4 bg-card border border-border rounded-xl hover:border-primary/50 transition-all shadow-sm"
-                      >
-                        <h3 className="font-bold text-sm truncate">
-                          {place.name}
-                        </h3>
-                        <p className="text-xs text-muted-foreground line-clamp-1">
-                          {place.address}
-                        </p>
-                        <div className="mt-2 flex items-center gap-2">
-                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                            {t(`categories.${place.category}`)}
-                          </span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                : <div className="p-12 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
-                    <Bookmark
-                      size={32}
-                      className="text-muted-foreground/30 mb-4"
-                    />
-                    <p className="text-sm text-muted-foreground max-w-xs">
-                      {t("noBookmarks")}
-                    </p>
-                  </div>}
-            </section>
-          </div>
+          <DiscoverClient initialRandomPlaces={randomPlaces} bookmarks={bookmarks} />
         </div>
       </div>
     </AppShell>
