@@ -374,7 +374,20 @@
     "categoryLabel": "Kategorie",
     "yourRating": "Deine Bewertung",
     "commentOptional": "Kommentar (Optional)",
-    "savePlace": "Ort hinzufügen & speichern"
+    "savePlace": "Ort hinzufügen & speichern",
+    "search": {
+      "placeholder": "Nach Einträgen suchen...",
+      "modeIn": "In",
+      "modeAround": "Um",
+      "locationPlaceholder": "Stadt, Ort oder Adresse...",
+      "radiusLabel": "Radius",
+      "radiusUnit": "km",
+      "useCurrentLocation": "Meinen Standort verwenden",
+      "noResults": "Keine Einträge gefunden.",
+      "moreResults": "Nach mehr Einträgen suchen",
+      "map": "Karte",
+      "list": "Liste"
+    }
   },
   "Subscriptions": {
     "title": "Abonnements",

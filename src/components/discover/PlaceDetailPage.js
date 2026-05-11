@@ -22,10 +22,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { Search } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import ReviewModal from "@/components/discover/ReviewModal";
 import SimpleOSM from "@/components/discover/SimpleOSM";
 import SubPageHeader from "@/components/layout/SubPageHeader";
+import DiscoverSearchModal from "@/components/discover/DiscoverSearchModal";
 
 export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const t = useTranslations("Discover");
@@ -38,6 +40,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const [copied, setCopied] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const router = useRouter();
 
   const loadPlace = useCallback(async () => {
@@ -194,6 +197,13 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
         title={place.name}
         icon={place.category === "gastronomy" ? Utensils : TreePine}
       >
+        <button
+          type="button"
+          onClick={() => setShowSearchModal(true)}
+          className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground"
+        >
+          <Search size={20} />
+        </button>
         <button
           type="button"
           onClick={sharePlace}
@@ -519,6 +529,10 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
           </div>
         </div>
       </div>
+
+      {showSearchModal && (
+        <DiscoverSearchModal onClose={() => setShowSearchModal(false)} />
+      )}
     </div>
   );
 }
