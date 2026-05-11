@@ -96,7 +96,11 @@ export default function PermissionEditor({
               {permissions.map((p) => (
                 <tr key={p.userId}>
                   <td className="px-3 py-2 text-foreground flex items-center gap-2 truncate max-w-[160px]">
-                    <Avatar src={p.image} displayName={p.displayName} size="xs" />
+                    <Avatar
+                      src={p.image}
+                      displayName={p.displayName}
+                      size="xs"
+                    />
                     <span className="truncate">{p.displayName}</span>
                   </td>
                   {!isPublic && (

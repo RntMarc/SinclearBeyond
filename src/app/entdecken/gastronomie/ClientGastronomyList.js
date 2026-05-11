@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowLeft, Plus, Star, Utensils, Search, Map as MapIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Star,
+  Utensils,
+  Search,
+  Map as MapIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";

@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowLeft, Plus, Star, TreePine, Search, Map as MapIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Star,
+  TreePine,
+  Search,
+  Map as MapIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -112,9 +119,7 @@ export default function ClientLeisureList({ initialPlaces }) {
               </div>
             : <div className="p-20 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
                 <TreePine size={48} className="text-muted-foreground/20 mb-4" />
-                <p className="text-muted-foreground mb-6">
-                  {t("noLeisure")}
-                </p>
+                <p className="text-muted-foreground mb-6">{t("noLeisure")}</p>
                 <button
                   type="button"
                   onClick={() => setShowAddModal(true)}

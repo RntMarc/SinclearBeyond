@@ -41,7 +41,8 @@
     "openMenu": "Menü uffmacha",
     "discover": "Entdegga",
     "feedback": "Feedback",
-    "subscriptions": "Abos"
+    "subscriptions": "Abos",
+    "reviews": "Reviews"
   },
   "Auth": {
     "login": "Neigauda",
@@ -554,6 +555,43 @@
       "cancelled": "Abbrocha",
       "rejected": "Abglehnt",
       "later": "Schbäder"
+    }
+  },
+  "Reviews": {
+    "title": "Reviews",
+    "subtitle": "Kritik & Bewertonga",
+    "categoriesLabel": "Rubriga",
+    "games": "Schbiele",
+    "gamesDesc": "Computerschbiele, Konsola ond so Sacha",
+    "movies": "Film",
+    "moviesDesc": "Kommt bald",
+    "music": "Mugg",
+    "musicDesc": "Kommt bald",
+    "searchPlaceholder": "Schbiel suacha...",
+    "addReview": "Bewertong abgäba",
+    "noReviews": "No koine Bewertonga dõ.",
+    "rating": "Bewertong",
+    "comment": "Doin Senf",
+    "platform": "Pladdform",
+    "saveReview": "Bewertong schbeichera",
+    "successAdded": "Bewertong isch gschbeicheret.",
+    "platforms": {
+      "pc_linux": "PC (Linux)",
+      "pc_windows": "PC (Windows)",
+      "pc_mac": "PC (Mac)",
+      "nintendo_switch": "Nintendo Switch",
+      "playstation": "PlayStation",
+      "xbox": "Xbox",
+      "android": "Android",
+      "ios": "iOS",
+      "web": "Web",
+      "other_emulator": "Sonschtiges (Emulator)"
+    },
+    "search": {
+      "placeholder": "Nach Schbiele suacha...",
+      "noResults": "Koi Schbiel gfonda.",
+      "import": "Übernehma",
+      "moreResults": "Nach meh Schbiele suacha"
     }
   }
 }

@@ -41,7 +41,8 @@
     "openMenu": "Menü öffnen",
     "discover": "Entdecken",
     "feedback": "Feedback",
-    "subscriptions": "Abonnements"
+    "subscriptions": "Abonnements",
+    "reviews": "Reviews"
   },
   "Auth": {
     "login": "Login",
@@ -559,6 +560,43 @@
       "cancelled": "Abgebrochen",
       "rejected": "Abgelehnt",
       "later": "Später"
+    }
+  },
+  "Reviews": {
+    "title": "Reviews",
+    "subtitle": "Kritik & Bewertungen",
+    "categoriesLabel": "Kategorien",
+    "games": "Spiele",
+    "gamesDesc": "Computerspiele, Konsolen und mehr",
+    "movies": "Filme",
+    "moviesDesc": "Bald verfügbar",
+    "music": "Musik",
+    "musicDesc": "Bald verfügbar",
+    "searchPlaceholder": "Spiel suchen...",
+    "addReview": "Bewertung abgeben",
+    "noReviews": "Noch keine Bewertungen vorhanden.",
+    "rating": "Bewertung",
+    "comment": "Kommentar",
+    "platform": "Plattform",
+    "saveReview": "Bewertung speichern",
+    "successAdded": "Bewertung erfolgreich hinzugefügt.",
+    "platforms": {
+      "pc_linux": "PC (Linux)",
+      "pc_windows": "PC (Windows)",
+      "pc_mac": "PC (Mac)",
+      "nintendo_switch": "Nintendo Switch",
+      "playstation": "PlayStation",
+      "xbox": "Xbox",
+      "android": "Android",
+      "ios": "iOS",
+      "web": "Web",
+      "other_emulator": "Sonstige (Emulator)"
+    },
+    "search": {
+      "placeholder": "Nach Spielen suchen...",
+      "noResults": "Keine Spiele gefunden.",
+      "import": "Übernehmen",
+      "moreResults": "Nach mehr Spielen suchen"
     }
   }
 }

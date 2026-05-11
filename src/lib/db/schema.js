@@ -317,3 +317,28 @@ export const subscriptionRelations = mysqlTable("SubscriptionRelation", {
   userName: varchar("userName", { length: 255 }),
   hasPaid: tinyint("hasPaid").notNull().default(0),
 });
+
+// ── Reviews / Kritik ─────────────────────────────────────────────────────────
+
+export const mediaItems = mysqlTable("MediaItem", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  type: mysqlEnum("type", ["game", "movie", "music"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  image: text("image"),
+  externalId: varchar("externalId", { length: 191 }),
+  releaseDate: varchar("releaseDate", { length: 100 }),
+  creatorId: varchar("creatorId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const mediaReviews = mysqlTable("MediaReview", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  itemId: varchar("itemId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  rating: tinyint("rating").notNull(),
+  comment: text("comment"),
+  platform: varchar("platform", { length: 191 }), // Only for games
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});

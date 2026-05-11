@@ -125,7 +125,10 @@ export default function CloseFriendsManager({ initialFriends }) {
                   className="flex items-center justify-between p-3 bg-sidebar border border-sidebar-border rounded-xl"
                 >
                   <div className="flex items-center gap-3">
-                    <Avatar src={friend.image} displayName={friend.displayName} />
+                    <Avatar
+                      src={friend.image}
+                      displayName={friend.displayName}
+                    />
                     <span className="text-sm font-medium">
                       {friend.displayName}
                     </span>
