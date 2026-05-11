@@ -1,4 +1,4 @@
-import { Clapperboard, Gamepad2, Music } from "lucide-react";
+import { Clapperboard, Gamepad2, Music, Star } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -22,11 +22,7 @@ export default async function ReviewsPage() {
   return (
     <AppShell user={user} session={session}>
       <div className="flex flex-col h-full bg-background">
-        <PageHeader
-          subtitle={t("subtitle")}
-          title={t("title")}
-          icon={Clapperboard}
-        />
+        <PageHeader subtitle={t("subtitle")} title={t("title")} icon={Star} />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto space-y-12">

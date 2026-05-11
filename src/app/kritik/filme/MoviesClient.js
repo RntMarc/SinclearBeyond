@@ -19,6 +19,7 @@ export default function MoviesClient({ initialMovies }) {
         title={t("movies")}
         subtitle={t("moviesSubtitle")}
         backHref="/kritik"
+        icon={Star}
       />
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">

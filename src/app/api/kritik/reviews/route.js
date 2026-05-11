@@ -71,7 +71,10 @@ export async function POST(req) {
       .select()
       .from(mediaReviews)
       .where(
-        and(eq(mediaReviews.itemId, itemId), eq(mediaReviews.userId, session.sub)),
+        and(
+          eq(mediaReviews.itemId, itemId),
+          eq(mediaReviews.userId, session.sub),
+        ),
       )
       .limit(1);
 
