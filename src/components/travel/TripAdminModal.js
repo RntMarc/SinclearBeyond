@@ -5,12 +5,7 @@ import Notification from "@/components/Notification";
 import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 import TravelEventFormModal from "./TravelEventFormModal";
 
-export default function TripAdminModal({
-  trip,
-  onClose,
-  onUpdated,
-  timezone,
-}) {
+export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
   const [form, setForm] = useState({
     name: trip.name,
     description: trip.description || "",

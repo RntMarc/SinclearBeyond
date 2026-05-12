@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Star } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -17,6 +17,8 @@ export default function HomeClient({
   upcomingBirthdays = [],
   latestPosts = [],
   latestPhotos = [],
+  latestMediaReviews = [],
+  latestDiscoverReviews = [],
 }) {
   const t = useTranslations("Home");
   const [selectedItem, setSelectedItem] = useState(null); // { type, data }
@@ -26,6 +28,8 @@ export default function HomeClient({
   const hasBirthdays = upcomingBirthdays.length > 0;
   const hasPosts = latestPosts.length > 0;
   const hasPhotos = latestPhotos.length > 0;
+  const hasMediaReviews = latestMediaReviews.length > 0;
+  const hasDiscoverReviews = latestDiscoverReviews.length > 0;
 
   return (
     <div className="columns-1 md:columns-2 gap-6 md:gap-10">
@@ -171,6 +175,102 @@ export default function HomeClient({
         >
           {latestPhotos.map((photo) => (
             <PhotoItem key={photo.id} photo={photo} />
+          ))}
+        </Section>
+      )}
+
+      {/* Latest Media Reviews */}
+      {hasMediaReviews && (
+        <Section
+          title={t("latestMediaReviews")}
+          href="/kritik"
+          className="space-y-3"
+        >
+          {latestMediaReviews.map(({ review, item, user }) => (
+            <Link
+              key={review.id}
+              href={`/kritik/${item.type === "game" ? "spiele" : item.type === "movie" ? "filme" : "musik"}/${item.id}`}
+              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Avatar
+                    src={user.image}
+                    displayName={user.displayName}
+                    size="xs"
+                  />
+                  <span className="text-xs font-medium text-foreground">
+                    {user.displayName}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-orange-500">
+                  <Star size={12} fill="currentColor" />
+                  <span className="text-xs font-bold">{review.rating}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm line-clamp-1">
+                  {item.title}
+                </span>
+                <ChevronRight
+                  size={14}
+                  className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
+                />
+              </div>
+              {review.comment && (
+                <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
+                  &quot;{review.comment}&quot;
+                </p>
+              )}
+            </Link>
+          ))}
+        </Section>
+      )}
+
+      {/* Latest Discover Reviews */}
+      {hasDiscoverReviews && (
+        <Section
+          title={t("latestDiscoverReviews")}
+          href="/entdecken"
+          className="space-y-3"
+        >
+          {latestDiscoverReviews.map(({ review, place, user }) => (
+            <Link
+              key={review.id}
+              href={`/entdecken/orte/${place.id}`}
+              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Avatar
+                    src={user.image}
+                    displayName={user.displayName}
+                    size="xs"
+                  />
+                  <span className="text-xs font-medium text-foreground">
+                    {user.displayName}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-orange-500">
+                  <Star size={12} fill="currentColor" />
+                  <span className="text-xs font-bold">{review.rating}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm line-clamp-1">
+                  {place.name}
+                </span>
+                <ChevronRight
+                  size={14}
+                  className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
+                />
+              </div>
+              {review.comment && (
+                <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
+                  &quot;{review.comment}&quot;
+                </p>
+              )}
+            </Link>
           ))}
         </Section>
       )}

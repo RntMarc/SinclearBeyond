@@ -41,7 +41,8 @@
     "openMenu": "Menü öffnen",
     "discover": "Entdecken",
     "feedback": "Feedback",
-    "subscriptions": "Abonnements"
+    "subscriptions": "Abonnements",
+    "reviews": "Reviews"
   },
   "Auth": {
     "login": "Login",
@@ -98,19 +99,21 @@
     "upcomingTrips": "Kommende Reisen",
     "upcomingBirthdays": "Kommende Geburtstage",
     "latestPosts": "Neueste Beiträge",
-    "latestPhotos": "Neueste Fotos"
+    "latestPhotos": "Neueste Fotos",
+    "latestMediaReviews": "Neueste Reviews",
+    "latestDiscoverReviews": "Neueste Entdeckungen"
   },
   "LandingPage": {
     "badge": "Community-Plattform",
-    "heroTitle": "Gemeinsam sind wir <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
+    "heroTitle": "Gemeinsam sind wir <italic>Sinclear</italic>.",
     "heroDesc": "Chats, Kalender, Geburtstage, Kontakte – alles was eine Gruppe zum Überleben braucht. An einem Ort.",
     "ctaStart": "Jetzt starten",
     "ctaFeatures": "Was es kann ↓",
     "ctaOpenApp": "App öffnen",
-    "problemStatement": "Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen <em class='italic text-foreground'>eigenen Ort.</em>",
+    "problemStatement": "Discord ist unsicher und zunehmend kontrovers. Außerhalb davon sind wir über viele Messenger zersplittert. Wir verdienen einen <italic>eigenen Ort.</italic>",
     "featuresTitle": "Was Sinclear Beyond mitbringt",
     "readyTitle": "Bereit?",
-    "readyDesc": "Sinclear Beyond ist in aktiver Entwicklung.<br/>Es können Fehler vorkommen.",
+    "readyDesc": "Sinclear Beyond ist in aktiver Entwicklung.<br></br>Es können Fehler vorkommen.",
     "footerTitle": "Sinclear Beyond",
     "footerDesc": "Gebaut für echte Gemeinschaft. Von und für Sinclear.",
     "features": {
@@ -559,6 +562,52 @@
       "cancelled": "Abgebrochen",
       "rejected": "Abgelehnt",
       "later": "Später"
+    }
+  },
+  "Reviews": {
+    "title": "Reviews",
+    "subtitle": "Kritik & Bewertungen",
+    "categoriesLabel": "Kategorien",
+    "games": "Spiele",
+    "gamesDesc": "Computerspiele, Konsolen und mehr",
+    "movies": "Filme",
+    "moviesSubtitle": "Kino & Streaming",
+    "moviesDesc": "Blockbuster, Serien und Klassiker",
+    "music": "Musik",
+    "musicSubtitle": "Alben & Künstler",
+    "musicDesc": "Deine Lieblingsmusik und Neuentdeckungen",
+    "addReview": "Bewertung abgeben",
+    "latestReviews": "Neueste Bewertungen",
+    "noReviews": "Noch keine Bewertungen vorhanden.",
+    "rating": "Bewertung",
+    "comment": "Kommentar",
+    "platform": "Plattform",
+    "saveReview": "Bewertung speichern",
+    "successAdded": "Bewertung erfolgreich hinzugefügt.",
+    "platforms": {
+      "pc_linux": "PC (Linux)",
+      "pc_windows": "PC (Windows)",
+      "pc_mac": "PC (Mac)",
+      "nintendo_switch": "Nintendo Switch",
+      "playstation": "PlayStation",
+      "xbox": "Xbox",
+      "android": "Android",
+      "ios": "iOS",
+      "web": "Web",
+      "other_emulator": "Sonstige (Emulator)"
+    },
+    "shareText": "Schau dir meine Bewertung zu {title} auf Sinclear Beyond an!",
+    "linkCopied": "Link in die Zwischenablage kopiert!",
+    "search": {
+      "gamePlaceholder": "Nach Spielen suchen...",
+      "moviePlaceholder": "Nach Filmen suchen...",
+      "musicPlaceholder": "Nach Alben suchen...",
+      "noResults": "Keine Einträge gefunden.",
+      "gameEmptyHint": "Suche oben nach einem Spiel, um die erste Bewertung abzugeben.",
+      "movieEmptyHint": "Suche oben nach einem Film, um die erste Bewertung abzugeben.",
+      "musicEmptyHint": "Suche oben nach Musik, um die erste Bewertung abzugeben.",
+      "import": "Übernehmen",
+      "moreResults": "Nach mehr Einträgen suchen"
     }
   }
 }

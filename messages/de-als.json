@@ -41,7 +41,8 @@
     "openMenu": "Menü uffmacha",
     "discover": "Entdegga",
     "feedback": "Feedback",
-    "subscriptions": "Abos"
+    "subscriptions": "Abos",
+    "reviews": "Reviews"
   },
   "Auth": {
     "login": "Neigauda",
@@ -98,19 +99,21 @@
     "upcomingTrips": "Reisa die bald geit",
     "upcomingBirthdays": "Geburtsdag die bald send",
     "latestPosts": "S'neieschte em Feed",
-    "latestPhotos": "S'neieschte bei de Bildla"
+    "latestPhotos": "S'neieschte bei de Bildla",
+    "latestMediaReviews": "Neieschde Reviews",
+    "latestDiscoverReviews": "Neieschde Entdeckunga"
   },
   "LandingPage": {
     "badge": "Community-Pladdform",
-    "heroTitle": "Zemma semmr <em class='italic font-normal text-muted-foreground'>Sinclear</em>.",
+    "heroTitle": "Zemma semmr <italic>Sinclear</italic>.",
     "heroDesc": "Chats, Kalender, Geburtsdag, Kondagde – älles was ma für d'Grupp braucht. An oim Fleck.",
     "ctaStart": "Jetzt loslega",
     "ctaFeatures": "Was des ko ↓",
     "ctaOpenApp": "App uffmacha",
-    "problemStatement": "Discord isch osicher ond wird emmer gschbässiger. Außerhalb verzettelt mr sich uff viele Messenger. Mir brauchet an <em class='italic text-foreground'>oigena Blatz.</em>",
+    "problemStatement": "Discord isch osicher ond wird emmer gschbässiger. Außerhalb verzettelt mr sich uff viele Messenger. Mir brauchet an <italic>oigena Blatz.</italic>",
     "featuresTitle": "Was Sinclear Beyond mitbrengt",
     "readyTitle": "Bisch parat?",
-    "readyDesc": "Sinclear Beyond isch no am wergla.<br/>Es ko mol a Fählerla gäba.",
+    "readyDesc": "Sinclear Beyond isch no am wergla.<br></br>Es ko mol a Fählerla gäba.",
     "footerTitle": "Sinclear Beyond",
     "footerDesc": "Gmacht für a echta Gmoinschaft. Von und für Sinclear.",
     "features": {
@@ -554,6 +557,52 @@
       "cancelled": "Abbrocha",
       "rejected": "Abglehnt",
       "later": "Schbäder"
+    }
+  },
+  "Reviews": {
+    "title": "Reviews",
+    "subtitle": "Kritik & Bewertonga",
+    "categoriesLabel": "Rubriga",
+    "games": "Schbiele",
+    "gamesDesc": "Computerschbiele, Konsola ond so Sacha",
+    "movies": "Film",
+    "moviesSubtitle": "Kino & Schtreaming",
+    "moviesDesc": "Blockbuster, Seria ond Klassiker",
+    "music": "Mugg",
+    "musicSubtitle": "Alba & Künschtler",
+    "musicDesc": "Doi Lieblingsmugg ond Neientdeggonga",
+    "addReview": "Bewertong abgäba",
+    "latestReviews": "Neieschte Bewertonga",
+    "noReviews": "No koine Bewertonga dõ.",
+    "rating": "Bewertong",
+    "comment": "Doin Senf",
+    "platform": "Pladdform",
+    "saveReview": "Bewertong schbeichera",
+    "successAdded": "Bewertong isch gschbeicheret.",
+    "platforms": {
+      "pc_linux": "PC (Linux)",
+      "pc_windows": "PC (Windows)",
+      "pc_mac": "PC (Mac)",
+      "nintendo_switch": "Nintendo Switch",
+      "playstation": "PlayStation",
+      "xbox": "Xbox",
+      "android": "Android",
+      "ios": "iOS",
+      "web": "Web",
+      "other_emulator": "Sonschtiges (Emulator)"
+    },
+    "shareText": "Gugg mol, was i über {title} uf Sinclear Beyond gschrieba han!",
+    "linkCopied": "Link isch gschbeicheret!",
+    "search": {
+      "gamePlaceholder": "Nach Schbiele suacha...",
+      "moviePlaceholder": "Nach Film suacha...",
+      "musicPlaceholder": "Nach Alba suacha...",
+      "noResults": "Nix gfonda.",
+      "gameEmptyHint": "Suach oba nach ma Schbiel, om die erschte Bewertong abzgäba.",
+      "movieEmptyHint": "Suach oba nach ma Film, om die erschte Bewertong abzgäba.",
+      "musicEmptyHint": "Suach oba nach Mugg, om die erschte Bewertong abzgäba.",
+      "import": "Übernehma",
+      "moreResults": "Nach meh Sacha suacha"
     }
   }
 }

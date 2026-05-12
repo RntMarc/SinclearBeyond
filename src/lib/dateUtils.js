@@ -109,5 +109,7 @@ export function formatBirthday(date) {
  * Returns the current timezone of the browser.
  */
 export function getBrowserTimezone() {
-  return typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC";
+  return typeof Intl !== "undefined"
+    ? Intl.DateTimeFormat().resolvedOptions().timeZone
+    : "UTC";
 }

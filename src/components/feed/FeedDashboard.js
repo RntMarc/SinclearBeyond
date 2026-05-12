@@ -62,11 +62,7 @@ export default function FeedDashboard() {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <PageHeader
-        subtitle={t("subtitle")}
-        title={t("title")}
-        icon={SquarePlay}
-      >
+      <PageHeader subtitle={t("subtitle")} title={t("title")} icon={SquarePlay}>
         <button
           type="button"
           onClick={handleCreatePost}
