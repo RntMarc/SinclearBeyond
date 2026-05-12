@@ -71,7 +71,7 @@ export default function MovieDetailPageClient({
     <div className="flex flex-col h-full bg-background">
       <SubPageHeader
         title={movie.title}
-        subtitle={t("movies")}
+        subtitle={movie.format === "series" ? t("series") : t("movies")}
         backHref="/kritik/filme"
         icon={Star}
       >

@@ -52,7 +52,8 @@ export async function POST(req) {
 
   try {
     const data = await req.json();
-    const { title, type, description, image, externalId, releaseDate } = data;
+    const { title, type, format, description, image, externalId, releaseDate } =
+      data;
 
     if (!title || !type) {
       return NextResponse.json(
@@ -81,6 +82,7 @@ export async function POST(req) {
       id,
       title,
       type,
+      format,
       description,
       image,
       externalId,
