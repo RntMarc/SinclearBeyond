@@ -73,7 +73,7 @@ export default function KalenderClient({
   }
 
   function handleDayClick(date) {
-    if (isMobile) {
+    if (isMobile || viewMode === "month") {
       const dayEvents = eventList
         .filter((ev) => isEventOnDay(ev, date))
         .sort(sortEvents);
