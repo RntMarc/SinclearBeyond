@@ -74,17 +74,19 @@ export default function ContactModal({ contact, onClose }) {
             </h3>
 
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
-                  <Mail size={16} />
+              {contact.email && (
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                    <Mail size={16} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
+                      {t("email")}
+                    </p>
+                    <p className="text-foreground">{contact.email}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                    {t("email")}
-                  </p>
-                  <p className="text-foreground">{contact.email}</p>
-                </div>
-              </div>
+              )}
 
               {detailFields.map(
                 ({ label, value, icon: Icon }) =>

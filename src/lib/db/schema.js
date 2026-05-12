@@ -27,6 +27,7 @@ export const users = mysqlTable("User", {
   displayName: varchar("displayName", { length: 191 }).notNull(),
   birthday: datetime("birthday", { fsp: 3 }),
   birthdayVisibility: tinyint("birthdayVisibility").notNull().default(1),
+  emailVisibility: tinyint("emailVisibility").notNull().default(1),
   isAdmin: tinyint("isAdmin").notNull().default(0),
   discordId: varchar("discordId", { length: 191 }),
   image: longtext("image"),
