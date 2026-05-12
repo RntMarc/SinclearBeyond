@@ -15,6 +15,7 @@ export async function getContacts() {
       id: users.id,
       displayName: users.displayName,
       email: users.email,
+      emailVisibility: users.emailVisibility,
       image: users.image,
     })
     .from(users);
@@ -73,6 +74,10 @@ export async function getContacts() {
         });
       }
 
+      const isEmailVisible =
+        user.emailVisibility === 1 ||
+        (user.emailVisibility === 2 && allowsMePrivateInfo);
+
       const filteredSocial = {};
       if (social) {
         const socialFields = [
@@ -97,6 +102,7 @@ export async function getContacts() {
 
       return {
         ...user,
+        email: isEmailVisible ? user.email : null,
         isCloseFriend,
         contactInfo: filteredInfo,
         socialInfo: filteredSocial,

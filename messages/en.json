@@ -409,6 +409,7 @@
       "deleteImage": "Delete",
       "imagePreviewAlt": "Profile picture preview",
       "nameLabel": "Name",
+      "emailLabel": "Email Address",
       "birthdayLabel": "Date of birth",
       "contactTitle": "Contact",
       "socialTitle": "Social Media",

@@ -112,6 +112,7 @@ export default function ProfilForm({ user, contact, social }) {
 
   const [visibility, setVisibility] = useState({
     birthdayVisibility: user?.birthdayVisibility ?? 1,
+    emailVisibility: user?.emailVisibility ?? 1,
     discordVisibility: contact?.discordVisibility ?? 1,
     fluxerVisibility: contact?.fluxerVisibility ?? 1,
     matrixVisibility: contact?.matrixVisibility ?? 1,
@@ -225,47 +226,78 @@ export default function ProfilForm({ user, contact, social }) {
         <input type="hidden" name="removeImage" value={removeImage} />
       </div>
 
-      <div>
-        <label
-          htmlFor="displayName"
-          className="block text-sm font-medium mb-1 text-foreground"
-        >
-          {t("profile.nameLabel")}
-        </label>
-        <input
-          id="displayName"
-          name="displayName"
-          defaultValue={user.displayName}
-          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-        />
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label
+            htmlFor="displayName"
+            className="block text-sm font-medium mb-1 text-foreground"
+          >
+            {t("profile.nameLabel")}
+          </label>
+          <input
+            id="displayName"
+            name="displayName"
+            defaultValue={user.displayName}
+            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+          />
+        </div>
 
-      <div>
-        <label
-          htmlFor="birthday"
-          className="block text-sm font-medium mb-1 text-foreground"
-        >
-          {t("profile.birthdayLabel")}
-        </label>
-        <div className="flex gap-2 items-center">
-          <input
-            id="birthday"
-            name="birthday"
-            type="date"
-            defaultValue={birthdayValue}
-            className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-          />
-          <VisibilityToggle
-            value={visibility.birthdayVisibility}
-            onChange={(v) =>
-              setVisibility((prev) => ({ ...prev, birthdayVisibility: v }))
-            }
-          />
-          <input
-            type="hidden"
-            name="birthdayVisibility"
-            value={visibility.birthdayVisibility}
-          />
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium mb-1 text-foreground"
+          >
+            {t("profile.emailLabel")}
+          </label>
+          <div className="flex gap-2 items-center">
+            <input
+              id="email"
+              type="email"
+              readOnly
+              value={user.email}
+              className="flex-1 rounded-lg border border-border bg-sidebar-accent px-3 py-2 text-sm focus:outline-none text-muted-foreground cursor-not-allowed"
+            />
+            <VisibilityToggle
+              value={visibility.emailVisibility}
+              onChange={(v) =>
+                setVisibility((prev) => ({ ...prev, emailVisibility: v }))
+              }
+            />
+            <input
+              type="hidden"
+              name="emailVisibility"
+              value={visibility.emailVisibility}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="birthday"
+            className="block text-sm font-medium mb-1 text-foreground"
+          >
+            {t("profile.birthdayLabel")}
+          </label>
+          <div className="flex gap-2 items-center">
+            <input
+              id="birthday"
+              name="birthday"
+              type="date"
+              defaultValue={birthdayValue}
+              className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+            />
+            <VisibilityToggle
+              value={visibility.birthdayVisibility}
+              onChange={(v) =>
+                setVisibility((prev) => ({ ...prev, birthdayVisibility: v }))
+              }
+            />
+            <input
+              type="hidden"
+              name="birthdayVisibility"
+              value={visibility.birthdayVisibility}
+            />
+          </div>
         </div>
       </div>
 

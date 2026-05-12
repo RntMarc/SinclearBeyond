@@ -38,7 +38,11 @@ export default function ContactList({ initialContacts }) {
                     <Heart size={14} className="fill-primary text-primary" />
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">{contact.email}</p>
+                {contact.email && (
+                  <p className="text-xs text-muted-foreground">
+                    {contact.email}
+                  </p>
+                )}
               </div>
             </div>
             <ChevronRight
