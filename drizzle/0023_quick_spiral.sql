@@ -1,0 +1,1 @@
+ALTER TABLE `User` ADD `emailVisibility` tinyint DEFAULT 1 NOT NULL;

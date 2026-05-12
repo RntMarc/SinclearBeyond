@@ -162,6 +162,13 @@
       "when": 1778620359712,
       "tag": "0022_natural_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1778620426684,
+      "tag": "0023_quick_spiral",
+      "breakpoints": true
     }
   ]
 }
