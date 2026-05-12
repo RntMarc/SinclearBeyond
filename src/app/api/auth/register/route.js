@@ -1,14 +1,29 @@
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
+import { z } from "zod";
 import { registerUser } from "@/lib/auth/register";
+import { rateLimit } from "@/lib/rate-limit";
+
+const RegisterSchema = z.object({
+  email: z.string().email(),
+  displayName: z.string().min(1).max(50),
+});
 
 export async function POST(req) {
-  const t = await getTranslations("Common");
-  const { email, displayName } = await req.json();
+  const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+  if (!rateLimit(ip, 3, 60000)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
 
-  if (!email || !displayName?.trim()) {
+  const t = await getTranslations("Common");
+  const body = await req.json();
+  const validation = RegisterSchema.safeParse(body);
+
+  if (!validation.success) {
     return NextResponse.json({ error: t("missingFields") }, { status: 400 });
   }
+
+  const { email, displayName } = validation.data;
 
   const result = await registerUser(email, displayName);
 

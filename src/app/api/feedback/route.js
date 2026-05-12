@@ -1,9 +1,23 @@
 import { desc, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { z } from "zod";
 import { verifyToken } from "@/lib/auth/auth";
 import { db } from "@/lib/db/db";
 import { feedbackSuggestions, feedbackVotes, users } from "@/lib/db/schema";
+import { rateLimit } from "@/lib/rate-limit";
+
+const FeedbackSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("feedback"),
+    message: z.string().min(1).max(5000),
+  }),
+  z.object({
+    type: z.literal("suggestion"),
+    title: z.string().min(1).max(100),
+    description: z.string().max(2000).optional(),
+  }),
+]);
 
 const transport = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -75,6 +89,11 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+  if (!rateLimit(ip, 5, 60000)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const token = req.cookies.get("session")?.value;
   if (!token)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -82,16 +101,22 @@ export async function POST(req) {
   try {
     const payload = await verifyToken(token);
     const userId = payload.sub;
-    const body = await req.json();
+
+    const rawBody = await req.json();
+    const result = FeedbackSchema.safeParse(rawBody);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: result.error.format() },
+        { status: 400 },
+      );
+    }
+
+    const body = result.data;
 
     if (body.type === "feedback") {
       // Send general feedback email
       const { message } = body;
-      if (!message)
-        return NextResponse.json(
-          { error: "Message is required" },
-          { status: 400 },
-        );
 
       await transport.sendMail({
         from: process.env.SMTP_FROM,
@@ -112,11 +137,6 @@ export async function POST(req) {
     } else if (body.type === "suggestion") {
       // Create new feature suggestion
       const { title, description } = body;
-      if (!title)
-        return NextResponse.json(
-          { error: "Title is required" },
-          { status: 400 },
-        );
 
       const newId = crypto.randomUUID();
       await db.insert(feedbackSuggestions).values({
