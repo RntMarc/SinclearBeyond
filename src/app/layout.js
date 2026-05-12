@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
@@ -22,6 +23,8 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }) {
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || "";
   const locale = await getLocale();
   const messages = await getMessages();
   const session = await getSession();
@@ -43,8 +46,8 @@ export default async function RootLayout({ children }) {
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
-      <SpeedInsights />
-      <Analytics />
+      <SpeedInsights nonce={nonce} />
+      <Analytics nonce={nonce} />
     </html>
   );
 }
