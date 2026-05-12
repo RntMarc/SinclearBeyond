@@ -323,6 +323,7 @@ export const subscriptionRelations = mysqlTable("SubscriptionRelation", {
 export const mediaItems = mysqlTable("MediaItem", {
   id: varchar("id", { length: 191 }).primaryKey(),
   type: mysqlEnum("type", ["game", "movie", "music"]).notNull(),
+  format: mysqlEnum("format", ["movie", "series"]),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   image: text("image"),

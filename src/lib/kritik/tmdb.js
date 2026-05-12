@@ -9,7 +9,7 @@ export async function searchMovies(query) {
 
   try {
     const res = await fetch(
-      `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=de-DE`,
+      `${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=de-DE`,
       { next: { revalidate: 86400 } },
     );
 
@@ -19,16 +19,21 @@ export async function searchMovies(query) {
 
     const data = await res.json();
 
-    return data.results.slice(0, 10).map((movie) => ({
-      externalId: `tmdb-${movie.id}`,
-      title: movie.title,
-      description: movie.overview,
-      image: movie.poster_path
-        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-        : null,
-      releaseDate: movie.release_date,
-      type: "movie",
-    }));
+    return data.results
+      .filter((item) => item.media_type === "movie" || item.media_type === "tv")
+      .slice(0, 10)
+      .map((item) => ({
+        externalId: `tmdb-${item.id}`,
+        title: item.media_type === "movie" ? item.title : item.name,
+        description: item.overview,
+        image: item.poster_path
+          ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+          : null,
+        releaseDate:
+          item.media_type === "movie" ? item.release_date : item.first_air_date,
+        type: "movie",
+        format: item.media_type === "movie" ? "movie" : "series",
+      }));
   } catch (error) {
     console.error("TMDB Search Error:", error);
     return [];

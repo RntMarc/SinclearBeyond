@@ -70,6 +70,13 @@ function MovieCard({ movie, t }) {
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+          {movie.format === "series" && (
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white text-[10px] font-black px-2 py-1 rounded-lg border border-white/10 uppercase tracking-widest">
+              {t("series")}
+            </div>
+          )}
+
           <div className="absolute bottom-4 left-4 right-4">
             <h3 className="font-bold text-lg text-white group-hover:text-primary transition-colors line-clamp-1">
               {movie.title}
