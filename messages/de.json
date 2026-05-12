@@ -4,6 +4,7 @@
     "description": "Deine Community. Kein Lärm. Chats, Kalender, Geburtstage und mehr – an einem Ort."
   },
   "Common": {
+    "close": "Schließen",
     "save": "Speichern",
     "saving": "Wird gespeichert…",
     "saved": "Gespeichert",
@@ -144,6 +145,14 @@
     }
   },
   "Travel": {
+    "description": "Beschreibung",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "timeRange": "Zeitraum",
+    "tripLabel": "Reise-Event",
+    "openTrip": "Reise aufrufen",
+    "noDescriptionShort": "Keine Beschreibung vorhanden.",
     "title": "Reisen",
     "subtitle": "Unterwegs",
     "detailsTitle": "Reise-Details",
@@ -162,6 +171,7 @@
     "accommodationLabel": "Unterkunft",
     "participants": "Mitreisende",
     "events": "Events",
+    "eventLabel": "Event",
     "noDescription": "Keine Beschreibung vorhanden.",
     "noAccommodation": "Keine persönliche Unterkunft hinterlegt.",
     "otherAccommodations": "Weitere Unterkünfte der Teilnehmer",
@@ -181,6 +191,8 @@
       }
     },
     "accommodation": {
+      "accommodationDetailLabel": "Unterkunft",
+      "accommodationDetailType": "Unterkunft",
       "name": "Name der Unterkunft",
       "description": "Beschreibung",
       "address": "Adresse",
@@ -567,7 +579,7 @@
   "Reviews": {
     "title": "Reviews",
     "subtitle": "Kritik & Bewertungen",
-    "reviews" : "Kritiken",
+    "reviews": "Kritiken",
     "categoriesLabel": "Kategorien",
     "games": "Spiele",
     "gamesDesc": "Computerspiele, Konsolen und mehr",
