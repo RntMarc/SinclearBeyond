@@ -131,12 +131,7 @@ export default function ClientLeisureList({ initialPlaces }) {
         </div>
       </div>
 
-      {showAddModal && (
-        <AddPlaceModal
-          initialCategory="leisure"
-          onClose={() => setShowAddModal(false)}
-        />
-      )}
+      {showAddModal && <AddPlaceModal onClose={() => setShowAddModal(false)} />}
 
       {showSearchModal && (
         <DiscoverSearchModal onClose={() => setShowSearchModal(false)} />

@@ -15,10 +15,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import SaveButton from "@/components/SaveButton";
 
-export default function AddPlaceModal({
-  initialCategory = "gastronomy",
-  onClose,
-}) {
+export default function AddPlaceModal({ onClose }) {
   const router = useRouter();
   const t = useTranslations("Discover");
   const tCommon = useTranslations("Common");
@@ -30,7 +27,6 @@ export default function AddPlaceModal({
   const [isClosing, setIsClosing] = useState(false);
 
   const [form, setForm] = useState({
-    category: initialCategory,
     rating: 5,
     comment: "",
   });
@@ -77,7 +73,6 @@ export default function AddPlaceModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...selectedPlace,
-          category: form.category,
           rating: form.rating,
           comment: form.comment,
         }),
@@ -174,7 +169,11 @@ export default function AddPlaceModal({
                       className="w-full p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all text-left flex items-start gap-4 group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                        <MapPin size={20} />
+                        {item.category === "gastronomy"
+                          ? <Utensils size={20} />
+                          : item.category === "leisure"
+                            ? <TreePine size={20} />
+                            : <MapPin size={20} />}
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-bold text-sm truncate">
@@ -236,29 +235,13 @@ export default function AddPlaceModal({
                       <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1">
                         {t("categoryLabel")}
                       </label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setForm({ ...form, category: "gastronomy" })
-                          }
-                          className={`p-3 rounded-xl border flex flex-col items-center gap-1 transition-all ${form.category === "gastronomy" ? "bg-primary/10 border-primary text-primary" : "bg-sidebar-accent/30 border-sidebar-border text-muted-foreground hover:border-muted-foreground/30"}`}
-                        >
-                          <Utensils size={18} />
-                          <span className="text-[10px] font-bold">
-                            {t("categories.gastronomy")}
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          disabled
-                          className="p-3 rounded-xl border border-border bg-muted/50 text-muted-foreground/50 flex flex-col items-center gap-1 cursor-not-allowed opacity-60"
-                        >
-                          <TreePine size={18} />
-                          <span className="text-[10px] font-bold">
-                            {t("categories.leisure")}
-                          </span>
-                        </button>
+                      <div className="p-3 rounded-xl border bg-primary/10 border-primary text-primary flex flex-col items-center gap-1">
+                        {selectedPlace.category === "gastronomy"
+                          ? <Utensils size={18} />
+                          : <TreePine size={18} />}
+                        <span className="text-[10px] font-bold">
+                          {t(`categories.${selectedPlace.category}`)}
+                        </span>
                       </div>
                     </div>
                   </div>

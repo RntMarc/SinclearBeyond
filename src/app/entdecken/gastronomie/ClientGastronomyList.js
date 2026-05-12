@@ -133,12 +133,7 @@ export default function ClientGastronomyList({ initialPlaces }) {
         </div>
       </div>
 
-      {showAddModal && (
-        <AddPlaceModal
-          initialCategory="gastronomy"
-          onClose={() => setShowAddModal(false)}
-        />
-      )}
+      {showAddModal && <AddPlaceModal onClose={() => setShowAddModal(false)} />}
 
       {showSearchModal && (
         <DiscoverSearchModal onClose={() => setShowSearchModal(false)} />
