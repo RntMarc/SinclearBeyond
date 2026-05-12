@@ -6,8 +6,11 @@ import {
   Ticket,
   X,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function TravelEventDetailModal({ event, onClose }) {
+  const t = useTranslations("Travel");
+  const tc = useTranslations("Common");
   const start = new Date(event.startAt);
   const end = event.endAt ? new Date(event.endAt) : null;
 
@@ -41,7 +44,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
             <div className="mb-1">
               <h2 className="text-xl font-semibold">{event.title}</h2>
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                Reise-Event
+                {t("tripLabel")}
               </p>
             </div>
           </div>
@@ -55,10 +58,10 @@ export default function TravelEventDetailModal({ event, onClose }) {
               </div>
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                  Beschreibung
+                  {t("description")}
                 </p>
                 <p className="text-sm text-foreground leading-relaxed">
-                  {event.description || "Keine Beschreibung vorhanden."}
+                  {event.description || t("noDescriptionShort")}
                 </p>
               </div>
             </div>
@@ -69,7 +72,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
               </div>
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                  Zeitraum
+                  {t("timeRange")}
                 </p>
                 <p className="text-sm text-foreground">
                   {formatDateTime(start)}
@@ -85,7 +88,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
                 </div>
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                    Ort
+                    {t("address")}
                   </p>
                   <p className="text-sm text-foreground">{event.address}</p>
                 </div>
@@ -98,14 +101,14 @@ export default function TravelEventDetailModal({ event, onClose }) {
               href={`/reisen/${event.tripId}`}
               className="flex-1 py-3 bg-trip hover:bg-trip/90 text-white rounded-xl font-medium transition-colors text-center shadow-sm"
             >
-              Reise aufrufen
+              {t("openTrip")}
             </a>
             <button
               type="button"
               onClick={onClose}
               className="flex-1 py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-xl font-medium transition-colors border border-sidebar-border"
             >
-              Schließen
+              {tc("close")}
             </button>
           </div>
         </div>

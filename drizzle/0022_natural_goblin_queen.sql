@@ -1,0 +1,1 @@
+ALTER TABLE `MediaItem` ADD `format` enum('movie','series');

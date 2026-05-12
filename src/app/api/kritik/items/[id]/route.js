@@ -20,6 +20,7 @@ export async function GET(_req, { params }) {
         description: mediaItems.description,
         image: mediaItems.image,
         type: mediaItems.type,
+        format: mediaItems.format,
         releaseDate: mediaItems.releaseDate,
         avgRating: sql`AVG(${mediaReviews.rating})`,
         reviewCount: sql`COUNT(${mediaReviews.id})`,

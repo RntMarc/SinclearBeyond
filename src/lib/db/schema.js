@@ -27,6 +27,7 @@ export const users = mysqlTable("User", {
   displayName: varchar("displayName", { length: 191 }).notNull(),
   birthday: datetime("birthday", { fsp: 3 }),
   birthdayVisibility: tinyint("birthdayVisibility").notNull().default(1),
+  emailVisibility: tinyint("emailVisibility").notNull().default(1),
   isAdmin: tinyint("isAdmin").notNull().default(0),
   discordId: varchar("discordId", { length: 191 }),
   image: longtext("image"),
@@ -323,6 +324,7 @@ export const subscriptionRelations = mysqlTable("SubscriptionRelation", {
 export const mediaItems = mysqlTable("MediaItem", {
   id: varchar("id", { length: 191 }).primaryKey(),
   type: mysqlEnum("type", ["game", "movie", "music"]).notNull(),
+  format: mysqlEnum("format", ["movie", "series"]),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   image: text("image"),

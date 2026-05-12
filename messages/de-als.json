@@ -4,6 +4,7 @@
     "description": "Dei Community. Koi Gschroi. Chats, Kalender, Geburtsdag und meh – an oim Fleck."
   },
   "Common": {
+    "close": "Zuamacha",
     "save": "Schbeichra",
     "saving": "Wird gschbeicheret…",
     "saved": "Gschbeicheret",
@@ -144,6 +145,14 @@
     }
   },
   "Travel": {
+    "description": "Was mr dõ macht",
+    "address": "Wo des isch",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "timeRange": "Zeit",
+    "tripLabel": "Reisa-Event",
+    "openTrip": "Reis õgugga",
+    "noDescriptionShort": "S'geit koi Beschreibong.",
     "title": "Reisa",
     "subtitle": "Onderwegs",
     "detailsTitle": "Reisa-Details",
@@ -162,6 +171,7 @@
     "accommodationLabel": "Onderkonft",
     "participants": "Mitroisende",
     "events": "Events",
+    "eventLabel": "Event",
     "noDescription": "S'geit koi Beschreibong.",
     "noAccommodation": "Koi oigene Onderkonft henderlegt.",
     "otherAccommodations": "Andere Onderkünfd vo de Leit",
@@ -181,6 +191,8 @@
       }
     },
     "accommodation": {
+      "accommodationDetailLabel": "Onderkonft",
+      "accommodationDetailType": "Onderkonft",
       "name": "Wia d'Onderkonft hoißt",
       "description": "Was mr dõ macht",
       "address": "Wo des isch",
@@ -397,6 +409,7 @@
       "deleteImage": "Lescha",
       "imagePreviewAlt": "Profilbild Vorschau",
       "nameLabel": "Nama",
+      "emailLabel": "E-Mail-Adräss",
       "birthdayLabel": "Geburtsdag",
       "contactTitle": "Kondagd",
       "socialTitle": "Soziale Mediena",
@@ -566,6 +579,7 @@
     "games": "Schbiele",
     "gamesDesc": "Computerschbiele, Konsola ond so Sacha",
     "movies": "Film",
+    "series": "Seria",
     "moviesSubtitle": "Kino & Schtreaming",
     "moviesDesc": "Blockbuster, Seria ond Klassiker",
     "music": "Mugg",

@@ -1,10 +1,31 @@
 "use client";
 
-import { Calendar, ChevronDown, Info, MapPin, Users } from "lucide-react";
+import {
+  Calendar,
+  ChevronDown,
+  Info,
+  Map as MapIcon,
+  MapPin,
+  Users,
+} from "lucide-react";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Avatar from "@/components/Avatar";
+import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import AccommodationDetailModal from "./AccommodationDetailModal";
+
+const TravelMap = dynamic(() => import("./TravelMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-2xl border border-border">
+      <p className="text-xs text-muted-foreground italic">
+        Karte wird geladen...
+      </p>
+    </div>
+  ),
+});
 
 function StatusBadge({ isActive, isUpcoming, isPast }) {
   const t = useTranslations("Travel");
@@ -46,7 +67,7 @@ function SectionBox({ title, icon: Icon, children }) {
   );
 }
 
-function EventCard({ event }) {
+function EventCard({ event, onClick }) {
   const locale = useLocale();
   const start = new Date(event.start);
   const end = new Date(event.end);
@@ -59,8 +80,12 @@ function EventCard({ event }) {
     });
 
   return (
-    <div className="p-4 bg-background border border-sidebar-border rounded-xl flex flex-col gap-2">
-      <div className="flex items-start justify-between gap-2">
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full p-4 bg-background border border-sidebar-border rounded-xl flex flex-col gap-2 text-left hover:border-primary/50 transition-all group"
+    >
+      <div className="flex items-start justify-between gap-2 w-full">
         <h4 className="font-medium text-foreground leading-tight">
           {event.name}
         </h4>
@@ -82,7 +107,7 @@ function EventCard({ event }) {
           <span className="truncate">{event.address}</span>
         </div>
       )}
-    </div>
+    </button>
   );
 }
 
@@ -91,6 +116,9 @@ export default function TripDashboard({ trip }) {
   const locale = useLocale();
   const [expandOtherAccomm, setExpandOtherAccomm] = useState(false);
   const [mobileTab, setMobileTab] = useState("details");
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedAccommodation, setSelectedAccommodation] = useState(null);
+
   const isMobile = useIsMobile();
   const start = new Date(trip.start);
   const end = new Date(trip.end);
@@ -101,17 +129,72 @@ export default function TripDashboard({ trip }) {
       year: "numeric",
     });
 
-  const otherAccommodations = trip.participants.reduce((acc, p) => {
-    if (p.accommodation && p.accommodation.id !== trip.userAccommodation?.id) {
-      const existing = acc.find((a) => a.id === p.accommodation.id);
-      if (existing) {
-        existing.users.push(p.displayName);
-      } else {
-        acc.push({ ...p.accommodation, users: [p.displayName] });
+  const otherAccommodations = useMemo(() => {
+    return trip.participants.reduce((acc, p) => {
+      if (
+        p.accommodation &&
+        p.accommodation.id !== trip.userAccommodation?.id
+      ) {
+        const existing = acc.find((a) => a.id === p.accommodation.id);
+        if (existing) {
+          existing.users.push(p.displayName);
+        } else {
+          acc.push({ ...p.accommodation, users: [p.displayName] });
+        }
       }
+      return acc;
+    }, []);
+  }, [trip.participants, trip.userAccommodation]);
+
+  const mapItems = useMemo(() => {
+    const items = [];
+
+    // User's own accommodation
+    if (trip.userAccommodation?.latitude && trip.userAccommodation.longitude) {
+      items.push({
+        ...trip.userAccommodation,
+        type: "accommodation",
+        isOwn: true,
+      });
     }
-    return acc;
-  }, []);
+
+    // Other accommodations
+    otherAccommodations.forEach((acc) => {
+      if (acc.latitude && acc.longitude) {
+        items.push({
+          ...acc,
+          type: "accommodation",
+          isOwn: false,
+        });
+      }
+    });
+
+    // Events
+    trip.events.forEach((event) => {
+      if (event.latitude && event.longitude) {
+        items.push({
+          ...event,
+          type: "event",
+          isOwn: true, // Assuming events are shared/primary for now
+        });
+      }
+    });
+
+    return items;
+  }, [trip.userAccommodation, otherAccommodations, trip.events]);
+
+  const handleMapItemClick = (item) => {
+    if (item.type === "accommodation") {
+      setSelectedAccommodation(item);
+    } else {
+      setSelectedEvent({
+        ...item,
+        title: item.name,
+        startAt: item.start,
+        endAt: item.end,
+      });
+    }
+  };
 
   const DashboardContent = (
     <div className="space-y-6">
@@ -144,7 +227,11 @@ export default function TripDashboard({ trip }) {
       <SectionBox title={t("accommodationLabel")} icon={MapPin}>
         <div className="space-y-4">
           {trip.userAccommodation
-            ? <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
+            ? <button
+                type="button"
+                onClick={() => setSelectedAccommodation(trip.userAccommodation)}
+                className="w-full text-left p-4 bg-primary/5 border border-primary/10 rounded-xl hover:border-primary/30 transition-all"
+              >
                 <h4 className="font-medium text-foreground mb-1">
                   {trip.userAccommodation.name}
                 </h4>
@@ -165,7 +252,7 @@ export default function TripDashboard({ trip }) {
                     </span>
                   )}
                 </div>
-              </div>
+              </button>
             : <p className="text-sm text-muted-foreground italic">
                 {t("noAccommodation")}
               </p>}
@@ -186,12 +273,17 @@ export default function TripDashboard({ trip }) {
               {expandOtherAccomm && (
                 <div className="mt-3 space-y-3 pl-2 border-l-2 border-sidebar-border">
                   {otherAccommodations.map((acc) => (
-                    <div key={acc.id} className="text-xs">
+                    <button
+                      key={acc.id}
+                      type="button"
+                      onClick={() => setSelectedAccommodation(acc)}
+                      className="text-xs block w-full text-left hover:text-primary transition-colors"
+                    >
                       <p className="font-medium text-foreground">{acc.name}</p>
                       <p className="text-muted-foreground text-[10px]">
                         {t("participantLabel")}: {acc.users.join(", ")}
                       </p>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -221,6 +313,13 @@ export default function TripDashboard({ trip }) {
           ))}
         </div>
       </SectionBox>
+
+      {/* Map Box - Desktop */}
+      {!isMobile && mapItems.length > 0 && (
+        <div className="h-[400px]">
+          <TravelMap items={mapItems} onItemClick={handleMapItemClick} />
+        </div>
+      )}
     </div>
   );
 
@@ -234,7 +333,18 @@ export default function TripDashboard({ trip }) {
       {trip.events.length > 0
         ? <div className="space-y-3">
             {trip.events.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <EventCard
+                key={event.id}
+                event={event}
+                onClick={() =>
+                  setSelectedEvent({
+                    ...event,
+                    title: event.name,
+                    startAt: event.start,
+                    endAt: event.end,
+                  })
+                }
+              />
             ))}
           </div>
         : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-2xl">
@@ -244,6 +354,12 @@ export default function TripDashboard({ trip }) {
             />
             <p className="text-sm text-muted-foreground">{t("noEvents")}</p>
           </div>}
+    </div>
+  );
+
+  const MapContent = (
+    <div className="h-[60vh] md:h-full">
+      <TravelMap items={mapItems} onItemClick={handleMapItemClick} />
     </div>
   );
 
@@ -282,9 +398,41 @@ export default function TripDashboard({ trip }) {
           >
             {t("tabs.events")} ({trip.events.length})
           </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab("map")}
+            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
+              mobileTab === "map"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <MapIcon size={14} />
+              <span>{t("tabs.map")}</span>
+            </div>
+          </button>
         </div>
-        {mobileTab === "details" ? DashboardContent : EventsContent}
+        {mobileTab === "details"
+          ? DashboardContent
+          : mobileTab === "events"
+            ? EventsContent
+            : MapContent}
       </div>
+
+      {/* Modals */}
+      {selectedEvent && (
+        <TravelEventDetailModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
+      {selectedAccommodation && (
+        <AccommodationDetailModal
+          accommodation={selectedAccommodation}
+          onClose={() => setSelectedAccommodation(null)}
+        />
+      )}
     </>
   );
 }

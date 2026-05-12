@@ -25,6 +25,7 @@ export default async function MoviesPage() {
       description: mediaItems.description,
       image: mediaItems.image,
       type: mediaItems.type,
+      format: mediaItems.format,
       avgRating: sql`AVG(${mediaReviews.rating})`,
       reviewCount: sql`COUNT(${mediaReviews.id})`,
     })

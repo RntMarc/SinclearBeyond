@@ -4,6 +4,7 @@
     "description": "Your community. No noise. Chats, calendars, birthdays and more – all in one place."
   },
   "Common": {
+    "close": "Close",
     "save": "Save",
     "saving": "Saving...",
     "saved": "Saved",
@@ -144,6 +145,14 @@
     }
   },
   "Travel": {
+    "description": "Description",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "timeRange": "Period",
+    "tripLabel": "Travel Event",
+    "openTrip": "View Trip",
+    "noDescriptionShort": "No description available.",
     "title": "Travel",
     "subtitle": "On the road",
     "detailsTitle": "Trip Details",
@@ -162,6 +171,7 @@
     "accommodationLabel": "Accommodation",
     "participants": "Participants",
     "events": "Events",
+    "eventLabel": "Event",
     "noDescription": "No description available.",
     "noAccommodation": "No personal accommodation recorded.",
     "otherAccommodations": "Other participants' accommodations",
@@ -181,6 +191,8 @@
       }
     },
     "accommodation": {
+      "accommodationDetailLabel": "Accommodation",
+      "accommodationDetailType": "Accommodation",
       "name": "Accommodation Name",
       "description": "Description",
       "address": "Address",
@@ -397,6 +409,7 @@
       "deleteImage": "Delete",
       "imagePreviewAlt": "Profile picture preview",
       "nameLabel": "Name",
+      "emailLabel": "Email Address",
       "birthdayLabel": "Date of birth",
       "contactTitle": "Contact",
       "socialTitle": "Social Media",
@@ -497,6 +510,7 @@
     "games": "Games",
     "gamesDesc": "Computer games, consoles and more",
     "movies": "Movies",
+    "series": "Series",
     "moviesSubtitle": "Cinema & Streaming",
     "moviesDesc": "Blockbusters, series and classics",
     "music": "Music",
