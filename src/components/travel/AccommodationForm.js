@@ -1,7 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import SaveButton from "@/components/SaveButton";
+
+const TravelMap = dynamic(() => import("./TravelMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-xl border border-sidebar-border">
+      <p className="text-[10px] text-muted-foreground italic">
+        Karte wird geladen...
+      </p>
+    </div>
+  ),
+});
 
 export default function AccommodationForm({
   form,
@@ -109,16 +121,27 @@ export default function AccommodationForm({
           </div>
 
           <div className="space-y-1.5">
-            <div className="flex items-center gap-2 bg-sidebar-accent/30 p-3 rounded-xl border border-sidebar-border/50">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary italic font-serif">
-                M
-              </div>
-              <div className="flex-1">
-                <p className="text-xs font-medium">{t("mapIntegration")}</p>
-                <p className="text-[10px] text-muted-foreground">
-                  {t("mapPlaceholder")}
-                </p>
-              </div>
+            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
+              {t("mapIntegration")}
+            </label>
+            <div className="h-48 rounded-xl border border-sidebar-border overflow-hidden">
+              <TravelMap
+                items={
+                  form.latitude && form.longitude
+                    ? [
+                        {
+                          id: "preview",
+                          name: form.name || "Vorschau",
+                          latitude: form.latitude,
+                          longitude: form.longitude,
+                          type: "accommodation",
+                          isOwn: true,
+                        },
+                      ]
+                    : []
+                }
+                onItemClick={() => {}}
+              />
             </div>
           </div>
 
