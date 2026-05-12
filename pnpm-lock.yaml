@@ -60,7 +60,7 @@ importers:
         specifier: ^4.11.0
         version: 4.11.0(next@16.2.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       nodemailer:
-        specifier: ^8.0.5
+        specifier: ^8.0.7
         version: 8.0.7
       opening_hours:
         specifier: ^3.9.0
