@@ -43,7 +43,8 @@
     "discover": "Entdegga",
     "feedback": "Feedback",
     "subscriptions": "Abos",
-    "reviews": "Reviews"
+    "reviews": "Reviews",
+    "info": "Changelog"
   },
   "Auth": {
     "login": "Neigauda",
@@ -570,6 +571,27 @@
       "cancelled": "Abbrocha",
       "rejected": "Abglehnt",
       "later": "Schbäder"
+    }
+  },
+  "Changelog": {
+    "title": "Changelog",
+    "subtitle": "Neuigkeiten",
+    "noEntries": "Nix gfonda.",
+    "addEntry": "Eitrag dazua dõa",
+    "newEntryTitle": "Nuier Changelog-Eitrag",
+    "editEntryTitle": "Eitrag bearbeida",
+    "form": {
+      "title": "Titel",
+      "content": "Inhalt",
+      "category": "Kategorie",
+      "save": "Schbeichra"
+    },
+    "categories": {
+      "feature": "Nuie Sach",
+      "bugfix": "Fähler-Fix",
+      "improvement": "Besser gmacht",
+      "maintenance": "Wartong",
+      "security": "Sicherheit"
     }
   },
   "Reviews": {

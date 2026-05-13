@@ -20,6 +20,28 @@ export const otpTokens = mysqlTable("OtpToken", {
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
+export const changelogEntries = mysqlTable("ChangelogEntry", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  category: mysqlEnum("category", [
+    "feature",
+    "bugfix",
+    "improvement",
+    "maintenance",
+    "security",
+  ]).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const readStatuses = mysqlTable("ReadStatus", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  entityType: varchar("entityType", { length: 191 }).notNull(),
+  entityId: varchar("entityId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
 export const users = mysqlTable("User", {
   id: varchar("id", { length: 191 }).primaryKey(),
   email: varchar("email", { length: 191 }).notNull(),

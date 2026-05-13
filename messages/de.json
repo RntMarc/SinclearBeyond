@@ -43,7 +43,8 @@
     "discover": "Entdecken",
     "feedback": "Feedback",
     "subscriptions": "Abonnements",
-    "reviews": "Reviews"
+    "reviews": "Reviews",
+    "info": "Changelog"
   },
   "Auth": {
     "login": "Login",
@@ -575,6 +576,27 @@
       "cancelled": "Abgebrochen",
       "rejected": "Abgelehnt",
       "later": "Später"
+    }
+  },
+  "Changelog": {
+    "title": "Changelog",
+    "subtitle": "Neuigkeiten",
+    "noEntries": "Keine Einträge vorhanden.",
+    "addEntry": "Eintrag hinzufügen",
+    "newEntryTitle": "Neuer Changelog-Eintrag",
+    "editEntryTitle": "Eintrag bearbeiten",
+    "form": {
+      "title": "Titel",
+      "content": "Inhalt",
+      "category": "Kategorie",
+      "save": "Speichern"
+    },
+    "categories": {
+      "feature": "Neue Funktion",
+      "bugfix": "Bugfix",
+      "improvement": "Verbesserung",
+      "maintenance": "Wartung",
+      "security": "Sicherheit"
     }
   },
   "Reviews": {
