@@ -60,7 +60,11 @@ export default async function MusicDetailPage({ params }) {
 
   return (
     <AppShell user={user} session={session}>
-      <MusicDetailPageClient music={musicResult[0]} reviews={reviews} />
+      <MusicDetailPageClient
+        music={musicResult[0]}
+        reviews={reviews}
+        userId={session.sub}
+      />
     </AppShell>
   );
 }

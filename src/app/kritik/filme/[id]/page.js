@@ -61,7 +61,11 @@ export default async function MovieDetailPage({ params }) {
 
   return (
     <AppShell user={user} session={session}>
-      <MovieDetailPageClient movie={movieResult[0]} reviews={reviews} />
+      <MovieDetailPageClient
+        movie={movieResult[0]}
+        reviews={reviews}
+        userId={session.sub}
+      />
     </AppShell>
   );
 }

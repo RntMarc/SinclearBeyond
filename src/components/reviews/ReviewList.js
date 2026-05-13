@@ -1,10 +1,15 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Edit2, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Avatar from "@/components/Avatar";
 
-export default function ReviewList({ reviews }) {
+export default function ReviewList({
+  reviews,
+  currentUserId,
+  onEdit,
+  onDelete,
+}) {
   const t = useTranslations("Reviews");
 
   if (reviews.length === 0) {
@@ -49,6 +54,27 @@ export default function ReviewList({ reviews }) {
           )}
 
           <p className="text-foreground leading-relaxed">{review.comment}</p>
+
+          {currentUserId === review.user.id && (
+            <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
+              <button
+                type="button"
+                onClick={() => onEdit(review)}
+                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                aria-label={t("edit")}
+              >
+                <Edit2 size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => onDelete(review.id)}
+                className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                aria-label={t("delete")}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>

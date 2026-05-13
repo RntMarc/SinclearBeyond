@@ -10,12 +10,15 @@ import ReviewModal from "@/components/reviews/ReviewModal";
 export default function MusicDetailPageClient({
   music: initialMusic,
   reviews: initialReviews,
+  userId,
 }) {
   const t = useTranslations("Reviews");
 
   const [music, setMusic] = useState(initialMusic);
   const [reviews, setReviews] = useState(initialReviews);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [newReview, setNewReview] = useState({
@@ -26,8 +29,13 @@ export default function MusicDetailPageClient({
   async function handleSubmitReview() {
     setLoading(true);
     try {
-      const res = await fetch("/api/kritik/reviews", {
-        method: "POST",
+      const url = isEditing
+        ? `/api/kritik/reviews/${editingReviewId}`
+        : "/api/kritik/reviews";
+      const method = isEditing ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           itemId: music.id,
@@ -37,6 +45,7 @@ export default function MusicDetailPageClient({
 
       if (res.ok) {
         setShowReviewModal(false);
+        setIsEditing(false);
         // Refresh reviews and music data
         const [reviewsRes, musicRes] = await Promise.all([
           fetch(`/api/kritik/reviews?itemId=${music.id}`),
@@ -51,6 +60,35 @@ export default function MusicDetailPageClient({
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleDeleteReview(reviewId) {
+    if (!confirm(t("deleteReviewConfirm"))) return;
+    try {
+      const res = await fetch(`/api/kritik/reviews/${reviewId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        const [reviewsRes, musicRes] = await Promise.all([
+          fetch(`/api/kritik/reviews?itemId=${music.id}`),
+          fetch(`/api/kritik/items/${music.id}`),
+        ]);
+        setReviews(await reviewsRes.json());
+        setMusic(await musicRes.json());
+      }
+    } catch (err) {
+      console.error("Failed to delete review", err);
+    }
+  }
+
+  function handleEditReview(review) {
+    setNewReview({
+      rating: review.rating,
+      comment: review.comment,
+    });
+    setIsEditing(true);
+    setEditingReviewId(review.id);
+    setShowReviewModal(true);
   }
 
   const share = () => {
@@ -154,14 +192,25 @@ export default function MusicDetailPageClient({
             <h2 className="text-2xl font-black flex items-center gap-3">
               {t("reviews")}
             </h2>
-            <ReviewList reviews={reviews} />
+            <ReviewList
+              reviews={reviews}
+              currentUserId={userId}
+              onEdit={handleEditReview}
+              onDelete={handleDeleteReview}
+            />
           </section>
         </div>
       </div>
 
       <ReviewModal
         isOpen={showReviewModal}
-        onClose={() => setShowReviewModal(false)}
+        isEditing={isEditing}
+        onClose={() => {
+          setShowReviewModal(false);
+          setIsEditing(false);
+          setEditingReviewId(null);
+          setNewReview({ rating: 5, comment: "" });
+        }}
         onSubmit={handleSubmitReview}
         loading={loading}
         newReview={newReview}

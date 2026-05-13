@@ -2,6 +2,7 @@
 
 import { Loader2, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Button from "@/components/ui/Button";
 
 const PLATFORMS = [
   "pc_linux",
@@ -24,6 +25,7 @@ export default function ReviewModal({
   newReview,
   setNewReview,
   type = "game",
+  isEditing = false,
 }) {
   const t = useTranslations("Reviews");
   const tc = useTranslations("Common");
@@ -40,7 +42,9 @@ export default function ReviewModal({
       />
       <div className="relative w-full max-w-md bg-card border border-border rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="p-6 border-b border-border">
-          <h3 className="text-xl font-black">{t("addReview")}</h3>
+          <h3 className="text-xl font-black">
+            {isEditing ? t("editReview") : t("addReview")}
+          </h3>
         </div>
         <form
           onSubmit={(e) => {
@@ -118,22 +122,23 @@ export default function ReviewModal({
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button
+            <Button
               type="button"
               disabled={loading}
               onClick={onClose}
-              className="flex-1 py-3 bg-muted hover:bg-muted/80 rounded-2xl font-bold transition-all disabled:opacity-50"
+              variant="secondary"
+              className="flex-1"
             >
               {tc("cancel")}
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 bg-primary text-primary-foreground rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading && <Loader2 size={18} className="animate-spin" />}
               {t("saveReview")}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
