@@ -83,3 +83,26 @@ export async function PUT(req, { params }) {
     .limit(1);
   return NextResponse.json({ ...updated, canEdit: true });
 }
+
+export async function DELETE(_req, { params }) {
+  const t = await getTranslations("Common");
+  const session = await getSession();
+  if (!session)
+    return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
+
+  const { id } = await params;
+  const userId = session.sub;
+
+  const [ev] = await db.select().from(events).where(eq(events.id, id)).limit(1);
+  if (!ev) return NextResponse.json({ error: t("notFound") }, { status: 404 });
+
+  const isCreator = ev.creatorId === userId;
+  if (!isCreator && session.role !== "admin") {
+    return NextResponse.json({ error: t("forbidden") }, { status: 403 });
+  }
+
+  await db.delete(eventPermissions).where(eq(eventPermissions.eventId, id));
+  await db.delete(events).where(eq(events.id, id));
+
+  return NextResponse.json({ ok: true });
+}

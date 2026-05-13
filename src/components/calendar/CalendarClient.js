@@ -38,7 +38,8 @@ export default function KalenderClient({
   const [formModal, setFormModal] = useState(null); // null | { mode: "create"|"edit", event }
   const isMobile = useIsMobile();
 
-  const { eventList, allUsers, addEvent, updateEvent } = useCalendarEvents();
+  const { eventList, allUsers, addEvent, updateEvent, removeEvent } =
+    useCalendarEvents();
 
   function prev() {
     if (viewMode === "month") {
@@ -70,6 +71,15 @@ export default function KalenderClient({
     const res = await fetch(`/api/events/${ev.id}/permissions`);
     const permissions = res.ok ? await res.json() : [];
     setFormModal({ mode: "edit", event: { ...ev, permissions } });
+  }
+
+  async function handleDeleteEvent(id) {
+    if (!confirm(t("deleteConfirm"))) return;
+    const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      removeEvent(id);
+      setSelectedEvent(null);
+    }
   }
 
   function handleDayClick(date) {
@@ -156,6 +166,7 @@ export default function KalenderClient({
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
           onEdit={openEditModal}
+          onDelete={handleDeleteEvent}
         />
       )}
 

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowLeft,
   Bookmark,
   Check,
   Clock,
@@ -12,6 +11,7 @@ import {
   Phone,
   Plus,
   RefreshCcw,
+  Search,
   Share2,
   Star,
   Trash2,
@@ -19,17 +19,16 @@ import {
   User as UserIcon,
   Utensils,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
-import { Search } from "lucide-react";
 import Avatar from "@/components/Avatar";
+import DiscoverSearchModal from "@/components/discover/DiscoverSearchModal";
+import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 import ReviewModal from "@/components/discover/ReviewModal";
 import SimpleOSM from "@/components/discover/SimpleOSM";
-import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 import SubPageHeader from "@/components/layout/SubPageHeader";
-import DiscoverSearchModal from "@/components/discover/DiscoverSearchModal";
+import Button from "@/components/ui/Button";
 
 export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const t = useTranslations("Discover");
@@ -43,6 +42,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const [copied, setCopied] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showOSMInfo, setShowOSMInfo] = useState(false);
   const router = useRouter();
@@ -127,6 +127,11 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
     } catch (_err) {
       alert(t("errorUpdate"));
     }
+  }
+
+  function handleEditReview(review) {
+    setEditingReview(review);
+    setShowReviewModal(true);
   }
 
   async function deleteReview(reviewId) {
@@ -293,17 +298,18 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                         Diese Informationen sind älter als 30 Tage.
                       </p>
                     </div>
-                    <button
+                    <Button
                       type="button"
                       onClick={refreshFromOSM}
                       disabled={updating}
-                      className="p-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50 transition-all"
+                      size="icon"
+                      className="rounded-lg"
                     >
                       <RefreshCcw
                         size={16}
                         className={updating ? "animate-spin" : ""}
                       />
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -467,14 +473,16 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                     <Star size={20} className="text-primary" />
                     {t("reviews")}
                   </h2>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setShowReviewModal(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-xs font-bold rounded-lg hover:bg-primary/20 transition-colors"
+                    variant="secondary"
+                    size="compact"
+                    className="bg-primary/10 text-primary hover:bg-primary/20 rounded-lg"
                   >
                     <Plus size={14} />
                     {t("addReview")}
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="space-y-6">
@@ -519,7 +527,14 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                             )}
 
                             {(review.userId === userId || isAdmin) && (
-                              <div className="pt-2 flex justify-end">
+                              <div className="pt-2 flex justify-end gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditReview(review)}
+                                  className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors hover:underline"
+                                >
+                                  {t("edit")}
+                                </button>
                                 <button
                                   type="button"
                                   onClick={() => deleteReview(review.id)}
@@ -540,8 +555,12 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
               {showReviewModal && (
                 <ReviewModal
                   placeId={id}
-                  onClose={() => setShowReviewModal(false)}
+                  onClose={() => {
+                    setShowReviewModal(false);
+                    setEditingReview(null);
+                  }}
                   onAdded={loadPlace}
+                  initialData={editingReview}
                 />
               )}
             </div>
@@ -565,13 +584,13 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
             <p className="text-sm text-muted-foreground leading-relaxed">
               {t("osmInfoText")}
             </p>
-            <button
+            <Button
               type="button"
               onClick={() => setShowOSMInfo(false)}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold hover:opacity-90 transition-opacity"
+              className="w-full py-3 rounded-xl"
             >
               {tc("ok")}
-            </button>
+            </Button>
           </div>
         </div>
       )}

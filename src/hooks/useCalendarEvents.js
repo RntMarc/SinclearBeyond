@@ -83,9 +83,22 @@ export function useCalendarEvents() {
 
   function updateEvent(updated) {
     setEventList((prev) =>
-      prev.map((ev) => (ev.id === updated.id ? updated : ev)),
+      prev.map((ev) =>
+        ev.id === updated.id ? { ...updated, type: "event" } : ev,
+      ),
     );
   }
 
-  return { eventList, allUsers, addEvent, updateEvent };
+  function removeEvent(id) {
+    setEventList((prev) => prev.filter((ev) => ev.id !== id));
+  }
+
+  return {
+    eventList,
+    allUsers,
+    addEvent,
+    updateEvent,
+    removeEvent,
+    refresh: fetchEvents,
+  };
 }

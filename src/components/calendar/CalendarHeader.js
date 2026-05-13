@@ -9,6 +9,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Button from "@/components/ui/Button";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { MONTHS } from "@/lib/calendar/calendarUtils";
 
@@ -77,21 +78,24 @@ export default function CalendarHeader({
         </div>
 
         {/* View Switcher Mobile - icons only */}
-        <div className="flex bg-muted/50 p-1 rounded-lg">
-          {VIEW_MODES.map((mode) => (
-            <button
-              key={mode.id}
-              onClick={() => setViewMode(mode.id)}
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === mode.id
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <mode.icon size={16} />
-            </button>
-          ))}
-        </div>
+        {isMobile && (
+          <div className="flex bg-muted/50 p-1 rounded-lg">
+            {VIEW_MODES.map((mode) => (
+              <button
+                key={mode.id}
+                type="button"
+                onClick={() => setViewMode(mode.id)}
+                className={`p-1.5 rounded-md transition-colors ${
+                  viewMode === mode.id
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <mode.icon size={16} />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div
@@ -100,14 +104,11 @@ export default function CalendarHeader({
         } justify-end`}
       >
         {/* View Switcher Desktop - text/icons */}
-        <div
-          className={`hidden ${
-            isMobile ? "" : "sm:flex"
-          } bg-muted/50 p-1 rounded-lg`}
-        >
+        <div className="hidden sm:flex bg-muted/50 p-1 rounded-lg">
           {VIEW_MODES.map((mode) => (
             <button
               key={mode.id}
+              type="button"
               onClick={() => setViewMode(mode.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 viewMode === mode.id
@@ -121,14 +122,14 @@ export default function CalendarHeader({
           ))}
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={onNew}
-          className={`${isMobile ? "hidden" : "hidden md:flex"} items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0`}
+          className={`${isMobile ? "hidden" : "hidden md:flex"} shrink-0`}
         >
           <Plus size={15} />
           {t("newEntry")}
-        </button>
+        </Button>
       </div>
     </div>
   );

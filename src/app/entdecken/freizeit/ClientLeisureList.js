@@ -1,21 +1,16 @@
 "use client";
 
-import {
-  ArrowLeft,
-  Plus,
-  Star,
-  TreePine,
-  Search,
-  Map as MapIcon,
-} from "lucide-react";
+import { Map as MapIcon, Plus, Search, Star, TreePine } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import AddPlaceModal from "@/components/discover/AddPlaceModal";
-import SubPageHeader from "@/components/layout/SubPageHeader";
 import DiscoverSearchModal from "@/components/discover/DiscoverSearchModal";
 import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
-import dynamic from "next/dynamic";
+import SubPageHeader from "@/components/layout/SubPageHeader";
+import Button from "@/components/ui/Button";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const ResultsMap = dynamic(() => import("../ResultsMap"), {
   ssr: false,
@@ -28,6 +23,7 @@ const ResultsMap = dynamic(() => import("../ResultsMap"), {
 
 export default function ClientLeisureList({ initialPlaces }) {
   const t = useTranslations("Discover");
+  const isMobile = useIsMobile();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -54,17 +50,15 @@ export default function ClientLeisureList({ initialPlaces }) {
         >
           <MapIcon size={20} />
         </button>
-        <button
-          type="button"
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
-        >
-          <Plus size={16} />
-          {t("addPlace")}
-        </button>
+        {!isMobile && (
+          <Button type="button" onClick={() => setShowAddModal(true)}>
+            <Plus size={16} />
+            {t("addPlace")}
+          </Button>
+        )}
       </SubPageHeader>
 
-      <div className="flex-1 overflow-y-auto p-6 md:p-10">
+      <div className="flex-1 overflow-y-auto p-6 md:p-10 relative">
         <div className="max-w-5xl mx-auto space-y-8">
           {showMap && initialPlaces.length > 0 && (
             <div className="h-[300px] w-full rounded-2xl overflow-hidden border border-border shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
@@ -120,16 +114,24 @@ export default function ClientLeisureList({ initialPlaces }) {
             : <div className="p-20 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
                 <TreePine size={48} className="text-muted-foreground/20 mb-4" />
                 <p className="text-muted-foreground mb-6">{t("noLeisure")}</p>
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(true)}
-                  className="px-6 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold"
-                >
+                <Button type="button" onClick={() => setShowAddModal(true)}>
                   {t("addFirst")}
-                </button>
+                </Button>
               </div>}
         </div>
       </div>
+
+      {isMobile && (
+        <Button
+          type="button"
+          onClick={() => setShowAddModal(true)}
+          className="fixed bottom-6 right-6 w-14 h-14 z-50 shadow-lg"
+          size="icon"
+          aria-label={t("addPlace")}
+        >
+          <Plus size={24} />
+        </Button>
+      )}
 
       {showAddModal && <AddPlaceModal onClose={() => setShowAddModal(false)} />}
 

@@ -1,7 +1,7 @@
 "use client";
 import { Check, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useTheme } from "@/components/layout/ThemeProvider";
+import Button from "@/components/ui/Button";
 
 export default function SaveButton({
   pending,
@@ -13,7 +13,6 @@ export default function SaveButton({
   type = "submit",
 }) {
   const t = useTranslations("Common");
-  const { activeEffects } = useTheme();
   const isPending = pending || loading;
   const isSuccess = state?.ok === true;
   const isError = state?.ok === false;
@@ -22,16 +21,12 @@ export default function SaveButton({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <button
+      <Button
         type={type}
         onClick={onClick}
         disabled={isPending}
-        className={`w-full rounded-full py-2.5 text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2
-          ${
-            isError
-              ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              : "bg-primary text-primary-foreground hover:bg-primary/90"
-          } ${activeEffects.showPride ? "effect-pride-button" : ""} ${activeEffects.showSnow ? "effect-snow-button" : ""}`}
+        variant={isError ? "destructive" : "primary"}
+        className="w-full"
       >
         {isPending
           ? t("saving")
@@ -44,7 +39,7 @@ export default function SaveButton({
                   <X size={15} /> {t("error")}
                 </>
               : displayLabel}
-      </button>
+      </Button>
       {isError && state.error && (
         <p className="text-destructive text-xs text-center">{state.error}</p>
       )}
