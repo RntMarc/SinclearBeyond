@@ -60,7 +60,11 @@ export default async function GameDetailPage({ params }) {
 
   return (
     <AppShell user={user} session={session}>
-      <GameDetailPageClient game={gameResult[0]} reviews={reviews} />
+      <GameDetailPageClient
+        game={gameResult[0]}
+        reviews={reviews}
+        userId={session.sub}
+      />
     </AppShell>
   );
 }

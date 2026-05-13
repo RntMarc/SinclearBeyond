@@ -1,8 +1,9 @@
 "use client";
 import { X } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { isSameDay } from "@/lib/calendar/calendarUtils";
 
-export default function EventDetailModal({ event, onClose, onEdit }) {
+export default function EventDetailModal({ event, onClose, onEdit, onDelete }) {
   const start = new Date(event.startAt);
   const end = event.endAt ? new Date(event.endAt) : null;
   const dateOpts = {
@@ -61,23 +62,36 @@ export default function EventDetailModal({ event, onClose, onEdit }) {
             </div>
           )}
         </div>
-        <div className="px-6 pb-5 flex gap-3">
-          {event.canEdit && (
-            <button
-              type="button"
-              onClick={() => onEdit(event)}
-              className="flex-1 px-4 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-            >
-              Bearbeiten
-            </button>
-          )}
-          <button
+        <div className="px-6 pb-5 flex flex-col gap-3">
+          <div className="flex gap-3">
+            {event.canEdit && (
+              <>
+                <Button
+                  type="button"
+                  onClick={() => onEdit(event)}
+                  className="flex-1"
+                >
+                  Bearbeiten
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => onDelete(event.id)}
+                  variant="destructive"
+                  className="px-4"
+                >
+                  Löschen
+                </Button>
+              </>
+            )}
+          </div>
+          <Button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-full border border-border text-muted-foreground text-sm hover:text-foreground hover:border-foreground/30 transition-colors"
+            variant="outline"
+            className="flex-1"
           >
             Schließen
-          </button>
+          </Button>
         </div>
       </div>
     </div>

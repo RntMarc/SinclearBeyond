@@ -4,13 +4,19 @@ import { Star, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import SaveButton from "@/components/SaveButton";
+import Button from "@/components/ui/Button";
 
-export default function ReviewModal({ placeId, onClose, onAdded }) {
+export default function ReviewModal({
+  placeId,
+  onClose,
+  onAdded,
+  initialData = null,
+}) {
   const t = useTranslations("Discover");
   const tCommon = useTranslations("Common");
 
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(initialData?.rating || 5);
+  const [comment, setComment] = useState(initialData?.comment || "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [isClosing, setIsClosing] = useState(false);
@@ -33,8 +39,13 @@ export default function ReviewModal({ placeId, onClose, onAdded }) {
     setError("");
 
     try {
-      const res = await fetch("/api/discover/reviews", {
-        method: "POST",
+      const url = initialData
+        ? `/api/discover/reviews/${initialData.id}`
+        : "/api/discover/reviews";
+      const method = initialData ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ placeId, rating, comment }),
       });
@@ -46,7 +57,7 @@ export default function ReviewModal({ placeId, onClose, onAdded }) {
         const data = await res.json();
         setError(data.error || t("errorUpdate"));
       }
-    } catch (err) {
+    } catch (_err) {
       setError(t("errorUpdate"));
     } finally {
       setSaving(false);
@@ -55,11 +66,13 @@ export default function ReviewModal({ placeId, onClose, onAdded }) {
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      <div
+      <button
+        type="button"
         className={`absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-200 ${
           isClosing ? "opacity-0" : "opacity-100"
         }`}
         onClick={handleClose}
+        aria-label={tCommon("close")}
       />
 
       <div
@@ -70,7 +83,9 @@ export default function ReviewModal({ placeId, onClose, onAdded }) {
         {/* Header */}
         <div className="px-6 py-5 border-b border-border flex items-center justify-between shrink-0">
           <div>
-            <h2 className="text-xl font-semibold">{t("addReview")}</h2>
+            <h2 className="text-xl font-semibold">
+              {initialData ? t("editReview") : t("addReview")}
+            </h2>
           </div>
           <button
             type="button"
@@ -89,9 +104,9 @@ export default function ReviewModal({ placeId, onClose, onAdded }) {
           )}
 
           <div className="space-y-3">
-            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1">
+            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1">
               {t("rating")}
-            </label>
+            </span>
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((s) => (
                 <button
@@ -127,13 +142,14 @@ export default function ReviewModal({ placeId, onClose, onAdded }) {
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-            <button
+            <Button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              variant="ghost"
+              className="px-4"
             >
               {tCommon("cancel")}
-            </button>
+            </Button>
             <SaveButton loading={saving} onClick={handleSubmit}>
               {tCommon("save")}
             </SaveButton>

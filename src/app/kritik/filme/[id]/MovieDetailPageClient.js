@@ -10,12 +10,14 @@ import ReviewModal from "@/components/reviews/ReviewModal";
 export default function MovieDetailPageClient({
   movie: initialMovie,
   reviews: initialReviews,
+  userId,
 }) {
   const t = useTranslations("Reviews");
 
   const [movie, setMovie] = useState(initialMovie);
   const [reviews, setReviews] = useState(initialReviews);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [newReview, setNewReview] = useState({
@@ -37,6 +39,7 @@ export default function MovieDetailPageClient({
 
       if (res.ok) {
         setShowReviewModal(false);
+        setIsEditing(false);
         // Refresh reviews and movie data
         const [reviewsRes, movieRes] = await Promise.all([
           fetch(`/api/kritik/reviews?itemId=${movie.id}`),
@@ -51,6 +54,34 @@ export default function MovieDetailPageClient({
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleDeleteReview(reviewId) {
+    if (!confirm(t("deleteReviewConfirm"))) return;
+    try {
+      const res = await fetch(`/api/kritik/reviews/${reviewId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        const [reviewsRes, movieRes] = await Promise.all([
+          fetch(`/api/kritik/reviews?itemId=${movie.id}`),
+          fetch(`/api/kritik/items/${movie.id}`),
+        ]);
+        setReviews(await reviewsRes.json());
+        setMovie(await movieRes.json());
+      }
+    } catch (err) {
+      console.error("Failed to delete review", err);
+    }
+  }
+
+  function handleEditReview(review) {
+    setNewReview({
+      rating: review.rating,
+      comment: review.comment,
+    });
+    setIsEditing(true);
+    setShowReviewModal(true);
   }
 
   const share = () => {
@@ -157,14 +188,24 @@ export default function MovieDetailPageClient({
             <h2 className="text-2xl font-black flex items-center gap-3">
               {t("reviews")}
             </h2>
-            <ReviewList reviews={reviews} />
+            <ReviewList
+              reviews={reviews}
+              currentUserId={userId}
+              onEdit={handleEditReview}
+              onDelete={handleDeleteReview}
+            />
           </section>
         </div>
       </div>
 
       <ReviewModal
         isOpen={showReviewModal}
-        onClose={() => setShowReviewModal(false)}
+        isEditing={isEditing}
+        onClose={() => {
+          setShowReviewModal(false);
+          setIsEditing(false);
+          setNewReview({ rating: 5, comment: "" });
+        }}
         onSubmit={handleSubmitReview}
         loading={loading}
         newReview={newReview}

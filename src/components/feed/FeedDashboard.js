@@ -3,14 +3,17 @@
 import { Plus, SquarePlay } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
-import Notification from "@/components/Notification";
 import PageHeader from "@/components/layout/PageHeader";
+import Notification from "@/components/Notification";
+import Button from "@/components/ui/Button";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import FeedFilters from "./FeedFilters";
 import FeedFormModal from "./FeedFormModal";
 import FeedList from "./FeedList";
 
 export default function FeedDashboard() {
   const t = useTranslations("Feed");
+  const isMobile = useIsMobile();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("all");
@@ -63,14 +66,12 @@ export default function FeedDashboard() {
   return (
     <div className="flex flex-col h-full bg-background">
       <PageHeader subtitle={t("subtitle")} title={t("title")} icon={SquarePlay}>
-        <button
-          type="button"
-          onClick={handleCreatePost}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 w-fit"
-        >
-          <Plus size={18} />
-          {t("newPost")}
-        </button>
+        {!isMobile && (
+          <Button type="button" onClick={handleCreatePost}>
+            <Plus size={18} />
+            {t("newPost")}
+          </Button>
+        )}
       </PageHeader>
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
@@ -98,6 +99,18 @@ export default function FeedDashboard() {
           />
         </div>
       </div>
+
+      {isMobile && (
+        <Button
+          type="button"
+          onClick={handleCreatePost}
+          className="fixed bottom-6 right-6 w-14 h-14 z-50 shadow-lg"
+          size="icon"
+          aria-label={t("newPost")}
+        >
+          <Plus size={24} />
+        </Button>
+      )}
 
       {isModalOpen && (
         <FeedFormModal
