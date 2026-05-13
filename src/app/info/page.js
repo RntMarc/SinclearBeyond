@@ -1,6 +1,11 @@
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { getSession } from "@/lib/auth/session";
+import AppShell from "@/components/layout/Appshell";
+import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getChangelogEntries } from "@/lib/changelog/actions";
+import { db } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 import InfoClient from "./InfoClient";
 
 export async function generateMetadata() {
@@ -11,8 +16,28 @@ export async function generateMetadata() {
 }
 
 export default async function InfoPage() {
-  const session = await getSession();
+  const session = await getSessionWithSubs();
+  if (!session) redirect("/login");
+
+  const [user] = await db
+    .select({
+      displayName: users.displayName,
+      email: users.email,
+      image: users.image,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .where(eq(users.id, session.sub))
+    .limit(1);
+
   const entries = await getChangelogEntries();
 
-  return <InfoClient entries={entries} isAdmin={session?.isAdmin} />;
+  return (
+    <AppShell
+      user={{ ...user, hasSubscriptions: session.hasSubscriptions }}
+      session={session}
+    >
+      <InfoClient entries={entries} isAdmin={session?.isAdmin} />
+    </AppShell>
+  );
 }

@@ -39,7 +39,7 @@ export async function getChangelogEntries() {
     .from(readStatuses)
     .where(
       and(
-        eq(readStatuses.userId, session.userId),
+        eq(readStatuses.userId, session.sub),
         eq(readStatuses.entityType, "changelog"),
       ),
     );
@@ -68,7 +68,7 @@ export async function markAllChangelogAsRead() {
     .from(readStatuses)
     .where(
       and(
-        eq(readStatuses.userId, session.userId),
+        eq(readStatuses.userId, session.sub),
         eq(readStatuses.entityType, "changelog"),
       ),
     );
@@ -79,7 +79,7 @@ export async function markAllChangelogAsRead() {
   if (unreadIds.length > 0) {
     const values = unreadIds.map((id) => ({
       id: crypto.randomUUID(),
-      userId: session.userId,
+      userId: session.sub,
       entityType: "changelog",
       entityId: id,
       createdAt: new Date(),
@@ -109,7 +109,7 @@ export async function getUnreadChangelogCount() {
     .from(readStatuses)
     .where(
       and(
-        eq(readStatuses.userId, session.userId),
+        eq(readStatuses.userId, session.sub),
         eq(readStatuses.entityType, "changelog"),
       ),
     );
