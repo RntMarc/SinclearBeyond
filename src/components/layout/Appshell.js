@@ -14,11 +14,12 @@ import {
   Star,
   Users,
   X,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
 import SnowEffect from "@/components/layout/SnowEffect";
@@ -31,6 +32,24 @@ export default function AppShell({ children, user, session }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const [unreadChangelog, setUnreadChangelog] = useState(0);
+
+  useEffect(() => {
+    async function checkUnread() {
+      try {
+        const { getUnreadChangelogCount } = await import(
+          "@/lib/changelog/actions"
+        );
+        const count = await getUnreadChangelogCount();
+        setUnreadChangelog(count);
+      } catch (error) {
+        console.error("Failed to fetch unread count", error);
+      }
+    }
+    if (user || session) {
+      checkUnread();
+    }
+  }, [user, session, pathname]);
 
   const navItems = [
     { href: "/feed", label: t("entertainment"), icon: SquarePlay },
@@ -47,6 +66,12 @@ export default function AppShell({ children, user, session }) {
       icon: Banknote,
     },
     { href: "/feedback", label: t("feedback"), icon: MessageSquarePlus },
+    {
+      href: "/info",
+      label: t("info"),
+      icon: Info,
+      badge: unreadChangelog > 0 && pathname !== "/info",
+    },
     { href: "/einstellungen", label: t("settings"), icon: Settings },
   ];
 
@@ -95,7 +120,8 @@ export default function AppShell({ children, user, session }) {
           {[
             ...navItems,
             ...(user?.isAdmin || session?.isAdmin ? [adminNavItem] : []),
-          ].map(({ href, label, icon: Icon }) => {
+          ].map((item) => {
+            const { href, label, icon: Icon } = item;
             const active = pathname.startsWith(href);
             return (
               <Link
@@ -110,7 +136,13 @@ export default function AppShell({ children, user, session }) {
                   }`}
               >
                 <Icon size={16} />
-                {label}
+                <span className="flex-1">{label}</span>
+                {item.badge && (
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                  </span>
+                )}
               </Link>
             );
           })}

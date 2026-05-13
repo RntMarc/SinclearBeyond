@@ -43,7 +43,8 @@
     "discover": "Discover",
     "feedback": "Feedback",
     "subscriptions": "Subscriptions",
-    "reviews": "Reviews"
+    "reviews": "Reviews",
+    "info": "Changelog"
   },
   "Auth": {
     "login": "Login",
@@ -501,6 +502,27 @@
       "cancelled": "Cancelled",
       "rejected": "Rejected",
       "later": "Later"
+    }
+  },
+  "Changelog": {
+    "title": "Changelog",
+    "subtitle": "News",
+    "noEntries": "No entries found.",
+    "addEntry": "Add entry",
+    "newEntryTitle": "New Changelog Entry",
+    "editEntryTitle": "Edit entry",
+    "form": {
+      "title": "Title",
+      "content": "Content",
+      "category": "Category",
+      "save": "Save"
+    },
+    "categories": {
+      "feature": "New Feature",
+      "bugfix": "Bugfix",
+      "improvement": "Improvement",
+      "maintenance": "Maintenance",
+      "security": "Security"
     }
   },
   "Reviews": {
