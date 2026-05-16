@@ -16,6 +16,7 @@ export default async function ReisenPage() {
   if (!data) redirect("/login");
 
   const trips = await getTrips();
+  const standaloneEvents = await getTrips(true);
   const { user } = data;
 
   return (
@@ -28,11 +29,24 @@ export default async function ReisenPage() {
         />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto space-y-12">
             <TripList
               initialTrips={trips ?? []}
               isAdmin={Boolean(session.isAdmin)}
             />
+
+            {standaloneEvents && standaloneEvents.length > 0 && (
+              <div className="space-y-4">
+                <h2 className="text-sm uppercase tracking-[0.2em] text-muted-foreground font-medium">
+                  Eigenständige Events
+                </h2>
+                <TripList
+                  initialTrips={standaloneEvents}
+                  isAdmin={Boolean(session.isAdmin)}
+                  isEventList={true}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

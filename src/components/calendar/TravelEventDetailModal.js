@@ -51,6 +51,14 @@ export default function TravelEventDetailModal({ event, onClose }) {
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto">
+          {event.participantIds && !event.isParticipant && (
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl">
+              <p className="text-xs text-destructive font-medium flex items-center gap-2">
+                <X size={14} />
+                {t("notParticipant")}
+              </p>
+            </div>
+          )}
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground shrink-0">
@@ -97,12 +105,14 @@ export default function TravelEventDetailModal({ event, onClose }) {
           </div>
 
           <div className="flex gap-3">
-            <a
-              href={`/reisen/${event.tripId}`}
-              className="flex-1 py-3 bg-trip hover:bg-trip/90 text-white rounded-xl font-medium transition-colors text-center shadow-sm"
-            >
-              {t("openTrip")}
-            </a>
+            {event.tripId && (
+              <a
+                href={`/reisen/${event.tripId}`}
+                className="flex-1 py-3 bg-trip hover:bg-trip/90 text-white rounded-xl font-medium transition-colors text-center shadow-sm"
+              >
+                {t("openTrip")}
+              </a>
+            )}
             <button
               type="button"
               onClick={onClose}

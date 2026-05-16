@@ -5,6 +5,7 @@ import {
   Camera,
   Compass,
   Gift,
+  Info,
   Lock,
   Map as MapIcon,
   Menu,
@@ -14,7 +15,6 @@ import {
   Star,
   Users,
   X,
-  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -49,7 +49,7 @@ export default function AppShell({ children, user, session }) {
     if (user || session) {
       checkUnread();
     }
-  }, [user, session, pathname]);
+  }, [user, session]);
 
   const navItems = [
     { href: "/feed", label: t("entertainment"), icon: SquarePlay },

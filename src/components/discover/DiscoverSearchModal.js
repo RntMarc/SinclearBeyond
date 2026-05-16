@@ -1,9 +1,9 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import DiscoverSearch from "./DiscoverSearch";
-import { useRouter } from "next/navigation";
 
 export default function DiscoverSearchModal({ onClose }) {
   const router = useRouter();

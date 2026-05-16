@@ -6,6 +6,7 @@ import { db } from "@/lib/db/db";
 import {
   closeFriends,
   eventPermissions,
+  eventRelations,
   events,
   travelEvents,
   travelRelations,
@@ -48,6 +49,12 @@ export async function GET() {
 
   const participantTripIds = userRelations.map((r) => r.tripId);
 
+  const userEventRelations = await db
+    .select({ eventId: eventRelations.eventId })
+    .from(eventRelations)
+    .where(eq(eventRelations.userId, userId));
+  const participantEventIds = userEventRelations.map((r) => r.eventId);
+
   let trips = [];
   if (session.isAdmin) {
     trips = await db.select().from(travelTrips).orderBy(travelTrips.start);
@@ -60,13 +67,12 @@ export async function GET() {
   }
 
   // 3. Travel Events
-  const visibleTripIds = trips.map((t) => t.id);
   let trvEvents = [];
-  if (visibleTripIds.length > 0) {
+  if (participantEventIds.length > 0) {
     trvEvents = await db
       .select()
       .from(travelEvents)
-      .where(inArray(travelEvents.tripId, visibleTripIds))
+      .where(inArray(travelEvents.id, participantEventIds))
       .orderBy(travelEvents.start);
   }
 

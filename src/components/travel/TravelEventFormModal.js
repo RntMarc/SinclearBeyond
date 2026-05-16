@@ -1,7 +1,7 @@
 "use client";
 
-import { Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { Trash2, User, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import SaveButton from "@/components/SaveButton";
 import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 
@@ -18,6 +18,7 @@ export default function TravelEventFormModal({
           ...event,
           start: toLocalDatetimeValue(event.start, timezone),
           end: toLocalDatetimeValue(event.end, timezone),
+          participantIds: event.participantIds || [],
         }
       : {
           tripId,
@@ -35,8 +36,50 @@ export default function TravelEventFormModal({
           latitude: "",
           longitude: "",
           osmId: "",
+          participantIds: [],
         },
   );
+
+  const [availableUsers, setAvailableUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (event && !event.participantIds) {
+        try {
+          const res = await fetch(`/api/travel/events/${event.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            setForm((prev) => ({
+              ...prev,
+              participantIds: data.participantIds || [],
+            }));
+          }
+        } catch (err) {
+          console.error("Error fetching event details:", err);
+        }
+      }
+
+      setLoadingUsers(true);
+      try {
+        let url = "/api/users";
+        if (tripId) {
+          url = `/api/travel/trips/${tripId}/participants`;
+        }
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          setAvailableUsers(data);
+        }
+      } catch (err) {
+        console.error("Error fetching available users:", err);
+      } finally {
+        setLoadingUsers(false);
+      }
+    }
+
+    fetchData();
+  }, [event, tripId]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -219,6 +262,55 @@ export default function TravelEventFormModal({
                   setForm({ ...form, longitude: e.target.value })
                 }
               />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
+              Teilnehmer
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-sidebar border border-sidebar-border rounded-xl p-3 max-h-40 overflow-y-auto">
+              {loadingUsers
+                ? <div className="col-span-full text-xs text-muted-foreground animate-pulse">
+                    Lade Nutzer...
+                  </div>
+                : availableUsers.length > 0
+                  ? availableUsers.map((user) => (
+                      <label
+                        key={user.id}
+                        className="flex items-center gap-2 text-xs cursor-pointer hover:bg-white/5 p-1 rounded"
+                      >
+                        <input
+                          type="checkbox"
+                          className="rounded border-sidebar-border bg-background text-primary focus:ring-primary"
+                          checked={form.participantIds.includes(user.id)}
+                          onChange={(e) => {
+                            const newIds = e.target.checked
+                              ? [...form.participantIds, user.id]
+                              : form.participantIds.filter(
+                                  (id) => id !== user.id,
+                                );
+                            setForm({ ...form, participantIds: newIds });
+                          }}
+                        />
+                        <div className="flex items-center gap-2 truncate">
+                          {user.image
+                            ? <img
+                                src={user.image}
+                                alt=""
+                                className="w-4 h-4 rounded-full object-cover"
+                              />
+                            : <User
+                                size={12}
+                                className="text-muted-foreground"
+                              />}
+                          <span className="truncate">{user.displayName}</span>
+                        </div>
+                      </label>
+                    ))
+                  : <div className="col-span-full text-xs text-muted-foreground italic">
+                      Keine Nutzer gefunden.
+                    </div>}
             </div>
           </div>
 

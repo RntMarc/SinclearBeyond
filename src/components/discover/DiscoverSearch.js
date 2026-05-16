@@ -1,6 +1,6 @@
 "use client";
 
-import { Compass, Crosshair, Loader2, MapPin, Search, X } from "lucide-react";
+import { Crosshair, Loader2, MapPin, Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -232,7 +232,7 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
                   type="number"
                   className="w-12 bg-transparent border-none outline-none text-sm font-bold text-center"
                   value={radius}
-                  onChange={(e) => setRadius(parseInt(e.target.value) || 0)}
+                  onChange={(e) => setRadius(parseInt(e.target.value, 10) || 0)}
                 />
                 <span className="text-xs text-muted-foreground">
                   {t("radiusUnit")}

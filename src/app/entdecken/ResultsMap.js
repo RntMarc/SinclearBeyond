@@ -80,7 +80,7 @@ export default function ResultsMap({ places, showNumbers = true }) {
         mapInstanceRef.current = null;
       }
     };
-  }, [places]);
+  }, [places, showNumbers]);
 
   return (
     <div

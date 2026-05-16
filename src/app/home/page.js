@@ -20,6 +20,7 @@ import {
   travelEvents,
   travelRelations,
   travelTrips,
+  eventRelations,
   users,
 } from "@/lib/db/schema";
 import { getUnsplashPhotos } from "@/lib/photos/unsplash";
@@ -74,7 +75,7 @@ export default async function HomePage() {
     )
     .orderBy(events.startAt);
 
-  // 2. Fetch Upcoming Trips (next 7 days)
+  // 2. Fetch Upcoming Trips (next 7 days OR currently active)
   const userTripRelations = await db
     .select({ tripId: travelRelations.tripId })
     .from(travelRelations)
@@ -87,9 +88,12 @@ export default async function HomePage() {
       .select()
       .from(travelTrips)
       .where(
-        and(
-          gte(travelTrips.start, now),
-          lte(travelTrips.start, sevenDaysLater),
+        or(
+          and(
+            gte(travelTrips.start, now),
+            lte(travelTrips.start, sevenDaysLater),
+          ),
+          and(lte(travelTrips.start, now), gte(travelTrips.end, now)),
         ),
       )
       .orderBy(travelTrips.start);
@@ -100,8 +104,13 @@ export default async function HomePage() {
       .where(
         and(
           inArray(travelTrips.id, participantTripIds),
-          gte(travelTrips.start, now),
-          lte(travelTrips.start, sevenDaysLater),
+          or(
+            and(
+              gte(travelTrips.start, now),
+              lte(travelTrips.start, sevenDaysLater),
+            ),
+            and(lte(travelTrips.start, now), gte(travelTrips.end, now)),
+          ),
         ),
       )
       .orderBy(travelTrips.start);
@@ -224,17 +233,28 @@ export default async function HomePage() {
   // Combine Events, Trips, TravelEvents if necessary?
   // User asked for "Events", "Trips", "Birthdays", "Posts", "Photos".
   // Let's also include travelEvents in the events section if they fall in the range.
+
+  const userEventRelations = await db
+    .select({ eventId: eventRelations.eventId })
+    .from(eventRelations)
+    .where(eq(eventRelations.userId, userId));
+  const participantEventIds = userEventRelations.map((r) => r.eventId);
+
   let upcomingTravelEvents = [];
-  const visibleTripIds = trips.map((t) => t.id);
-  if (visibleTripIds.length > 0) {
+  if (participantEventIds.length > 0) {
     upcomingTravelEvents = await db
       .select()
       .from(travelEvents)
       .where(
         and(
-          inArray(travelEvents.tripId, visibleTripIds),
-          gte(travelEvents.start, now),
-          lte(travelEvents.start, sevenDaysLater),
+          inArray(travelEvents.id, participantEventIds),
+          or(
+            and(
+              gte(travelEvents.start, now),
+              lte(travelEvents.start, sevenDaysLater),
+            ),
+            and(lte(travelEvents.start, now), gte(travelEvents.end, now)),
+          ),
         ),
       )
       .orderBy(travelEvents.start);
