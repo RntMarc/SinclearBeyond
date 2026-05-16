@@ -1,6 +1,7 @@
 "use client";
 import { Bed, Info, Mail, MapPin, Phone, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import SimpleOSM from "@/components/discover/SimpleOSM";
 
 export default function AccommodationDetailModal({ accommodation, onClose }) {
   const t = useTranslations("Travel.accommodation");
@@ -34,6 +35,16 @@ export default function AccommodationDetailModal({ accommodation, onClose }) {
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto">
+          {accommodation.latitude && accommodation.longitude && (
+            <div className="h-48 shrink-0">
+              <SimpleOSM
+                lat={accommodation.latitude}
+                lon={accommodation.longitude}
+                name={accommodation.name}
+                zoom={14}
+              />
+            </div>
+          )}
           <div className="space-y-4">
             {accommodation.description && (
               <div className="flex items-start gap-3">

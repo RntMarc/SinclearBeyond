@@ -24,6 +24,11 @@
     "loadError": "Error loading",
     "deleteError": "Error deleting",
     "notImplemented": "Not implemented",
+    "navigation": {
+      "title": "Navigation",
+      "openInApp": "Open in App",
+      "openInBrowser": "Open in Browser"
+    },
     "tooManyRequests": "Too many requests",
     "alreadyParticipant": "Already a participant.",
     "genericError": "An error occurred."

@@ -24,6 +24,11 @@
     "loadError": "I konnt des net lada",
     "deleteError": "Lescha hot net gklabbd",
     "notImplemented": "Geit's no net",
+    "navigation": {
+      "title": "Navigation",
+      "openInApp": "In de App uffmacha",
+      "openInBrowser": "Im Browser uffmacha"
+    },
     "tooManyRequests": "Langsam reit's",
     "alreadyParticipant": "Bisch scho dabei.",
     "genericError": "Ebbes isch schiaf ganga."
