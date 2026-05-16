@@ -2,17 +2,17 @@
 
 import {
   Bookmark,
-  Star,
-  Utensils,
-  TreePine,
   MapPin,
   Search as SearchIcon,
+  Star,
+  TreePine,
+  Utensils,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import DiscoverSearch from "@/components/discover/DiscoverSearch";
-import dynamic from "next/dynamic";
 import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 
 const ResultsMap = dynamic(() => import("./ResultsMap"), {
@@ -37,7 +37,7 @@ export default function DiscoverClient({
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("list"); // "list" or "map"
   const [showGlobalMap, setShowGlobalMap] = useState(false);
-  const searchRef = useRef(null);
+  const _searchRef = useRef(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -52,10 +52,10 @@ export default function DiscoverClient({
         query: q || "",
         mode: mode || "in",
         location: lat && lon ? { lat, lon } : null,
-        radius: radius ? parseInt(radius) : 10,
+        radius: radius ? parseInt(radius, 10) : 10,
       });
     }
-  }, []);
+  }, [handleSearch]);
 
   async function handleSearch(searchParams) {
     setLoading(true);
@@ -83,7 +83,7 @@ export default function DiscoverClient({
 
   const focusSearch = () => {
     const input = document.querySelector(
-      'input[placeholder="' + ts("placeholder") + '"]',
+      `input[placeholder="${ts("placeholder")}"]`,
     );
     if (input) {
       input.focus();

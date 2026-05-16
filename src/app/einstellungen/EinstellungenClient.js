@@ -3,10 +3,10 @@
 import { Key, Palette, Settings, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import PageHeader from "@/components/layout/PageHeader";
 import AppearanceForm from "@/components/profile/AppearanceForm";
 import CloseFriendsManager from "@/components/profile/CloseFriendsManager";
 import EmailChangeForm from "@/components/profile/EmailChangeForm";
-import PageHeader from "@/components/layout/PageHeader";
 import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
 

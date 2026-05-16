@@ -1,5 +1,4 @@
 import crypto from "node:crypto";
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
@@ -25,7 +24,7 @@ export async function POST(req) {
       id,
       placeId,
       userId: session.sub,
-      rating: parseInt(rating),
+      rating: parseInt(rating, 10),
       comment,
       createdAt: new Date(),
     });

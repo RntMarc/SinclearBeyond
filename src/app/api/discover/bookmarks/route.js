@@ -5,7 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { discoverBookmarks, discoverPlaces } from "@/lib/db/schema";
 
-export async function GET(req) {
+export async function GET(_req) {
   const session = await getSession();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

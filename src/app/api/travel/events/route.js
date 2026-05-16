@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { travelEvents } from "@/lib/db/schema";
+import { eventRelations, travelEvents } from "@/lib/db/schema";
 
 export async function POST(req) {
   const t = await getTranslations("Common");
@@ -31,9 +31,10 @@ export async function POST(req) {
       latitude,
       longitude,
       osmId,
+      participantIds, // New field
     } = data;
 
-    if (!tripId || !name || !start || !end) {
+    if (!name || !start || !end) {
       return NextResponse.json({ error: t("missingFields") }, { status: 400 });
     }
 
@@ -41,7 +42,7 @@ export async function POST(req) {
 
     await db.insert(travelEvents).values({
       id,
-      tripId,
+      tripId: tripId || null,
       name,
       description: description || null,
       start: new Date(start),
@@ -57,6 +58,17 @@ export async function POST(req) {
       longitude: longitude ? parseFloat(longitude) : null,
       osmId: osmId ? BigInt(osmId) : null,
     });
+
+    if (participantIds && Array.isArray(participantIds)) {
+      for (const userId of participantIds) {
+        await db.insert(eventRelations).values({
+          id: crypto.randomUUID(),
+          eventId: id,
+          userId,
+          createdAt: new Date(),
+        });
+      }
+    }
 
     return NextResponse.json({ ok: true, id });
   } catch (error) {

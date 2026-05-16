@@ -6,8 +6,8 @@ import Avatar from "@/components/Avatar";
 import ContactField from "@/components/profile/ContactField";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
-import { saveProfile } from "@/lib/profile/profile";
 import { formatBirthday } from "@/lib/dateUtils";
+import { saveProfile } from "@/lib/profile/profile";
 
 export default function ProfilForm({ user, contact, social }) {
   const t = useTranslations("Settings");

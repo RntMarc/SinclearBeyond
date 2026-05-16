@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { and, eq, gt, isNull, lt } from "drizzle-orm";
-import { sendOtpEmail } from "@/lib/auth/email";
 import { createSessionToken } from "@/lib/auth/auth";
+import { sendOtpEmail } from "@/lib/auth/email";
 import { db } from "@/lib/db/db";
 import { otpTokens, users } from "@/lib/db/schema";
 

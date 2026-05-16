@@ -2,13 +2,13 @@ import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { createSessionToken } from "@/lib/auth/auth";
 import {
   exchangeDiscordCode,
   getDiscordUser,
   getDiscordUserGuilds,
   processDiscordAvatar,
 } from "@/lib/auth/discord";
-import { createSessionToken } from "@/lib/auth/auth";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { contactInfo, users } from "@/lib/db/schema";
