@@ -7,6 +7,7 @@ import {
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import SimpleOSM from "@/components/discover/SimpleOSM";
 
 export default function TravelEventDetailModal({ event, onClose }) {
   const t = useTranslations("Travel");
@@ -51,6 +52,16 @@ export default function TravelEventDetailModal({ event, onClose }) {
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto">
+          {event.latitude && event.longitude && (
+            <div className="h-48 shrink-0">
+              <SimpleOSM
+                lat={event.latitude}
+                lon={event.longitude}
+                name={event.title}
+                zoom={14}
+              />
+            </div>
+          )}
           {event.participantIds && !event.isParticipant && (
             <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl">
               <p className="text-xs text-destructive font-medium flex items-center gap-2">

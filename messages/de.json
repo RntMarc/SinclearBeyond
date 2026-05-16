@@ -24,6 +24,11 @@
     "loadError": "Fehler beim Laden",
     "deleteError": "Fehler beim Löschen",
     "notImplemented": "Nicht implementiert",
+    "navigation": {
+      "title": "Navigation",
+      "openInApp": "In App öffnen",
+      "openInBrowser": "Im Browser öffnen"
+    },
     "tooManyRequests": "Zu viele Anfragen",
     "alreadyParticipant": "Bereits Teilnehmer.",
     "genericError": "Ein Fehler ist aufgetreten."
