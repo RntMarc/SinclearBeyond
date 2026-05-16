@@ -621,6 +621,20 @@
     "yourRating": "Your rating",
     "commentOptional": "Comment (optional)",
     "savePlace": "Add & save place",
+    "reportMissing": "Place not found?",
+    "reportMissingButton": "Report missing place",
+    "reportModal": {
+      "title": "Report missing place",
+      "description": "If a place is missing from OpenStreetMap, you can send us the details here. We will try to add it.",
+      "name": "Name of the place",
+      "address": "Address",
+      "googleMapsLink": "Google Maps Link",
+      "website": "Website",
+      "coordinates": "Coordinates on map",
+      "submit": "Send report",
+      "success": "Report sent successfully. Thank you!",
+      "error": "Please provide either a Google Maps link OR the name and address or coordinates of the place."
+    },
     "status": {
       "open": "Open now",
       "closed": "Closed",

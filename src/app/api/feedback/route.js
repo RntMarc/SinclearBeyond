@@ -17,6 +17,15 @@ const FeedbackSchema = z.discriminatedUnion("type", [
     title: z.string().min(1).max(100),
     description: z.string().max(2000).optional(),
   }),
+  z.object({
+    type: z.literal("missing_place"),
+    name: z.string().max(200).optional(),
+    address: z.string().max(500).optional(),
+    googleMapsLink: z.string().max(500).optional(),
+    website: z.string().max(500).optional(),
+    latitude: z.number().nullable().optional(),
+    longitude: z.number().nullable().optional(),
+  }),
 ]);
 
 const transport = nodemailer.createTransport({
@@ -149,6 +158,32 @@ export async function POST(req) {
       });
 
       return NextResponse.json({ id: newId });
+    } else if (body.type === "missing_place") {
+      const { name, address, googleMapsLink, website, latitude, longitude } =
+        body;
+
+      await transport.sendMail({
+        from: process.env.SMTP_FROM,
+        to: process.env.FEEDBACK_EMAIL,
+        subject: `Fehlender Ort gemeldet von ${payload.email}`,
+        text: `Vermisster Ort gemeldet von: ${payload.email} (ID: ${userId})\n\nDetails:\nName: ${name || "-"}\nAdresse: ${address || "-"}\nGoogle Maps: ${googleMapsLink || "-"}\nWebseite: ${website || "-"}\nKoordinaten: ${latitude && longitude ? `${latitude}, ${longitude}` : "-"}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+            <h2 style="font-weight:300">Fehlender Ort gemeldet</h2>
+            <p><strong>Von:</strong> ${payload.email} (ID: ${userId})</p>
+            <hr style="border:0;border-top:1px solid #eee;margin:20px 0" />
+            <table style="width:100%;border-collapse:collapse">
+              <tr><td style="padding:8px 0;font-weight:bold;width:120px">Name:</td><td>${name || "-"}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:bold">Adresse:</td><td>${address || "-"}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:bold">Google Maps:</td><td>${googleMapsLink ? `<a href="${googleMapsLink}">${googleMapsLink}</a>` : "-"}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:bold">Webseite:</td><td>${website ? `<a href="${website}">${website}</a>` : "-"}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:bold">Koordinaten:</td><td>${latitude && longitude ? `${latitude}, ${longitude}` : "-"}</td></tr>
+            </table>
+          </div>
+        `,
+      });
+
+      return NextResponse.json({ success: true });
     }
 
     return NextResponse.json(

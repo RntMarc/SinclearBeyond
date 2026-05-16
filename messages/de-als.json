@@ -494,6 +494,20 @@
       "yourRating": "Deine Bewertong",
       "commentOptional": "Doin Senf (wenn de magsch)",
       "savePlace": "Ort neidõa & schbeichera",
+      "reportMissing": "Ort net gfonda?",
+      "reportMissingButton": "Fehlender Ort melda",
+      "reportModal": {
+        "title": "Vermisstâ Ort melda",
+        "description": "Wenn a Ort in OpenStreetMap fehlt, kasch uns hier d'Details schicka. Mir probierat dann, den neizodõa.",
+        "name": "Wie dr Ort hoißt",
+        "address": "Wo des isch",
+        "googleMapsLink": "Google Maps Link",
+        "website": "Webseite",
+        "coordinates": "Koordinatâ uff dr Kart",
+        "submit": "Meldong abschicken",
+        "success": "Meldong isch komma. Vergelts Gott!",
+        "error": "Bitte gib entwedr an Google Maps Link õ ODR den Nama ond d'Adress odr Koordinatâ vom Ort."
+      },
       "osmInfoTitle": "Information zu de Öffnongszeida",
       "osmInfoText": "Die Öffnongszeida hier kommet aus OpenStreetMap ond werdet vo Leit in ihrer Freizeit pflegt. Die kennet also au mal ald sei odr net ganz schdemma. Im Zweifel liaber mal auf d'Webseite gucka odr oifach a-rufa.",
       "status": {

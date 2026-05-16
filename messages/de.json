@@ -405,6 +405,20 @@
     "yourRating": "Deine Bewertung",
     "commentOptional": "Kommentar (Optional)",
     "savePlace": "Ort hinzufügen & speichern",
+    "reportMissing": "Ort nicht gefunden?",
+    "reportMissingButton": "Fehlenden Ort melden",
+    "reportModal": {
+      "title": "Vermissten Ort melden",
+      "description": "Wenn ein Ort in OpenStreetMap fehlt, kannst du uns hier die Details senden. Wir werden versuchen, ihn hinzuzufügen.",
+      "name": "Name des Ortes",
+      "address": "Adresse",
+      "googleMapsLink": "Google Maps Link",
+      "website": "Webseite",
+      "coordinates": "Koordinaten auf Karte",
+      "submit": "Meldung senden",
+      "success": "Meldung erfolgreich gesendet. Vielen Dank!",
+      "error": "Bitte gib entweder einen Google Maps Link an ODER den Namen sowie Adresse oder Koordinaten des Ortes."
+    },
     "search": {
       "placeholder": "Nach Einträgen suchen...",
       "modeIn": "In",
