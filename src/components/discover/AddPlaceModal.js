@@ -4,6 +4,7 @@ import {
   Check,
   Loader2,
   MapPin,
+  MessageSquareWarning,
   Search,
   Star,
   TreePine,
@@ -14,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import SaveButton from "@/components/SaveButton";
+import ReportMissingPlaceModal from "./ReportMissingPlaceModal";
 
 export default function AddPlaceModal({ onClose }) {
   const router = useRouter();
@@ -32,6 +34,7 @@ export default function AddPlaceModal({ onClose }) {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -56,7 +59,7 @@ export default function AddPlaceModal({ onClose }) {
       );
       const data = await res.json();
       setResults(data);
-    } catch (err) {
+    } catch (_err) {
       setError("Suche fehlgeschlagen.");
     } finally {
       setLoading(false);
@@ -86,7 +89,7 @@ export default function AddPlaceModal({ onClose }) {
         const data = await res.json();
         setError(data.error || "Fehler beim Speichern.");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Ein Fehler ist aufgetreten.");
     } finally {
       setSaving(false);
@@ -100,6 +103,9 @@ export default function AddPlaceModal({ onClose }) {
           isClosing ? "opacity-0" : "opacity-100"
         }`}
         onClick={handleClose}
+        onKeyDown={(e) => e.key === "Escape" && handleClose()}
+        role="button"
+        tabIndex={-1}
       />
 
       <div
@@ -142,7 +148,6 @@ export default function AddPlaceModal({ onClose }) {
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
                     />
                     <input
-                      autoFocus
                       className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
                       placeholder={t("searchPlaceholder")}
                       value={query}
@@ -164,6 +169,7 @@ export default function AddPlaceModal({ onClose }) {
                 <div className="grid grid-cols-1 gap-2">
                   {results.map((item) => (
                     <button
+                      type="button"
                       key={`${item.osmId}-${item.osmType}`}
                       onClick={() => setSelectedPlace(item)}
                       className="w-full p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all text-left flex items-start gap-4 group"
@@ -187,8 +193,34 @@ export default function AddPlaceModal({ onClose }) {
                   ))}
 
                   {query && results.length === 0 && !loading && (
-                    <div className="p-10 border-2 border-dashed border-border rounded-3xl text-center text-muted-foreground text-sm">
-                      {t("noResults")}
+                    <div className="p-10 border-2 border-dashed border-border rounded-3xl text-center space-y-4">
+                      <p className="text-muted-foreground text-sm">
+                        {t("noResults")}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowReportModal(true)}
+                        className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"
+                      >
+                        <MessageSquareWarning size={18} />
+                        {t("reportMissingButton")}
+                      </button>
+                    </div>
+                  )}
+
+                  {results.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        {t("reportMissing")}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowReportModal(true)}
+                        className="text-xs font-bold text-primary hover:underline flex items-center gap-1.5"
+                      >
+                        <MessageSquareWarning size={14} />
+                        {t("reportMissingButton")}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -208,6 +240,7 @@ export default function AddPlaceModal({ onClose }) {
                     </p>
                   </div>
                   <button
+                    type="button"
                     onClick={() => setSelectedPlace(null)}
                     className="text-xs font-bold text-muted-foreground hover:text-foreground"
                   >
@@ -232,9 +265,9 @@ export default function AddPlaceModal({ onClose }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1">
+                      <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1">
                         {t("categoryLabel")}
-                      </label>
+                      </span>
                       <div className="p-3 rounded-xl border bg-primary/10 border-primary text-primary flex flex-col items-center gap-1">
                         {selectedPlace.category === "gastronomy"
                           ? <Utensils size={18} />
@@ -248,9 +281,9 @@ export default function AddPlaceModal({ onClose }) {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1">
+                      <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1">
                         {t("yourRating")}
-                      </label>
+                      </span>
                       <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((s) => (
                           <button
@@ -269,10 +302,14 @@ export default function AddPlaceModal({ onClose }) {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1">
+                      <label
+                        htmlFor="place-comment"
+                        className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1"
+                      >
                         {t("commentOptional")}
                       </label>
                       <textarea
+                        id="place-comment"
                         className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-2 text-sm min-h-[80px] focus:ring-2 ring-primary/20 outline-none resize-none"
                         placeholder="..."
                         value={form.comment}
@@ -309,6 +346,10 @@ export default function AddPlaceModal({ onClose }) {
           )}
         </div>
       </div>
+
+      {showReportModal && (
+        <ReportMissingPlaceModal onClose={() => setShowReportModal(false)} />
+      )}
     </div>
   );
 }
