@@ -367,7 +367,7 @@ export function getOpeningStatus(ohString) {
 
     if (diffMin < 60) return "opens_soon";
     return "closed";
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }

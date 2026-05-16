@@ -18,7 +18,7 @@ export function toLocalDatetimeValue(date, timezone) {
     d = date;
   }
 
-  if (isNaN(d.getTime())) return "";
+  if (Number.isNaN(d.getTime())) return "";
 
   if (timezone) {
     // Format to local time in specific timezone

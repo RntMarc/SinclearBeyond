@@ -38,7 +38,7 @@ export default function SubscriptionFormModal({
   const [members, setMembers] = useState(subscription?.members || []);
 
   const [allUsers, setAllUsers] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [_loadingUsers, setLoadingUsers] = useState(true);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -90,7 +90,7 @@ export default function SubscriptionFormModal({
         const data = await res.json();
         setError(data.error || tc("saveError"));
       }
-    } catch (err) {
+    } catch (_err) {
       setError(tc("genericError"));
     } finally {
       setLoading(false);
@@ -111,7 +111,7 @@ export default function SubscriptionFormModal({
         const data = await res.json();
         setError(data.error || tc("deleteError"));
       }
-    } catch (err) {
+    } catch (_err) {
       setError(tc("genericError"));
     } finally {
       setLoading(false);

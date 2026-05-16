@@ -18,7 +18,7 @@ export async function PATCH(req, { params }) {
   }
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(_req, { params }) {
   const t = await getTranslations("Common");
   const { id } = await params;
   try {

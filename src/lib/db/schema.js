@@ -144,7 +144,7 @@ export const travelTrips = mysqlTable("TravelTrip", {
 
 export const travelEvents = mysqlTable("TravelEvent", {
   id: varchar("ID", { length: 191 }).primaryKey(),
-  tripId: varchar("trip", { length: 191 }).notNull(),
+  tripId: varchar("trip", { length: 191 }),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   start: datetime("start").notNull(),
@@ -166,6 +166,13 @@ export const travelRelations = mysqlTable("TravelRelation", {
   userId: varchar("userid", { length: 191 }).notNull(),
   tripId: varchar("tripid", { length: 191 }).notNull(),
   accommodationId: varchar("accommodation", { length: 191 }),
+});
+
+export const eventRelations = mysqlTable("EventRelation", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  eventId: varchar("eventId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
 export const travelAccommodations = mysqlTable("TravelAccommodation", {

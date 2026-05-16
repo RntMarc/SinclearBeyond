@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import SaveButton from "@/components/SaveButton";
-import { toUTCISOString } from "@/lib/dateUtils";
 
 export default function TripForm({
   form,

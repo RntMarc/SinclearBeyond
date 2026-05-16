@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { Compass } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -13,7 +13,6 @@ import {
 } from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
 import DiscoverClient from "./DiscoverClient";
-import { sql } from "drizzle-orm";
 
 export default async function DiscoverPage() {
   const t = await getTranslations("Discover");

@@ -30,7 +30,7 @@ export default function ReviewForm({ placeId, onAdded }) {
         const data = await res.json();
         setError(data.error || "Fehler beim Speichern.");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Ein Fehler ist aufgetreten.");
     } finally {
       setSaving(false);

@@ -2,6 +2,7 @@
 
 import {
   Banknote,
+  CalendarDays,
   Hotel,
   Lock,
   Palette,
@@ -18,6 +19,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";
 import AccommodationFormModal from "@/components/travel/AccommodationFormModal";
+import TravelEventFormModal from "@/components/travel/TravelEventFormModal";
 import TripAdminModal from "@/components/travel/TripAdminModal";
 import TripFormModal from "@/components/travel/TripFormModal";
 
@@ -25,9 +27,11 @@ export default function AdminPage({ user, session }) {
   const { adminEffectsEnabled, setAdminEffectsEnabled } = useTheme();
   const [activeTab, setActiveTab] = useState("reisen");
   const [showTripModal, setShowTripModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
   const [showAccommodationModal, setShowAccommodationModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [trips, setTrips] = useState([]);
+  const [standaloneEvents, setStandaloneEvents] = useState([]);
   const [accommodations, setAccommodations] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const hasSubs = useMemo(
@@ -35,6 +39,7 @@ export default function AdminPage({ user, session }) {
     [subscriptions],
   );
   const [editingTrip, setEditingTrip] = useState(null);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [editingAccommodation, setEditingAccommodation] = useState(null);
   const [editingSubscription, setEditingSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,15 +47,16 @@ export default function AdminPage({ user, session }) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [tripsRes, accommodationsRes, subscriptionsRes] = await Promise.all(
-        [
+      const [tripsRes, accommodationsRes, subscriptionsRes, eventsRes] =
+        await Promise.all([
           fetch("/api/reisen/data"),
           fetch("/api/travel/accommodations"),
           fetch("/api/subscriptions"),
-        ],
-      );
+          fetch("/api/reisen/data?standalone=1"),
+        ]);
 
       if (tripsRes.ok) setTrips(await tripsRes.json());
+      if (eventsRes.ok) setStandaloneEvents(await eventsRes.json());
       if (accommodationsRes.ok)
         setAccommodations(await accommodationsRes.json());
       if (subscriptionsRes.ok) setSubscriptions(await subscriptionsRes.json());
@@ -93,6 +99,15 @@ export default function AdminPage({ user, session }) {
           >
             <Hotel size={18} />
             Unterkunft anlegen
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowEventModal(true)}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+          >
+            <CalendarDays size={18} />
+            Event anlegen
           </button>
 
           <button
@@ -236,6 +251,58 @@ export default function AdminPage({ user, session }) {
                             Keine Reisen vorhanden.
                           </div>}
                   </div>
+
+                  {/* Eigenständige Events */}
+                  <div className="flex items-center justify-between pt-4">
+                    <h2 className="text-xl font-light flex items-center gap-2">
+                      <CalendarDays className="text-primary" size={20} />
+                      Eigenständige Events
+                    </h2>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                      {standaloneEvents.length}
+                    </span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {loading
+                      ? <div className="animate-pulse space-y-3">
+                          {[1, 2].map((i) => (
+                            <div key={i} className="h-20 bg-muted rounded-xl" />
+                          ))}
+                        </div>
+                      : standaloneEvents.length > 0
+                        ? standaloneEvents.map((event) => (
+                            <div
+                              key={event.id}
+                              className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                            >
+                              <div>
+                                <h3 className="font-medium text-sm">
+                                  {event.name}
+                                </h3>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(event.start).toLocaleDateString(
+                                    "de-DE",
+                                  )}{" "}
+                                  –{" "}
+                                  {new Date(event.end).toLocaleDateString(
+                                    "de-DE",
+                                  )}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setEditingEvent(event)}
+                                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                              >
+                                <Wrench size={18} />
+                              </button>
+                            </div>
+                          ))
+                        : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                            Keine eigenständigen Events vorhanden.
+                          </div>}
+                  </div>
                 </div>
 
                 {/* Unterkünfte Spalte */}
@@ -348,6 +415,14 @@ export default function AdminPage({ user, session }) {
           />
         )}
 
+        {showEventModal && (
+          <TravelEventFormModal
+            onClose={() => setShowEventModal(false)}
+            onUpdated={fetchData}
+            timezone={session.timezone}
+          />
+        )}
+
         {showAccommodationModal && (
           <AccommodationFormModal
             onClose={() => setShowAccommodationModal(false)}
@@ -359,6 +434,15 @@ export default function AdminPage({ user, session }) {
           <TripAdminModal
             trip={editingTrip}
             onClose={() => setEditingTrip(null)}
+            onUpdated={fetchData}
+            timezone={session.timezone}
+          />
+        )}
+
+        {editingEvent && (
+          <TravelEventFormModal
+            event={editingEvent}
+            onClose={() => setEditingEvent(null)}
             onUpdated={fetchData}
             timezone={session.timezone}
           />

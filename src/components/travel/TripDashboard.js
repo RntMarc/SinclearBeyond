@@ -68,6 +68,7 @@ function SectionBox({ title, icon: Icon, children }) {
 }
 
 function EventCard({ event, onClick }) {
+  const t = useTranslations("Travel");
   const locale = useLocale();
   const start = new Date(event.start);
   const end = new Date(event.end);
@@ -79,11 +80,13 @@ function EventCard({ event, onClick }) {
       minute: "2-digit",
     });
 
+  const isNotParticipant = event.participantIds && !event.isParticipant;
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="w-full p-4 bg-background border border-sidebar-border rounded-xl flex flex-col gap-2 text-left hover:border-primary/50 transition-all group"
+      className={`w-full p-4 bg-background border border-sidebar-border rounded-xl flex flex-col gap-2 text-left hover:border-primary/50 transition-all group ${isNotParticipant ? "opacity-50 grayscale-[0.5]" : ""}`}
     >
       <div className="flex items-start justify-between gap-2 w-full">
         <h4 className="font-medium text-foreground leading-tight">
@@ -106,6 +109,11 @@ function EventCard({ event, onClick }) {
           <MapPin size={14} />
           <span className="truncate">{event.address}</span>
         </div>
+      )}
+      {isNotParticipant && (
+        <p className="text-[10px] text-destructive font-medium uppercase tracking-tight">
+          {t("notParticipant")}
+        </p>
       )}
     </button>
   );
