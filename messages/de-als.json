@@ -662,6 +662,7 @@
   "episodes": "Folge",
   "season": "Staffel",
   "tracks": "Titel",
-  "albums": "Albe"
+  "albums": "Albe",
+  "openAlbum": "Album uffmacha"
   }
 }

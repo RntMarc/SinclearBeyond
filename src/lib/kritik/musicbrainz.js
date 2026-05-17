@@ -72,7 +72,7 @@ export async function getAlbumTracks(mbReleaseGroupId) {
     if (!releaseId) return [];
 
     const relRes = await fetch(
-      `${MUSICBRAINZ_BASE_URL}/release/${releaseId}?inc=recordings&fmt=json`,
+      `${MUSICBRAINZ_BASE_URL}/release/${releaseId}?inc=recordings+artist-credits&fmt=json`,
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },

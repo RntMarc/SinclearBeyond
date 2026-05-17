@@ -26,6 +26,7 @@ export default async function MusicDetailPage({ params }) {
       description: mediaItems.description,
       image: mediaItems.image,
       type: mediaItems.type,
+      format: mediaItems.format,
       releaseDate: mediaItems.releaseDate,
       avgRating: sql`AVG(${mediaReviews.rating})`,
       reviewCount: sql`COUNT(${mediaReviews.id})`,
@@ -38,6 +39,65 @@ export default async function MusicDetailPage({ params }) {
 
   if (musicResult.length === 0) {
     notFound();
+  }
+
+  const music = musicResult[0];
+
+  if (music.type === "music") {
+    const { albumTracks } = await import("@/lib/db/schema");
+    if (music.format === "album") {
+      const tracks = await db
+        .select({
+          id: mediaItems.id,
+          title: mediaItems.title,
+          format: mediaItems.format,
+          trackNumber: albumTracks.trackNumber,
+          avgRating: sql`AVG(${mediaReviews.rating})`,
+          reviewCount: sql`COUNT(${mediaReviews.id})`,
+        })
+        .from(albumTracks)
+        .innerJoin(mediaItems, eq(albumTracks.songId, mediaItems.id))
+        .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
+        .where(eq(albumTracks.albumId, music.id))
+        .groupBy(mediaItems.id)
+        .orderBy(albumTracks.trackNumber);
+
+      music.tracks = tracks;
+    } else if (music.format === "song") {
+      const albumsResult = await db
+        .select({
+          id: mediaItems.id,
+          title: mediaItems.title,
+          image: mediaItems.image,
+          format: mediaItems.format,
+        })
+        .from(albumTracks)
+        .innerJoin(mediaItems, eq(albumTracks.albumId, mediaItems.id))
+        .where(eq(albumTracks.songId, music.id));
+
+      const albumsWithTracks = await Promise.all(
+        albumsResult.map(async (album) => {
+          const tracks = await db
+            .select({
+              id: mediaItems.id,
+              title: mediaItems.title,
+              format: mediaItems.format,
+              trackNumber: albumTracks.trackNumber,
+              avgRating: sql`AVG(${mediaReviews.rating})`,
+              reviewCount: sql`COUNT(${mediaReviews.id})`,
+            })
+            .from(albumTracks)
+            .innerJoin(mediaItems, eq(albumTracks.songId, mediaItems.id))
+            .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
+            .where(eq(albumTracks.albumId, album.id))
+            .groupBy(mediaItems.id)
+            .orderBy(albumTracks.trackNumber);
+          return { ...album, tracks };
+        }),
+      );
+
+      music.albums = albumsWithTracks;
+    }
   }
 
   const reviews = await db
@@ -61,7 +121,7 @@ export default async function MusicDetailPage({ params }) {
   return (
     <AppShell user={user} session={session}>
       <MusicDetailPageClient
-        music={musicResult[0]}
+        music={music}
         reviews={reviews}
         userId={session.sub}
       />
