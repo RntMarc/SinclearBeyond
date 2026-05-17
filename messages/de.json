@@ -641,6 +641,15 @@
     "platform": "Plattform",
     "saveReview": "Bewertung speichern",
     "successAdded": "Bewertung erfolgreich hinzugefügt.",
+    "buy": "Kaufen",
+    "stream": "Streamen",
+    "buyOn": "Kaufen bei...",
+    "streamOn": "Streamen auf...",
+    "noLinksFound": "Keine Links gefunden.",
+    "outdatedData": "Veraltete Daten?",
+    "outdatedDataMusicHint": "Diese Informationen sind älter als 7 Tage.",
+    "outdatedDataMovieHint": "Diese Informationen sind älter als 7 Tage.",
+    "outdatedDataGameHint": "Diese Informationen sind älter als 7 Tage.",
     "platforms": {
       "pc_linux": "PC (Linux)",
       "pc_windows": "PC (Windows)",
@@ -665,11 +674,11 @@
       "musicEmptyHint": "Suche oben nach Musik, um die erste Bewertung abzugeben.",
       "import": "Übernehmen",
       "moreResults": "Nach mehr Einträgen suchen"
-  },
-  "episodes": "Folgen",
-  "season": "Staffel",
-  "tracks": "Titel",
-  "albums": "Alben",
-  "openAlbum": "Album öffnen"
+    },
+    "episodes": "Folgen",
+    "season": "Staffel",
+    "tracks": "Titel",
+    "albums": "Alben",
+    "openAlbum": "Album öffnen"
   }
 }

@@ -359,6 +359,7 @@ export const mediaItems = mysqlTable("MediaItem", {
   image: text("image"),
   externalId: varchar("externalId", { length: 191 }),
   releaseDate: varchar("releaseDate", { length: 100 }),
+  links: longtext("links"),
   creatorId: varchar("creatorId", { length: 191 }).notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),

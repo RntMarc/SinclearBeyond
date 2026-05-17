@@ -40,6 +40,54 @@ export async function searchMovies(query) {
   }
 }
 
+export async function getMovieDetails(tmdbId) {
+  if (!TMDB_API_KEY) return null;
+  try {
+    const id = tmdbId.replace("tmdb-", "");
+    const res = await fetch(
+      `${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=de-DE`,
+    );
+    if (!res.ok) throw new Error("Failed to fetch movie details");
+    const item = await res.json();
+    return {
+      title: item.title,
+      description: item.overview,
+      image: item.poster_path
+        ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+        : null,
+      releaseDate: item.release_date,
+      links: item.homepage ? [{ type: "homepage", url: item.homepage }] : [],
+    };
+  } catch (error) {
+    console.error("TMDB Movie Details Error:", error);
+    return null;
+  }
+}
+
+export async function getSeriesDetails(tmdbId) {
+  if (!TMDB_API_KEY) return null;
+  try {
+    const id = tmdbId.replace("tmdb-", "");
+    const res = await fetch(
+      `${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&language=de-DE`,
+    );
+    if (!res.ok) throw new Error("Failed to fetch series details");
+    const item = await res.json();
+    return {
+      title: item.name,
+      description: item.overview,
+      image: item.poster_path
+        ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+        : null,
+      releaseDate: item.first_air_date,
+      links: item.homepage ? [{ type: "homepage", url: item.homepage }] : [],
+    };
+  } catch (error) {
+    console.error("TMDB Series Details Error:", error);
+    return null;
+  }
+}
+
 export async function getSeriesEpisodes(tmdbId) {
   if (!TMDB_API_KEY) return [];
 

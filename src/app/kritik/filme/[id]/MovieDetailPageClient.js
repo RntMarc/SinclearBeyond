@@ -6,6 +6,7 @@ import {
   ChevronUp,
   Clapperboard,
   Plus,
+  RefreshCcw,
   Share2,
   Star,
 } from "lucide-react";
@@ -14,6 +15,7 @@ import { useEffect, useState } from "react";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 import ReviewList from "@/components/reviews/ReviewList";
 import ReviewModal from "@/components/reviews/ReviewModal";
+import Button from "@/components/ui/Button";
 
 export default function MovieDetailPageClient({
   movie: initialMovie,
@@ -28,6 +30,7 @@ export default function MovieDetailPageClient({
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   const [newReview, setNewReview] = useState({
     rating: 5,
@@ -91,6 +94,23 @@ export default function MovieDetailPageClient({
     });
     setIsEditing(true);
     setShowReviewModal(true);
+  }
+
+  async function refreshData() {
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/kritik/items/${movie.id}`, {
+        method: "PATCH",
+      });
+      if (res.ok) {
+        const movieRes = await fetch(`/api/kritik/items/${movie.id}`);
+        setMovie(await movieRes.json());
+      }
+    } catch (err) {
+      console.error("Failed to refresh data", err);
+    } finally {
+      setUpdating(false);
+    }
   }
 
   async function handleEpisodeRate(episodeId, rating) {
@@ -219,6 +239,29 @@ export default function MovieDetailPageClient({
                   {movie.description}
                 </p>
               )}
+
+              {movie.needsUpdate && (
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold">{t("outdatedData")}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("outdatedDataMovieHint")}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={refreshData}
+                    disabled={updating}
+                    size="icon"
+                    className="rounded-lg"
+                  >
+                    <RefreshCcw
+                      size={16}
+                      className={updating ? "animate-spin" : ""}
+                    />
+                  </Button>
+                </div>
+              )}
             </div>
           </section>
 
@@ -235,8 +278,10 @@ export default function MovieDetailPageClient({
                 }, {}),
               ).map(([season, episodes]) => {
                 const seasonAvg =
-                  episodes.reduce((sum, ep) => sum + (Number(ep.avgRating) || 0), 0) /
-                  episodes.length;
+                  episodes.reduce(
+                    (sum, ep) => sum + (Number(ep.avgRating) || 0),
+                    0,
+                  ) / episodes.length;
                 return (
                   <div
                     key={season}
@@ -286,7 +331,9 @@ export default function MovieDetailPageClient({
                                 onClick={() =>
                                   handleEpisodeRate(
                                     ep.id,
-                                    userEpisodeReviews[ep.id] === star ? 0 : star,
+                                    userEpisodeReviews[ep.id] === star
+                                      ? 0
+                                      : star,
                                   )
                                 }
                                 className="p-1 hover:scale-110 transition-transform"

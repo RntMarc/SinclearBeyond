@@ -552,6 +552,15 @@
     "platform": "Platform",
     "saveReview": "Save Review",
     "successAdded": "Review added successfully.",
+    "buy": "Buy",
+    "stream": "Stream",
+    "buyOn": "Buy on...",
+    "streamOn": "Stream on...",
+    "noLinksFound": "No links found.",
+    "outdatedData": "Outdated data?",
+    "outdatedDataMusicHint": "This information is more than 7 days old.",
+    "outdatedDataMovieHint": "This information is more than 7 days old.",
+    "outdatedDataGameHint": "This information is more than 7 days old.",
     "platforms": {
       "pc_linux": "PC (Linux)",
       "pc_windows": "PC (Windows)",
@@ -576,12 +585,12 @@
       "musicEmptyHint": "Search for music above to submit the first review.",
       "import": "Import",
       "moreResults": "Search for more entries"
-  },
-  "episodes": "Episodes",
-  "season": "Season",
-  "tracks": "Tracks",
-  "albums": "Albums",
-  "openAlbum": "Open Album"
+    },
+    "episodes": "Episodes",
+    "season": "Season",
+    "tracks": "Tracks",
+    "albums": "Albums",
+    "openAlbum": "Open Album"
   },
   "Discover": {
     "title": "Local Explorer Guide",

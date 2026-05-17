@@ -29,7 +29,7 @@ export default async function MusicPage() {
       reviewCount: sql`COUNT(${mediaReviews.id})`,
     })
     .from(mediaItems)
-    .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
+    .innerJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
     .where(eq(mediaItems.type, "music"))
     .groupBy(mediaItems.id)
     .orderBy(sql`${mediaItems.updatedAt} DESC`);

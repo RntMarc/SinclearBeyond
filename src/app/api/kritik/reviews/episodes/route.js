@@ -15,7 +15,10 @@ export async function GET(req) {
   const episodeId = searchParams.get("episodeId");
 
   if (!episodeId) {
-    return NextResponse.json({ error: "episodeId is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "episodeId is required" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -74,7 +77,9 @@ export async function POST(req) {
     if (existing) {
       if (rating === 0) {
         // Assume 0 means delete rating
-        await db.delete(episodeReviews).where(eq(episodeReviews.id, existing.id));
+        await db
+          .delete(episodeReviews)
+          .where(eq(episodeReviews.id, existing.id));
         return NextResponse.json({ ok: true, deleted: true });
       }
       await db
