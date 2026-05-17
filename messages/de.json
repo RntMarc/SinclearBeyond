@@ -665,6 +665,10 @@
       "musicEmptyHint": "Suche oben nach Musik, um die erste Bewertung abzugeben.",
       "import": "Übernehmen",
       "moreResults": "Nach mehr Einträgen suchen"
-    }
+  },
+  "episodes": "Folgen",
+  "season": "Staffel",
+  "tracks": "Titel",
+  "albums": "Alben"
   }
 }

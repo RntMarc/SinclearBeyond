@@ -1,9 +1,16 @@
 import crypto from "node:crypto";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, exists, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { mediaItems, mediaReviews } from "@/lib/db/schema";
+import {
+  albumTracks,
+  mediaItems,
+  mediaReviews,
+  seriesEpisodes,
+} from "@/lib/db/schema";
+import { getAlbumTracks } from "@/lib/kritik/musicbrainz";
+import { getSeriesEpisodes } from "@/lib/kritik/tmdb";
 
 export async function GET(req) {
   const session = await getSession();
@@ -30,7 +37,30 @@ export async function GET(req) {
       .groupBy(mediaItems.id);
 
     if (type) {
-      query = query.where(eq(mediaItems.type, type));
+      if (type === "music") {
+        // Only show music items with reviews
+        query = query.where(
+          and(
+            eq(mediaItems.type, "music"),
+            exists(
+              db
+                .select()
+                .from(mediaReviews)
+                .where(eq(mediaReviews.itemId, mediaItems.id)),
+            ),
+          ),
+        );
+      } else if (type === "movie") {
+        // Filter out episodes from general movie/series view
+        query = query.where(
+          and(
+            eq(mediaItems.type, "movie"),
+            sql`${mediaItems.format} IN ('movie', 'series')`,
+          ),
+        );
+      } else {
+        query = query.where(eq(mediaItems.type, type));
+      }
     }
 
     const items = await query;
@@ -91,6 +121,63 @@ export async function POST(req) {
       createdAt: now,
       updatedAt: now,
     });
+
+    // Auto-populate episodes for series
+    if (type === "movie" && format === "series" && externalId) {
+      const episodes = await getSeriesEpisodes(externalId);
+      if (episodes.length > 0) {
+        await db.insert(seriesEpisodes).values(
+          episodes.map((ep) => ({
+            id: crypto.randomUUID(),
+            seriesId: id,
+            seasonNumber: ep.seasonNumber,
+            episodeNumber: ep.episodeNumber,
+            title: ep.title,
+            externalId: ep.externalId,
+            releaseDate: ep.releaseDate,
+          })),
+        );
+      }
+    }
+
+    // Auto-populate tracks and songs for albums
+    if (type === "music" && format === "album" && externalId) {
+      const tracks = await getAlbumTracks(externalId);
+      for (const track of tracks) {
+        // Check if song already exists
+        let songId;
+        const [existingSong] = await db
+          .select()
+          .from(mediaItems)
+          .where(eq(mediaItems.externalId, track.songExternalId))
+          .limit(1);
+
+        if (existingSong) {
+          songId = existingSong.id;
+        } else {
+          songId = crypto.randomUUID();
+          await db.insert(mediaItems).values({
+            id: songId,
+            type: "music",
+            format: "song",
+            title: `${track.artist} - ${track.title}`,
+            externalId: track.songExternalId,
+            releaseDate: track.releaseDate,
+            creatorId: session.sub,
+            createdAt: now,
+            updatedAt: now,
+          });
+        }
+
+        // Link song to album
+        await db.insert(albumTracks).values({
+          id: crypto.randomUUID(),
+          albumId: id,
+          songId,
+          trackNumber: track.trackNumber,
+        });
+      }
+    }
 
     const newItem = await db
       .select()

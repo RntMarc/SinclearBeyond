@@ -576,7 +576,11 @@
       "musicEmptyHint": "Search for music above to submit the first review.",
       "import": "Import",
       "moreResults": "Search for more entries"
-    }
+  },
+  "episodes": "Episodes",
+  "season": "Season",
+  "tracks": "Tracks",
+  "albums": "Albums"
   },
   "Discover": {
     "title": "Local Explorer Guide",
