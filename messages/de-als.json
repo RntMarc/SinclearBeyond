@@ -658,6 +658,10 @@
       "musicEmptyHint": "Suach oba nach Mugg, om die erschte Bewertong abzgäba.",
       "import": "Übernehma",
       "moreResults": "Nach meh Sacha suacha"
-    }
+  },
+  "episodes": "Folge",
+  "season": "Staffel",
+  "tracks": "Titel",
+  "albums": "Albe"
   }
 }
