@@ -59,7 +59,7 @@ export default async function MusicDetailPage({ params }) {
         .innerJoin(mediaItems, eq(albumTracks.songId, mediaItems.id))
         .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
         .where(eq(albumTracks.albumId, music.id))
-        .groupBy(mediaItems.id)
+        .groupBy(mediaItems.id, albumTracks.trackNumber)
         .orderBy(albumTracks.trackNumber);
 
       music.tracks = tracks;
@@ -90,7 +90,7 @@ export default async function MusicDetailPage({ params }) {
             .innerJoin(mediaItems, eq(albumTracks.songId, mediaItems.id))
             .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
             .where(eq(albumTracks.albumId, album.id))
-            .groupBy(mediaItems.id)
+            .groupBy(mediaItems.id, albumTracks.trackNumber)
             .orderBy(albumTracks.trackNumber);
           return { ...album, tracks };
         }),
