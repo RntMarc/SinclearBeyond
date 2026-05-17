@@ -580,7 +580,8 @@
   "episodes": "Episodes",
   "season": "Season",
   "tracks": "Tracks",
-  "albums": "Albums"
+  "albums": "Albums",
+  "openAlbum": "Open Album"
   },
   "Discover": {
     "title": "Local Explorer Guide",

@@ -669,6 +669,7 @@
   "episodes": "Folgen",
   "season": "Staffel",
   "tracks": "Titel",
-  "albums": "Alben"
+  "albums": "Alben",
+  "openAlbum": "Album öffnen"
   }
 }

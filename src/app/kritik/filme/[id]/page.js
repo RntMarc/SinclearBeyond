@@ -41,6 +41,34 @@ export default async function MovieDetailPage({ params }) {
     notFound();
   }
 
+  const movie = movieResult[0];
+
+  // If it's a series, fetch episodes
+  if (movie.type === "movie" && movie.format === "series") {
+    const { episodeReviews, seriesEpisodes } = await import("@/lib/db/schema");
+    const episodes = await db
+      .select({
+        id: seriesEpisodes.id,
+        seasonNumber: seriesEpisodes.seasonNumber,
+        episodeNumber: seriesEpisodes.episodeNumber,
+        title: seriesEpisodes.title,
+        releaseDate: seriesEpisodes.releaseDate,
+        avgRating: sql`AVG(${episodeReviews.rating})`,
+        reviewCount: sql`COUNT(${episodeReviews.id})`,
+        userRating: sql`MAX(CASE WHEN ${episodeReviews.userId} = ${session.sub} THEN ${episodeReviews.rating} ELSE NULL END)`,
+      })
+      .from(seriesEpisodes)
+      .leftJoin(
+        episodeReviews,
+        eq(seriesEpisodes.id, episodeReviews.episodeId),
+      )
+      .where(eq(seriesEpisodes.seriesId, movie.id))
+      .groupBy(seriesEpisodes.id)
+      .orderBy(seriesEpisodes.seasonNumber, seriesEpisodes.episodeNumber);
+
+    movie.episodes = episodes;
+  }
+
   const reviews = await db
     .select({
       id: mediaReviews.id,
@@ -62,7 +90,7 @@ export default async function MovieDetailPage({ params }) {
   return (
     <AppShell user={user} session={session}>
       <MovieDetailPageClient
-        movie={movieResult[0]}
+        movie={movie}
         reviews={reviews}
         userId={session.sub}
       />
