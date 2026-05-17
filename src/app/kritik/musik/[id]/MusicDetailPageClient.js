@@ -257,8 +257,7 @@ export default function MusicDetailPageClient({
                         href={`/kritik/musik/${album.id}`}
                         className="text-primary text-sm font-bold hover:underline"
                       >
-                        {t("openTrip").replace("Reise", t("season").replace("Staffel", "Album"))} {/* Hacky translation reuse or add new one */}
-                        Album öffnen
+                        {t("openAlbum")}
                       </Link>
                     </div>
                   </div>

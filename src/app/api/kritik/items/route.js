@@ -156,11 +156,13 @@ export async function POST(req) {
           songId = existingSong.id;
         } else {
           songId = crypto.randomUUID();
+          const songArtist = track.artist || title.split(" - ")[0];
           await db.insert(mediaItems).values({
             id: songId,
             type: "music",
             format: "song",
-            title: `${track.artist} - ${track.title}`,
+            title: `${songArtist} - ${track.title}`,
+            image: image,
             externalId: track.songExternalId,
             releaseDate: track.releaseDate,
             creatorId: session.sub,
