@@ -1,11 +1,24 @@
 "use client";
 
-import { Calendar, Music, Plus, Share2, Star } from "lucide-react";
+import {
+  Calendar,
+  Disc,
+  Music,
+  Plus,
+  Play,
+  ShoppingCart,
+  Share2,
+  Star,
+  RefreshCcw,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useState } from "react";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 import ReviewList from "@/components/reviews/ReviewList";
 import ReviewModal from "@/components/reviews/ReviewModal";
+import LinkSelectionModal from "@/components/reviews/LinkSelectionModal";
+import Button from "@/components/ui/Button";
 
 export default function MusicDetailPageClient({
   music: initialMusic,
@@ -17,7 +30,9 @@ export default function MusicDetailPageClient({
   const [music, setMusic] = useState(initialMusic);
   const [reviews, setReviews] = useState(initialReviews);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [linkModal, setLinkModal] = useState({ open: false, type: "buy" });
   const [isEditing, setIsEditing] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -89,6 +104,23 @@ export default function MusicDetailPageClient({
     setIsEditing(true);
     setEditingReviewId(review.id);
     setShowReviewModal(true);
+  }
+
+  async function refreshData() {
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/kritik/items/${music.id}`, {
+        method: "PATCH",
+      });
+      if (res.ok) {
+        const musicRes = await fetch(`/api/kritik/items/${music.id}`);
+        setMusic(await musicRes.json());
+      }
+    } catch (err) {
+      console.error("Failed to refresh data", err);
+    } finally {
+      setUpdating(false);
+    }
   }
 
   const share = () => {
@@ -184,8 +216,172 @@ export default function MusicDetailPageClient({
                   {music.description}
                 </p>
               )}
+
+              {music.needsUpdate && (
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold">{t("outdatedData")}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("outdatedDataMusicHint")}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={refreshData}
+                    disabled={updating}
+                    size="icon"
+                    className="rounded-lg"
+                  >
+                    <RefreshCcw
+                      size={16}
+                      className={updating ? "animate-spin" : ""}
+                    />
+                  </Button>
+                </div>
+              )}
+
+              {music.links && music.links.length > 0 && (
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    onClick={() => setLinkModal({ open: true, type: "buy" })}
+                    variant="outline"
+                    className="rounded-xl border-blue-500/20 hover:bg-blue-500/10 text-blue-500"
+                  >
+                    <ShoppingCart size={18} />
+                    {t("buy")}
+                  </Button>
+                  <Button
+                    onClick={() => setLinkModal({ open: true, type: "stream" })}
+                    variant="outline"
+                    className="rounded-xl border-green-500/20 hover:bg-green-500/10 text-green-500"
+                  >
+                    <Play size={18} />
+                    {t("stream")}
+                  </Button>
+                </div>
+              )}
             </div>
           </section>
+
+          {/* Tracks List for Album */}
+          {music.format === "album" && music.tracks && (
+            <section className="space-y-6">
+              <h2 className="text-2xl font-black flex items-center gap-3">
+                <Disc size={28} />
+                {t("tracks")}
+              </h2>
+              <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
+                {music.tracks.map((track) => (
+                  <Link
+                    key={track.id}
+                    href={`/kritik/musik/${track.id}`}
+                    className="p-4 flex items-center justify-between hover:bg-muted/20 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-muted-foreground font-mono w-6 text-right">
+                        {track.trackNumber}
+                      </span>
+                      <span className="font-bold">{track.title}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      <span className="flex items-center gap-1">
+                        <Star
+                          size={12}
+                          className={track.avgRating ? "text-orange-500" : ""}
+                          fill={track.avgRating ? "currentColor" : "none"}
+                        />
+                        {track.avgRating
+                          ? Number(track.avgRating).toFixed(1)
+                          : "-"}
+                      </span>
+                      <span>
+                        {track.reviewCount} {t("reviews")}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Albums and Tracks for Song */}
+          {music.format === "song" && music.albums && (
+            <section className="space-y-12">
+              {music.albums.map((album) => (
+                <div key={album.id} className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted border border-border flex-shrink-0">
+                      {album.image
+                        ? <img
+                            src={album.image}
+                            alt={album.title}
+                            className="w-full h-full object-cover"
+                          />
+                        : <div className="w-full h-full flex items-center justify-center">
+                            <Music
+                              className="text-muted-foreground/20"
+                              size={24}
+                            />
+                          </div>}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-black">{album.title}</h2>
+                      <Link
+                        href={`/kritik/musik/${album.id}`}
+                        className="text-primary text-sm font-bold hover:underline"
+                      >
+                        {t("openAlbum")}
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
+                    {album.tracks.map((track) => (
+                      <Link
+                        key={track.id}
+                        href={`/kritik/musik/${track.id}`}
+                        className={`p-4 flex items-center justify-between hover:bg-muted/20 transition-colors ${
+                          track.id === music.id ? "bg-primary/10" : ""
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className="text-muted-foreground font-mono w-6 text-right">
+                            {track.trackNumber}
+                          </span>
+                          <span
+                            className={
+                              track.id === music.id
+                                ? "font-black text-primary"
+                                : "font-bold"
+                            }
+                          >
+                            {track.title}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                          <span className="flex items-center gap-1">
+                            <Star
+                              size={12}
+                              className={
+                                track.avgRating ? "text-orange-500" : ""
+                              }
+                              fill={track.avgRating ? "currentColor" : "none"}
+                            />
+                            {track.avgRating
+                              ? Number(track.avgRating).toFixed(1)
+                              : "-"}
+                          </span>
+                          <span>
+                            {track.reviewCount} {t("reviews")}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
 
           {/* Reviews List */}
           <section className="space-y-6">
@@ -201,6 +397,13 @@ export default function MusicDetailPageClient({
           </section>
         </div>
       </div>
+
+      <LinkSelectionModal
+        isOpen={linkModal.open}
+        onClose={() => setLinkModal({ ...linkModal, open: false })}
+        links={music.links || []}
+        type={linkModal.type}
+      />
 
       <ReviewModal
         isOpen={showReviewModal}

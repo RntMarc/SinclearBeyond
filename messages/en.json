@@ -24,13 +24,18 @@
     "loadError": "Error loading",
     "deleteError": "Error deleting",
     "notImplemented": "Not implemented",
+    "navigation": {
+      "title": "Navigation",
+      "openInApp": "Open in App",
+      "openInBrowser": "Open in Browser"
+    },
     "tooManyRequests": "Too many requests",
     "alreadyParticipant": "Already a participant.",
     "genericError": "An error occurred."
   },
   "Navigation": {
     "entertainment": "Entertainment",
-    "travel": "Travel",
+    "travel": "Travel & Events",
     "calendar": "Calendar",
     "birthdays": "Birthdays",
     "contacts": "Contacts",
@@ -97,8 +102,8 @@
     "subtitle": "Dashboard",
     "welcome": "Hello, {name}.",
     "description": "Welcome to Sinclear Beyond.",
-    "upcomingEvents": "Upcoming Events",
-    "upcomingTrips": "Upcoming Trips",
+    "upcomingEvents": "Upcoming/current Events",
+    "upcomingTrips": "Upcoming/current Trips",
     "upcomingBirthdays": "Upcoming Birthdays",
     "latestPosts": "Latest Posts",
     "latestPhotos": "Latest Photos",
@@ -154,7 +159,7 @@
     "tripLabel": "Travel Event",
     "openTrip": "View Trip",
     "noDescriptionShort": "No description available.",
-    "title": "Travel",
+    "title": "Travel & Events",
     "subtitle": "On the road",
     "detailsTitle": "Trip Details",
     "accessDenied": "Access Denied",
@@ -547,6 +552,15 @@
     "platform": "Platform",
     "saveReview": "Save Review",
     "successAdded": "Review added successfully.",
+    "buy": "Buy",
+    "stream": "Stream",
+    "buyOn": "Buy on...",
+    "streamOn": "Stream on...",
+    "noLinksFound": "No links found.",
+    "outdatedData": "Outdated data?",
+    "outdatedDataMusicHint": "This information is more than 7 days old.",
+    "outdatedDataMovieHint": "This information is more than 7 days old.",
+    "outdatedDataGameHint": "This information is more than 7 days old.",
     "platforms": {
       "pc_linux": "PC (Linux)",
       "pc_windows": "PC (Windows)",
@@ -571,7 +585,12 @@
       "musicEmptyHint": "Search for music above to submit the first review.",
       "import": "Import",
       "moreResults": "Search for more entries"
-    }
+    },
+    "episodes": "Episodes",
+    "season": "Season",
+    "tracks": "Tracks",
+    "albums": "Albums",
+    "openAlbum": "Open Album"
   },
   "Discover": {
     "title": "Local Explorer Guide",

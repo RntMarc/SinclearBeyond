@@ -24,13 +24,18 @@
     "loadError": "Fehler beim Laden",
     "deleteError": "Fehler beim Löschen",
     "notImplemented": "Nicht implementiert",
+    "navigation": {
+      "title": "Navigation",
+      "openInApp": "In App öffnen",
+      "openInBrowser": "Im Browser öffnen"
+    },
     "tooManyRequests": "Zu viele Anfragen",
     "alreadyParticipant": "Bereits Teilnehmer.",
     "genericError": "Ein Fehler ist aufgetreten."
   },
   "Navigation": {
     "entertainment": "Unterhaltung",
-    "travel": "Reisen",
+    "travel": "Reisen & Events",
     "calendar": "Kalender",
     "birthdays": "Geburtstage",
     "contacts": "Kontakte",
@@ -97,8 +102,8 @@
     "subtitle": "Dashboard",
     "welcome": "Hallo, {name}.",
     "description": "Willkommen bei Sinclear Beyond.",
-    "upcomingEvents": "Kommende Events",
-    "upcomingTrips": "Kommende Reisen",
+    "upcomingEvents": "Kommende/aktuelle Events",
+    "upcomingTrips": "Kommende/aktuelle Reisen",
     "upcomingBirthdays": "Kommende Geburtstage",
     "latestPosts": "Neueste Beiträge",
     "latestPhotos": "Neueste Fotos",
@@ -154,7 +159,7 @@
     "tripLabel": "Reise-Event",
     "openTrip": "Reise aufrufen",
     "noDescriptionShort": "Keine Beschreibung vorhanden.",
-    "title": "Reisen",
+    "title": "Reisen & Events",
     "subtitle": "Unterwegs",
     "detailsTitle": "Reise-Details",
     "accessDenied": "Zugriff verweigert",
@@ -636,6 +641,15 @@
     "platform": "Plattform",
     "saveReview": "Bewertung speichern",
     "successAdded": "Bewertung erfolgreich hinzugefügt.",
+    "buy": "Kaufen",
+    "stream": "Streamen",
+    "buyOn": "Kaufen bei...",
+    "streamOn": "Streamen auf...",
+    "noLinksFound": "Keine Links gefunden.",
+    "outdatedData": "Veraltete Daten?",
+    "outdatedDataMusicHint": "Diese Informationen sind älter als 7 Tage.",
+    "outdatedDataMovieHint": "Diese Informationen sind älter als 7 Tage.",
+    "outdatedDataGameHint": "Diese Informationen sind älter als 7 Tage.",
     "platforms": {
       "pc_linux": "PC (Linux)",
       "pc_windows": "PC (Windows)",
@@ -660,6 +674,11 @@
       "musicEmptyHint": "Suche oben nach Musik, um die erste Bewertung abzugeben.",
       "import": "Übernehmen",
       "moreResults": "Nach mehr Einträgen suchen"
-    }
+    },
+    "episodes": "Folgen",
+    "season": "Staffel",
+    "tracks": "Titel",
+    "albums": "Alben",
+    "openAlbum": "Album öffnen"
   }
 }

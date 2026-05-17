@@ -76,3 +76,59 @@ export async function searchGames(query) {
     return [];
   }
 }
+
+export async function getGameDetails(externalId) {
+  const token = await getAccessToken();
+  if (!token) return null;
+
+  const clientId = process.env.TWITCH_CLIENT_ID;
+  const gameId = externalId.replace("igdb-", "");
+
+  try {
+    const requestOptions = {
+      method: "POST",
+      baseURL: "https://api.igdb.com/v4",
+      headers: {
+        Accept: "application/json",
+        "Client-ID": clientId,
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await apicalypse(requestOptions)
+      .fields([
+        "name",
+        "summary",
+        "cover.url",
+        "first_release_date",
+        "websites.url",
+        "websites.category",
+      ])
+      .where(`id = ${gameId}`)
+      .request("/games");
+
+    if (!response.data || response.data.length === 0) return null;
+    const game = response.data[0];
+
+    const links = (game.websites || []).map((w) => ({
+      type: "website",
+      url: w.url,
+      category: w.category,
+    }));
+
+    return {
+      title: game.name,
+      description: game.summary,
+      image: game.cover?.url
+        ? `https:${game.cover.url.replace("t_thumb", "t_720p")}`
+        : null,
+      releaseDate: game.first_release_date
+        ? new Date(game.first_release_date * 1000).toISOString().split("T")[0]
+        : null,
+      links,
+    };
+  } catch (error) {
+    console.error("IGDB Details Error:", error);
+    return null;
+  }
+}

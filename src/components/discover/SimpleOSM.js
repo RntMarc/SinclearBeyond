@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
+import NavigationFAB from "@/components/ui/NavigationFAB";
 
 export default function SimpleOSM({ lat, lon, zoom = 15, name }) {
   const mapRef = useRef(null);
@@ -51,9 +52,12 @@ export default function SimpleOSM({ lat, lon, zoom = 15, name }) {
   }, [lat, lon, zoom, name]);
 
   return (
-    <div
-      ref={mapRef}
-      className="w-full h-full rounded-2xl overflow-hidden border border-border shadow-inner bg-muted z-10"
-    ></div>
+    <div className="relative w-full h-full">
+      <div
+        ref={mapRef}
+        className="w-full h-full rounded-2xl overflow-hidden border border-border shadow-inner bg-muted z-10"
+      ></div>
+      <NavigationFAB lat={lat} lon={lon} name={name} />
+    </div>
   );
 }

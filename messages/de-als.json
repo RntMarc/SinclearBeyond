@@ -24,13 +24,18 @@
     "loadError": "I konnt des net lada",
     "deleteError": "Lescha hot net gklabbd",
     "notImplemented": "Geit's no net",
+    "navigation": {
+      "title": "Navigation",
+      "openInApp": "In de App uffmacha",
+      "openInBrowser": "Im Browser uffmacha"
+    },
     "tooManyRequests": "Langsam reit's",
     "alreadyParticipant": "Bisch scho dabei.",
     "genericError": "Ebbes isch schiaf ganga."
   },
   "Navigation": {
     "entertainment": "Onderhaldong",
-    "travel": "Reisa",
+    "travel": "Reisa & Events",
     "calendar": "Kalender",
     "birthdays": "Geburtsdag",
     "contacts": "Kondagde",
@@ -97,8 +102,8 @@
     "subtitle": "Doin Blatz",
     "welcome": "Griaß di, {name}.",
     "description": "Schee, dass dõ bisch bei Sinclear Beyond.",
-    "upcomingEvents": "Events die bald kommet",
-    "upcomingTrips": "Reisa die bald geit",
+    "upcomingEvents": "Events die bald kommet/grad send",
+    "upcomingTrips": "Reisa die bald geit/grad send",
     "upcomingBirthdays": "Geburtsdag die bald send",
     "latestPosts": "S'neieschte em Feed",
     "latestPhotos": "S'neieschte bei de Bildla",
@@ -154,7 +159,7 @@
     "tripLabel": "Reisa-Event",
     "openTrip": "Reis õgugga",
     "noDescriptionShort": "S'geit koi Beschreibong.",
-    "title": "Reisa",
+    "title": "Reisa & Events",
     "subtitle": "Onderwegs",
     "detailsTitle": "Reisa-Details",
     "accessDenied": "Dõ därfsch net nei",
@@ -629,6 +634,15 @@
     "platform": "Pladdform",
     "saveReview": "Bewertong schbeichera",
     "successAdded": "Bewertong isch gschbeicheret.",
+    "buy": "Kaufä",
+    "stream": "Schdreamä",
+    "buyOn": "Kaufä bei...",
+    "streamOn": "Schdreamä uff...",
+    "noLinksFound": "Nix gfonda.",
+    "outdatedData": "Alde Sacha?",
+    "outdatedDataMusicHint": "Des isch scho älter als 7 Däg.",
+    "outdatedDataMovieHint": "Des isch scho älter als 7 Däg.",
+    "outdatedDataGameHint": "Des isch scho älter als 7 Däg.",
     "platforms": {
       "pc_linux": "PC (Linux)",
       "pc_windows": "PC (Windows)",
@@ -653,6 +667,11 @@
       "musicEmptyHint": "Suach oba nach Mugg, om die erschte Bewertong abzgäba.",
       "import": "Übernehma",
       "moreResults": "Nach meh Sacha suacha"
-    }
+    },
+    "episodes": "Folge",
+    "season": "Staffel",
+    "tracks": "Titel",
+    "albums": "Albe",
+    "openAlbum": "Album uffmacha"
   }
 }

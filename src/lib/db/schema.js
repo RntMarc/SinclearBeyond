@@ -353,12 +353,13 @@ export const subscriptionRelations = mysqlTable("SubscriptionRelation", {
 export const mediaItems = mysqlTable("MediaItem", {
   id: varchar("id", { length: 191 }).primaryKey(),
   type: mysqlEnum("type", ["game", "movie", "music"]).notNull(),
-  format: mysqlEnum("format", ["movie", "series"]),
+  format: mysqlEnum("format", ["movie", "series", "album", "song"]),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   image: text("image"),
   externalId: varchar("externalId", { length: 191 }),
   releaseDate: varchar("releaseDate", { length: 100 }),
+  links: longtext("links"),
   creatorId: varchar("creatorId", { length: 191 }).notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
@@ -372,4 +373,29 @@ export const mediaReviews = mysqlTable("MediaReview", {
   comment: text("comment"),
   platform: varchar("platform", { length: 191 }), // Only for games
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const seriesEpisodes = mysqlTable("SeriesEpisode", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  seriesId: varchar("seriesId", { length: 191 }).notNull(),
+  seasonNumber: tinyint("seasonNumber").notNull(),
+  episodeNumber: tinyint("episodeNumber").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  externalId: varchar("externalId", { length: 191 }),
+  releaseDate: varchar("releaseDate", { length: 100 }),
+});
+
+export const episodeReviews = mysqlTable("EpisodeReview", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  episodeId: varchar("episodeId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  rating: tinyint("rating").notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const albumTracks = mysqlTable("AlbumTrack", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  albumId: varchar("albumId", { length: 191 }).notNull(),
+  songId: varchar("songId", { length: 191 }).notNull(),
+  trackNumber: tinyint("trackNumber"),
 });
