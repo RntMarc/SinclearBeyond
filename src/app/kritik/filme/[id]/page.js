@@ -58,10 +58,7 @@ export default async function MovieDetailPage({ params }) {
         userRating: sql`MAX(CASE WHEN ${episodeReviews.userId} = ${session.sub} THEN ${episodeReviews.rating} ELSE NULL END)`,
       })
       .from(seriesEpisodes)
-      .leftJoin(
-        episodeReviews,
-        eq(seriesEpisodes.id, episodeReviews.episodeId),
-      )
+      .leftJoin(episodeReviews, eq(seriesEpisodes.id, episodeReviews.episodeId))
       .where(eq(seriesEpisodes.seriesId, movie.id))
       .groupBy(seriesEpisodes.id)
       .orderBy(seriesEpisodes.seasonNumber, seriesEpisodes.episodeNumber);

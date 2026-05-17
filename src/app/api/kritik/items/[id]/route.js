@@ -9,6 +9,9 @@ import {
   mediaReviews,
   seriesEpisodes,
 } from "@/lib/db/schema";
+import { getGameDetails } from "@/lib/kritik/igdb";
+import { getMusicDetails } from "@/lib/kritik/musicbrainz";
+import { getMovieDetails, getSeriesDetails } from "@/lib/kritik/tmdb";
 
 export async function GET(_req, { params }) {
   const session = await getSession();
@@ -28,6 +31,8 @@ export async function GET(_req, { params }) {
         type: mediaItems.type,
         format: mediaItems.format,
         releaseDate: mediaItems.releaseDate,
+        links: mediaItems.links,
+        updatedAt: mediaItems.updatedAt,
         avgRating: sql`AVG(${mediaReviews.rating})`,
         reviewCount: sql`COUNT(${mediaReviews.id})`,
       })
@@ -42,6 +47,16 @@ export async function GET(_req, { params }) {
     }
 
     const item = items[0];
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    item.needsUpdate = item.externalId && item.updatedAt < sevenDaysAgo;
+
+    try {
+      item.links = item.links ? JSON.parse(item.links) : [];
+    } catch (e) {
+      item.links = [];
+    }
 
     // Add extra data based on type
     if (item.type === "movie" && item.format === "series") {
@@ -83,7 +98,7 @@ export async function GET(_req, { params }) {
           .innerJoin(mediaItems, eq(albumTracks.songId, mediaItems.id))
           .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
           .where(eq(albumTracks.albumId, item.id))
-        .groupBy(mediaItems.id, albumTracks.trackNumber)
+          .groupBy(mediaItems.id, albumTracks.trackNumber)
           .orderBy(albumTracks.trackNumber);
 
         item.tracks = tracks;
@@ -128,6 +143,72 @@ export async function GET(_req, { params }) {
     return NextResponse.json(item);
   } catch (error) {
     console.error("[API/Kritik/Items/ID] GET Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PATCH(req, { params }) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  try {
+    const [item] = await db
+      .select()
+      .from(mediaItems)
+      .where(eq(mediaItems.id, id))
+      .limit(1);
+
+    if (!item) {
+      return NextResponse.json({ error: "Not Found" }, { status: 404 });
+    }
+
+    if (!item.externalId) {
+      return NextResponse.json({ error: "No external ID" }, { status: 400 });
+    }
+
+    let updatedData = null;
+
+    if (item.type === "music") {
+      updatedData = await getMusicDetails(item.externalId, item.format);
+    } else if (item.type === "movie") {
+      if (item.format === "series") {
+        updatedData = await getSeriesDetails(item.externalId);
+      } else {
+        updatedData = await getMovieDetails(item.externalId);
+      }
+    } else if (item.type === "game") {
+      updatedData = await getGameDetails(item.externalId);
+    }
+
+    if (!updatedData) {
+      return NextResponse.json(
+        { error: "Failed to fetch data" },
+        { status: 500 },
+      );
+    }
+
+    await db
+      .update(mediaItems)
+      .set({
+        title: updatedData.title,
+        description: updatedData.description,
+        image: updatedData.image,
+        releaseDate: updatedData.releaseDate,
+        links: JSON.stringify(updatedData.links),
+        updatedAt: new Date(),
+      })
+      .where(eq(mediaItems.id, id));
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[API/Kritik/Items/ID] PATCH Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

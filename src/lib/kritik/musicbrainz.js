@@ -7,14 +7,18 @@ export async function searchMusic(query) {
       fetch(
         `${MUSICBRAINZ_BASE_URL}/release-group?query=${encodeURIComponent(query)}&fmt=json`,
         {
-          headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
+          headers: {
+            "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )",
+          },
           next: { revalidate: 86400 },
         },
       ),
       fetch(
         `${MUSICBRAINZ_BASE_URL}/recording?query=${encodeURIComponent(query)}&fmt=json`,
         {
-          headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
+          headers: {
+            "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )",
+          },
           next: { revalidate: 86400 },
         },
       ),
@@ -51,6 +55,47 @@ export async function searchMusic(query) {
   } catch (error) {
     console.error("MusicBrainz Search Error:", error);
     return [];
+  }
+}
+
+export async function getMusicDetails(mbId, format) {
+  try {
+    const id = mbId.replace("mb-rg-", "").replace("mb-rec-", "");
+    const entity = format === "album" ? "release-group" : "recording";
+    const res = await fetch(
+      `${MUSICBRAINZ_BASE_URL}/${entity}/${id}?inc=url-rels+artist-credits${format === "song" ? "+releases" : ""}&fmt=json`,
+      {
+        headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
+      },
+    );
+    if (!res.ok) throw new Error(`Failed to fetch ${entity} details`);
+    const data = await res.json();
+
+    const links = (data.relations || [])
+      .filter((rel) => rel["target-type"] === "url")
+      .map((rel) => ({
+        type: rel.type,
+        url: rel.url.resource,
+      }));
+
+    return {
+      title: `${data["artist-credit"]?.[0]?.name} - ${data.title}`,
+      description: format === "album" ? data["primary-type"] : "Song",
+      image:
+        format === "album"
+          ? `https://coverartarchive.org/release-group/${data.id}/front-500`
+          : data.releases?.[0]?.id
+            ? `https://coverartarchive.org/release/${data.releases[0].id}/front-500`
+            : null,
+      releaseDate:
+        format === "album"
+          ? data["first-release-date"]
+          : data.releases?.[0]?.date,
+      links,
+    };
+  } catch (error) {
+    console.error("MusicBrainz Details Error:", error);
+    return null;
   }
 }
 

@@ -634,6 +634,15 @@
     "platform": "Pladdform",
     "saveReview": "Bewertong schbeichera",
     "successAdded": "Bewertong isch gschbeicheret.",
+    "buy": "Kaufä",
+    "stream": "Schdreamä",
+    "buyOn": "Kaufä bei...",
+    "streamOn": "Schdreamä uff...",
+    "noLinksFound": "Nix gfonda.",
+    "outdatedData": "Alde Sacha?",
+    "outdatedDataMusicHint": "Des isch scho älter als 7 Däg.",
+    "outdatedDataMovieHint": "Des isch scho älter als 7 Däg.",
+    "outdatedDataGameHint": "Des isch scho älter als 7 Däg.",
     "platforms": {
       "pc_linux": "PC (Linux)",
       "pc_windows": "PC (Windows)",
@@ -658,11 +667,11 @@
       "musicEmptyHint": "Suach oba nach Mugg, om die erschte Bewertong abzgäba.",
       "import": "Übernehma",
       "moreResults": "Nach meh Sacha suacha"
-  },
-  "episodes": "Folge",
-  "season": "Staffel",
-  "tracks": "Titel",
-  "albums": "Albe",
-  "openAlbum": "Album uffmacha"
+    },
+    "episodes": "Folge",
+    "season": "Staffel",
+    "tracks": "Titel",
+    "albums": "Albe",
+    "openAlbum": "Album uffmacha"
   }
 }
