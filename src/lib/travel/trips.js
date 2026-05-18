@@ -2,13 +2,22 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import {
+  closeFriends,
+  contactInfo,
   eventRelations,
+  socialInfo,
   travelAccommodations,
   travelEvents,
   travelRelations,
   travelTrips,
   users,
 } from "@/lib/db/schema";
+import {
+  CONTACT_FIELDS,
+  SOCIAL_FIELDS,
+  filterEmail,
+  filterVisibility,
+} from "@/lib/profile/visibility";
 
 export async function getTrips(standalone = false) {
   const session = await getSession();
@@ -110,9 +119,12 @@ export async function getTripById(id) {
         id: users.id,
         displayName: users.displayName,
         email: users.email,
+        emailVisibility: users.emailVisibility,
         image: users.image,
       },
       accommodation: travelAccommodations,
+      contact: contactInfo,
+      social: socialInfo,
     })
     .from(travelRelations)
     .innerJoin(users, eq(travelRelations.userId, users.id))
@@ -120,7 +132,26 @@ export async function getTripById(id) {
       travelAccommodations,
       eq(travelRelations.accommodationId, travelAccommodations.id),
     )
+    .leftJoin(contactInfo, eq(users.id, contactInfo.userId))
+    .leftJoin(socialInfo, eq(users.id, socialInfo.userId))
     .where(eq(travelRelations.tripId, id));
+
+  // Visibility logic
+  const whoMarkedMeAsCloseFriend = await db
+    .select({ userId: closeFriends.userId })
+    .from(closeFriends)
+    .where(eq(closeFriends.friendId, session.sub));
+
+  const visibilityCloseFriendIds = new Set(
+    whoMarkedMeAsCloseFriend.map((f) => f.userId),
+  );
+
+  const iMarkedAsCloseFriend = await db
+    .select({ friendId: closeFriends.friendId })
+    .from(closeFriends)
+    .where(eq(closeFriends.userId, session.sub));
+
+  const myCloseFriendIds = new Set(iMarkedAsCloseFriend.map((f) => f.friendId));
 
   const events = await db
     .select()
@@ -144,10 +175,26 @@ export async function getTripById(id) {
     isPast: new Date(trip.end) < now,
     isActive: new Date(trip.start) <= now && new Date(trip.end) >= now,
     isUpcoming: new Date(trip.start) > now,
-    participants: relations.map((r) => ({
-      ...r.user,
-      accommodation: r.accommodation,
-    })),
+    participants: relations.map((r) => {
+      const allowsMePrivateInfo =
+        r.user.id === session.sub || visibilityCloseFriendIds.has(r.user.id);
+      return {
+        ...r.user,
+        email: filterEmail(r.user, allowsMePrivateInfo),
+        isCloseFriend: myCloseFriendIds.has(r.user.id),
+        contactInfo: filterVisibility(
+          r.contact,
+          CONTACT_FIELDS,
+          allowsMePrivateInfo,
+        ),
+        socialInfo: filterVisibility(
+          r.social,
+          SOCIAL_FIELDS,
+          allowsMePrivateInfo,
+        ),
+        accommodation: r.accommodation,
+      };
+    }),
     userAccommodation:
       relations.find((r) => r.user.id === session.sub)?.accommodation || null,
     events: events.map((event) => {
