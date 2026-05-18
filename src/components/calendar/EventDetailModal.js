@@ -34,22 +34,24 @@ export default function EventDetailModal({ event, onClose, onEdit, onDelete }) {
             <span className="text-xs text-muted-foreground uppercase tracking-wider">
               {event.allDay ? "Datum" : "Zeitraum"}
             </span>
-            {event.allDay
-              ? <span className="text-sm text-foreground">
-                  {start.toLocaleDateString("de-DE", dateOpts)}
-                </span>
-              : <span className="text-sm text-foreground">
-                  {start.toLocaleDateString("de-DE", dateOpts)},{" "}
-                  {start.toLocaleTimeString("de-DE", timeOpts)}
-                  {end && (
-                    <>
-                      {" – "}
-                      {isSameDay(start, end)
-                        ? end.toLocaleTimeString("de-DE", timeOpts)
-                        : `${end.toLocaleDateString("de-DE", dateOpts)}, ${end.toLocaleTimeString("de-DE", timeOpts)}`}
-                    </>
-                  )}
-                </span>}
+            {event.allDay ? (
+              <span className="text-sm text-foreground">
+                {start.toLocaleDateString("de-DE", dateOpts)}
+              </span>
+            ) : (
+              <span className="text-sm text-foreground">
+                {start.toLocaleDateString("de-DE", dateOpts)},{" "}
+                {start.toLocaleTimeString("de-DE", timeOpts)}
+                {end && (
+                  <>
+                    {" – "}
+                    {isSameDay(start, end)
+                      ? end.toLocaleTimeString("de-DE", timeOpts)
+                      : `${end.toLocaleDateString("de-DE", dateOpts)}, ${end.toLocaleTimeString("de-DE", timeOpts)}`}
+                  </>
+                )}
+              </span>
+            )}
           </div>
           {event.description && (
             <div className="flex flex-col gap-1">

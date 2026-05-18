@@ -83,71 +83,73 @@ export default function EmailChangeForm({ currentEmail }) {
         </div>
       )}
 
-      {step === 1
-        ? <form onSubmit={handleRequestOtp} className="space-y-4">
-            <div>
-              <label
-                htmlFor="newEmail"
-                className="block text-sm font-medium mb-1 text-foreground"
-              >
-                {t("newEmailLabel")}
-              </label>
-              <input
-                id="newEmail"
-                type="email"
-                required
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                placeholder={t("newEmailPlaceholder")}
-              />
-            </div>
+      {step === 1 ? (
+        <form onSubmit={handleRequestOtp} className="space-y-4">
+          <div>
+            <label
+              htmlFor="newEmail"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
+              {t("newEmailLabel")}
+            </label>
+            <input
+              id="newEmail"
+              type="email"
+              required
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+              placeholder={t("newEmailPlaceholder")}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+          >
+            {loading && <Loader2 size={16} className="animate-spin" />}
+            {t("requestCode")}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleVerifyOtp} className="space-y-4">
+          <div>
+            <label
+              htmlFor="otp"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
+              {t("otpLabel")} (an {newEmail})
+            </label>
+            <input
+              id="otp"
+              type="text"
+              required
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground text-center tracking-widest font-mono"
+              placeholder={t("otpPlaceholder")}
+              maxLength={6}
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="flex-1 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground rounded-lg text-sm font-medium hover:bg-sidebar-accent/80 transition-colors"
+            >
+              {tCommon("cancel")}
+            </button>
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              className="flex-[2] px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
               {loading && <Loader2 size={16} className="animate-spin" />}
-              {t("requestCode")}
+              {t("verifyEmail")}
             </button>
-          </form>
-        : <form onSubmit={handleVerifyOtp} className="space-y-4">
-            <div>
-              <label
-                htmlFor="otp"
-                className="block text-sm font-medium mb-1 text-foreground"
-              >
-                {t("otpLabel")} (an {newEmail})
-              </label>
-              <input
-                id="otp"
-                type="text"
-                required
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground text-center tracking-widest font-mono"
-                placeholder={t("otpPlaceholder")}
-                maxLength={6}
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="flex-1 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground rounded-lg text-sm font-medium hover:bg-sidebar-accent/80 transition-colors"
-              >
-                {tCommon("cancel")}
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-[2] px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-              >
-                {loading && <Loader2 size={16} className="animate-spin" />}
-                {t("verifyEmail")}
-              </button>
-            </div>
-          </form>}
+          </div>
+        </form>
+      )}
     </div>
   );
 }

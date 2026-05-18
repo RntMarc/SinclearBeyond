@@ -177,18 +177,20 @@ export default function MovieDetailPageClient({
           <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
               <div className="aspect-[2/3] rounded-3xl overflow-hidden bg-muted shadow-xl border border-border">
-                {movie.image
-                  ? <img
-                      src={movie.image}
-                      alt={movie.title}
-                      className="w-full h-full object-cover"
+                {movie.image ? (
+                  <img
+                    src={movie.image}
+                    alt={movie.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Clapperboard
+                      className="text-muted-foreground/20"
+                      size={64}
                     />
-                  : <div className="w-full h-full flex items-center justify-center">
-                      <Clapperboard
-                        className="text-muted-foreground/20"
-                        size={64}
-                      />
-                    </div>}
+                  </div>
+                )}
               </div>
             </div>
             <div className="md:col-span-2 flex flex-col justify-center space-y-6">

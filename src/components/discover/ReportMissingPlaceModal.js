@@ -124,118 +124,118 @@ export default function ReportMissingPlaceModal({ onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {success
-            ? <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
-                <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center">
-                  <MapPin size={32} />
-                </div>
-                <p className="text-lg font-medium">{t("success")}</p>
+          {success ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center">
+                <MapPin size={32} />
               </div>
-            : <form onSubmit={handleSubmit} className="space-y-6">
-                <p className="text-sm text-muted-foreground">
-                  {t("description")}
-                </p>
+              <p className="text-lg font-medium">{t("success")}</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <p className="text-sm text-muted-foreground">
+                {t("description")}
+              </p>
 
-                <div className="space-y-4">
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="place-name"
+                    className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1"
+                  >
+                    {t("name")}
+                  </label>
+                  <input
+                    id="place-name"
+                    type="text"
+                    className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="..."
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="place-address"
+                    className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1"
+                  >
+                    {t("address")}
+                  </label>
+                  <input
+                    id="place-address"
+                    type="text"
+                    className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
+                    value={form.address}
+                    onChange={(e) =>
+                      setForm({ ...form, address: e.target.value })
+                    }
+                    placeholder="..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label
-                      htmlFor="place-name"
+                      htmlFor="google-maps-link"
                       className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1"
                     >
-                      {t("name")}
+                      {t("googleMapsLink")}
                     </label>
                     <input
-                      id="place-name"
-                      type="text"
+                      id="google-maps-link"
+                      type="url"
                       className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
-                      value={form.name}
+                      value={form.googleMapsLink}
                       onChange={(e) =>
-                        setForm({ ...form, name: e.target.value })
+                        setForm({ ...form, googleMapsLink: e.target.value })
                       }
-                      placeholder="..."
+                      placeholder="https://goo.gl/maps/..."
                     />
                   </div>
-
                   <div className="space-y-1.5">
                     <label
-                      htmlFor="place-address"
+                      htmlFor="place-website"
                       className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1"
                     >
-                      {t("address")}
+                      {t("website")}
                     </label>
                     <input
-                      id="place-address"
-                      type="text"
+                      id="place-website"
+                      type="url"
                       className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
-                      value={form.address}
+                      value={form.website}
                       onChange={(e) =>
-                        setForm({ ...form, address: e.target.value })
+                        setForm({ ...form, website: e.target.value })
                       }
-                      placeholder="..."
+                      placeholder="https://..."
                     />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="google-maps-link"
-                        className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1"
-                      >
-                        {t("googleMapsLink")}
-                      </label>
-                      <input
-                        id="google-maps-link"
-                        type="url"
-                        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
-                        value={form.googleMapsLink}
-                        onChange={(e) =>
-                          setForm({ ...form, googleMapsLink: e.target.value })
-                        }
-                        placeholder="https://goo.gl/maps/..."
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="place-website"
-                        className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1"
-                      >
-                        {t("website")}
-                      </label>
-                      <input
-                        id="place-website"
-                        type="url"
-                        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
-                        value={form.website}
-                        onChange={(e) =>
-                          setForm({ ...form, website: e.target.value })
-                        }
-                        placeholder="https://..."
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
-                      {t("coordinates")}
-                    </span>
-                    <div className="h-48 rounded-xl border border-border overflow-hidden">
-                      <LocationPickerMap
-                        lat={form.latitude}
-                        lon={form.longitude}
-                        onChange={(lat, lon) =>
-                          setForm({ ...form, latitude: lat, longitude: lon })
-                        }
-                      />
-                    </div>
                   </div>
                 </div>
 
-                {error && (
-                  <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-lg border border-destructive/20">
-                    {error}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
+                    {t("coordinates")}
+                  </span>
+                  <div className="h-48 rounded-xl border border-border overflow-hidden">
+                    <LocationPickerMap
+                      lat={form.latitude}
+                      lon={form.longitude}
+                      onChange={(lat, lon) =>
+                        setForm({ ...form, latitude: lat, longitude: lon })
+                      }
+                    />
                   </div>
-                )}
-              </form>}
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-lg border border-destructive/20">
+                  {error}
+                </div>
+              )}
+            </form>
+          )}
         </div>
 
         {!success && (

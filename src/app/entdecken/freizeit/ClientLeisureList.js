@@ -66,58 +66,60 @@ export default function ClientLeisureList({ initialPlaces }) {
             </div>
           )}
 
-          {initialPlaces.length > 0
-            ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {initialPlaces.map((place, index) => (
-                  <Link
-                    key={place.id}
-                    href={`/entdecken/orte/${place.id}`}
-                    className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col relative"
-                  >
-                    {showMap && (
-                      <div className="absolute top-4 right-4 w-7 h-7 rounded-lg bg-green-500 text-white flex items-center justify-center font-bold text-xs shadow-sm z-10">
-                        {index + 1}
-                      </div>
-                    )}
-                    <div className="p-6 space-y-4">
-                      <div>
-                        <h3 className="font-bold text-lg group-hover:text-primary transition-colors pr-8">
-                          {place.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {place.address}
-                        </p>
-                      </div>
+          {initialPlaces.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {initialPlaces.map((place, index) => (
+                <Link
+                  key={place.id}
+                  href={`/entdecken/orte/${place.id}`}
+                  className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col relative"
+                >
+                  {showMap && (
+                    <div className="absolute top-4 right-4 w-7 h-7 rounded-lg bg-green-500 text-white flex items-center justify-center font-bold text-xs shadow-sm z-10">
+                      {index + 1}
+                    </div>
+                  )}
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors pr-8">
+                        {place.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-1">
+                        {place.address}
+                      </p>
+                    </div>
 
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-orange-500">
-                          <Star
-                            size={16}
-                            fill={place.avgRating ? "currentColor" : "none"}
-                          />
-                          <span className="text-sm font-bold">
-                            {place.avgRating
-                              ? Number(place.avgRating).toFixed(1)
-                              : "-"}
-                          </span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          ({place.reviewCount} {t("reviews")})
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1 text-orange-500">
+                        <Star
+                          size={16}
+                          fill={place.avgRating ? "currentColor" : "none"}
+                        />
+                        <span className="text-sm font-bold">
+                          {place.avgRating
+                            ? Number(place.avgRating).toFixed(1)
+                            : "-"}
                         </span>
                       </div>
-
-                      <OpeningStatusBadge status={place.openingStatus} />
+                      <span className="text-xs text-muted-foreground">
+                        ({place.reviewCount} {t("reviews")})
+                      </span>
                     </div>
-                  </Link>
-                ))}
-              </div>
-            : <div className="p-20 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
-                <TreePine size={48} className="text-muted-foreground/20 mb-4" />
-                <p className="text-muted-foreground mb-6">{t("noLeisure")}</p>
-                <Button type="button" onClick={() => setShowAddModal(true)}>
-                  {t("addFirst")}
-                </Button>
-              </div>}
+
+                    <OpeningStatusBadge status={place.openingStatus} />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="p-20 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
+              <TreePine size={48} className="text-muted-foreground/20 mb-4" />
+              <p className="text-muted-foreground mb-6">{t("noLeisure")}</p>
+              <Button type="button" onClick={() => setShowAddModal(true)}>
+                {t("addFirst")}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

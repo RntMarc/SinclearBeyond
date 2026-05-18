@@ -149,18 +149,17 @@ export default function GameDetailPageClient({
           <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
               <div className="aspect-[3/4] rounded-3xl overflow-hidden bg-muted shadow-xl border border-border">
-                {game.image
-                  ? <img
-                      src={game.image}
-                      alt={game.title}
-                      className="w-full h-full object-cover"
-                    />
-                  : <div className="w-full h-full flex items-center justify-center">
-                      <Gamepad2
-                        className="text-muted-foreground/20"
-                        size={64}
-                      />
-                    </div>}
+                {game.image ? (
+                  <img
+                    src={game.image}
+                    alt={game.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Gamepad2 className="text-muted-foreground/20" size={64} />
+                  </div>
+                )}
               </div>
             </div>
             <div className="md:col-span-2 flex flex-col justify-center space-y-6">

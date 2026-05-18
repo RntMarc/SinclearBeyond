@@ -234,36 +234,38 @@ export default function TripDashboard({ trip }) {
       {/* Accommodation Box */}
       <SectionBox title={t("accommodationLabel")} icon={MapPin}>
         <div className="space-y-4">
-          {trip.userAccommodation
-            ? <button
-                type="button"
-                onClick={() => setSelectedAccommodation(trip.userAccommodation)}
-                className="w-full text-left p-4 bg-primary/5 border border-primary/10 rounded-xl hover:border-primary/30 transition-all"
-              >
-                <h4 className="font-medium text-foreground mb-1">
-                  {trip.userAccommodation.name}
-                </h4>
-                {trip.userAccommodation.address && (
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {trip.userAccommodation.address}
-                  </p>
+          {trip.userAccommodation ? (
+            <button
+              type="button"
+              onClick={() => setSelectedAccommodation(trip.userAccommodation)}
+              className="w-full text-left p-4 bg-primary/5 border border-primary/10 rounded-xl hover:border-primary/30 transition-all"
+            >
+              <h4 className="font-medium text-foreground mb-1">
+                {trip.userAccommodation.name}
+              </h4>
+              {trip.userAccommodation.address && (
+                <p className="text-xs text-muted-foreground mb-2">
+                  {trip.userAccommodation.address}
+                </p>
+              )}
+              <div className="flex flex-wrap gap-3 text-xs">
+                {trip.userAccommodation.phone && (
+                  <span className="text-primary">
+                    {trip.userAccommodation.phone}
+                  </span>
                 )}
-                <div className="flex flex-wrap gap-3 text-xs">
-                  {trip.userAccommodation.phone && (
-                    <span className="text-primary">
-                      {trip.userAccommodation.phone}
-                    </span>
-                  )}
-                  {trip.userAccommodation.mail && (
-                    <span className="text-primary">
-                      {trip.userAccommodation.mail}
-                    </span>
-                  )}
-                </div>
-              </button>
-            : <p className="text-sm text-muted-foreground italic">
-                {t("noAccommodation")}
-              </p>}
+                {trip.userAccommodation.mail && (
+                  <span className="text-primary">
+                    {trip.userAccommodation.mail}
+                  </span>
+                )}
+              </div>
+            </button>
+          ) : (
+            <p className="text-sm text-muted-foreground italic">
+              {t("noAccommodation")}
+            </p>
+          )}
 
           {otherAccommodations.length > 0 && (
             <div className="pt-2">
@@ -325,30 +327,29 @@ export default function TripDashboard({ trip }) {
           {t("events")} ({trip.events.length})
         </h3>
       </div>
-      {trip.events.length > 0
-        ? <div className="space-y-3">
-            {trip.events.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onClick={() =>
-                  setSelectedEvent({
-                    ...event,
-                    title: event.name,
-                    startAt: event.start,
-                    endAt: event.end,
-                  })
-                }
-              />
-            ))}
-          </div>
-        : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-2xl">
-            <Calendar
-              className="mx-auto mb-2 text-muted-foreground"
-              size={24}
+      {trip.events.length > 0 ? (
+        <div className="space-y-3">
+          {trip.events.map((event) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onClick={() =>
+                setSelectedEvent({
+                  ...event,
+                  title: event.name,
+                  startAt: event.start,
+                  endAt: event.end,
+                })
+              }
             />
-            <p className="text-sm text-muted-foreground">{t("noEvents")}</p>
-          </div>}
+          ))}
+        </div>
+      ) : (
+        <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-2xl">
+          <Calendar className="mx-auto mb-2 text-muted-foreground" size={24} />
+          <p className="text-sm text-muted-foreground">{t("noEvents")}</p>
+        </div>
+      )}
     </div>
   );
 

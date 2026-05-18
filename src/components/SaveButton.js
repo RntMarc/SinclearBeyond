@@ -28,17 +28,19 @@ export default function SaveButton({
         variant={isError ? "destructive" : "primary"}
         className="w-full"
       >
-        {isPending
-          ? t("saving")
-          : isSuccess
-            ? <>
-                <Check size={15} /> {t("saved")}
-              </>
-            : isError
-              ? <>
-                  <X size={15} /> {t("error")}
-                </>
-              : displayLabel}
+        {isPending ? (
+          t("saving")
+        ) : isSuccess ? (
+          <>
+            <Check size={15} /> {t("saved")}
+          </>
+        ) : isError ? (
+          <>
+            <X size={15} /> {t("error")}
+          </>
+        ) : (
+          displayLabel
+        )}
       </Button>
       {isError && state.error && (
         <p className="text-destructive text-xs text-center">{state.error}</p>

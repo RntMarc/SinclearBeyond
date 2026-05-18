@@ -48,9 +48,7 @@
       "compositePrimaryKeys": {
         "ChangelogEntry_id": {
           "name": "ChangelogEntry_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -93,9 +91,7 @@
       "compositePrimaryKeys": {
         "CloseFriend_id": {
           "name": "CloseFriend_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -199,9 +195,7 @@
       "compositePrimaryKeys": {
         "ContactInfo_id": {
           "name": "ContactInfo_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -244,9 +238,7 @@
       "compositePrimaryKeys": {
         "DiscoverBookmark_id": {
           "name": "DiscoverBookmark_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -282,9 +274,7 @@
       "compositePrimaryKeys": {
         "DiscoverGastronomy_id": {
           "name": "DiscoverGastronomy_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -411,9 +401,7 @@
       "compositePrimaryKeys": {
         "DiscoverPlace_id": {
           "name": "DiscoverPlace_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -470,9 +458,7 @@
       "compositePrimaryKeys": {
         "DiscoverReview_id": {
           "name": "DiscoverReview_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -531,9 +517,7 @@
       "compositePrimaryKeys": {
         "EventPermission_id": {
           "name": "EventPermission_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -576,9 +560,7 @@
       "compositePrimaryKeys": {
         "EventRelation_id": {
           "name": "EventRelation_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -658,9 +640,7 @@
       "compositePrimaryKeys": {
         "Event_id": {
           "name": "Event_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -809,9 +789,7 @@
       "compositePrimaryKeys": {
         "FeedPosts_id": {
           "name": "FeedPosts_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -876,9 +854,7 @@
       "compositePrimaryKeys": {
         "FeedbackSuggestion_id": {
           "name": "FeedbackSuggestion_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -921,9 +897,7 @@
       "compositePrimaryKeys": {
         "FeedbackVote_id": {
           "name": "FeedbackVote_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1015,9 +989,7 @@
       "compositePrimaryKeys": {
         "MediaItem_id": {
           "name": "MediaItem_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1081,9 +1053,7 @@
       "compositePrimaryKeys": {
         "MediaReview_id": {
           "name": "MediaReview_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1140,9 +1110,7 @@
       "compositePrimaryKeys": {
         "OtpToken_id": {
           "name": "OtpToken_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1221,9 +1189,7 @@
       "compositePrimaryKeys": {
         "Passkey_id": {
           "name": "Passkey_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1273,9 +1239,7 @@
       "compositePrimaryKeys": {
         "ReadStatus_id": {
           "name": "ReadStatus_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1409,9 +1373,7 @@
       "compositePrimaryKeys": {
         "SocialInfo_id": {
           "name": "SocialInfo_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1470,9 +1432,7 @@
       "compositePrimaryKeys": {
         "SubscriptionRelation_id": {
           "name": "SubscriptionRelation_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1522,9 +1482,7 @@
       "compositePrimaryKeys": {
         "Subscription_id": {
           "name": "Subscription_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1609,9 +1567,7 @@
       "compositePrimaryKeys": {
         "TravelAccommodation_ID": {
           "name": "TravelAccommodation_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -1675,9 +1631,7 @@
       "compositePrimaryKeys": {
         "TravelEventTicket_ID": {
           "name": "TravelEventTicket_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -1805,9 +1759,7 @@
       "compositePrimaryKeys": {
         "TravelEvent_ID": {
           "name": "TravelEvent_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -1850,9 +1802,7 @@
       "compositePrimaryKeys": {
         "TravelRelation_ID": {
           "name": "TravelRelation_ID",
-          "columns": [
-            "ID"
-          ]
+          "columns": ["ID"]
         }
       },
       "uniqueConstraints": {},
@@ -1924,9 +1874,7 @@
       "compositePrimaryKeys": {
         "TravelTrip_id": {
           "name": "TravelTrip_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1986,9 +1934,7 @@
       "compositePrimaryKeys": {
         "UserPreferences_id": {
           "name": "UserPreferences_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -2083,9 +2029,7 @@
       "compositePrimaryKeys": {
         "User_id": {
           "name": "User_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -2135,9 +2079,7 @@
       "compositePrimaryKeys": {
         "WebauthnChallenge_id": {
           "name": "WebauthnChallenge_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

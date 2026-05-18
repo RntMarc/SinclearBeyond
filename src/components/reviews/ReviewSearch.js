@@ -101,15 +101,17 @@ export default function ReviewSearch({ type = "game" }) {
                 onClick={() => handleImport(item)}
                 className="w-full flex items-center gap-4 p-3 hover:bg-muted rounded-xl transition-colors text-left group"
               >
-                {item.image
-                  ? <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-12 h-16 object-cover rounded-md shadow-sm"
-                    />
-                  : <div className="w-12 h-16 bg-muted rounded-md flex items-center justify-center">
-                      <Plus className="text-muted-foreground/30" size={20} />
-                    </div>}
+                {item.image ? (
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-12 h-16 object-cover rounded-md shadow-sm"
+                  />
+                ) : (
+                  <div className="w-12 h-16 bg-muted rounded-md flex items-center justify-center">
+                    <Plus className="text-muted-foreground/30" size={20} />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">
                     {item.title}

@@ -117,35 +117,34 @@ export default function CloseFriendsManager({ initialFriends }) {
         <h3 className="text-sm font-medium text-foreground">
           {t("yourFriends")}
         </h3>
-        {friends.length > 0
-          ? <div className="grid grid-cols-1 gap-3">
-              {friends.map((friend) => (
-                <div
-                  key={friend.id}
-                  className="flex items-center justify-between p-3 bg-sidebar border border-sidebar-border rounded-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar
-                      src={friend.image}
-                      displayName={friend.displayName}
-                    />
-                    <span className="text-sm font-medium">
-                      {friend.displayName}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemove(friend.id)}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                  >
-                    <X size={18} />
-                  </button>
+        {friends.length > 0 ? (
+          <div className="grid grid-cols-1 gap-3">
+            {friends.map((friend) => (
+              <div
+                key={friend.id}
+                className="flex items-center justify-between p-3 bg-sidebar border border-sidebar-border rounded-xl"
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar src={friend.image} displayName={friend.displayName} />
+                  <span className="text-sm font-medium">
+                    {friend.displayName}
+                  </span>
                 </div>
-              ))}
-            </div>
-          : <p className="text-sm text-muted-foreground italic">
-              {t("noFriends")}
-            </p>}
+                <button
+                  type="button"
+                  onClick={() => handleRemove(friend.id)}
+                  className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground italic">
+            {t("noFriends")}
+          </p>
+        )}
       </div>
     </div>
   );
