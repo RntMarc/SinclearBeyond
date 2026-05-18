@@ -16,6 +16,7 @@
     "search": "Suchen...",
     "loading": "Wird geladen...",
     "noEntries": "Keine Einträge gefunden.",
+    "emailHidden": "E-Mail versteckt",
     "unauthorized": "Nicht autorisiert",
     "forbidden": "Zugriff verweigert",
     "notFound": "Nicht gefunden",
@@ -244,6 +245,14 @@
     "email": "E-Mail",
     "noInfo": "Keine weiteren Informationen freigegeben.",
     "socialTitle": "Soziale Medien",
+    "sendMessage": "Nachricht senden",
+    "messageTo": "Nachricht an",
+    "messageSubject": "Betreff",
+    "messageSubjectPlaceholder": "Worum geht es?",
+    "messageBody": "Nachricht",
+    "messageBodyPlaceholder": "Schreibe hier deine Nachricht...",
+    "sendButton": "Nachricht abschicken",
+    "messageSent": "Nachricht wurde gesendet!",
     "close": "Schließen"
   },
   "Photos": {

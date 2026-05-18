@@ -16,6 +16,7 @@
     "search": "Suacha...",
     "loading": "Ladet grad...",
     "noEntries": "Nix gfonda.",
+    "emailHidden": "E-Mail verschdeggt",
     "unauthorized": "Dõ därfsch net nei",
     "forbidden": "Verbodda",
     "notFound": "Fend i net",
@@ -243,6 +244,14 @@
     "email": "E-Mail",
     "noInfo": "Hot nix weidrs gsagt.",
     "socialTitle": "Im Netz",
+    "sendMessage": "Nõchricht schigga",
+    "messageTo": "Nõchricht an",
+    "messageSubject": "Betreff",
+    "messageSubjectPlaceholder": "Was isch los?",
+    "messageBody": "Nõchricht",
+    "messageBodyPlaceholder": "Schreib dõ doine Nõchricht nei...",
+    "sendButton": "Nõchricht absigga",
+    "messageSent": "Nõchricht isch raus!",
     "close": "Zuamacha"
   },
   "Photos": {

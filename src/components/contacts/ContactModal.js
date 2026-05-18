@@ -1,11 +1,15 @@
 "use client";
-import { Heart, Mail, MessageSquare, Phone, X } from "lucide-react";
+import { Heart, Mail, MessageSquare, Phone, Send, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import Avatar from "@/components/Avatar";
 import BrandIcon from "@/components/BrandIcon";
+import MessageModal from "./MessageModal";
 
 export default function ContactModal({ contact, onClose }) {
   const t = useTranslations("Contacts");
+  const commonT = useTranslations("Common");
+  const [showMessageModal, setShowMessageModal] = useState(false);
   const info = contact.contactInfo || {};
   const social = contact.socialInfo || {};
 
@@ -29,6 +33,15 @@ export default function ContactModal({ contact, onClose }) {
     { label: "YouTube", value: social.youtubeHandle, icon: "Youtube" },
     { label: "Twitch", value: social.twitchHandle, icon: "Twitch" },
   ];
+
+  if (showMessageModal) {
+    return (
+      <MessageModal
+        contact={contact}
+        onClose={() => setShowMessageModal(false)}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -69,24 +82,38 @@ export default function ContactModal({ contact, onClose }) {
         {/* Content */}
         <div className="p-6 space-y-6">
           <div className="space-y-4">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-sidebar-border pb-2">
-              {t("infoTitle")}
-            </h3>
+            <div className="flex items-center justify-between border-b border-sidebar-border pb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                {t("infoTitle")}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowMessageModal(true)}
+                className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
+              >
+                <Send size={12} />
+                {t("sendMessage")}
+              </button>
+            </div>
 
             <div className="space-y-3">
-              {contact.email && (
-                <div className="flex items-center gap-3 text-sm">
-                  <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
-                    <Mail size={16} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
-                      {t("email")}
-                    </p>
-                    <p className="text-foreground">{contact.email}</p>
-                  </div>
+              <div className="flex items-center gap-3 text-sm">
+                <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                  <Mail size={16} />
                 </div>
-              )}
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none mb-1">
+                    {t("email")}
+                  </p>
+                  {contact.email ? (
+                    <p className="text-foreground">{contact.email}</p>
+                  ) : (
+                    <p className="text-muted-foreground/60 italic text-xs">
+                      {commonT("emailHidden")}
+                    </p>
+                  )}
+                </div>
+              </div>
 
               {detailFields.map(
                 ({ label, value, icon: Icon }) =>
