@@ -81,3 +81,18 @@ export function mixColors(color1, color2, weight) {
 
   return `#${mixed.map((x) => x.toString(16).padStart(2, "0")).join("")}`;
 }
+
+/**
+ * Ensures an origin has a protocol and returns a base URL.
+ * If no protocol is present, it defaults to https.
+ * @param {string} origin The origin string.
+ * @param {string} fallback Default fallback if origin is missing.
+ * @returns {string} The normalized origin.
+ */
+export function normalizeOrigin(origin, fallback) {
+  let base = origin || fallback;
+  if (base && !base.startsWith("http://") && !base.startsWith("https://")) {
+    base = `https://${base}`;
+  }
+  return base;
+}

@@ -25,7 +25,14 @@ export async function proxy(req) {
   requestHeaders.set("Content-Security-Policy", cspHeader);
 
   const token = req.cookies.get("session")?.value;
-  const origin = process.env.NEXT_PUBLIC_ORIGIN || req.url;
+  let origin = process.env.NEXT_PUBLIC_ORIGIN || req.url;
+  if (
+    origin &&
+    !origin.startsWith("http://") &&
+    !origin.startsWith("https://")
+  ) {
+    origin = `https://${origin}`;
+  }
 
   if (!token) {
     const url = new URL("/login", origin);

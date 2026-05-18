@@ -11,7 +11,10 @@ import { passkeys, users, webauthnChallenges } from "@/lib/db/schema";
 
 const RP_ID = process.env.NEXT_PUBLIC_RP_ID || "localhost";
 const RP_NAME = "Sinclear Beyond";
-const ORIGIN = process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000";
+let ORIGIN = process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000";
+if (ORIGIN && !ORIGIN.startsWith("http://") && !ORIGIN.startsWith("https://")) {
+  ORIGIN = `https://${ORIGIN}`;
+}
 
 /**
  * Purge expired challenges

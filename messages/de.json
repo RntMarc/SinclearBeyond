@@ -80,6 +80,7 @@
         "userNotFound": "Kein Konto verknüpft. Bitte registriere dich zuerst.",
         "authFailed": "Discord-Authentifizierung fehlgeschlagen.",
         "noCode": "Kein Code von Discord erhalten.",
+        "serviceUnavailable": "Discord-Dienst ist derzeit nicht erreichbar. Bitte versuche es später erneut.",
         "generic": "Fehler bei der Discord-Anmeldung."
       },
       "otp": {
