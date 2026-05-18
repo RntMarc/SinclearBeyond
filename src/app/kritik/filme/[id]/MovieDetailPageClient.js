@@ -2,8 +2,6 @@
 
 import {
   Calendar,
-  ChevronDown,
-  ChevronUp,
   Clapperboard,
   Plus,
   RefreshCcw,
@@ -163,7 +161,6 @@ export default function MovieDetailPageClient({
         title={movie.title}
         subtitle={movie.format === "series" ? t("series") : t("movies")}
         backHref="/kritik/filme"
-        icon={Star}
       >
         <button
           type="button"

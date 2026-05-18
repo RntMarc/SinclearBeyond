@@ -143,7 +143,6 @@ export default function MusicDetailPageClient({
         title={music.title}
         subtitle={t("music")}
         backHref="/kritik/musik"
-        icon={Star}
       >
         <button
           type="button"
