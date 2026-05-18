@@ -84,22 +84,21 @@ export default function AbosClient({ initialSubscriptions }) {
                       {member.userName || "Unbekannt"}
                     </span>
                     <div className="flex items-center gap-2">
-                      {member.hasPaid
-                        ? <>
-                            <span className="text-[10px] font-bold uppercase text-green-500">
-                              {t("paid")}
-                            </span>
-                            <CheckCircle2
-                              size={16}
-                              className="text-green-500"
-                            />
-                          </>
-                        : <>
-                            <span className="text-[10px] font-bold uppercase text-amber-500">
-                              {t("pending")}
-                            </span>
-                            <Circle size={16} className="text-amber-500" />
-                          </>}
+                      {member.hasPaid ? (
+                        <>
+                          <span className="text-[10px] font-bold uppercase text-green-500">
+                            {t("paid")}
+                          </span>
+                          <CheckCircle2 size={16} className="text-green-500" />
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-[10px] font-bold uppercase text-amber-500">
+                            {t("pending")}
+                          </span>
+                          <Circle size={16} className="text-amber-500" />
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}

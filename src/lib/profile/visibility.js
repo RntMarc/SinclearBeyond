@@ -61,7 +61,7 @@ export async function canSeePrivateInfo(targetUserId, currentUserId) {
       and(
         eq(closeFriends.userId, targetUserId),
         eq(closeFriends.friendId, currentUserId),
-      )
+      ),
     )
     .limit(1);
 

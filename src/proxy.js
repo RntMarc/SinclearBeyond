@@ -25,9 +25,10 @@ export async function proxy(req) {
   requestHeaders.set("Content-Security-Policy", cspHeader);
 
   const token = req.cookies.get("session")?.value;
+  const origin = process.env.NEXT_PUBLIC_ORIGIN || req.url;
 
   if (!token) {
-    const url = new URL("/login", req.url);
+    const url = new URL("/login", origin);
     url.searchParams.set(
       "callbackUrl",
       req.nextUrl.pathname + req.nextUrl.search,
@@ -50,7 +51,7 @@ export async function proxy(req) {
 
     return response;
   } catch {
-    const url = new URL("/login", req.url);
+    const url = new URL("/login", origin);
     url.searchParams.set(
       "callbackUrl",
       req.nextUrl.pathname + req.nextUrl.search,

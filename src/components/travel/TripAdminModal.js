@@ -335,32 +335,34 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
               </div>
 
               <div className="grid gap-3">
-                {events.length > 0
-                  ? events.map((event) => (
-                      <div
-                        key={event.id}
-                        onClick={() => setEditingEvent(event)}
-                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl cursor-pointer hover:bg-sidebar-accent/50 transition-colors"
-                      >
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">
-                            {event.name}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">
-                            {new Date(event.start).toLocaleString("de-DE", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                        <Calendar size={16} className="text-muted-foreground" />
+                {events.length > 0 ? (
+                  events.map((event) => (
+                    <div
+                      key={event.id}
+                      onClick={() => setEditingEvent(event)}
+                      className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl cursor-pointer hover:bg-sidebar-accent/50 transition-colors"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {event.name}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {new Date(event.start).toLocaleString("de-DE", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
                       </div>
-                    ))
-                  : <div className="p-8 text-center bg-muted/20 border border-dashed border-sidebar-border rounded-xl text-muted-foreground text-xs">
-                      Keine Events geplant.
-                    </div>}
+                      <Calendar size={16} className="text-muted-foreground" />
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-8 text-center bg-muted/20 border border-dashed border-sidebar-border rounded-xl text-muted-foreground text-xs">
+                    Keine Events geplant.
+                  </div>
+                )}
               </div>
             </div>
           )}

@@ -64,8 +64,16 @@ export async function getContacts() {
         ...user,
         email: filterEmail(user, allowsMePrivateInfo),
         isCloseFriend,
-        contactInfo: filterVisibility(info, CONTACT_FIELDS, allowsMePrivateInfo),
-        socialInfo: filterVisibility(social, SOCIAL_FIELDS, allowsMePrivateInfo),
+        contactInfo: filterVisibility(
+          info,
+          CONTACT_FIELDS,
+          allowsMePrivateInfo,
+        ),
+        socialInfo: filterVisibility(
+          social,
+          SOCIAL_FIELDS,
+          allowsMePrivateInfo,
+        ),
       };
     })
     .filter(Boolean);

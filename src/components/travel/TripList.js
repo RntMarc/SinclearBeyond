@@ -68,11 +68,13 @@ function TripCard({ trip, isAdmin, isEvent }) {
 
   return (
     <div className="flex gap-2">
-      {isEvent
-        ? Content
-        : <Link href={`/reisen/${trip.id}`} className="w-full">
-            {Content}
-          </Link>}
+      {isEvent ? (
+        Content
+      ) : (
+        <Link href={`/reisen/${trip.id}`} className="w-full">
+          {Content}
+        </Link>
+      )}
     </div>
   );
 }
@@ -101,23 +103,23 @@ export default function TripList({ initialTrips, isAdmin, isEventList }) {
   const past = initialTrips.filter((t) => t.isPast);
 
   const Section = ({ title, trips }) =>
-    trips.length > 0
-      ? <div className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium">
-            {title}
-          </p>
-          <div className="space-y-3">
-            {trips.map((t) => (
-              <TripCard
-                key={t.id}
-                trip={t}
-                isAdmin={isAdmin}
-                isEvent={isEventList}
-              />
-            ))}
-          </div>
+    trips.length > 0 ? (
+      <div className="space-y-3">
+        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium">
+          {title}
+        </p>
+        <div className="space-y-3">
+          {trips.map((t) => (
+            <TripCard
+              key={t.id}
+              trip={t}
+              isAdmin={isAdmin}
+              isEvent={isEventList}
+            />
+          ))}
         </div>
-      : null;
+      </div>
+    ) : null;
 
   return (
     <div className="space-y-8">

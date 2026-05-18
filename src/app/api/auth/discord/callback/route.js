@@ -22,8 +22,10 @@ export async function GET(req) {
   const [mode, ...rest] = state.split("|");
   const callbackUrl = rest.length > 0 ? rest.join("|") : null;
 
+  const origin = process.env.NEXT_PUBLIC_ORIGIN || req.url;
+
   if (!code) {
-    return NextResponse.redirect(new URL("/login?error=no_code", req.url));
+    return NextResponse.redirect(new URL("/login?error=no_code", origin));
   }
 
   try {
@@ -50,7 +52,7 @@ export async function GET(req) {
     if (mode === "link") {
       const session = await getSession();
       if (!session) {
-        return NextResponse.redirect(new URL("/login", req.url));
+        return NextResponse.redirect(new URL("/login", origin));
       }
 
       // Check if this Discord account is already linked to another user
@@ -59,7 +61,7 @@ export async function GET(req) {
         existingByDiscordId[0].id !== session.sub
       ) {
         return NextResponse.redirect(
-          new URL("/einstellungen?error=discord_already_linked", req.url),
+          new URL("/einstellungen?error=discord_already_linked", origin),
         );
       }
 
@@ -90,20 +92,20 @@ export async function GET(req) {
       }
 
       return NextResponse.redirect(
-        new URL("/einstellungen?success=discord_linked", req.url),
+        new URL("/einstellungen?success=discord_linked", origin),
       );
     }
 
     if (mode === "register") {
       if (!isMember) {
         return NextResponse.redirect(
-          new URL("/login?error=not_on_server", req.url),
+          new URL("/login?error=not_on_server", origin),
         );
       }
 
       if (existingByEmail.length > 0 || existingByDiscordId.length > 0) {
         return NextResponse.redirect(
-          new URL("/login?error=account_exists", req.url),
+          new URL("/login?error=account_exists", origin),
         );
       }
 
@@ -135,7 +137,12 @@ export async function GET(req) {
         discordHandle: discordUser.username,
       });
 
-      return await createSessionAndRedirect(userId, discordUser.email, 0, req);
+      return await createSessionAndRedirect(
+        userId,
+        discordUser.email,
+        0,
+        origin,
+      );
     }
 
     // Default: Login
@@ -143,7 +150,7 @@ export async function GET(req) {
 
     if (!user) {
       return NextResponse.redirect(
-        new URL("/login?error=user_not_found", req.url),
+        new URL("/login?error=user_not_found", origin),
       );
     }
 
@@ -181,12 +188,12 @@ export async function GET(req) {
       user.id,
       user.email,
       user.isAdmin,
-      req,
+      origin,
       callbackUrl,
     );
   } catch (error) {
     console.error("Discord callback error:", error);
-    return NextResponse.redirect(new URL("/login?error=auth_failed", req.url));
+    return NextResponse.redirect(new URL("/login?error=auth_failed", origin));
   }
 }
 
@@ -194,7 +201,7 @@ async function createSessionAndRedirect(
   userId,
   email,
   isAdmin,
-  req,
+  origin,
   callbackUrl,
 ) {
   const token = await createSessionToken({
@@ -214,6 +221,6 @@ async function createSessionAndRedirect(
 
   const validatedCallbackUrl = validateRelativeCallbackUrl(callbackUrl);
   return NextResponse.redirect(
-    new URL(validatedCallbackUrl || "/home", req.url),
+    new URL(validatedCallbackUrl || "/home", origin),
   );
 }

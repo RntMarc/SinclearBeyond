@@ -53,48 +53,48 @@ export default function EventForm({
         <span className="text-sm text-muted-foreground">{t("allDay")}</span>
       </button>
 
-      {form.allDay
-        ? <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground">{t("date")}</label>
+      {form.allDay ? (
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">{t("date")}</label>
+          <input
+            type="date"
+            value={form.startAt.slice(0, 10)}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, startAt: e.target.value }))
+            }
+            required
+            className="px-4 py-2.5 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+          />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-muted-foreground">
+              {t("start")}
+            </label>
             <input
-              type="date"
-              value={form.startAt.slice(0, 10)}
+              type="datetime-local"
+              value={form.startAt}
               onChange={(e) =>
                 setForm((f) => ({ ...f, startAt: e.target.value }))
               }
               required
-              className="px-4 py-2.5 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+              className="px-3 py-2 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
             />
           </div>
-        : <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">
-                {t("start")}
-              </label>
-              <input
-                type="datetime-local"
-                value={form.startAt}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, startAt: e.target.value }))
-                }
-                required
-                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">
-                {t("end")}
-              </label>
-              <input
-                type="datetime-local"
-                value={form.endAt}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, endAt: e.target.value }))
-                }
-                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-              />
-            </div>
-          </div>}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-muted-foreground">{t("end")}</label>
+            <input
+              type="datetime-local"
+              value={form.endAt}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, endAt: e.target.value }))
+              }
+              className="px-3 py-2 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+            />
+          </div>
+        </div>
+      )}
 
       <button
         type="button"

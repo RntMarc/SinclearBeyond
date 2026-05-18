@@ -159,15 +159,17 @@ export default function MusicDetailPageClient({
           <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
               <div className="aspect-square rounded-3xl overflow-hidden bg-muted shadow-xl border border-border">
-                {music.image
-                  ? <img
-                      src={music.image}
-                      alt={music.title}
-                      className="w-full h-full object-cover"
-                    />
-                  : <div className="w-full h-full flex items-center justify-center">
-                      <Music className="text-muted-foreground/20" size={64} />
-                    </div>}
+                {music.image ? (
+                  <img
+                    src={music.image}
+                    alt={music.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Music className="text-muted-foreground/20" size={64} />
+                  </div>
+                )}
               </div>
             </div>
             <div className="md:col-span-2 flex flex-col justify-center space-y-6">
@@ -310,18 +312,20 @@ export default function MusicDetailPageClient({
                 <div key={album.id} className="space-y-6">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted border border-border flex-shrink-0">
-                      {album.image
-                        ? <img
-                            src={album.image}
-                            alt={album.title}
-                            className="w-full h-full object-cover"
+                      {album.image ? (
+                        <img
+                          src={album.image}
+                          alt={album.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Music
+                            className="text-muted-foreground/20"
+                            size={24}
                           />
-                        : <div className="w-full h-full flex items-center justify-center">
-                            <Music
-                              className="text-muted-foreground/20"
-                              size={24}
-                            />
-                          </div>}
+                        </div>
+                      )}
                     </div>
                     <div>
                       <h2 className="text-2xl font-black">{album.title}</h2>

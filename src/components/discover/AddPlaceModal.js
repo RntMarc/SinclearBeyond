@@ -159,9 +159,11 @@ export default function AddPlaceModal({ onClose }) {
                     disabled={loading}
                     className="px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
                   >
-                    {loading
-                      ? <Loader2 size={18} className="animate-spin" />
-                      : <Search size={18} />}
+                    {loading ? (
+                      <Loader2 size={18} className="animate-spin" />
+                    ) : (
+                      <Search size={18} />
+                    )}
                     {t("searchButton")}
                   </button>
                 </form>
@@ -175,11 +177,13 @@ export default function AddPlaceModal({ onClose }) {
                       className="w-full p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all text-left flex items-start gap-4 group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                        {item.category === "gastronomy"
-                          ? <Utensils size={20} />
-                          : item.category === "leisure"
-                            ? <TreePine size={20} />
-                            : <MapPin size={20} />}
+                        {item.category === "gastronomy" ? (
+                          <Utensils size={20} />
+                        ) : item.category === "leisure" ? (
+                          <TreePine size={20} />
+                        ) : (
+                          <MapPin size={20} />
+                        )}
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-bold text-sm truncate">
@@ -269,9 +273,11 @@ export default function AddPlaceModal({ onClose }) {
                         {t("categoryLabel")}
                       </span>
                       <div className="p-3 rounded-xl border bg-primary/10 border-primary text-primary flex flex-col items-center gap-1">
-                        {selectedPlace.category === "gastronomy"
-                          ? <Utensils size={18} />
-                          : <TreePine size={18} />}
+                        {selectedPlace.category === "gastronomy" ? (
+                          <Utensils size={18} />
+                        ) : (
+                          <TreePine size={18} />
+                        )}
                         <span className="text-[10px] font-bold">
                           {t(`categories.${selectedPlace.category}`)}
                         </span>

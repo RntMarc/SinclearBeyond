@@ -100,18 +100,20 @@ export default function FeedbackClient({ user }) {
 
           <section>
             <h2 className="text-lg font-bold mb-6">{t("suggestions")}</h2>
-            {loading
-              ? <div className="flex justify-center py-12">
-                  <p className="text-muted-foreground">{commonT("loading")}</p>
-                </div>
-              : <SuggestionList
-                  suggestions={suggestions}
-                  user={user}
-                  onVote={handleVote}
-                  onDelete={handleDelete}
-                  onEdit={setEditingSuggestion}
-                  onStatusChange={handleStatusChange}
-                />}
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <p className="text-muted-foreground">{commonT("loading")}</p>
+              </div>
+            ) : (
+              <SuggestionList
+                suggestions={suggestions}
+                user={user}
+                onVote={handleVote}
+                onDelete={handleDelete}
+                onEdit={setEditingSuggestion}
+                onStatusChange={handleStatusChange}
+              />
+            )}
           </section>
         </div>
       </main>
