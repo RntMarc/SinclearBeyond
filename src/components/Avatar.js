@@ -50,11 +50,13 @@ export default function Avatar({
     <div
       className={`${widthHeight} rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium shrink-0 border border-primary/20 ${className}`}
     >
-      {FallbackIcon
-        ? <FallbackIcon size={iconSize} />
-        : initial
-          ? <span className={textSize}>{initial}</span>
-          : <User size={iconSize} />}
+      {FallbackIcon ? (
+        <FallbackIcon size={iconSize} />
+      ) : initial ? (
+        <span className={textSize}>{initial}</span>
+      ) : (
+        <User size={iconSize} />
+      )}
     </div>
   );
 }

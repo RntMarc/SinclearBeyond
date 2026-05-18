@@ -56,7 +56,11 @@ export default function MessageModal({ contact, onClose }) {
             <X size={18} />
           </button>
           <div className="flex items-center gap-3">
-            <Avatar src={contact.image} displayName={contact.displayName} size="sm" />
+            <Avatar
+              src={contact.image}
+              displayName={contact.displayName}
+              size="sm"
+            />
             <div>
               <h2 className="text-lg font-semibold leading-tight">
                 {t("messageTo")} {contact.displayName}
@@ -73,7 +77,9 @@ export default function MessageModal({ contact, onClose }) {
                 <Send size={24} />
               </div>
               <p className="text-foreground font-medium">{t("messageSent")}</p>
-              <p className="text-xs text-muted-foreground">{commonT("saved")}</p>
+              <p className="text-xs text-muted-foreground">
+                {commonT("saved")}
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSend} className="space-y-4">
@@ -120,11 +126,7 @@ export default function MessageModal({ contact, onClose }) {
                 >
                   {commonT("cancel")}
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isSending}
-                  className="flex-1"
-                >
+                <Button type="submit" disabled={isSending} className="flex-1">
                   {isSending ? commonT("loading") : t("sendButton")}
                 </Button>
               </div>

@@ -119,40 +119,40 @@ export default function PasskeyManager() {
       {error && <p className="text-destructive text-sm mb-4">{error}</p>}
 
       <div className="space-y-3 mb-6">
-        {loading
-          ? <p className="text-sm text-muted-foreground">
-              {tCommon("loading")}
-            </p>
-          : passkeys.length === 0
-            ? <p className="text-sm text-muted-foreground italic">
-                {t("noPasskeys")}
-              </p>
-            : passkeys.map((pk) => (
-                <div
-                  key={pk.id}
-                  className="flex items-center justify-between p-4 rounded-xl bg-card border border-border group"
-                >
-                  <div>
-                    <p className="font-medium text-foreground">{pk.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {t("passkeyCreated")}{" "}
-                      {new Date(pk.createdAt).toLocaleDateString(
-                        locale === "en" ? "en-GB" : "de-DE",
-                      )}
-                      {pk.lastUsedAt &&
-                        ` • ${t("passkeyLastUsed")}: ${new Date(pk.lastUsedAt).toLocaleDateString(locale === "en" ? "en-GB" : "de-DE")}`}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(pk.id)}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                    title="Löschen"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+        {loading ? (
+          <p className="text-sm text-muted-foreground">{tCommon("loading")}</p>
+        ) : passkeys.length === 0 ? (
+          <p className="text-sm text-muted-foreground italic">
+            {t("noPasskeys")}
+          </p>
+        ) : (
+          passkeys.map((pk) => (
+            <div
+              key={pk.id}
+              className="flex items-center justify-between p-4 rounded-xl bg-card border border-border group"
+            >
+              <div>
+                <p className="font-medium text-foreground">{pk.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("passkeyCreated")}{" "}
+                  {new Date(pk.createdAt).toLocaleDateString(
+                    locale === "en" ? "en-GB" : "de-DE",
+                  )}
+                  {pk.lastUsedAt &&
+                    ` • ${t("passkeyLastUsed")}: ${new Date(pk.lastUsedAt).toLocaleDateString(locale === "en" ? "en-GB" : "de-DE")}`}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDelete(pk.id)}
+                className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                title="Löschen"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        )}
       </div>
 
       <button

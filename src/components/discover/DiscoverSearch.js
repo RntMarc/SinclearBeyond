@@ -190,34 +190,36 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
               {showLocationResults &&
                 (locationResults.length > 0 || loadingLocation) && (
                   <div className="absolute z-[120] left-0 right-0 mt-2 bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
-                    {loadingLocation
-                      ? <div className="p-4 flex items-center justify-center">
-                          <Loader2
-                            size={20}
-                            className="animate-spin text-primary"
-                          />
-                        </div>
-                      : <div className="max-h-[200px] overflow-y-auto">
-                          {locationResults.map((loc) => (
-                            <button
-                              key={`${loc.lat}-${loc.lon}`}
-                              onClick={() => {
-                                setSelectedLocation(loc);
-                                setLocationQuery(loc.display_name);
-                                setShowLocationResults(false);
-                              }}
-                              className="w-full px-4 py-3 text-left text-sm hover:bg-accent flex items-start gap-3 border-b border-border last:border-0"
-                            >
-                              <MapPin
-                                size={14}
-                                className="mt-1 shrink-0 text-muted-foreground"
-                              />
-                              <span className="line-clamp-2">
-                                {loc.display_name}
-                              </span>
-                            </button>
-                          ))}
-                        </div>}
+                    {loadingLocation ? (
+                      <div className="p-4 flex items-center justify-center">
+                        <Loader2
+                          size={20}
+                          className="animate-spin text-primary"
+                        />
+                      </div>
+                    ) : (
+                      <div className="max-h-[200px] overflow-y-auto">
+                        {locationResults.map((loc) => (
+                          <button
+                            key={`${loc.lat}-${loc.lon}`}
+                            onClick={() => {
+                              setSelectedLocation(loc);
+                              setLocationQuery(loc.display_name);
+                              setShowLocationResults(false);
+                            }}
+                            className="w-full px-4 py-3 text-left text-sm hover:bg-accent flex items-start gap-3 border-b border-border last:border-0"
+                          >
+                            <MapPin
+                              size={14}
+                              className="mt-1 shrink-0 text-muted-foreground"
+                            />
+                            <span className="line-clamp-2">
+                              {loc.display_name}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
             </div>

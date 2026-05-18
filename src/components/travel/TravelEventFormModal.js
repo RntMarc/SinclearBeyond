@@ -270,47 +270,46 @@ export default function TravelEventFormModal({
               Teilnehmer
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-sidebar border border-sidebar-border rounded-xl p-3 max-h-40 overflow-y-auto">
-              {loadingUsers
-                ? <div className="col-span-full text-xs text-muted-foreground animate-pulse">
-                    Lade Nutzer...
-                  </div>
-                : availableUsers.length > 0
-                  ? availableUsers.map((user) => (
-                      <label
-                        key={user.id}
-                        className="flex items-center gap-2 text-xs cursor-pointer hover:bg-white/5 p-1 rounded"
-                      >
-                        <input
-                          type="checkbox"
-                          className="rounded border-sidebar-border bg-background text-primary focus:ring-primary"
-                          checked={form.participantIds.includes(user.id)}
-                          onChange={(e) => {
-                            const newIds = e.target.checked
-                              ? [...form.participantIds, user.id]
-                              : form.participantIds.filter(
-                                  (id) => id !== user.id,
-                                );
-                            setForm({ ...form, participantIds: newIds });
-                          }}
+              {loadingUsers ? (
+                <div className="col-span-full text-xs text-muted-foreground animate-pulse">
+                  Lade Nutzer...
+                </div>
+              ) : availableUsers.length > 0 ? (
+                availableUsers.map((user) => (
+                  <label
+                    key={user.id}
+                    className="flex items-center gap-2 text-xs cursor-pointer hover:bg-white/5 p-1 rounded"
+                  >
+                    <input
+                      type="checkbox"
+                      className="rounded border-sidebar-border bg-background text-primary focus:ring-primary"
+                      checked={form.participantIds.includes(user.id)}
+                      onChange={(e) => {
+                        const newIds = e.target.checked
+                          ? [...form.participantIds, user.id]
+                          : form.participantIds.filter((id) => id !== user.id);
+                        setForm({ ...form, participantIds: newIds });
+                      }}
+                    />
+                    <div className="flex items-center gap-2 truncate">
+                      {user.image ? (
+                        <img
+                          src={user.image}
+                          alt=""
+                          className="w-4 h-4 rounded-full object-cover"
                         />
-                        <div className="flex items-center gap-2 truncate">
-                          {user.image
-                            ? <img
-                                src={user.image}
-                                alt=""
-                                className="w-4 h-4 rounded-full object-cover"
-                              />
-                            : <User
-                                size={12}
-                                className="text-muted-foreground"
-                              />}
-                          <span className="truncate">{user.displayName}</span>
-                        </div>
-                      </label>
-                    ))
-                  : <div className="col-span-full text-xs text-muted-foreground italic">
-                      Keine Nutzer gefunden.
-                    </div>}
+                      ) : (
+                        <User size={12} className="text-muted-foreground" />
+                      )}
+                      <span className="truncate">{user.displayName}</span>
+                    </div>
+                  </label>
+                ))
+              ) : (
+                <div className="col-span-full text-xs text-muted-foreground italic">
+                  Keine Nutzer gefunden.
+                </div>
+              )}
             </div>
           </div>
 

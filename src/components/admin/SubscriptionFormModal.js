@@ -333,31 +333,33 @@ export default function SubscriptionFormModal({
                   </div>
 
                   <div className="grid grid-cols-1 gap-3">
-                    {member.isUser === 1
-                      ? <select
-                          required
-                          value={member.userId}
-                          onChange={(e) =>
-                            updateMember(idx, "userId", e.target.value)
-                          }
-                          className="w-full bg-background border border-border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        >
-                          <option value="">{t("selectUser")}</option>
-                          {allUsers.map((u) => (
-                            <option key={u.id} value={u.id}>
-                              {u.displayName} ({u.email})
-                            </option>
-                          ))}
-                        </select>
-                      : <input
-                          required
-                          value={member.userName}
-                          onChange={(e) =>
-                            updateMember(idx, "userName", e.target.value)
-                          }
-                          placeholder={t("userName")}
-                          className="w-full bg-background border border-border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        />}
+                    {member.isUser === 1 ? (
+                      <select
+                        required
+                        value={member.userId}
+                        onChange={(e) =>
+                          updateMember(idx, "userId", e.target.value)
+                        }
+                        className="w-full bg-background border border-border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      >
+                        <option value="">{t("selectUser")}</option>
+                        {allUsers.map((u) => (
+                          <option key={u.id} value={u.id}>
+                            {u.displayName} ({u.email})
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        required
+                        value={member.userName}
+                        onChange={(e) =>
+                          updateMember(idx, "userName", e.target.value)
+                        }
+                        placeholder={t("userName")}
+                        className="w-full bg-background border border-border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                    )}
                   </div>
                 </div>
               ))}
@@ -371,17 +373,19 @@ export default function SubscriptionFormModal({
         </form>
 
         <div className="px-6 py-6 border-t border-border bg-muted/20 flex flex-wrap items-center justify-between gap-4 shrink-0">
-          {subscription
-            ? <button
-                type="button"
-                disabled={loading}
-                onClick={handleDelete}
-                className="flex items-center gap-2 px-5 py-2.5 text-destructive font-medium hover:bg-destructive/10 rounded-xl transition-colors disabled:opacity-50"
-              >
-                <Trash2 size={18} />
-                {t("deleteSubscription")}
-              </button>
-            : <div />}
+          {subscription ? (
+            <button
+              type="button"
+              disabled={loading}
+              onClick={handleDelete}
+              className="flex items-center gap-2 px-5 py-2.5 text-destructive font-medium hover:bg-destructive/10 rounded-xl transition-colors disabled:opacity-50"
+            >
+              <Trash2 size={18} />
+              {t("deleteSubscription")}
+            </button>
+          ) : (
+            <div />
+          )}
 
           <div className="flex gap-3">
             <button
@@ -396,9 +400,11 @@ export default function SubscriptionFormModal({
               disabled={loading}
               className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 disabled:opacity-50"
             >
-              {loading
-                ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                : <Check size={18} />}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Check size={18} />
+              )}
               {tc("save")}
             </button>
           </div>

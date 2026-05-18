@@ -77,40 +77,44 @@ export default function LinkSelectionModal({ isOpen, onClose, links, type }) {
         </div>
 
         <div className="grid grid-cols-1 gap-3">
-          {filteredLinks.length > 0
-            ? filteredLinks.map((link, i) => {
-                const info = getProviderInfo(link.url, link.type);
-                return (
-                  <a
-                    key={i}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 rounded-2xl transition-all group"
-                  >
-                    <div className="flex items-center gap-4">
-                      {info.icon
-                        ? <BrandIcon
-                            name={info.icon}
-                            size={24}
-                            className="text-muted-foreground group-hover:text-foreground transition-colors"
-                          />
-                        : <ExternalLink
-                            size={24}
-                            className="text-muted-foreground group-hover:text-foreground transition-colors"
-                          />}
-                      <span className="font-bold">{info.name}</span>
-                    </div>
-                    <ExternalLink
-                      size={16}
-                      className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                  </a>
-                );
-              })
-            : <p className="text-center py-10 text-muted-foreground text-sm">
-                {t("noLinksFound")}
-              </p>}
+          {filteredLinks.length > 0 ? (
+            filteredLinks.map((link, i) => {
+              const info = getProviderInfo(link.url, link.type);
+              return (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 rounded-2xl transition-all group"
+                >
+                  <div className="flex items-center gap-4">
+                    {info.icon ? (
+                      <BrandIcon
+                        name={info.icon}
+                        size={24}
+                        className="text-muted-foreground group-hover:text-foreground transition-colors"
+                      />
+                    ) : (
+                      <ExternalLink
+                        size={24}
+                        className="text-muted-foreground group-hover:text-foreground transition-colors"
+                      />
+                    )}
+                    <span className="font-bold">{info.name}</span>
+                  </div>
+                  <ExternalLink
+                    size={16}
+                    className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
+                </a>
+              );
+            })
+          ) : (
+            <p className="text-center py-10 text-muted-foreground text-sm">
+              {t("noLinksFound")}
+            </p>
+          )}
         </div>
 
         <Button

@@ -155,44 +155,44 @@ export default function AdminPage({ user, session }) {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {loading
-                    ? <div className="animate-pulse space-y-3 col-span-full">
-                        {[1, 2, 3].map((i) => (
-                          <div key={i} className="h-20 bg-muted rounded-xl" />
-                        ))}
+                  {loading ? (
+                    <div className="animate-pulse space-y-3 col-span-full">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                      ))}
+                    </div>
+                  ) : subscriptions.length > 0 ? (
+                    subscriptions.map((sub) => (
+                      <div
+                        key={sub.id}
+                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                      >
+                        <div>
+                          <h3 className="font-medium text-sm">{sub.name}</h3>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(
+                              sub.billingPeriodStart,
+                            ).toLocaleDateString("de-DE")}{" "}
+                            –{" "}
+                            {new Date(sub.billingPeriodEnd).toLocaleDateString(
+                              "de-DE",
+                            )}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingSubscription(sub)}
+                          className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Wrench size={18} />
+                        </button>
                       </div>
-                    : subscriptions.length > 0
-                      ? subscriptions.map((sub) => (
-                          <div
-                            key={sub.id}
-                            className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
-                          >
-                            <div>
-                              <h3 className="font-medium text-sm">
-                                {sub.name}
-                              </h3>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(
-                                  sub.billingPeriodStart,
-                                ).toLocaleDateString("de-DE")}{" "}
-                                –{" "}
-                                {new Date(
-                                  sub.billingPeriodEnd,
-                                ).toLocaleDateString("de-DE")}
-                              </p>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => setEditingSubscription(sub)}
-                              className="p-2 text-muted-foreground hover:text-primary transition-colors"
-                            >
-                              <Wrench size={18} />
-                            </button>
-                          </div>
-                        ))
-                      : <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
-                          Keine Abonnements vorhanden.
-                        </div>}
+                    ))
+                  ) : (
+                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                      Keine Abonnements vorhanden.
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -212,44 +212,39 @@ export default function AdminPage({ user, session }) {
                   </div>
 
                   <div className="space-y-3">
-                    {loading
-                      ? <div className="animate-pulse space-y-3">
-                          {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-20 bg-muted rounded-xl" />
-                          ))}
+                    {loading ? (
+                      <div className="animate-pulse space-y-3">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-20 bg-muted rounded-xl" />
+                        ))}
+                      </div>
+                    ) : trips.length > 0 ? (
+                      trips.map((trip) => (
+                        <div
+                          key={trip.id}
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        >
+                          <div>
+                            <h3 className="font-medium text-sm">{trip.name}</h3>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(trip.start).toLocaleDateString("de-DE")}{" "}
+                              – {new Date(trip.end).toLocaleDateString("de-DE")}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEditingTrip(trip)}
+                            className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Wrench size={18} />
+                          </button>
                         </div>
-                      : trips.length > 0
-                        ? trips.map((trip) => (
-                            <div
-                              key={trip.id}
-                              className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
-                            >
-                              <div>
-                                <h3 className="font-medium text-sm">
-                                  {trip.name}
-                                </h3>
-                                <p className="text-xs text-muted-foreground">
-                                  {new Date(trip.start).toLocaleDateString(
-                                    "de-DE",
-                                  )}{" "}
-                                  –{" "}
-                                  {new Date(trip.end).toLocaleDateString(
-                                    "de-DE",
-                                  )}
-                                </p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setEditingTrip(trip)}
-                                className="p-2 text-muted-foreground hover:text-primary transition-colors"
-                              >
-                                <Wrench size={18} />
-                              </button>
-                            </div>
-                          ))
-                        : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
-                            Keine Reisen vorhanden.
-                          </div>}
+                      ))
+                    ) : (
+                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                        Keine Reisen vorhanden.
+                      </div>
+                    )}
                   </div>
 
                   {/* Eigenständige Events */}
@@ -264,44 +259,44 @@ export default function AdminPage({ user, session }) {
                   </div>
 
                   <div className="space-y-3">
-                    {loading
-                      ? <div className="animate-pulse space-y-3">
-                          {[1, 2].map((i) => (
-                            <div key={i} className="h-20 bg-muted rounded-xl" />
-                          ))}
+                    {loading ? (
+                      <div className="animate-pulse space-y-3">
+                        {[1, 2].map((i) => (
+                          <div key={i} className="h-20 bg-muted rounded-xl" />
+                        ))}
+                      </div>
+                    ) : standaloneEvents.length > 0 ? (
+                      standaloneEvents.map((event) => (
+                        <div
+                          key={event.id}
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        >
+                          <div>
+                            <h3 className="font-medium text-sm">
+                              {event.name}
+                            </h3>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(event.start).toLocaleDateString(
+                                "de-DE",
+                              )}{" "}
+                              –{" "}
+                              {new Date(event.end).toLocaleDateString("de-DE")}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEditingEvent(event)}
+                            className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Wrench size={18} />
+                          </button>
                         </div>
-                      : standaloneEvents.length > 0
-                        ? standaloneEvents.map((event) => (
-                            <div
-                              key={event.id}
-                              className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
-                            >
-                              <div>
-                                <h3 className="font-medium text-sm">
-                                  {event.name}
-                                </h3>
-                                <p className="text-xs text-muted-foreground">
-                                  {new Date(event.start).toLocaleDateString(
-                                    "de-DE",
-                                  )}{" "}
-                                  –{" "}
-                                  {new Date(event.end).toLocaleDateString(
-                                    "de-DE",
-                                  )}
-                                </p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setEditingEvent(event)}
-                                className="p-2 text-muted-foreground hover:text-primary transition-colors"
-                              >
-                                <Wrench size={18} />
-                              </button>
-                            </div>
-                          ))
-                        : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
-                            Keine eigenständigen Events vorhanden.
-                          </div>}
+                      ))
+                    ) : (
+                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                        Keine eigenständigen Events vorhanden.
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -318,38 +313,40 @@ export default function AdminPage({ user, session }) {
                   </div>
 
                   <div className="space-y-3">
-                    {loading
-                      ? <div className="animate-pulse space-y-3">
-                          {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-20 bg-muted rounded-xl" />
-                          ))}
+                    {loading ? (
+                      <div className="animate-pulse space-y-3">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-20 bg-muted rounded-xl" />
+                        ))}
+                      </div>
+                    ) : accommodations.length > 0 ? (
+                      accommodations.map((acc) => (
+                        <div
+                          key={acc.id}
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        >
+                          <div className="min-w-0">
+                            <h3 className="font-medium text-sm truncate">
+                              {acc.name}
+                            </h3>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {acc.address || "Keine Adresse"}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEditingAccommodation(acc)}
+                            className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Wrench size={18} />
+                          </button>
                         </div>
-                      : accommodations.length > 0
-                        ? accommodations.map((acc) => (
-                            <div
-                              key={acc.id}
-                              className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
-                            >
-                              <div className="min-w-0">
-                                <h3 className="font-medium text-sm truncate">
-                                  {acc.name}
-                                </h3>
-                                <p className="text-xs text-muted-foreground truncate">
-                                  {acc.address || "Keine Adresse"}
-                                </p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setEditingAccommodation(acc)}
-                                className="p-2 text-muted-foreground hover:text-primary transition-colors"
-                              >
-                                <Wrench size={18} />
-                              </button>
-                            </div>
-                          ))
-                        : <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
-                            Keine Unterkünfte vorhanden.
-                          </div>}
+                      ))
+                    ) : (
+                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                        Keine Unterkünfte vorhanden.
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

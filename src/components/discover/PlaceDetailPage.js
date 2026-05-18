@@ -219,9 +219,11 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
           className="p-2 hover:bg-muted rounded-full transition-colors relative"
           title={t("share")}
         >
-          {copied
-            ? <Check size={20} className="text-green-500" />
-            : <Share2 size={20} />}
+          {copied ? (
+            <Check size={20} className="text-green-500" />
+          ) : (
+            <Share2 size={20} />
+          )}
           {copied && (
             <span className="absolute -bottom-8 right-0 bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-lg border border-border whitespace-nowrap animate-in fade-in zoom-in duration-200">
               {t("linkCopied")}
@@ -432,25 +434,27 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                               <Info size={14} />
                             </button>
                           </div>
-                          {place.formattedOpeningHours
-                            ? <div className="space-y-2">
-                                {place.formattedOpeningHours.map((day) => (
-                                  <div
-                                    key={day.name}
-                                    className={`flex justify-between items-center text-sm ${day.isToday ? "font-bold text-primary bg-primary/5 -mx-2 px-2 py-1 rounded-lg" : "text-muted-foreground/80"}`}
-                                  >
-                                    <span className="w-24 shrink-0">
-                                      {day.name}
-                                    </span>
-                                    <span className="text-right">
-                                      {day.times}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            : <p className="text-sm whitespace-pre-line font-mono bg-background/50 p-2 rounded border border-border/50">
-                                {place.openingHours}
-                              </p>}
+                          {place.formattedOpeningHours ? (
+                            <div className="space-y-2">
+                              {place.formattedOpeningHours.map((day) => (
+                                <div
+                                  key={day.name}
+                                  className={`flex justify-between items-center text-sm ${day.isToday ? "font-bold text-primary bg-primary/5 -mx-2 px-2 py-1 rounded-lg" : "text-muted-foreground/80"}`}
+                                >
+                                  <span className="w-24 shrink-0">
+                                    {day.name}
+                                  </span>
+                                  <span className="text-right">
+                                    {day.times}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm whitespace-pre-line font-mono bg-background/50 p-2 rounded border border-border/50">
+                              {place.openingHours}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -487,68 +491,70 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
 
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    {place.reviews.length > 0
-                      ? place.reviews.map((review) => (
-                          <div
-                            key={review.id}
-                            className="p-4 bg-card border border-border rounded-2xl space-y-3 shadow-sm"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <Avatar
-                                  src={review.userImage}
-                                  displayName={review.userDisplayName}
-                                  size="sm"
-                                  fallbackIcon={UserIcon}
-                                />
-                                <div className="min-w-0">
-                                  <p className="text-xs font-bold truncate">
-                                    {review.userDisplayName}
-                                  </p>
-                                  <p className="text-[10px] text-muted-foreground">
-                                    {new Date(
-                                      review.createdAt,
-                                    ).toLocaleDateString()}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-1 text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full">
-                                <Star size={12} fill="currentColor" />
-                                <span className="text-xs font-bold">
-                                  {review.rating}
-                                </span>
+                    {place.reviews.length > 0 ? (
+                      place.reviews.map((review) => (
+                        <div
+                          key={review.id}
+                          className="p-4 bg-card border border-border rounded-2xl space-y-3 shadow-sm"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Avatar
+                                src={review.userImage}
+                                displayName={review.userDisplayName}
+                                size="sm"
+                                fallbackIcon={UserIcon}
+                              />
+                              <div className="min-w-0">
+                                <p className="text-xs font-bold truncate">
+                                  {review.userDisplayName}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {new Date(
+                                    review.createdAt,
+                                  ).toLocaleDateString()}
+                                </p>
                               </div>
                             </div>
-
-                            {review.comment && (
-                              <p className="text-sm text-muted-foreground leading-relaxed italic">
-                                "{review.comment}"
-                              </p>
-                            )}
-
-                            {(review.userId === userId || isAdmin) && (
-                              <div className="pt-2 flex justify-end gap-3">
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditReview(review)}
-                                  className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors hover:underline"
-                                >
-                                  {t("edit")}
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => deleteReview(review.id)}
-                                  className="text-[10px] uppercase font-bold text-destructive hover:underline"
-                                >
-                                  {t("delete")}
-                                </button>
-                              </div>
-                            )}
+                            <div className="flex items-center gap-1 text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full">
+                              <Star size={12} fill="currentColor" />
+                              <span className="text-xs font-bold">
+                                {review.rating}
+                              </span>
+                            </div>
                           </div>
-                        ))
-                      : <div className="p-10 border-2 border-dashed border-border rounded-3xl text-center text-muted-foreground text-sm">
-                          {t("noReviews")}
-                        </div>}
+
+                          {review.comment && (
+                            <p className="text-sm text-muted-foreground leading-relaxed italic">
+                              "{review.comment}"
+                            </p>
+                          )}
+
+                          {(review.userId === userId || isAdmin) && (
+                            <div className="pt-2 flex justify-end gap-3">
+                              <button
+                                type="button"
+                                onClick={() => handleEditReview(review)}
+                                className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors hover:underline"
+                              >
+                                {t("edit")}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteReview(review.id)}
+                                className="text-[10px] uppercase font-bold text-destructive hover:underline"
+                              >
+                                {t("delete")}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-10 border-2 border-dashed border-border rounded-3xl text-center text-muted-foreground text-sm">
+                        {t("noReviews")}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
