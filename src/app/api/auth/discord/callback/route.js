@@ -12,17 +12,17 @@ import {
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { contactInfo, users } from "@/lib/db/schema";
-import { validateRelativeCallbackUrl } from "@/lib/utils";
+import { normalizeOrigin, validateRelativeCallbackUrl } from "@/lib/utils";
 
 export async function GET(req) {
+  const origin = normalizeOrigin(process.env.NEXT_PUBLIC_ORIGIN, req.url);
+
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
   const state = searchParams.get("state") || ""; // 'login', 'register', or 'link' (potentially with |callbackUrl)
 
   const [mode, ...rest] = state.split("|");
   const callbackUrl = rest.length > 0 ? rest.join("|") : null;
-
-  const origin = process.env.NEXT_PUBLIC_ORIGIN || req.url;
 
   if (!code) {
     return NextResponse.redirect(new URL("/login?error=no_code", origin));
@@ -193,6 +193,17 @@ export async function GET(req) {
     );
   } catch (error) {
     console.error("Discord callback error:", error);
+
+    // Specific error handling for timeouts or fetch failures
+    if (
+      error.code === "UND_ERR_CONNECT_TIMEOUT" ||
+      error.message?.includes("fetch failed")
+    ) {
+      return NextResponse.redirect(
+        new URL("/login?error=service_unavailable", origin),
+      );
+    }
+
     return NextResponse.redirect(new URL("/login?error=auth_failed", origin));
   }
 }

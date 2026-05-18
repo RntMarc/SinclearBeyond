@@ -31,6 +31,7 @@ export default function LoginPage() {
           user_not_found: t("errors.discord.userNotFound"),
           auth_failed: t("errors.discord.authFailed"),
           no_code: t("errors.discord.noCode"),
+          service_unavailable: t("errors.discord.serviceUnavailable"),
         }[error] ?? t("errors.discord.generic");
       setError(msg);
       // Clean up URL
