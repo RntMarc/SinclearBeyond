@@ -1,8 +1,16 @@
-export default {
+import { defineConfig } from "drizzle-kit";
+import "dotenv/config";
+
+
+export default defineConfig({
   schema: "./src/lib/db/schema.js",
   out: "./drizzle",
   dialect: "mysql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    port: Number(process.env.DB_PORT),
   },
-};
+});

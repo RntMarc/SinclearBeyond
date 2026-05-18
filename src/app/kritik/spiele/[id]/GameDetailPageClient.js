@@ -132,7 +132,6 @@ export default function GameDetailPageClient({
         title={game.title}
         subtitle={t("games")}
         backHref="/kritik/spiele"
-        icon={Star}
       >
         <button
           type="button"
