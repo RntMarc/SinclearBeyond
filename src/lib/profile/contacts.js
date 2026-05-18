@@ -2,6 +2,12 @@ import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { closeFriends, contactInfo, socialInfo, users } from "@/lib/db/schema";
+import {
+  CONTACT_FIELDS,
+  SOCIAL_FIELDS,
+  filterEmail,
+  filterVisibility,
+} from "@/lib/profile/visibility";
 
 export async function getContacts() {
   const session = await getSession();
@@ -54,58 +60,12 @@ export async function getContacts() {
       const isCloseFriend = myCloseFriendIds.has(user.id);
       const allowsMePrivateInfo = visibilityCloseFriendIds.has(user.id);
 
-      const filteredInfo = {};
-      if (info) {
-        const fields = [
-          { key: "discordHandle", vis: "discordVisibility" },
-          { key: "fluxerHandle", vis: "fluxerVisibility" },
-          { key: "matrixHandle", vis: "matrixVisibility" },
-          { key: "signalNumber", vis: "signalVisibility" },
-          { key: "whatsappNumber", vis: "whatsappVisibility" },
-        ];
-
-        fields.forEach(({ key, vis }) => {
-          const visibility = info[vis];
-          if (visibility === 1 || (visibility === 2 && allowsMePrivateInfo)) {
-            filteredInfo[key] = info[key];
-          } else {
-            filteredInfo[key] = null;
-          }
-        });
-      }
-
-      const isEmailVisible =
-        user.emailVisibility === 1 ||
-        (user.emailVisibility === 2 && allowsMePrivateInfo);
-
-      const filteredSocial = {};
-      if (social) {
-        const socialFields = [
-          { key: "unsplashHandle", vis: "unsplashVisibility" },
-          { key: "instagramHandle", vis: "instagramVisibility" },
-          { key: "mastodonHandle", vis: "mastodonVisibility" },
-          { key: "pixelfedHandle", vis: "pixelfedVisibility" },
-          { key: "blueskyHandle", vis: "blueskyVisibility" },
-          { key: "youtubeHandle", vis: "youtubeVisibility" },
-          { key: "twitchHandle", vis: "twitchVisibility" },
-        ];
-
-        socialFields.forEach(({ key, vis }) => {
-          const visibility = social[vis];
-          if (visibility === 1 || (visibility === 2 && allowsMePrivateInfo)) {
-            filteredSocial[key] = social[key];
-          } else {
-            filteredSocial[key] = null;
-          }
-        });
-      }
-
       return {
         ...user,
-        email: isEmailVisible ? user.email : null,
+        email: filterEmail(user, allowsMePrivateInfo),
         isCloseFriend,
-        contactInfo: filteredInfo,
-        socialInfo: filteredSocial,
+        contactInfo: filterVisibility(info, CONTACT_FIELDS, allowsMePrivateInfo),
+        socialInfo: filterVisibility(social, SOCIAL_FIELDS, allowsMePrivateInfo),
       };
     })
     .filter(Boolean);

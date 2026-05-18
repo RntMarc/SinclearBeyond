@@ -16,6 +16,7 @@
     "search": "Search...",
     "loading": "Loading...",
     "noEntries": "No entries found.",
+    "emailHidden": "Email hidden",
     "unauthorized": "Unauthorized",
     "forbidden": "Forbidden",
     "notFound": "Not found",
@@ -244,6 +245,14 @@
     "email": "Email",
     "noInfo": "No further information shared.",
     "socialTitle": "Social Media",
+    "sendMessage": "Send message",
+    "messageTo": "Message to",
+    "messageSubject": "Subject",
+    "messageSubjectPlaceholder": "What is it about?",
+    "messageBody": "Message",
+    "messageBodyPlaceholder": "Write your message here...",
+    "sendButton": "Send message",
+    "messageSent": "Message sent!",
     "close": "Close"
   },
   "Photos": {

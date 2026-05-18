@@ -11,8 +11,8 @@ import {
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
-import Avatar from "@/components/Avatar";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
+import ContactList from "@/components/contacts/ContactList";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AccommodationDetailModal from "./AccommodationDetailModal";
 
@@ -302,24 +302,11 @@ export default function TripDashboard({ trip }) {
 
       {/* Participants Box */}
       <SectionBox title={t("participants")} icon={Users}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {trip.participants.map((p) => (
-            <div
-              key={p.id}
-              className="flex items-center gap-3 p-3 bg-background border border-sidebar-border rounded-xl"
-            >
-              <Avatar src={p.image} displayName={p.displayName} size="sm" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">
-                  {p.displayName}
-                </p>
-                <p className="text-[10px] text-muted-foreground truncate">
-                  {p.email}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ContactList
+          initialContacts={trip.participants}
+          variant="grid"
+          showCloseFriendIcon={false}
+        />
       </SectionBox>
 
       {/* Map Box - Desktop */}
