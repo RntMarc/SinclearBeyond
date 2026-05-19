@@ -35,11 +35,26 @@ export async function GET() {
   if (permEventIds.length > 0)
     conditions.push(inArray(events.id, permEventIds));
 
-  const standardEvents = await db
+  const rows = await db
     .select()
     .from(events)
     .where(or(...conditions))
     .orderBy(events.startAt);
+
+  const editPermRows = await db
+    .select({ eventId: eventPermissions.eventId })
+    .from(eventPermissions)
+    .where(
+      and(eq(eventPermissions.userId, userId), eq(eventPermissions.canEdit, 1)),
+    );
+
+  const editEventIds = new Set(editPermRows.map((r) => r.eventId));
+
+  const standardEvents = rows.map((ev) => ({
+    ...ev,
+    canEdit:
+      session.isAdmin || ev.creatorId === userId || editEventIds.has(ev.id),
+  }));
 
   // 2. Trips
   const userRelations = await db

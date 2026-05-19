@@ -27,13 +27,8 @@ export default function DeleteConfirmModal({ onConfirm, onCancel }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      <div
-        className={`absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-200 ${
-          isClosing ? "opacity-0" : "opacity-100"
-        }`}
-        onClick={handleClose}
-      />
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="absolute inset-0" onClick={handleClose} />
 
       <div
         className={`relative w-full max-w-sm bg-card border border-border rounded-3xl shadow-2xl overflow-hidden transition-all duration-200 ${
