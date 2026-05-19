@@ -341,6 +341,7 @@
         "title": "Title",
         "spotifyLink": "Spotify Link",
         "ytMusicLink": "YouTube Music Link",
+        "youtubeLink": "YouTube Link",
         "soundcloudLink": "SoundCloud Link",
         "videoLink": "Video Link",
         "platform": "Platform",
@@ -356,6 +357,7 @@
         "video": "Video link and platform are required.",
         "news": "Title, news site and link are required.",
         "other": "Title and link are required.",
+        "invalidUrl": "Invalid URL format for this field.",
         "generic": "An error occurred.",
         "connection": "Connection error."
       }
