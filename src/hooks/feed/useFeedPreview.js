@@ -6,7 +6,11 @@ export function useFeedPreview(post) {
   // Compute target URL based on post category
   let targetUrl = "";
   if (post.category === "music") {
-    targetUrl = post.spotifyUrl || post.youtubeMusicUrl || post.soundcloudUrl;
+    targetUrl =
+      post.spotifyUrl ||
+      post.youtubeMusicUrl ||
+      post.youtubeUrl ||
+      post.soundcloudUrl;
   } else if (post.category === "video") {
     targetUrl = post.videoUrl;
   } else if (post.category === "news") {

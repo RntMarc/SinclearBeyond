@@ -108,6 +108,72 @@ export async function POST(req) {
   if (!category)
     return NextResponse.json({ error: t("missingFields") }, { status: 400 });
 
+  // Server-side validation
+  const tFeed = await getTranslations("Feed.form");
+  if (category === "music") {
+    if (!details.artist || !details.title) {
+      return NextResponse.json(
+        { error: tFeed("errors.music") },
+        { status: 400 },
+      );
+    }
+    if (
+      !details.spotifyUrl &&
+      !details.youtubeMusicUrl &&
+      !details.youtubeUrl &&
+      !details.soundcloudUrl
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.musicLink") },
+        { status: 400 },
+      );
+    }
+
+    // URL Validations
+    if (
+      details.spotifyUrl &&
+      !details.spotifyUrl.match(
+        /^(https?:\/\/)?(open\.spotify\.com\/|spotify:)(track|album|playlist|artist).+$/,
+      )
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+    if (
+      details.youtubeMusicUrl &&
+      !details.youtubeMusicUrl.match(
+        /^(https?:\/\/)?(music\.youtube\.com\/)(watch\?v=|playlist\?list=).+$/,
+      )
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+    if (
+      details.youtubeUrl &&
+      !details.youtubeUrl.match(
+        /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+$/,
+      )
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+    if (
+      details.soundcloudUrl &&
+      !details.soundcloudUrl.match(/^(https?:\/\/)?(soundcloud\.com\/).+$/)
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+  }
+
   const id = crypto.randomUUID();
   const now = new Date();
 
@@ -123,6 +189,7 @@ export async function POST(req) {
     title: details.title?.trim() || null,
     spotifyUrl: details.spotifyUrl?.trim() || null,
     youtubeMusicUrl: details.youtubeMusicUrl?.trim() || null,
+    youtubeUrl: details.youtubeUrl?.trim() || null,
     soundcloudUrl: details.soundcloudUrl?.trim() || null,
     videoUrl: details.videoUrl?.trim() || null,
     videoPlatform: details.videoPlatform?.trim() || null,

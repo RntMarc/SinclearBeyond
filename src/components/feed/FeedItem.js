@@ -196,6 +196,16 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
                       YouTube Music
                     </a>
                   )}
+                  {post.youtubeUrl && (
+                    <a
+                      href={post.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
+                    >
+                      YouTube
+                    </a>
+                  )}
                   {post.soundcloudUrl && (
                     <a
                       href={post.soundcloudUrl}
