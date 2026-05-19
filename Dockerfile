@@ -26,6 +26,9 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
+# Berechtigungen für den 'node' User setzen
+RUN chown -R node:node /app/.next
+
 # Sicherheit: Nicht als Root ausführen
 USER node
 

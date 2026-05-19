@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { fetchWithTimeout } from "@/lib/utils";
 
 export async function getDiscordAuthUrl(mode = "login", callbackUrl = null) {
   const state = callbackUrl ? `${mode}|${callbackUrl}` : mode;
@@ -12,23 +13,6 @@ export async function getDiscordAuthUrl(mode = "login", callbackUrl = null) {
   });
 
   return `https://discord.com/api/oauth2/authorize?${params.toString()}`;
-}
-
-async function fetchWithTimeout(url, options = {}, timeout = 15000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    clearTimeout(id);
-    throw error;
-  }
 }
 
 export async function exchangeDiscordCode(code) {

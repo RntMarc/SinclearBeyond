@@ -4,20 +4,20 @@ import {
   Calendar,
   Disc,
   Music,
-  Plus,
   Play,
-  ShoppingCart,
-  Share2,
-  Star,
+  Plus,
   RefreshCcw,
+  Share2,
+  ShoppingCart,
+  Star,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import SubPageHeader from "@/components/layout/SubPageHeader";
+import LinkSelectionModal from "@/components/reviews/LinkSelectionModal";
 import ReviewList from "@/components/reviews/ReviewList";
 import ReviewModal from "@/components/reviews/ReviewModal";
-import LinkSelectionModal from "@/components/reviews/LinkSelectionModal";
 import Button from "@/components/ui/Button";
 
 export default function MusicDetailPageClient({
