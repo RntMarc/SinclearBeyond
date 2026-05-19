@@ -1,0 +1,1 @@
+ALTER TABLE `FeedPosts` ADD `youtubeUrl` text;
