@@ -30,13 +30,8 @@ export default function DiscoverSearchModal({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-start justify-center p-4 md:p-10 pt-20">
-      <div
-        className={`absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-200 ${
-          isClosing ? "opacity-0" : "opacity-100"
-        }`}
-        onClick={handleClose}
-      />
+    <div className="fixed inset-0 z-[150] flex items-start justify-center p-4 md:p-10 pt-20 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="absolute inset-0" onClick={handleClose} />
 
       <div
         className={`relative w-full max-w-3xl transition-all duration-200 ${

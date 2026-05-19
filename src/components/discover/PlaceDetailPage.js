@@ -584,7 +584,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
       )}
 
       {showOSMInfo && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-card border border-border rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3 text-primary">
               <div className="p-2 bg-primary/10 rounded-xl">

@@ -87,7 +87,7 @@ export default function AppShell({ children, user, session }) {
       {open && showMobileElements && (
         <button
           type="button"
-          className="fixed inset-0 z-40 bg-black/50 w-full h-full cursor-default"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 w-full h-full cursor-default"
           onClick={() => setOpen(false)}
           aria-label={t("closeMenu")}
         />

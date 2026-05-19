@@ -55,7 +55,7 @@ export default function LinkSelectionModal({ isOpen, onClose, links, type }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-end md:items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[110] flex items-end md:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-card border border-border rounded-t-3xl md:rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-6 animate-in slide-in-from-bottom-full md:zoom-in-95 duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
