@@ -69,8 +69,12 @@ export async function GET(_req, { params }) {
       },
       reviews,
       needsUpdate,
-      openingStatus: getOpeningStatus(place.openingHours),
-      formattedOpeningHours: formatOpeningHours(place.openingHours),
+      openingStatus: getOpeningStatus(place.openingHours, session?.timezone),
+      formattedOpeningHours: formatOpeningHours(
+        place.openingHours,
+        "de",
+        session?.timezone,
+      ),
     });
   } catch (error) {
     console.error("[API/Discover/Places/[id]] GET Error:", error);

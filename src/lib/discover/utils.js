@@ -256,7 +256,17 @@ export function translateCuisine(cuisine) {
     .join(", ");
 }
 
-export function formatOpeningHours(ohString, locale = "de") {
+const getLocalDate = (date, timezone) => {
+  if (!timezone) return date;
+  try {
+    return new Date(date.toLocaleString("en-US", { timeZone: timezone }));
+  } catch (e) {
+    console.error("Error converting to timezone:", timezone, e);
+    return date;
+  }
+};
+
+export function formatOpeningHours(ohString, locale = "de", timezone = null) {
   if (!ohString) return null;
 
   try {
@@ -290,7 +300,7 @@ export function formatOpeningHours(ohString, locale = "de") {
     // Let's iterate through the next 7 days starting from last Monday or something?
     // Easier: get intervals for each day of the current week.
 
-    const now_for_today = new Date();
+    const now_for_today = getLocalDate(new Date(), timezone);
     const dayOfWeek = now_for_today.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
     const monday = new Date(now_for_today);
     monday.setDate(
@@ -346,13 +356,14 @@ export function formatOpeningHours(ohString, locale = "de") {
   }
 }
 
-export function getOpeningStatus(ohString) {
+export function getOpeningStatus(ohString, timezone = null) {
   if (!ohString) return null;
 
   try {
     const opening_hours = require("opening_hours");
     const oh = new opening_hours(ohString, null, { mode: 2 });
-    const now = new Date();
+
+    const now = getLocalDate(new Date(), timezone);
     const isOpen = oh.getState(now);
     const nextChange = oh.getNextChange(now);
 

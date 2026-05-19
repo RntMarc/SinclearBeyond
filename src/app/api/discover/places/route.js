@@ -90,7 +90,7 @@ export async function GET(req) {
     const places = await query;
     const placesWithStatus = places.map((p) => ({
       ...p,
-      openingStatus: getOpeningStatus(p.openingHours),
+      openingStatus: getOpeningStatus(p.openingHours, session?.timezone),
     }));
 
     return NextResponse.json(placesWithStatus);
