@@ -101,10 +101,10 @@ export function normalizeOrigin(origin, fallback) {
  * Enhanced fetch with a timeout using AbortController.
  * @param {string} url The URL to fetch.
  * @param {object} options Fetch options.
- * @param {number} timeout Timeout in milliseconds (default 15000).
+ * @param {number} timeout Timeout in milliseconds (default 20000).
  * @returns {Promise<Response>} The fetch response.
  */
-export async function fetchWithTimeout(url, options = {}, timeout = 15000) {
+export async function fetchWithTimeout(url, options = {}, timeout = 20000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
 

@@ -26,11 +26,15 @@ export async function exchangeDiscordCode(code) {
 
   const startTime = Date.now();
   try {
-    const res = await fetchWithTimeout("https://discord.com/api/oauth2/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params.toString(),
-    });
+    const res = await fetchWithTimeout(
+      "https://discord.com/api/oauth2/token",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params.toString(),
+      },
+      20000,
+    );
 
     const duration = Date.now() - startTime;
     console.log(`Discord token exchange took ${duration}ms`);
@@ -54,9 +58,13 @@ export async function exchangeDiscordCode(code) {
 export async function getDiscordUser(accessToken) {
   const startTime = Date.now();
   try {
-    const res = await fetchWithTimeout("https://discord.com/api/users/@me", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const res = await fetchWithTimeout(
+      "https://discord.com/api/users/@me",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+      20000,
+    );
 
     const duration = Date.now() - startTime;
     console.log(`Discord getDiscordUser took ${duration}ms`);
@@ -84,6 +92,7 @@ export async function getDiscordUserGuilds(accessToken) {
       {
         headers: { Authorization: `Bearer ${accessToken}` },
       },
+      20000,
     );
 
     const duration = Date.now() - startTime;
@@ -111,7 +120,7 @@ export async function processDiscordAvatar(userId, avatarHash) {
 
   const url = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png?size=512`;
   const startTime = Date.now();
-  const res = await fetchWithTimeout(url, {}, 10000);
+  const res = await fetchWithTimeout(url, {}, 20000);
   const duration = Date.now() - startTime;
   console.log(`Discord processDiscordAvatar fetch took ${duration}ms`);
 

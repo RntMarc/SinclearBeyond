@@ -85,7 +85,7 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
             },
             next: { revalidate: 3600 }, // Cache for 1 hour
           },
-          10000,
+          20000,
         );
 
         if (!res.ok) return [];
