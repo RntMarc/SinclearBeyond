@@ -1,11 +1,12 @@
 import { Camera } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
-import PhotoGrid from "@/components/photos/PhotoGrid";
+import { PhotosSkeleton } from "@/components/layout/Skeletons";
+import PhotosContent from "@/components/photos/PhotosContent";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { getUnsplashPhotos } from "@/lib/photos/unsplash";
 import { getProfileData } from "@/lib/profile/profile";
 
 export default async function FotosPage() {
@@ -14,7 +15,6 @@ export default async function FotosPage() {
   if (!session) redirect("/login");
   const profile = await getProfileData(session);
   if (!profile) redirect("/login");
-  const initialPhotos = await getUnsplashPhotos({ page: 1, perPage: 10 });
 
   return (
     <AppShell user={profile.user} session={session}>
@@ -23,7 +23,9 @@ export default async function FotosPage() {
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">
-            <PhotoGrid initialPhotos={initialPhotos} />
+            <Suspense fallback={<PhotosSkeleton />}>
+              <PhotosContent />
+            </Suspense>
           </div>
         </div>
       </div>
