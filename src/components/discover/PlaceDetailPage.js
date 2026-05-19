@@ -30,6 +30,11 @@ import SimpleOSM from "@/components/discover/SimpleOSM";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 import Button from "@/components/ui/Button";
 
+const CATEGORY_SLUGS = {
+  gastronomy: "gastronomie",
+  leisure: "freizeit",
+};
+
 export default function PlaceDetailPage({ id, userId, isAdmin }) {
   const t = useTranslations("Discover");
   const tc = useTranslations("Common");
@@ -201,7 +206,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   return (
     <div className="flex flex-col h-full bg-background overflow-hidden">
       <SubPageHeader
-        backHref={`/entdecken/${place.category === "gastronomy" ? "gastronomie" : place.category}`}
+        backHref={`/entdecken/${CATEGORY_SLUGS[place.category] || place.category}`}
         subtitle={t(`categories.${place.category}`)}
         title={place.name}
         icon={place.category === "gastronomy" ? Utensils : TreePine}
