@@ -339,6 +339,7 @@
         "title": "Titel",
         "spotifyLink": "Spotify Link",
         "ytMusicLink": "YouTube Music Link",
+        "youtubeLink": "YouTube Link",
         "soundcloudLink": "SoundCloud Link",
         "videoLink": "Video Link",
         "platform": "Pladdform",
@@ -354,6 +355,7 @@
         "video": "Video-Link und Pladdform musch ageba.",
         "news": "Titel, Nõchrichtaseita und Link musch ageba.",
         "other": "Titel und Link musch ageba.",
+        "invalidUrl": "Des Format vom Link basst net für des Feld.",
         "generic": "A Fähler isch bassiert.",
         "connection": "Verbindongsfähler. Komm net ins Netz."
       }

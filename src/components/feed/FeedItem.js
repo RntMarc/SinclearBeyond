@@ -14,9 +14,11 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
+import { useFeedPreview } from "@/hooks/feed/useFeedPreview";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
+  const { image: previewImage, loading: previewLoading } = useFeedPreview(post);
   const t = useTranslations("Feed");
   const locale = useLocale();
   const [showOptions, setShowOptions] = useState(false);
@@ -146,6 +148,23 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
 
         {/* Content Section */}
         <div className="space-y-4">
+          {previewLoading ? (
+            <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted animate-pulse border border-border" />
+          ) : (
+            previewImage && (
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted border border-border">
+                <img
+                  src={previewImage}
+                  alt={
+                    post.title || post.newsTitle || post.otherTitle || "Preview"
+                  }
+                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+            )
+          )}
+
           {/* Main Info */}
           <div className="bg-sidebar-accent/30 rounded-xl p-4 border border-sidebar-border">
             {post.category === "music" && (
@@ -175,6 +194,16 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
                       className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
                     >
                       YouTube Music
+                    </a>
+                  )}
+                  {post.youtubeUrl && (
+                    <a
+                      href={post.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
+                    >
+                      YouTube
                     </a>
                   )}
                   {post.soundcloudUrl && (

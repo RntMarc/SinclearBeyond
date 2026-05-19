@@ -12,6 +12,7 @@ import {
   discoverPlaces,
   discoverReviews,
   eventPermissions,
+  eventRelations,
   events,
   feedPosts,
   mediaItems,
@@ -20,7 +21,6 @@ import {
   travelEvents,
   travelRelations,
   travelTrips,
-  eventRelations,
   users,
 } from "@/lib/db/schema";
 import { getUnsplashPhotos } from "@/lib/photos/unsplash";

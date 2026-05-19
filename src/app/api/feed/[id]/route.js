@@ -27,6 +27,89 @@ export async function PATCH(req, { params }) {
   if (existing.userId !== session.sub)
     return NextResponse.json({ error: t("forbidden") }, { status: 403 });
 
+  // Server-side validation
+  const currentCategory = category || existing.category;
+  if (currentCategory === "music") {
+    const tFeed = await getTranslations("Feed.form");
+    const artist =
+      details.artist !== undefined ? details.artist?.trim() : existing.artist;
+    const title =
+      details.title !== undefined ? details.title?.trim() : existing.title;
+    const spotifyUrl =
+      details.spotifyUrl !== undefined
+        ? details.spotifyUrl?.trim()
+        : existing.spotifyUrl;
+    const youtubeMusicUrl =
+      details.youtubeMusicUrl !== undefined
+        ? details.youtubeMusicUrl?.trim()
+        : existing.youtubeMusicUrl;
+    const youtubeUrl =
+      details.youtubeUrl !== undefined
+        ? details.youtubeUrl?.trim()
+        : existing.youtubeUrl;
+    const soundcloudUrl =
+      details.soundcloudUrl !== undefined
+        ? details.soundcloudUrl?.trim()
+        : existing.soundcloudUrl;
+
+    if (!artist || !title) {
+      return NextResponse.json(
+        { error: tFeed("errors.music") },
+        { status: 400 },
+      );
+    }
+    if (!spotifyUrl && !youtubeMusicUrl && !youtubeUrl && !soundcloudUrl) {
+      return NextResponse.json(
+        { error: tFeed("errors.musicLink") },
+        { status: 400 },
+      );
+    }
+
+    // URL Validations
+    if (
+      spotifyUrl &&
+      !spotifyUrl.match(
+        /^(https?:\/\/)?(open\.spotify\.com\/|spotify:)(track|album|playlist|artist).+$/,
+      )
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+    if (
+      youtubeMusicUrl &&
+      !youtubeMusicUrl.match(
+        /^(https?:\/\/)?(music\.youtube\.com\/)(watch\?v=|playlist\?list=).+$/,
+      )
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+    if (
+      youtubeUrl &&
+      !youtubeUrl.match(
+        /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+$/,
+      )
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+    if (
+      soundcloudUrl &&
+      !soundcloudUrl.match(/^(https?:\/\/)?(soundcloud\.com\/).+$/)
+    ) {
+      return NextResponse.json(
+        { error: tFeed("errors.invalidUrl") },
+        { status: 400 },
+      );
+    }
+  }
+
   const now = new Date();
 
   await db
@@ -53,6 +136,10 @@ export async function PATCH(req, { params }) {
         details.youtubeMusicUrl !== undefined
           ? details.youtubeMusicUrl?.trim() || null
           : existing.youtubeMusicUrl,
+      youtubeUrl:
+        details.youtubeUrl !== undefined
+          ? details.youtubeUrl?.trim() || null
+          : existing.youtubeUrl,
       soundcloudUrl:
         details.soundcloudUrl !== undefined
           ? details.soundcloudUrl?.trim() || null

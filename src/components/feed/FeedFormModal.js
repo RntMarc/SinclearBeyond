@@ -29,6 +29,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
     title: post?.title || "",
     spotifyUrl: post?.spotifyUrl || "",
     youtubeMusicUrl: post?.youtubeMusicUrl || "",
+    youtubeUrl: post?.youtubeUrl || "",
     soundcloudUrl: post?.soundcloudUrl || "",
     // Video
     videoUrl: post?.videoUrl || "",
@@ -70,8 +71,49 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
         setError(t("errors.music"));
         return;
       }
-      if (!form.spotifyUrl && !form.youtubeMusicUrl && !form.soundcloudUrl) {
+      if (
+        !form.spotifyUrl &&
+        !form.youtubeMusicUrl &&
+        !form.youtubeUrl &&
+        !form.soundcloudUrl
+      ) {
         setError(t("errors.musicLink"));
+        return;
+      }
+
+      // URL Validations
+      if (
+        form.spotifyUrl &&
+        !form.spotifyUrl.match(
+          /^(https?:\/\/)?(open\.spotify\.com\/|spotify:)(track|album|playlist|artist).+$/,
+        )
+      ) {
+        setError(t("errors.invalidUrl"));
+        return;
+      }
+      if (
+        form.youtubeMusicUrl &&
+        !form.youtubeMusicUrl.match(
+          /^(https?:\/\/)?(music\.youtube\.com\/)(watch\?v=|playlist\?list=).+$/,
+        )
+      ) {
+        setError(t("errors.invalidUrl"));
+        return;
+      }
+      if (
+        form.youtubeUrl &&
+        !form.youtubeUrl.match(
+          /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+$/,
+        )
+      ) {
+        setError(t("errors.invalidUrl"));
+        return;
+      }
+      if (
+        form.soundcloudUrl &&
+        !form.soundcloudUrl.match(/^(https?:\/\/)?(soundcloud\.com\/).+$/)
+      ) {
+        setError(t("errors.invalidUrl"));
         return;
       }
     } else if (category === "video") {
@@ -217,6 +259,13 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
                     value={form.youtubeMusicUrl}
                     onChange={handleChange}
                     placeholder={t("placeholders.ytMusic")}
+                  />
+                  <FormField
+                    label={t("fields.youtubeLink")}
+                    name="youtubeUrl"
+                    value={form.youtubeUrl}
+                    onChange={handleChange}
+                    placeholder={t("placeholders.video")}
                   />
                   <FormField
                     label={t("fields.soundcloudLink")}

@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingCart, Play, ExternalLink, X } from "lucide-react";
+import { ExternalLink, Play, ShoppingCart, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import BrandIcon from "@/components/BrandIcon";
 import Button from "@/components/ui/Button";

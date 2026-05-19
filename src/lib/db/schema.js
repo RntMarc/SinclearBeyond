@@ -228,6 +228,7 @@ export const feedPosts = mysqlTable("FeedPosts", {
   title: varchar("title", { length: 255 }),
   spotifyUrl: text("spotifyUrl"),
   youtubeMusicUrl: text("youtubeMusicUrl"),
+  youtubeUrl: text("youtubeUrl"),
   soundcloudUrl: text("soundcloudUrl"),
 
   // Video specific

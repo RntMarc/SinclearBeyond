@@ -3,6 +3,7 @@ import { and, eq, inArray, or } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
 import { closeFriends, socialInfo, users } from "@/lib/db/schema";
+import { fetchWithTimeout } from "@/lib/utils";
 
 const UNSPLASH_API_KEY = process.env.UNSPLASH_API_KEY;
 
@@ -76,7 +77,7 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
   const allPhotos = await Promise.all(
     handles.map(async ({ handle, displayName }) => {
       try {
-        const res = await fetch(
+        const res = await fetchWithTimeout(
           `https://api.unsplash.com/users/${handle}/photos?page=${page}&per_page=${perPage}&order_by=latest`,
           {
             headers: {
@@ -84,6 +85,7 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
             },
             next: { revalidate: 3600 }, // Cache for 1 hour
           },
+          10000,
         );
 
         if (!res.ok) return [];

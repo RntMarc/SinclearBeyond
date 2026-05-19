@@ -3,6 +3,8 @@ import apicalypse from "apicalypse";
 let accessToken = null;
 let tokenExpires = 0;
 
+import { fetchWithTimeout } from "@/lib/utils";
+
 async function getAccessToken() {
   if (accessToken && Date.now() < tokenExpires) {
     return accessToken;
@@ -17,9 +19,10 @@ async function getAccessToken() {
   }
 
   try {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`,
       { method: "POST" },
+      10000,
     );
 
     if (!response.ok) {

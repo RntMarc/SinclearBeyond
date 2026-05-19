@@ -1,3 +1,5 @@
+import { fetchWithTimeout } from "@/lib/utils";
+
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -8,12 +10,18 @@ export async function searchMovies(query) {
   }
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=de-DE`,
       { next: { revalidate: 86400 } },
+      10000,
     );
 
     if (!res.ok) {
+      if (res.status === 401) {
+        console.error(
+          "TMDB API Error: Unauthorized. Please check your TMDB_API_KEY.",
+        );
+      }
       throw new Error(`TMDB API Error: ${res.statusText}`);
     }
 
@@ -44,10 +52,19 @@ export async function getMovieDetails(tmdbId) {
   if (!TMDB_API_KEY) return null;
   try {
     const id = tmdbId.replace("tmdb-", "");
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=de-DE`,
+      {},
+      10000,
     );
-    if (!res.ok) throw new Error("Failed to fetch movie details");
+    if (!res.ok) {
+      if (res.status === 401) {
+        console.error(
+          "TMDB API Error: Unauthorized. Please check your TMDB_API_KEY.",
+        );
+      }
+      throw new Error("Failed to fetch movie details");
+    }
     const item = await res.json();
     return {
       title: item.title,
@@ -68,10 +85,19 @@ export async function getSeriesDetails(tmdbId) {
   if (!TMDB_API_KEY) return null;
   try {
     const id = tmdbId.replace("tmdb-", "");
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&language=de-DE`,
+      {},
+      10000,
     );
-    if (!res.ok) throw new Error("Failed to fetch series details");
+    if (!res.ok) {
+      if (res.status === 401) {
+        console.error(
+          "TMDB API Error: Unauthorized. Please check your TMDB_API_KEY.",
+        );
+      }
+      throw new Error("Failed to fetch series details");
+    }
     const item = await res.json();
     return {
       title: item.name,
@@ -93,18 +119,29 @@ export async function getSeriesEpisodes(tmdbId) {
 
   try {
     const seriesId = tmdbId.replace("tmdb-", "");
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/tv/${seriesId}?api_key=${TMDB_API_KEY}&language=de-DE`,
+      {},
+      10000,
     );
-    if (!res.ok) throw new Error("Failed to fetch series details");
+    if (!res.ok) {
+      if (res.status === 401) {
+        console.error(
+          "TMDB API Error: Unauthorized. Please check your TMDB_API_KEY.",
+        );
+      }
+      throw new Error("Failed to fetch series details");
+    }
     const seriesData = await res.json();
 
     const allEpisodes = [];
     const seasonPromises = seriesData.seasons
       .filter((s) => s.season_number > 0)
       .map((season) =>
-        fetch(
+        fetchWithTimeout(
           `${TMDB_BASE_URL}/tv/${seriesId}/season/${season.season_number}?api_key=${TMDB_API_KEY}&language=de-DE`,
+          {},
+          10000,
         ).then((res) => (res.ok ? res.json() : null)),
       );
 

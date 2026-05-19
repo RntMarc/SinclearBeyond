@@ -28,26 +28,30 @@ export async function GET(req) {
     return NextResponse.redirect(new URL("/login?error=no_code", origin));
   }
 
+  const startTime = Date.now();
   try {
     const tokens = await exchangeDiscordCode(code);
-    const discordUser = await getDiscordUser(tokens.access_token);
-    const guilds = await getDiscordUserGuilds(tokens.access_token);
+    const [discordUser, guilds] = await Promise.all([
+      getDiscordUser(tokens.access_token),
+      getDiscordUserGuilds(tokens.access_token),
+    ]);
 
     const isMember = guilds.some(
       (g) => g.id === process.env.DISCORD_ALLOWED_GUILD_ID,
     );
 
-    const existingByDiscordId = await db
-      .select()
-      .from(users)
-      .where(eq(users.discordId, discordUser.id))
-      .limit(1);
-
-    const existingByEmail = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, discordUser.email))
-      .limit(1);
+    const [existingByDiscordId, existingByEmail] = await Promise.all([
+      db
+        .select()
+        .from(users)
+        .where(eq(users.discordId, discordUser.id))
+        .limit(1),
+      db
+        .select()
+        .from(users)
+        .where(eq(users.email, discordUser.email))
+        .limit(1),
+    ]);
 
     if (mode === "link") {
       const session = await getSession();
@@ -192,7 +196,8 @@ export async function GET(req) {
       callbackUrl,
     );
   } catch (error) {
-    console.error("Discord callback error:", error);
+    const duration = Date.now() - startTime;
+    console.error(`Discord callback error after ${duration}ms:`, error);
 
     // Specific error handling for timeouts or fetch failures
     if (
