@@ -1,10 +1,12 @@
+import { fetchWithTimeout } from "@/lib/utils";
+
 const MUSICBRAINZ_BASE_URL = "https://musicbrainz.org/ws/2";
 
 export async function searchMusic(query) {
   try {
     // Search for both release groups (albums) and recordings (songs)
     const [rgRes, recRes] = await Promise.all([
-      fetch(
+      fetchWithTimeout(
         `${MUSICBRAINZ_BASE_URL}/release-group?query=${encodeURIComponent(query)}&fmt=json`,
         {
           headers: {
@@ -12,8 +14,9 @@ export async function searchMusic(query) {
           },
           next: { revalidate: 86400 },
         },
+        10000,
       ),
-      fetch(
+      fetchWithTimeout(
         `${MUSICBRAINZ_BASE_URL}/recording?query=${encodeURIComponent(query)}&fmt=json`,
         {
           headers: {
@@ -21,6 +24,7 @@ export async function searchMusic(query) {
           },
           next: { revalidate: 86400 },
         },
+        10000,
       ),
     ]);
 
@@ -46,7 +50,7 @@ export async function searchMusic(query) {
       image: rec.releases?.[0]?.id
         ? `https://coverartarchive.org/release/${rec.releases[0].id}/front-500`
         : null,
-      releaseDate: rec.releases?.[0]?.["date"],
+      releaseDate: rec.releases?.[0]?.date,
       type: "music",
       format: "song",
     }));
@@ -62,11 +66,12 @@ export async function getMusicDetails(mbId, format) {
   try {
     const id = mbId.replace("mb-rg-", "").replace("mb-rec-", "");
     const entity = format === "album" ? "release-group" : "recording";
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${MUSICBRAINZ_BASE_URL}/${entity}/${id}?inc=url-rels+artist-credits${format === "song" ? "+releases" : ""}&fmt=json`,
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
+      10000,
     );
     if (!res.ok) throw new Error(`Failed to fetch ${entity} details`);
     const data = await res.json();
@@ -103,11 +108,12 @@ export async function getAlbumTracks(mbReleaseGroupId) {
   try {
     const rgId = mbReleaseGroupId.replace("mb-rg-", "");
     // First get releases for this release group
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${MUSICBRAINZ_BASE_URL}/release-group/${rgId}?inc=releases&fmt=json`,
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
+      10000,
     );
     if (!res.ok) throw new Error("Failed to fetch release group");
     const data = await res.json();
@@ -116,11 +122,12 @@ export async function getAlbumTracks(mbReleaseGroupId) {
     const releaseId = data.releases?.[0]?.id;
     if (!releaseId) return [];
 
-    const relRes = await fetch(
+    const relRes = await fetchWithTimeout(
       `${MUSICBRAINZ_BASE_URL}/release/${releaseId}?inc=recordings+artist-credits&fmt=json`,
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
+      10000,
     );
     if (!relRes.ok) throw new Error("Failed to fetch release");
     const relData = await relRes.json();
@@ -147,11 +154,12 @@ export async function getAlbumTracks(mbReleaseGroupId) {
 export async function getSongAlbums(mbRecordingId) {
   try {
     const recId = mbRecordingId.replace("mb-rec-", "");
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${MUSICBRAINZ_BASE_URL}/recording/${recId}?inc=releases+release-groups&fmt=json`,
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
+      10000,
     );
     if (!res.ok) throw new Error("Failed to fetch recording");
     const data = await res.json();

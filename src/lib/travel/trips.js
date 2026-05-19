@@ -14,9 +14,9 @@ import {
 } from "@/lib/db/schema";
 import {
   CONTACT_FIELDS,
-  SOCIAL_FIELDS,
   filterEmail,
   filterVisibility,
+  SOCIAL_FIELDS,
 } from "@/lib/profile/visibility";
 
 export async function getTrips(standalone = false) {
