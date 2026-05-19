@@ -13,7 +13,7 @@ export async function searchMovies(query) {
     const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=de-DE`,
       { next: { revalidate: 86400 } },
-      10000,
+      20000,
     );
 
     if (!res.ok) {
@@ -55,7 +55,7 @@ export async function getMovieDetails(tmdbId) {
     const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=de-DE`,
       {},
-      10000,
+      20000,
     );
     if (!res.ok) {
       if (res.status === 401) {
@@ -88,7 +88,7 @@ export async function getSeriesDetails(tmdbId) {
     const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&language=de-DE`,
       {},
-      10000,
+      20000,
     );
     if (!res.ok) {
       if (res.status === 401) {
@@ -122,7 +122,7 @@ export async function getSeriesEpisodes(tmdbId) {
     const res = await fetchWithTimeout(
       `${TMDB_BASE_URL}/tv/${seriesId}?api_key=${TMDB_API_KEY}&language=de-DE`,
       {},
-      10000,
+      20000,
     );
     if (!res.ok) {
       if (res.status === 401) {
@@ -141,7 +141,7 @@ export async function getSeriesEpisodes(tmdbId) {
         fetchWithTimeout(
           `${TMDB_BASE_URL}/tv/${seriesId}/season/${season.season_number}?api_key=${TMDB_API_KEY}&language=de-DE`,
           {},
-          10000,
+          20000,
         ).then((res) => (res.ok ? res.json() : null)),
       );
 

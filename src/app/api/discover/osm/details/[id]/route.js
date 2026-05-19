@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { formatAddress } from "@/lib/discover/utils";
+import { fetchWithTimeout } from "@/lib/utils";
 
 export async function GET(req, { params }) {
   const session = await getSession();
@@ -12,7 +13,7 @@ export async function GET(req, { params }) {
   const type = searchParams.get("type") || "N"; // N=Node, W=Way, R=Relation
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `https://nominatim.openstreetmap.org/lookup?osm_ids=${type}${id}&format=json&addressdetails=1&extratags=1`,
       {
         headers: {

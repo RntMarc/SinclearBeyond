@@ -14,7 +14,7 @@ export async function searchMusic(query) {
           },
           next: { revalidate: 86400 },
         },
-        10000,
+        20000,
       ),
       fetchWithTimeout(
         `${MUSICBRAINZ_BASE_URL}/recording?query=${encodeURIComponent(query)}&fmt=json`,
@@ -24,7 +24,7 @@ export async function searchMusic(query) {
           },
           next: { revalidate: 86400 },
         },
-        10000,
+        20000,
       ),
     ]);
 
@@ -71,7 +71,7 @@ export async function getMusicDetails(mbId, format) {
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
-      10000,
+      20000,
     );
     if (!res.ok) throw new Error(`Failed to fetch ${entity} details`);
     const data = await res.json();
@@ -113,7 +113,7 @@ export async function getAlbumTracks(mbReleaseGroupId) {
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
-      10000,
+      20000,
     );
     if (!res.ok) throw new Error("Failed to fetch release group");
     const data = await res.json();
@@ -127,7 +127,7 @@ export async function getAlbumTracks(mbReleaseGroupId) {
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
-      10000,
+      20000,
     );
     if (!relRes.ok) throw new Error("Failed to fetch release");
     const relData = await relRes.json();
@@ -159,7 +159,7 @@ export async function getSongAlbums(mbRecordingId) {
       {
         headers: { "User-Agent": "SinclearBeyond/0.1.0 ( admin@sinclear.de )" },
       },
-      10000,
+      20000,
     );
     if (!res.ok) throw new Error("Failed to fetch recording");
     const data = await res.json();
