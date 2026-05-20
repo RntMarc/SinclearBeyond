@@ -9,20 +9,6 @@
     "lint": "biome check",
     "format": "biome format --write"
   },
-  "pnpm": {
-    "overrides": {
-      "esbuild": "0.28.0",
-      "postcss": "8.5.14",
-      "@esbuild-kit/core-utils>esbuild": "0.28.0"
-    },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@swc/core",
-      "esbuild",
-      "msw",
-      "sharp"
-    ]
-  },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.8",
     "@simplewebauthn/browser": "^13.3.0",
