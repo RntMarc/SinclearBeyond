@@ -400,3 +400,37 @@ export const albumTracks = mysqlTable("AlbumTrack", {
   songId: varchar("songId", { length: 191 }).notNull(),
   trackNumber: tinyint("trackNumber"),
 });
+
+// ── Terminfinder (Polls) ─────────────────────────────────────────────────────
+
+export const polls = mysqlTable("Poll", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  creatorId: varchar("creatorId", { length: 191 }).notNull(),
+  finalizedOptionId: varchar("finalizedOptionId", { length: 191 }),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const pollOptions = mysqlTable("PollOption", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  pollId: varchar("pollId", { length: 191 }).notNull(),
+  startAt: datetime("startAt", { fsp: 3 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const pollInvites = mysqlTable("PollInvite", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  pollId: varchar("pollId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  isIndispensable: tinyint("isIndispensable").notNull().default(0),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const pollVotes = mysqlTable("PollVote", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  optionId: varchar("optionId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  availability: mysqlEnum("availability", ["yes", "maybe", "no"]).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});

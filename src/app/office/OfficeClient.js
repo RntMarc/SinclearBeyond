@@ -18,17 +18,26 @@ export default function OfficeClient({ user, session }) {
     initialized.current = true;
 
     const initOffice = async () => {
+      console.log("[Office] Initializing ZetaOffice...");
+      console.log("[Office] crossOriginIsolated:", window.crossOriginIsolated);
+      console.log(
+        "[Office] SharedArrayBuffer available:",
+        typeof SharedArrayBuffer !== "undefined",
+      );
+
       try {
         const helper = new ZetaHelperMain("/office-worker.js", {
           wasmPkg: "free",
         });
         helperRef.current = helper;
+        console.log("[Office] ZetaHelperMain instance created");
+
         helper.start(() => {
           setLoading(false);
-          console.log("ZetaOffice started");
+          console.log("[Office] ZetaOffice started successfully");
         });
       } catch (err) {
-        console.error("Failed to start ZetaOffice:", err);
+        console.error("[Office] Failed to start ZetaOffice:", err);
       }
     };
 
