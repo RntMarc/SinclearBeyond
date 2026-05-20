@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, inArray, lte, or } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm";
 import HomeClient from "@/components/home/HomeClient";
 import { db } from "@/lib/db/db";
 import {
@@ -11,7 +11,9 @@ import {
   feedPosts,
   mediaItems,
   mediaReviews,
-  subscriptionRelations,
+  pollInvites,
+  pollOptions,
+  polls,
   travelEvents,
   travelRelations,
   travelTrips,
@@ -238,6 +240,65 @@ export default async function HomeContent({ userId, isAdmin }) {
     })),
   ].sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
 
+  // 8. Fetch Polls
+  const invitedPollIdsRows = await db
+    .select({ pollId: pollInvites.pollId })
+    .from(pollInvites)
+    .where(eq(pollInvites.userId, userId));
+  const invitedPollIds = invitedPollIdsRows.map((r) => r.pollId);
+
+  const activePolls = await db
+    .select({
+      id: polls.id,
+      title: polls.title,
+      creatorId: polls.creatorId,
+      finalizedOptionId: polls.finalizedOptionId,
+      creatorName: users.displayName,
+    })
+    .from(polls)
+    .leftJoin(users, eq(polls.creatorId, users.id))
+    .where(
+      and(
+        or(
+          eq(polls.creatorId, userId),
+          invitedPollIds.length > 0
+            ? inArray(polls.id, invitedPollIds)
+            : sql`1=0`,
+        ),
+        sql`${polls.finalizedOptionId} IS NULL`,
+      ),
+    );
+
+  const finalizedPollsRows = await db
+    .select({
+      poll: {
+        id: polls.id,
+        title: polls.title,
+        finalizedOptionId: polls.finalizedOptionId,
+      },
+      option: pollOptions,
+    })
+    .from(polls)
+    .innerJoin(pollOptions, eq(polls.finalizedOptionId, pollOptions.id))
+    .where(
+      and(
+        or(
+          eq(polls.creatorId, userId),
+          invitedPollIds.length > 0
+            ? inArray(polls.id, invitedPollIds)
+            : sql`1=0`,
+        ),
+        sql`${polls.finalizedOptionId} IS NOT NULL`,
+        gte(polls.updatedAt, sevenDaysAgo),
+        gte(pollOptions.startAt, now),
+      ),
+    );
+
+  const finalizedPolls = finalizedPollsRows.map((row) => ({
+    ...row.poll,
+    options: [row.option],
+  }));
+
   return (
     <HomeClient
       upcomingEvents={combinedEvents}
@@ -247,6 +308,8 @@ export default async function HomeContent({ userId, isAdmin }) {
       latestPhotos={latestPhotos}
       latestMediaReviews={latestMediaReviewsRows}
       latestDiscoverReviews={latestDiscoverReviewsRows}
+      activePolls={activePolls}
+      finalizedPolls={finalizedPolls}
     />
   );
 }
