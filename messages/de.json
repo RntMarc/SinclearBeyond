@@ -51,7 +51,42 @@
     "subscriptions": "Abonnements",
     "reviews": "Reviews",
     "info": "Changelog",
-    "office": "Office"
+    "office": "Office",
+    "polls": "Termine"
+  },
+  "Polls": {
+    "title": "Terminabstimmung",
+    "subtitle": "Planung",
+    "newPoll": "Neue Abstimmung",
+    "pollTitle": "Titel der Abstimmung",
+    "pollTitlePlaceholder": "z.B. Stammtisch",
+    "options": "Optionen",
+    "addOption": "Weitere Option hinzufügen",
+    "invites": "Einladungen",
+    "indispensable": "Erforderlich",
+    "inviteUsers": "Nutzer einladen...",
+    "editPoll": "Bearbeiten",
+    "deletePoll": "Löschen",
+    "finalize": "Finalisieren",
+    "finalized": "Abstimmung abgeschlossen",
+    "finalizedOn": "Finalisiert am {date}",
+    "createdBy": "Erstellt von {name}",
+    "noPolls": "Keine Abstimmungen gefunden.",
+    "bestOption": "Beste Option",
+    "status": {
+      "ongoing": "Laufend",
+      "finalized": "Abgeschlossen"
+    },
+    "voting": {
+      "yes": "Dabei"
+    },
+    "form": {
+      "save": "Speichern",
+      "successCreate": "Abstimmung erstellt",
+      "successUpdate": "Abstimmung aktualisiert",
+      "successFinalize": "Abstimmung finalisiert",
+      "deleteConfirm": "Möchtest du diese Abstimmung wirklich löschen?"
+    }
   },
   "Auth": {
     "login": "Login",
