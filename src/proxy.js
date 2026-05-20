@@ -82,5 +82,6 @@ export const config = {
     "/entdecken/:path*",
     "/feedback/:path*",
     "/abos/:path*",
+    "/office/:path*",
   ],
 };
