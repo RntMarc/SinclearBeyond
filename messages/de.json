@@ -50,7 +50,8 @@
     "feedback": "Feedback",
     "subscriptions": "Abonnements",
     "reviews": "Reviews",
-    "info": "Changelog"
+    "info": "Changelog",
+    "office": "Office"
   },
   "Auth": {
     "login": "Login",
