@@ -1,12 +1,13 @@
 "use client";
 
-import { Key, Palette, Settings, User, Users } from "lucide-react";
+import { Download, Key, Palette, Settings, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import PageHeader from "@/components/layout/PageHeader";
 import AppearanceForm from "@/components/profile/AppearanceForm";
 import CloseFriendsManager from "@/components/profile/CloseFriendsManager";
 import EmailChangeForm from "@/components/profile/EmailChangeForm";
+import ExportManager from "@/components/profile/ExportManager";
 import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
 
@@ -28,6 +29,7 @@ export default function EinstellungenClient({
     { id: "kontakte", label: t("tabs.contacts"), icon: Users },
     { id: "appearance", label: t("tabs.appearance"), icon: Palette },
     { id: "login", label: t("tabs.login"), icon: Key },
+    { id: "export", label: t("tabs.export"), icon: Download },
   ];
 
   const setTab = (id) => {
@@ -113,6 +115,7 @@ export default function EinstellungenClient({
                 <PasskeyManager />
               </div>
             )}
+            {activeTab === "export" && <ExportManager />}
           </div>
         </div>
       </div>

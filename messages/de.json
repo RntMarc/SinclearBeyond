@@ -486,7 +486,8 @@
       "contacts": "Kontakte",
       "login": "Login",
       "appearance": "Anzeige",
-      "language": "Sprache"
+      "language": "Sprache",
+      "export": "Export"
     },
     "appearance": {
       "title": "Anzeige",
@@ -544,6 +545,17 @@
         "socialPlaceholder": "nutzername",
         "mastodonPlaceholder": "nutzername@instanz.de",
         "blueskyPlaceholder": "nutzername.bsky.social"
+      }
+    },
+    "export": {
+      "title": "Daten exportieren",
+      "description": "Lade deine abgegebenen Bewertungen aus den Bereichen Entdecken und Kritik als JSON-Datei herunter. Die Datei enthält externe IDs (OSM, TMDB, MusicBrainz), damit deine Bewertungen auf anderen Instanzen korrekt zugeordnet werden können.",
+      "noData": "Du hast noch keine Bewertungen abgegeben, die exportiert werden könnten.",
+      "button": "Daten herunterladen",
+      "sections": {
+        "discover": "Entdecken (Orte)",
+        "media": "Kritik (Filme, Musik, Spiele)",
+        "episodes": "Kritik (Serien-Folgen)"
       }
     },
     "contacts": {
