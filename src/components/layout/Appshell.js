@@ -4,6 +4,7 @@ import {
   Calendar,
   Camera,
   Compass,
+  FileText,
   Gift,
   Info,
   Lock,
@@ -75,6 +76,7 @@ export default function AppShell({ children, user, session }) {
     { href: "/einstellungen", label: t("settings"), icon: Settings },
   ];
 
+  const officeNavItem = { href: "/office", label: t("office"), icon: FileText };
   const adminNavItem = { href: "/admin", label: t("admin"), icon: Lock };
 
   // On mobile, the sidebar is hidden by default and uses the mobile-specific overlay and top-bar.
@@ -87,7 +89,7 @@ export default function AppShell({ children, user, session }) {
       {open && showMobileElements && (
         <button
           type="button"
-          className="fixed inset-0 z-40 bg-black/50 w-full h-full cursor-default"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 w-full h-full cursor-default"
           onClick={() => setOpen(false)}
           aria-label={t("closeMenu")}
         />
@@ -119,7 +121,9 @@ export default function AppShell({ children, user, session }) {
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {[
             ...navItems,
-            ...(user?.isAdmin || session?.isAdmin ? [adminNavItem] : []),
+            ...(user?.isAdmin || session?.isAdmin
+              ? [officeNavItem, adminNavItem]
+              : []),
           ].map((item) => {
             const { href, label, icon: Icon } = item;
             const active = pathname.startsWith(href);

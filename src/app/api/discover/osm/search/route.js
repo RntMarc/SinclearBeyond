@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { formatAddress } from "@/lib/discover/utils";
+import { fetchWithTimeout } from "@/lib/utils";
 
 export async function GET(req) {
   const session = await getSession();
@@ -13,7 +14,7 @@ export async function GET(req) {
   if (!q) return NextResponse.json([]);
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&addressdetails=1&extratags=1&limit=10`,
       {
         headers: {

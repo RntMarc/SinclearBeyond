@@ -44,7 +44,8 @@ export async function GET() {
 
   const result = rows.map((ev) => ({
     ...ev,
-    canEdit: ev.creatorId === userId || editEventIds.has(ev.id),
+    canEdit:
+      session.isAdmin || ev.creatorId === userId || editEventIds.has(ev.id),
   }));
 
   return NextResponse.json(result);

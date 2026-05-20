@@ -136,10 +136,10 @@ export default function SubscriptionFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <button
         type="button"
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-default"
+        className="absolute inset-0 cursor-default"
         onClick={onClose}
         aria-label="Close modal"
       />

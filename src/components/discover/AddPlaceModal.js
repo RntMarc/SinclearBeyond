@@ -97,11 +97,9 @@ export default function AddPlaceModal({ onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className={`absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-200 ${
-          isClosing ? "opacity-0" : "opacity-100"
-        }`}
+        className="absolute inset-0"
         onClick={handleClose}
         onKeyDown={(e) => e.key === "Escape" && handleClose()}
         role="button"

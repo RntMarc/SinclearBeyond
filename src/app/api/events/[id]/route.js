@@ -19,7 +19,7 @@ export async function PUT(req, { params }) {
   if (!ev) return NextResponse.json({ error: t("notFound") }, { status: 404 });
 
   const isCreator = ev.creatorId === userId;
-  if (!isCreator) {
+  if (!isCreator && !session.isAdmin) {
     const [perm] = await db
       .select()
       .from(eventPermissions)
@@ -97,8 +97,20 @@ export async function DELETE(_req, { params }) {
   if (!ev) return NextResponse.json({ error: t("notFound") }, { status: 404 });
 
   const isCreator = ev.creatorId === userId;
-  if (!isCreator && session.role !== "admin") {
-    return NextResponse.json({ error: t("forbidden") }, { status: 403 });
+  if (!isCreator && !session.isAdmin) {
+    const [perm] = await db
+      .select()
+      .from(eventPermissions)
+      .where(
+        and(
+          eq(eventPermissions.eventId, id),
+          eq(eventPermissions.userId, userId),
+          eq(eventPermissions.canEdit, 1),
+        ),
+      )
+      .limit(1);
+    if (!perm)
+      return NextResponse.json({ error: t("forbidden") }, { status: 403 });
   }
 
   await db.delete(eventPermissions).where(eq(eventPermissions.eventId, id));

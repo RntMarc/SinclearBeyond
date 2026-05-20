@@ -21,7 +21,7 @@ export default function TripDetailModal({ tripId, onClose }) {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
         <div className="bg-sidebar border border-sidebar-border w-full max-w-lg rounded-2xl p-8 text-center">
           <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
           <p className="text-muted-foreground">{t("loading")}</p>

@@ -22,7 +22,7 @@ async function getAccessToken() {
     const response = await fetchWithTimeout(
       `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`,
       { method: "POST" },
-      10000,
+      20000,
     );
 
     if (!response.ok) {
