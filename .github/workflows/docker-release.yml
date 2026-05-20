@@ -1,59 +1,53 @@
-name: Build and Publish Docker Image
+name: Build and Save Docker Image to Release
 
 on:
-  # Trigger 1: Läuft los, sobald du auf GitHub einen Release veröffentlichst
-  release:
-    types: [published]
-  
-  # Trigger 2: Erlaubt dir, das Image per Knopfdruck im "Actions"-Tab zu bauen
+  # Option 1: Trigger bei neuen Versionstags (z.B. git tag v1.0.0 && git push --tags)
+  push:
+    tags:
+      - 'v*.*.*'
+  # Option 2: Manueller Trigger über die GitHub-Oberfläche (mit Eingabe der Version)
   workflow_dispatch:
-
-env:
-  REGISTRY: ghcr.io
-  # Erzeugt einen Image-Namen wie ghcr.io/dein-username/dein-repo
-  IMAGE_NAME: ${{ github.repository }}
+    inputs:
+      version:
+        description: 'Versionsnummer für das manuelle Release (z.B. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
 
 jobs:
-  build-and-push-image:
+  build-and-release:
     runs-on: ubuntu-latest
-    
-    # Notwendige Berechtigungen, um Packages auf GitHub hochzuladen
     permissions:
-      contents: read
-      packages: write
+      contents: write # Zwingend erforderlich, um Releases zu erstellen und Dateien hochzuladen
 
     steps:
-      - name: Checkout repository
+      - name: Repository auschecken
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # Ermittelt die korrekte Versionsnummer (entweder vom Git-Tag oder aus der manuellen Eingabe)
+      - name: Versionsnummer bestimmen
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} # Wird von GitHub automatisch bereitgestellt
+      # Das Dockerfile bleibt unverändert und nutzt weiterhin dein pnpm-Setup
+      - name: Docker Image lokal bauen
+        run: |
+          docker build -t my-app:${{ env.VERSION }} .
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          # Wenn von einem Release getriggert, wird die Versionsnummer als Tag genommen.
-          # Wenn manuell getriggert, wird "latest" verwendet.
-          tags: |
-            type=semver,pattern={{version}}
-            type=raw,value=latest,enable=${{ github.event_name == 'workflow_dispatch' }}
+      # Das gebaute Image in eine .tar-Datei schreiben und mit gzip komprimieren
+      - name: Docker Image als Tarball exportieren
+        run: |
+          docker save my-app:${{ env.VERSION }} | gzip > my-app-${{ env.VERSION }}.tar.gz
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      # Erstellt das GitHub Release und lädt die .tar.gz-Datei hoch
+      - name: GitHub Release erstellen und Image anhängen
+        uses: softprops/action-gh-release@v2
         with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          # Nutzt GitHub Actions Cache für schnellere Builds
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          files: my-app-${{ env.VERSION }}.tar.gz
+          generate_release_notes: true # Erstellt automatisch Release Notes aus den Commits
