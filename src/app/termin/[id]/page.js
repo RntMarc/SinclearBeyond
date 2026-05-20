@@ -5,10 +5,15 @@ import AppShell from "@/components/layout/Appshell";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function PollDetailPage({ params }) {
   const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   const poll = await getPoll(params.id, session.sub);
   const t = await getTranslations("Polls");
 
