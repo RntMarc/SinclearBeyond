@@ -4,7 +4,11 @@
 // It is loaded via ZetaHelperMain.
 
 const init = () => {
-  console.log("Office worker initializing...");
+  console.log("[Office Worker] Initializing...");
+  console.log(
+    "[Office Worker] crossOriginIsolated:",
+    globalThis.crossOriginIsolated,
+  );
   const { zetajs, zJsModule } = globalThis.zetajsStore;
   const port = zetajs.mainPort;
   const css = zetajs.uno.com.sun.star;
@@ -52,15 +56,14 @@ const init = () => {
     }
   };
 
-  console.log("Office worker initialized and listening.");
+  console.log("[Office Worker] Initialized and listening.");
 };
 
 // The zetajsStore is populated by zetajs before this script runs
 // because ZetaHelperMain ensures it.
+console.log("[Office Worker] Script loaded, checking for zetajsStore...");
 if (globalThis.zetajsStore) {
   init();
 } else {
-  // Fallback or wait? Normally it should be there if loaded via ZetaHelperMain
-  console.warn("zetajsStore not found immediately in worker.");
-  // We could poll or wait for a specific signal if needed, but zetajs examples suggest it's there.
+  console.warn("[Office Worker] zetajsStore not found immediately.");
 }
