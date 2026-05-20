@@ -50,7 +50,42 @@
     "feedback": "Feedback",
     "subscriptions": "Abos",
     "reviews": "Reviews",
-    "info": "Changelog"
+    "info": "Changelog",
+    "polls": "Termie"
+  },
+  "Polls": {
+    "title": "Termie ab-schdimma",
+    "subtitle": "Blanong",
+    "newPoll": "Nuie Ab-schdimmong",
+    "pollTitle": "Wie's hoißt",
+    "pollTitlePlaceholder": "z.B. Schdammtisch",
+    "options": "Auswahl",
+    "addOption": "No ebbes dazua dõa",
+    "invites": "Leit",
+    "indispensable": "Musch dabei sei",
+    "inviteUsers": "Leit dazua dõa...",
+    "editPoll": "Bearbeida",
+    "deletePoll": "Lescha",
+    "finalize": "Fertig macha",
+    "finalized": "Ab-schdimmong isch fertig",
+    "finalizedOn": "Fertig gmacht am {date}",
+    "createdBy": "Gmacht von {name}",
+    "noPolls": "Nix gfonda.",
+    "bestOption": "Beschte Sach",
+    "status": {
+      "ongoing": "Lauft grad",
+      "finalized": "Fertig"
+    },
+    "voting": {
+      "yes": "Dabei"
+    },
+    "form": {
+      "save": "Schbeichra",
+      "successCreate": "Ab-schdimmong gmacht",
+      "successUpdate": "Ab-schdimmong g'ändert",
+      "successFinalize": "Ab-schdimmong fertig gmacht",
+      "deleteConfirm": "Willsch des wirklich lescha?"
+    }
   },
   "Auth": {
     "login": "Neigauda",
