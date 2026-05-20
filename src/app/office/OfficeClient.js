@@ -25,39 +25,8 @@ export default function OfficeClient({ user, session }) {
   const [buffer, setBuffer] = useState(null);
   const [filename, setFilename] = useState("");
 
-  useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-
-    const initOffice = async () => {
-      console.log("[Office] Initializing ZetaOffice...");
-      console.log("[Office] crossOriginIsolated:", window.crossOriginIsolated);
-      console.log(
-        "[Office] SharedArrayBuffer available:",
-        typeof SharedArrayBuffer !== "undefined",
-      );
-
-      try {
-        const helper = new ZetaHelperMain("/office-worker.js", {
-          wasmPkg: "free",
-        });
-        helperRef.current = helper;
-        console.log("[Office] ZetaHelperMain instance created");
-
-        helper.start(() => {
-          setLoading(false);
-          console.log("[Office] ZetaOffice started successfully");
-        });
-      } catch (err) {
-        console.error("[Office] Failed to start ZetaOffice:", err);
-      }
-    };
-
-    initOffice();
-  }, []);
-
   const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setFilename(file.name);
