@@ -2,17 +2,21 @@
 FROM node:lts-alpine AS builder
 WORKDIR /app
 
-# Wir brauchen ALLE dependencies für den Build (auch devDeps)
-COPY package.json package-lock.json* ./
-RUN npm install
+# Corepack aktivieren, um pnpm bereitzustellen
+RUN corepack enable pnpm
+
+# pnpm-lock.yaml statt package-lock.json verwenden
+COPY package.json pnpm-lock.yaml* ./
+# --frozen-lockfile ist das pnpm-Äquivalent zu npm ci
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-# Next.js braucht oft schärfere Umgebungsvariablen beim Build
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=3000
-RUN npx next build
+# pnpm run build statt npx next build
+RUN pnpm run build
 
 # Stage 2: Run
 FROM node:lts-alpine AS runner
@@ -33,4 +37,6 @@ RUN chown -R node:node /app/.next
 USER node
 
 EXPOSE 3000
+# npx ist Teil von Node und funktioniert hier weiterhin wunderbar, 
+# um das lokale next aus den node_modules zu starten.
 CMD ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]
