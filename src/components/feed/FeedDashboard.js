@@ -33,6 +33,12 @@ export default function FeedDashboard() {
       if (res.ok) {
         const data = await res.json();
         setPosts(data);
+      } else {
+        const errorData = await res.json();
+        setNotification({
+          type: "error",
+          message: errorData.error || t("loadError"),
+        });
       }
     } catch (_error) {
       setNotification({

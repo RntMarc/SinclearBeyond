@@ -58,10 +58,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
       }
       return {
         ...prev,
-        invites: [
-          ...prev.invites,
-          { userId: user.id, isIndispensable: false },
-        ],
+        invites: [...prev.invites, { userId: user.id, isIndispensable: false }],
       };
     });
   };
@@ -172,7 +169,9 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                   className="flex items-center gap-2 bg-sidebar-accent/50 border border-sidebar-border rounded-full pl-1 pr-3 py-1"
                 >
                   <Avatar user={user} size="xs" />
-                  <span className="text-xs font-medium">{user.displayName}</span>
+                  <span className="text-xs font-medium">
+                    {user.displayName}
+                  </span>
                   <button
                     type="button"
                     onClick={() => toggleIndispensable(user.id)}

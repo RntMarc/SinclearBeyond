@@ -10,6 +10,8 @@ import EventDetailModal from "@/components/calendar/EventDetailModal";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
 import FeedItem from "@/components/feed/FeedItem";
 import PhotoItem from "@/components/photos/PhotoItem";
+import InlineError from "@/components/ui/InlineError";
+import Notification from "@/components/Notification";
 
 export default function HomeClient({
   upcomingEvents = [],
@@ -19,6 +21,7 @@ export default function HomeClient({
   latestPhotos = [],
   latestMediaReviews = [],
   latestDiscoverReviews = [],
+  errors = {},
 }) {
   const t = useTranslations("Home");
   const [selectedItem, setSelectedItem] = useState(null); // { type, data }
@@ -32,249 +35,276 @@ export default function HomeClient({
   const hasDiscoverReviews = latestDiscoverReviews.length > 0;
 
   return (
-    <div className="columns-1 md:columns-2 gap-6 md:gap-10">
-      {/* Upcoming Events */}
-      {hasEvents && (
-        <Section
-          title={t("upcomingEvents")}
-          href="/kalender?view=agenda"
-          className="space-y-3"
-        >
-          {upcomingEvents.map((event) => (
-            <button
-              key={event.id}
-              type="button"
-              onClick={() => setSelectedItem({ type: event.type, data: event })}
-              className="w-full text-left p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
-            >
-              <div className="flex flex-col">
-                <span className="font-medium text-foreground">
-                  {event.title}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(event.startAt).toLocaleDateString("de-DE", {
-                    day: "2-digit",
-                    month: "long",
-                  })}
-                  {event.allDay
-                    ? ""
-                    : `, ${new Date(event.startAt).toLocaleTimeString("de-DE", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`}
-                </span>
-              </div>
-              <ChevronRight
-                size={16}
-                className="text-muted-foreground group-hover:translate-x-1 transition-transform"
-              />
-            </button>
-          ))}
-        </Section>
-      )}
-
-      {/* Upcoming Trips */}
-      {hasTrips && (
-        <Section
-          title={t("upcomingTrips")}
-          href="/reisen"
-          className="space-y-3"
-        >
-          {upcomingTrips.map((trip) => (
-            <Link
-              key={trip.id}
-              href={`/reisen/${trip.id}`}
-              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
-            >
-              <div className="flex flex-col">
-                <span className="font-medium text-foreground">{trip.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(trip.start).toLocaleDateString("de-DE", {
-                    day: "2-digit",
-                    month: "long",
-                  })}{" "}
-                  -{" "}
-                  {new Date(trip.end).toLocaleDateString("de-DE", {
-                    day: "2-digit",
-                    month: "long",
-                  })}
-                </span>
-              </div>
-              <ChevronRight
-                size={16}
-                className="text-muted-foreground group-hover:translate-x-1 transition-transform"
-              />
-            </Link>
-          ))}
-        </Section>
-      )}
-
-      {/* Upcoming Birthdays */}
-      {hasBirthdays && (
-        <Section
-          title={t("upcomingBirthdays")}
-          href="/geburtstage"
-          className="space-y-3"
-        >
-          {upcomingBirthdays.map((user) => (
-            <button
-              key={user.id}
-              type="button"
-              onClick={() => setSelectedItem({ type: "birthday", data: user })}
-              className="w-full text-left p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <Avatar
-                  src={user.image}
-                  displayName={user.displayName}
-                  size="sm"
-                />
+    <div className="flex flex-col gap-6">
+      {errors.user && <Notification message={t("loadError")} type="error" />}
+      <div className="columns-1 md:columns-2 gap-6 md:gap-10">
+        {/* Upcoming Events */}
+        {(hasEvents || errors.events) && (
+          <Section
+            title={t("upcomingEvents")}
+            href="/kalender?view=agenda"
+            className="space-y-3"
+          >
+            {errors.events && <InlineError />}
+            {upcomingEvents.map((event) => (
+              <button
+                key={event.id}
+                type="button"
+                onClick={() =>
+                  setSelectedItem({ type: event.type, data: event })
+                }
+                className="w-full text-left p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
+              >
                 <div className="flex flex-col">
                   <span className="font-medium text-foreground">
-                    {user.displayName}
+                    {event.title}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {user.birthdayDay}.{" "}
-                    {new Date(0, user.birthdayMonth).toLocaleString("de-DE", {
+                    {new Date(event.startAt).toLocaleDateString("de-DE", {
+                      day: "2-digit",
                       month: "long",
                     })}
+                    {event.allDay
+                      ? ""
+                      : `, ${new Date(event.startAt).toLocaleTimeString(
+                          "de-DE",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}`}
                   </span>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-primary">
-                  {user.daysUntil === 0
-                    ? "Heute! 🎉"
-                    : `in ${user.daysUntil} Tage`}
-                </span>
                 <ChevronRight
                   size={16}
                   className="text-muted-foreground group-hover:translate-x-1 transition-transform"
                 />
-              </div>
-            </button>
-          ))}
-        </Section>
-      )}
+              </button>
+            ))}
+          </Section>
+        )}
 
-      {/* Latest Posts */}
-      {hasPosts && (
-        <Section title={t("latestPosts")} href="/feed" className="space-y-6">
-          {latestPosts.map((post) => (
-            <FeedItem key={post.id} post={post} />
-          ))}
-        </Section>
-      )}
+        {/* Active Polls */}
+        {errors.polls && (
+          <Section
+            title={t("activePolls") || "Polls"}
+            href="/umfrage"
+            className="space-y-3"
+          >
+            <InlineError />
+          </Section>
+        )}
 
-      {/* Latest Photos */}
-      {hasPhotos && (
-        <Section
-          title={t("latestPhotos")}
-          href="/fotos"
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-        >
-          {latestPhotos.map((photo) => (
-            <PhotoItem key={photo.id} photo={photo} />
-          ))}
-        </Section>
-      )}
+        {/* Upcoming Trips */}
+        {(hasTrips || errors.trips) && (
+          <Section
+            title={t("upcomingTrips")}
+            href="/reisen"
+            className="space-y-3"
+          >
+            {errors.trips && <InlineError />}
+            {upcomingTrips.map((trip) => (
+              <Link
+                key={trip.id}
+                href={`/reisen/${trip.id}`}
+                className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
+              >
+                <div className="flex flex-col">
+                  <span className="font-medium text-foreground">
+                    {trip.name}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(trip.start).toLocaleDateString("de-DE", {
+                      day: "2-digit",
+                      month: "long",
+                    })}{" "}
+                    -{" "}
+                    {new Date(trip.end).toLocaleDateString("de-DE", {
+                      day: "2-digit",
+                      month: "long",
+                    })}
+                  </span>
+                </div>
+                <ChevronRight
+                  size={16}
+                  className="text-muted-foreground group-hover:translate-x-1 transition-transform"
+                />
+              </Link>
+            ))}
+          </Section>
+        )}
 
-      {/* Latest Media Reviews */}
-      {hasMediaReviews && (
-        <Section
-          title={t("latestMediaReviews")}
-          href="/kritik"
-          className="space-y-3"
-        >
-          {latestMediaReviews.map(({ review, item, user }) => (
-            <Link
-              key={review.id}
-              href={`/kritik/${item.type === "game" ? "spiele" : item.type === "movie" ? "filme" : "musik"}/${item.id}`}
-              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+        {/* Upcoming Birthdays */}
+        {hasBirthdays && (
+          <Section
+            title={t("upcomingBirthdays")}
+            href="/geburtstage"
+            className="space-y-3"
+          >
+            {upcomingBirthdays.map((user) => (
+              <button
+                key={user.id}
+                type="button"
+                onClick={() =>
+                  setSelectedItem({ type: "birthday", data: user })
+                }
+                className="w-full text-left p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
+              >
+                <div className="flex items-center gap-3">
                   <Avatar
                     src={user.image}
                     displayName={user.displayName}
-                    size="xs"
+                    size="sm"
                   />
-                  <span className="text-xs font-medium text-foreground">
-                    {user.displayName}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-foreground">
+                      {user.displayName}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {user.birthdayDay}.{" "}
+                      {new Date(0, user.birthdayMonth).toLocaleString("de-DE", {
+                        month: "long",
+                      })}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1 text-orange-500">
-                  <Star size={12} fill="currentColor" />
-                  <span className="text-xs font-bold">{review.rating}</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-sm line-clamp-1">
-                  {item.title}
-                </span>
-                <ChevronRight
-                  size={14}
-                  className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
-                />
-              </div>
-              {review.comment && (
-                <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
-                  &quot;{review.comment}&quot;
-                </p>
-              )}
-            </Link>
-          ))}
-        </Section>
-      )}
-
-      {/* Latest Discover Reviews */}
-      {hasDiscoverReviews && (
-        <Section
-          title={t("latestDiscoverReviews")}
-          href="/entdecken"
-          className="space-y-3"
-        >
-          {latestDiscoverReviews.map(({ review, place, user }) => (
-            <Link
-              key={review.id}
-              href={`/entdecken/orte/${place.id}`}
-              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
-            >
-              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Avatar
-                    src={user.image}
-                    displayName={user.displayName}
-                    size="xs"
-                  />
-                  <span className="text-xs font-medium text-foreground">
-                    {user.displayName}
+                  <span className="text-xs font-medium text-primary">
+                    {user.daysUntil === 0
+                      ? "Heute! 🎉"
+                      : `in ${user.daysUntil} Tage`}
                   </span>
+                  <ChevronRight
+                    size={16}
+                    className="text-muted-foreground group-hover:translate-x-1 transition-transform"
+                  />
                 </div>
-                <div className="flex items-center gap-1 text-orange-500">
-                  <Star size={12} fill="currentColor" />
-                  <span className="text-xs font-bold">{review.rating}</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-sm line-clamp-1">
-                  {place.name}
-                </span>
-                <ChevronRight
-                  size={14}
-                  className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
-                />
-              </div>
-              {review.comment && (
-                <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
-                  &quot;{review.comment}&quot;
-                </p>
-              )}
-            </Link>
-          ))}
-        </Section>
-      )}
+              </button>
+            ))}
+          </Section>
+        )}
 
+        {/* Latest Posts */}
+        {(hasPosts || errors.posts) && (
+          <Section title={t("latestPosts")} href="/feed" className="space-y-6">
+            {errors.posts && <InlineError />}
+            {latestPosts.map((post) => (
+              <FeedItem key={post.id} post={post} />
+            ))}
+          </Section>
+        )}
+
+        {/* Latest Photos */}
+        {hasPhotos && (
+          <Section
+            title={t("latestPhotos")}
+            href="/fotos"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          >
+            {latestPhotos.map((photo) => (
+              <PhotoItem key={photo.id} photo={photo} />
+            ))}
+          </Section>
+        )}
+
+        {/* Latest Media Reviews */}
+        {(hasMediaReviews || errors.mediaReviews) && (
+          <Section
+            title={t("latestMediaReviews")}
+            href="/kritik"
+            className="space-y-3"
+          >
+            {errors.mediaReviews && <InlineError />}
+            {latestMediaReviews.map(({ review, item, user }) => (
+              <Link
+                key={review.id}
+                href={`/kritik/${item.type === "game" ? "spiele" : item.type === "movie" ? "filme" : "musik"}/${item.id}`}
+                className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Avatar
+                      src={user.image}
+                      displayName={user.displayName}
+                      size="xs"
+                    />
+                    <span className="text-xs font-medium text-foreground">
+                      {user.displayName}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-orange-500">
+                    <Star size={12} fill="currentColor" />
+                    <span className="text-xs font-bold">{review.rating}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-sm line-clamp-1">
+                    {item.title}
+                  </span>
+                  <ChevronRight
+                    size={14}
+                    className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
+                  />
+                </div>
+                {review.comment && (
+                  <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
+                    &quot;{review.comment}&quot;
+                  </p>
+                )}
+              </Link>
+            ))}
+          </Section>
+        )}
+
+        {/* Latest Discover Reviews */}
+        {(hasDiscoverReviews || errors.discoverReviews) && (
+          <Section
+            title={t("latestDiscoverReviews")}
+            href="/entdecken"
+            className="space-y-3"
+          >
+            {errors.discoverReviews && <InlineError />}
+            {latestDiscoverReviews.map(({ review, place, user }) => (
+              <Link
+                key={review.id}
+                href={`/entdecken/orte/${place.id}`}
+                className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Avatar
+                      src={user.image}
+                      displayName={user.displayName}
+                      size="xs"
+                    />
+                    <span className="text-xs font-medium text-foreground">
+                      {user.displayName}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-orange-500">
+                    <Star size={12} fill="currentColor" />
+                    <span className="text-xs font-bold">{review.rating}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-sm line-clamp-1">
+                    {place.name}
+                  </span>
+                  <ChevronRight
+                    size={14}
+                    className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
+                  />
+                </div>
+                {review.comment && (
+                  <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
+                    &quot;{review.comment}&quot;
+                  </p>
+                )}
+              </Link>
+            ))}
+          </Section>
+        )}
+      </div>
       {/* Modals */}
       {selectedItem?.type === "event" && (
         <EventDetailModal

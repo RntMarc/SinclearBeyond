@@ -27,3 +27,13 @@ This project uses `next-intl` for localization. All UI strings must be externali
     - Use a structured hierarchy: `PageName.SectionName.KeyName` (e.g., `Settings.Profile.UploadButton`).
     - Use `Common` for shared strings like "Save", "Cancel", "Error".
     - Keys should be camelCase.
+
+# Database Resilience & Error Handling
+
+To prevent full-page crashes (e.g., Next.js error pages) due to background data fetch failures, all database queries in Server Components should be treated as potentially failing.
+
+### Rules for AI Agents
+1. **Wrap Queries:** Use the `safeQuery` utility (from `@/lib/db/db`) or similar `try/catch` patterns to wrap database calls.
+2. **Handle Failure Gracefully:** If a query fails, do NOT let the error bubble up to the root. Instead, return a failure state.
+3. **Inline Error UI:** If a specific data component fails to load, use the `InlineError` component (`@/components/ui/InlineError`) to display a localized error message in that specific section of the page, while allowing the rest of the page to remain functional.
+4. **Resilient APIs:** API routes should return appropriate 500 status codes with JSON error messages instead of crashing.

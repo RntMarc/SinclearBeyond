@@ -1,12 +1,5 @@
 "use client";
-import {
-  Check,
-  CheckCircle2,
-  HelpCircle,
-  Star,
-  Target,
-  X,
-} from "lucide-react";
+import { Check, CheckCircle2, HelpCircle, Star, Target, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import Avatar from "@/components/Avatar";
@@ -106,7 +99,9 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                     user={{ id: poll.creatorId, displayName: poll.creatorName }}
                     size="xs"
                   />
-                  <span className="text-sm font-medium">{poll.creatorName}</span>
+                  <span className="text-sm font-medium">
+                    {poll.creatorName}
+                  </span>
                 </td>
                 {poll.options.map((option) => (
                   <td

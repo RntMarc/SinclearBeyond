@@ -23,6 +23,7 @@
     "missingFields": "Du hosch ebbes vergessa",
     "saveError": "Des hot net gklabbd beim Schbeichra",
     "loadError": "I konnt des net lada",
+    "dbError": "I konnt d'Date net lada.",
     "deleteError": "Lescha hot net gklabbd",
     "notImplemented": "Geit's no net",
     "navigation": {

@@ -23,6 +23,7 @@
     "missingFields": "Missing required fields",
     "saveError": "Error saving",
     "loadError": "Error loading",
+    "dbError": "Failed to load data.",
     "deleteError": "Error deleting",
     "notImplemented": "Not implemented",
     "navigation": {

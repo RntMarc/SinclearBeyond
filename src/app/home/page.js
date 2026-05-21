@@ -8,7 +8,7 @@ import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { HomeSkeleton } from "@/components/layout/Skeletons";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 
 export default async function HomePage() {
@@ -18,16 +18,21 @@ export default async function HomePage() {
 
   const userId = session.sub;
 
-  const [user] = await db
-    .select({
-      displayName: users.displayName,
-      email: users.email,
-      image: users.image,
-      createdAt: users.createdAt,
-    })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+  const { data: userData, error: userError } = await safeQuery(
+    db
+      .select({
+        displayName: users.displayName,
+        email: users.email,
+        image: users.image,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1),
+    [null],
+  );
+
+  const user = userData?.[0];
 
   return (
     <AppShell
@@ -45,7 +50,11 @@ export default async function HomePage() {
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">
             <Suspense fallback={<HomeSkeleton />}>
-              <HomeContent userId={userId} isAdmin={session.isAdmin} />
+              <HomeContent
+                userId={userId}
+                isAdmin={session.isAdmin}
+                userError={userError}
+              />
             </Suspense>
           </div>
         </div>
