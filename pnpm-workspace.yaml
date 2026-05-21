@@ -4,3 +4,10 @@ allowBuilds:
   esbuild: true
   msw: true
   sharp: true
+
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - "@swc/core"
+  - esbuild
+  - msw
+  - sharp
