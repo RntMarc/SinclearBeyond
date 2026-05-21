@@ -290,7 +290,7 @@ export default async function HomeContent({ userId, isAdmin }) {
         ),
         sql`${polls.finalizedOptionId} IS NOT NULL`,
         gte(polls.updatedAt, sevenDaysAgo),
-        gte(pollOptions.startAt, now),
+        gte(pollOptions.dateValue, now),
       ),
     );
 
