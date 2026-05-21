@@ -10,7 +10,7 @@ const pool = mysql.createPool({
   //ssl: { rejectUnauthorized: true }, // MariaDB externe Verbindung
   waitForConnections: true,
   connectionLimit: 10,
-  charset: 'utf8mb4_unicode_ci',
+  charset: "utf8mb4_unicode_ci",
 });
 
 export const db = drizzle(pool);
