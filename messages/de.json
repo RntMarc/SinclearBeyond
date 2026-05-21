@@ -52,40 +52,65 @@
     "reviews": "Reviews",
     "info": "Changelog",
     "office": "Office",
-    "polls": "Termine"
+    "polls": "Umfragen & Termine"
   },
   "Polls": {
-    "title": "Terminabstimmung",
+    "title": "Umfragen & Termine",
     "subtitle": "Planung",
-    "newPoll": "Neue Abstimmung",
-    "pollTitle": "Titel der Abstimmung",
-    "pollTitlePlaceholder": "z.B. Stammtisch",
+    "newPoll": "Neu",
+    "newAppointment": "Neue Terminfindung",
+    "newSurvey": "Neue Umfrage",
+    "pollTitle": "Titel",
+    "pollTitlePlaceholder": "z.B. Stammtisch oder Feedback zur Tour",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Optionale Details...",
+    "type": "Typ",
+    "types": {
+      "appointment": "Terminfindung",
+      "survey": "Klassische Umfrage"
+    },
+    "questions": "Fragen",
+    "addQuestion": "Frage hinzufügen",
+    "questionTitle": "Frage",
+    "questionType": "Antwort-Typ",
+    "questionTypes": {
+      "checkbox": "Bestätigung (Checkbox)",
+      "toggle": "Ein/Aus Schalter",
+      "single_choice": "Einzelauswahl (Single Choice)",
+      "multiple_choice": "Mehrfachauswahl (Multiple Choice)",
+      "text": "Textfeld (einzeilig)",
+      "textarea": "Textfeld (mehrzeilig)",
+      "email": "E-Mail",
+      "address": "Adresse",
+      "number": "Zahl"
+    },
     "options": "Optionen",
-    "addOption": "Weitere Option hinzufügen",
+    "addOption": "Option hinzufügen",
     "invites": "Einladungen",
     "indispensable": "Erforderlich",
     "inviteUsers": "Nutzer einladen...",
     "editPoll": "Bearbeiten",
     "deletePoll": "Löschen",
     "finalize": "Finalisieren",
-    "finalized": "Abstimmung abgeschlossen",
+    "finalized": "Abgeschlossen",
     "finalizedOn": "Finalisiert am {date}",
     "createdBy": "Erstellt von {name}",
-    "noPolls": "Keine Abstimmungen gefunden.",
+    "noPolls": "Keine Einträge gefunden.",
     "bestOption": "Beste Option",
     "status": {
       "ongoing": "Laufend",
       "finalized": "Abgeschlossen"
     },
     "voting": {
-      "yes": "Dabei"
+      "yes": "Dabei",
+      "confirm": "Bist du dabei?"
     },
     "form": {
       "save": "Speichern",
-      "successCreate": "Abstimmung erstellt",
-      "successUpdate": "Abstimmung aktualisiert",
-      "successFinalize": "Abstimmung finalisiert",
-      "deleteConfirm": "Möchtest du diese Abstimmung wirklich löschen?"
+      "successCreate": "Erfolgreich erstellt",
+      "successUpdate": "Erfolgreich aktualisiert",
+      "successFinalize": "Erfolgreich finalisiert",
+      "deleteConfirm": "Möchtest du diesen Eintrag wirklich löschen?"
     }
   },
   "Auth": {

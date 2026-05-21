@@ -1,78 +1,99 @@
 import crypto from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { pollInvites, pollOptions, polls, pollVotes } from "@/lib/db/schema";
+import { pollInvites, pollQuestions, polls, pollVotes } from "@/lib/db/schema";
 
 export async function POST(request, { params }) {
+  const { id } = await params;
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const { optionId, availability } = await request.json();
+    const { answers } = await request.json();
 
-    if (!optionId || !availability) {
+    if (!answers || !Array.isArray(answers)) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // Check if option belongs to a poll the user is invited to
-    const [option] = await db
-      .select()
-      .from(pollOptions)
-      .where(eq(pollOptions.id, optionId));
+    const [poll] = await db.select().from(polls).where(eq(polls.id, id));
 
-    if (!option) {
-      return NextResponse.json({ error: "Option not found" }, { status: 404 });
+    if (!poll) {
+      return NextResponse.json({ error: "Poll not found" }, { status: 404 });
     }
 
     const invites = await db
       .select()
       .from(pollInvites)
       .where(
-        and(
-          eq(pollInvites.pollId, option.pollId),
-          eq(pollInvites.userId, session.sub),
-        ),
+        and(eq(pollInvites.pollId, id), eq(pollInvites.userId, session.sub)),
       );
 
-    const [poll] = await db
-      .select()
-      .from(polls)
-      .where(eq(polls.id, option.pollId));
-
-    if (invites.length === 0 && poll?.creatorId !== session.sub) {
+    if (invites.length === 0 && poll.creatorId !== session.sub) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const now = new Date();
 
-    const [existingVote] = await db
-      .select()
-      .from(pollVotes)
-      .where(
-        and(
-          eq(pollVotes.optionId, optionId),
-          eq(pollVotes.userId, session.sub),
-        ),
-      );
+    await db.transaction(async (tx) => {
+      // 1. Get all unique question IDs being answered
+      const answeredQuestionIds = [
+        ...new Set(answers.map((a) => a.questionId)),
+      ];
 
-    if (existingVote) {
-      await db
-        .update(pollVotes)
-        .set({ availability, updatedAt: now })
-        .where(eq(pollVotes.id, existingVote.id));
-    } else {
-      await db.insert(pollVotes).values({
-        id: crypto.randomUUID(),
-        optionId,
-        userId: session.sub,
-        availability,
-        updatedAt: now,
-      });
-    }
+      if (answeredQuestionIds.length > 0) {
+        // 2. Clear all previous votes for these questions by this user
+        await tx
+          .delete(pollVotes)
+          .where(
+            and(
+              inArray(pollVotes.questionId, answeredQuestionIds),
+              eq(pollVotes.userId, session.sub),
+            ),
+          );
+      }
+
+      // 3. Insert new votes
+      for (const answer of answers) {
+        const { questionId, optionId, value, availability } = answer;
+
+        // Verify question belongs to this poll
+        const [question] = await tx
+          .select()
+          .from(pollQuestions)
+          .where(
+            and(eq(pollQuestions.id, questionId), eq(pollQuestions.pollId, id)),
+          );
+
+        if (!question) continue;
+
+        // Add new vote if it has content
+        const hasContent =
+          value !== undefined ||
+          optionId !== undefined ||
+          availability !== undefined;
+
+        if (
+          hasContent &&
+          value !== null &&
+          optionId !== null &&
+          availability !== null
+        ) {
+          await tx.insert(pollVotes).values({
+            id: crypto.randomUUID(),
+            questionId,
+            optionId,
+            userId: session.sub,
+            value: value?.toString(),
+            availability,
+            updatedAt: now,
+          });
+        }
+      }
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

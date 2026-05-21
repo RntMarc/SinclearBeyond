@@ -13,6 +13,7 @@ import {
 } from "@/lib/db/schema";
 
 export async function POST(request, { params }) {
+  const { id } = await params;
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -24,7 +25,7 @@ export async function POST(request, { params }) {
     const [poll] = await db
       .select()
       .from(polls)
-      .where(and(eq(polls.id, params.id), eq(polls.creatorId, session.sub)));
+      .where(and(eq(polls.id, id), eq(polls.creatorId, session.sub)));
 
     if (!poll) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -33,9 +34,8 @@ export async function POST(request, { params }) {
     const [option] = await db
       .select()
       .from(pollOptions)
-      .where(
-        and(eq(pollOptions.id, optionId), eq(pollOptions.pollId, params.id)),
-      );
+      .leftJoin(pollQuestions, eq(pollOptions.questionId, pollQuestions.id))
+      .where(and(eq(pollOptions.id, optionId), eq(pollQuestions.pollId, id)));
 
     if (!option) {
       return NextResponse.json({ error: "Option not found" }, { status: 404 });
@@ -49,14 +49,16 @@ export async function POST(request, { params }) {
       await tx
         .update(polls)
         .set({ finalizedOptionId: optionId, updatedAt: now })
-        .where(eq(polls.id, params.id));
+        .where(eq(polls.id, id));
 
       // 2. Create Kalender-Event
       await tx.insert(events).values({
         id: eventId,
         title: poll.title,
-        startAt: option.startAt,
-        endAt: new Date(new Date(option.startAt).getTime() + 60 * 60 * 1000), // Default 1h
+        startAt: option.PollOption.dateValue,
+        endAt: new Date(
+          new Date(option.PollOption.dateValue).getTime() + 60 * 60 * 1000,
+        ), // Default 1h
         allDay: 0,
         isPublic: 0,
         creatorId: session.sub,
@@ -67,7 +69,7 @@ export async function POST(request, { params }) {
       const invites = await tx
         .select()
         .from(pollInvites)
-        .where(eq(pollInvites.pollId, params.id));
+        .where(eq(pollInvites.pollId, id));
 
       const participantUserIds = [
         ...new Set([...invites.map((i) => i.userId), session.sub]),

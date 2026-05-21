@@ -1,7 +1,7 @@
 "use client";
 import { Settings2, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Notification from "@/components/Notification";
 import PollDetail from "@/components/polls/PollDetail";
@@ -15,12 +15,12 @@ export default function PollDetailClient({ initialPoll, userId }) {
   const [notification, setNotification] = useState(null);
   const router = useRouter();
 
-  const handleVote = async (optionId, availability) => {
+  const handleVote = async (answers) => {
     try {
       const res = await fetch(`/api/polls/${poll.id}/vote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ optionId, availability }),
+        body: JSON.stringify({ answers }),
       });
 
       if (res.ok) {
@@ -92,7 +92,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
       });
 
       if (res.ok) {
-        router.push("/termin");
+        router.push("/umfrage");
       }
     } catch (_error) {
       setNotification({ message: "Fehler beim Löschen", type: "error" });
@@ -133,8 +133,13 @@ export default function PollDetailClient({ initialPoll, userId }) {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         initialData={{
+          type: poll.type,
           title: poll.title,
-          options: poll.options,
+          description: poll.description,
+          questions: poll.questions.map((q) => ({
+            ...q,
+            options: poll.options.filter((o) => o.questionId === q.id),
+          })),
           invites: poll.invites,
         }}
         onSubmit={handleUpdatePoll}

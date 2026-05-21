@@ -73,6 +73,7 @@ export const config = {
   matcher: [
     "/home/:path*",
     "/kalender/:path*",
+    "/umfrage/:path*",
     "/reisen/:path*",
     "/einstellungen/:path*",
     "/geburtstage/:path*",

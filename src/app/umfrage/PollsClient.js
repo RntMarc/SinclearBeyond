@@ -1,7 +1,7 @@
 "use client";
 import { Plus } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Notification from "@/components/Notification";
 import PollFormModal from "@/components/polls/PollFormModal";
@@ -18,6 +18,21 @@ export default function PollsClient({ initialPolls }) {
   const handleCreatePoll = async (form) => {
     setSaving(true);
     try {
+      // Basic validation for dates if appointment
+      if (form.type === "appointment") {
+        const hasInvalidDate = form.questions[0].options.some(
+          (opt) => !opt.dateValue,
+        );
+        if (hasInvalidDate) {
+          setNotification({
+            message: "Bitte alle Daten ausfüllen",
+            type: "error",
+          });
+          setSaving(false);
+          return;
+        }
+      }
+
       const res = await fetch("/api/polls", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,7 +43,7 @@ export default function PollsClient({ initialPolls }) {
         const { id } = await res.json();
         setNotification({ message: t("form.successCreate"), type: "success" });
         setIsModalOpen(false);
-        router.push(`/termin/${id}`);
+        router.push(`/umfrage/${id}`);
       } else {
         setNotification({ message: "Fehler beim Erstellen", type: "error" });
       }
