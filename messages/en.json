@@ -52,40 +52,65 @@
     "reviews": "Reviews",
     "info": "Changelog",
     "office": "Office",
-    "polls": "Polls"
+    "polls": "Surveys & Polls"
   },
   "Polls": {
-    "title": "Polls",
+    "title": "Surveys & Polls",
     "subtitle": "Planning",
-    "newPoll": "New Poll",
-    "pollTitle": "Poll Title",
-    "pollTitlePlaceholder": "e.g. Regulars' Table",
+    "newPoll": "New",
+    "newAppointment": "New Appointment Poll",
+    "newSurvey": "New Survey",
+    "pollTitle": "Title",
+    "pollTitlePlaceholder": "e.g. Weekly Meeting or Feedback",
+    "description": "Description",
+    "descriptionPlaceholder": "Optional details...",
+    "type": "Type",
+    "types": {
+      "appointment": "Appointment",
+      "survey": "Classic Survey"
+    },
+    "questions": "Questions",
+    "addQuestion": "Add Question",
+    "questionTitle": "Question",
+    "questionType": "Response Type",
+    "questionTypes": {
+      "checkbox": "Confirmation (Checkbox)",
+      "toggle": "Toggle Switch",
+      "single_choice": "Single Choice",
+      "multiple_choice": "Multiple Choice",
+      "text": "Text Input (single line)",
+      "textarea": "Text Input (multi-line)",
+      "email": "Email",
+      "address": "Address",
+      "number": "Number"
+    },
     "options": "Options",
-    "addOption": "Add another option",
+    "addOption": "Add Option",
     "invites": "Invites",
     "indispensable": "Required",
     "inviteUsers": "Invite users...",
     "editPoll": "Edit",
     "deletePoll": "Delete",
     "finalize": "Finalize",
-    "finalized": "Poll finalized",
+    "finalized": "Finalized",
     "finalizedOn": "Finalized on {date}",
     "createdBy": "Created by {name}",
-    "noPolls": "No polls found.",
+    "noPolls": "No entries found.",
     "bestOption": "Best Option",
     "status": {
       "ongoing": "Ongoing",
       "finalized": "Finalized"
     },
     "voting": {
-      "yes": "Attending"
+      "yes": "Going",
+      "confirm": "Are you going?"
     },
     "form": {
       "save": "Save",
-      "successCreate": "Poll created",
-      "successUpdate": "Poll updated",
-      "successFinalize": "Poll finalized",
-      "deleteConfirm": "Are you sure you want to delete this poll?"
+      "successCreate": "Successfully created",
+      "successUpdate": "Successfully updated",
+      "successFinalize": "Successfully finalized",
+      "deleteConfirm": "Do you really want to delete this entry?"
     }
   },
   "Auth": {

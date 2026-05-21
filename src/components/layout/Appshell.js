@@ -59,7 +59,7 @@ export default function AppShell({ children, user, session }) {
     { href: "/kritik", label: t("reviews"), icon: Star },
     { href: "/reisen", label: t("travel"), icon: MapIcon },
     { href: "/kalender", label: t("calendar"), icon: Calendar },
-    { href: "/termin", label: t("polls"), icon: CalendarCheck },
+    { href: "/umfrage", label: t("polls"), icon: CalendarCheck },
     { href: "/geburtstage", label: t("birthdays"), icon: Gift },
     { href: "/kontakte", label: t("contacts"), icon: Users },
     { href: "/fotos", label: t("photos"), icon: Camera },

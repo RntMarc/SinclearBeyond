@@ -51,16 +51,40 @@
     "subscriptions": "Abos",
     "reviews": "Reviews",
     "info": "Changelog",
-    "polls": "Termie"
+    "polls": "Umfraga & Termie"
   },
   "Polls": {
-    "title": "Termie ab-schdimma",
+    "title": "Umfraga & Termie",
     "subtitle": "Blanong",
-    "newPoll": "Nuie Ab-schdimmong",
-    "pollTitle": "Wie's hoißt",
-    "pollTitlePlaceholder": "z.B. Schdammtisch",
+    "newPoll": "Nui",
+    "newAppointment": "Nuie Termiefendong",
+    "newSurvey": "Nuie Umfrag",
+    "pollTitle": "Titel",
+    "pollTitlePlaceholder": "z.B. Schdammtisch odr Feedback",
+    "description": "Beschreibong",
+    "descriptionPlaceholder": "Mehr Details...",
+    "type": "Typ",
+    "types": {
+      "appointment": "Termiefendong",
+      "survey": "Klassische Umfrag"
+    },
+    "questions": "Fraga",
+    "addQuestion": "Fraga dazua dõa",
+    "questionTitle": "Fraga",
+    "questionType": "Antwort-Typ",
+    "questionTypes": {
+      "checkbox": "Bschdädigong (Checkbox)",
+      "toggle": "Oi/Aus Schalter",
+      "single_choice": "Oinzelauswahl (Single Choice)",
+      "multiple_choice": "Mehrfachaluswahl (Multiple Choice)",
+      "text": "Textfeld (oizeilig)",
+      "textarea": "Textfeld (mehrzeilig)",
+      "email": "E-Mail",
+      "address": "Adress",
+      "number": "Zahl"
+    },
     "options": "Auswahl",
-    "addOption": "No ebbes dazua dõa",
+    "addOption": "Ebbes dazua dõa",
     "invites": "Leit",
     "indispensable": "Musch dabei sei",
     "inviteUsers": "Leit dazua dõa...",
@@ -77,13 +101,14 @@
       "finalized": "Fertig"
     },
     "voting": {
-      "yes": "Dabei"
+      "yes": "Dabei",
+      "confirm": "Bisch dabei?"
     },
     "form": {
       "save": "Schbeichra",
-      "successCreate": "Ab-schdimmong gmacht",
-      "successUpdate": "Ab-schdimmong g'ändert",
-      "successFinalize": "Ab-schdimmong fertig gmacht",
+      "successCreate": "Erfolgreich gmacht",
+      "successUpdate": "Erfolgreich g'ändert",
+      "successFinalize": "Erfolgreich fertig gmacht",
       "deleteConfirm": "Willsch des wirklich lescha?"
     }
   },
