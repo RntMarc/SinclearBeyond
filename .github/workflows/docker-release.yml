@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - 'v*.*.*'
+      - 'v*.*'
   # Option 2: Manueller Trigger über die GitHub-Oberfläche (mit Eingabe der Version)
   workflow_dispatch:
     inputs:
