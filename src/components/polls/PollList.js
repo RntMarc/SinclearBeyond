@@ -1,7 +1,13 @@
 "use client";
-import { CheckCircle2, ChevronRight, Clock, Target } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import {
+  CheckCircle2,
+  CheckSquare,
+  ChevronRight,
+  Clock,
+  Target,
+} from "lucide-react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 
 function PollCard({ poll }) {
   const t = useTranslations("Polls");
@@ -24,14 +30,17 @@ function PollCard({ poll }) {
     ? "bg-emerald-500/15 text-emerald-400"
     : "bg-primary/15 text-primary";
 
+  const Icon =
+    poll.type === "survey" ? CheckSquare : isFinalized ? CheckCircle2 : Target;
+
   return (
-    <Link href={`/termin/${poll.id}`} className="block">
+    <Link href={`/umfrage/${poll.id}`} className="block">
       <div className="flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-xl transition-all group">
         <div className="flex items-center gap-3">
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isFinalized ? "bg-emerald-500/10 text-emerald-500" : "bg-primary/10 text-primary"}`}
           >
-            {isFinalized ? <CheckCircle2 size={18} /> : <Target size={18} />}
+            <Icon size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -43,18 +52,14 @@ function PollCard({ poll }) {
               </span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {isFinalized ? (
-                <>
-                  {t("finalizedOn", {
+              {isFinalized
+                ? t("finalizedOn", {
                     date: formatDate(
                       poll.options.find((o) => o.id === poll.finalizedOptionId)
-                        ?.startAt,
+                        ?.dateValue,
                     ),
-                  })}
-                </>
-              ) : (
-                t("createdBy", { name: poll.creatorName })
-              )}
+                  })
+                : t("createdBy", { name: poll.creatorName })}
             </p>
           </div>
         </div>

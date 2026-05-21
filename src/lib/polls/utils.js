@@ -3,6 +3,7 @@ import { db } from "@/lib/db/db";
 import {
   pollInvites,
   pollOptions,
+  pollQuestions,
   polls,
   pollVotes,
   users,
@@ -20,7 +21,9 @@ export async function getPolls(userId) {
   const userPolls = await db
     .select({
       id: polls.id,
+      type: polls.type,
       title: polls.title,
+      description: polls.description,
       creatorId: polls.creatorId,
       finalizedOptionId: polls.finalizedOptionId,
       createdAt: polls.createdAt,
@@ -39,17 +42,29 @@ export async function getPolls(userId) {
     )
     .orderBy(sql`${polls.createdAt} DESC`);
 
-  // Enrich with options and finalize status
+  // Enrich with questions and options to determine status/relevance
   const enrichedPolls = await Promise.all(
     userPolls.map(async (poll) => {
-      const options = await db
+      const questions = await db
         .select()
-        .from(pollOptions)
-        .where(eq(pollOptions.pollId, poll.id))
-        .orderBy(pollOptions.startAt);
+        .from(pollQuestions)
+        .where(eq(pollQuestions.pollId, poll.id))
+        .orderBy(pollQuestions.order);
+
+      const questionIds = questions.map((q) => q.id);
+
+      const options =
+        questionIds.length > 0
+          ? await db
+              .select()
+              .from(pollOptions)
+              .where(inArray(pollOptions.questionId, questionIds))
+              .orderBy(pollOptions.order)
+          : [];
 
       return {
         ...poll,
+        questions,
         options,
       };
     }),
@@ -62,7 +77,9 @@ export async function getPoll(pollId, userId) {
   const [poll] = await db
     .select({
       id: polls.id,
+      type: polls.type,
       title: polls.title,
+      description: polls.description,
       creatorId: polls.creatorId,
       finalizedOptionId: polls.finalizedOptionId,
       createdAt: polls.createdAt,
@@ -92,30 +109,43 @@ export async function getPoll(pollId, userId) {
 
   if (!isInvited && !isCreator) return null;
 
-  const options = await db
+  const questions = await db
     .select()
-    .from(pollOptions)
-    .where(eq(pollOptions.pollId, pollId))
-    .orderBy(pollOptions.startAt);
+    .from(pollQuestions)
+    .where(eq(pollQuestions.pollId, pollId))
+    .orderBy(pollQuestions.order);
+
+  const questionIds = questions.map((q) => q.id);
+
+  const options =
+    questionIds.length > 0
+      ? await db
+          .select()
+          .from(pollOptions)
+          .where(inArray(pollOptions.questionId, questionIds))
+          .orderBy(pollOptions.order)
+      : [];
 
   const votes =
-    options.length > 0
+    questionIds.length > 0
       ? await db
           .select()
           .from(pollVotes)
-          .where(
-            inArray(
-              pollVotes.optionId,
-              options.map((o) => o.id),
-            ),
-          )
+          .where(inArray(pollVotes.questionId, questionIds))
       : [];
+
+  // Filter votes for surveys: Only creator sees all, users see only their own
+  const filteredVotes =
+    poll.type === "survey" && !isCreator
+      ? votes.filter((v) => v.userId === userId)
+      : votes;
 
   return {
     ...poll,
     invites,
+    questions,
     options,
-    votes,
+    votes: filteredVotes,
     isCreator,
   };
 }

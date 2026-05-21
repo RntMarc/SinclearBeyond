@@ -401,21 +401,47 @@ export const albumTracks = mysqlTable("AlbumTrack", {
   trackNumber: tinyint("trackNumber"),
 });
 
-// ── Terminfinder (Polls) ─────────────────────────────────────────────────────
+// ── Terminfinder / Umfragen (Polls) ──────────────────────────────────────────
 
 export const polls = mysqlTable("Poll", {
   id: varchar("id", { length: 191 }).primaryKey(),
+  type: mysqlEnum("type", ["appointment", "survey"])
+    .notNull()
+    .default("appointment"),
   title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
   creatorId: varchar("creatorId", { length: 191 }).notNull(),
   finalizedOptionId: varchar("finalizedOptionId", { length: 191 }),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
 });
 
-export const pollOptions = mysqlTable("PollOption", {
+export const pollQuestions = mysqlTable("PollQuestion", {
   id: varchar("id", { length: 191 }).primaryKey(),
   pollId: varchar("pollId", { length: 191 }).notNull(),
-  startAt: datetime("startAt", { fsp: 3 }).notNull(),
+  title: text("title").notNull(),
+  type: mysqlEnum("type", [
+    "checkbox",
+    "toggle",
+    "single_choice",
+    "multiple_choice",
+    "text",
+    "textarea",
+    "email",
+    "address",
+    "number",
+    "date", // Used for appointments
+  ]).notNull(),
+  order: tinyint("order").notNull().default(0),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const pollOptions = mysqlTable("PollOption", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  questionId: varchar("questionId", { length: 191 }).notNull(),
+  label: text("label"), // For choice types
+  dateValue: datetime("dateValue", { fsp: 3 }), // For appointment types
+  order: tinyint("order").notNull().default(0),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
@@ -429,8 +455,10 @@ export const pollInvites = mysqlTable("PollInvite", {
 
 export const pollVotes = mysqlTable("PollVote", {
   id: varchar("id", { length: 191 }).primaryKey(),
-  optionId: varchar("optionId", { length: 191 }).notNull(),
+  questionId: varchar("questionId", { length: 191 }).notNull(),
+  optionId: varchar("optionId", { length: 191 }), // For choice/date types
   userId: varchar("userId", { length: 191 }).notNull(),
-  availability: mysqlEnum("availability", ["yes", "maybe", "no"]).notNull(),
+  value: text("value"), // For text/number/etc.
+  availability: mysqlEnum("availability", ["yes", "maybe", "no"]), // Only for appointments
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
 });

@@ -2,7 +2,12 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/db";
-import { pollInvites, pollOptions, polls } from "@/lib/db/schema";
+import {
+  pollInvites,
+  pollOptions,
+  pollQuestions,
+  polls,
+} from "@/lib/db/schema";
 import { getPolls } from "@/lib/polls/utils";
 
 export async function GET() {
@@ -22,9 +27,15 @@ export async function POST(request) {
   }
 
   try {
-    const { title, options, invites } = await request.json();
+    const {
+      type = "appointment",
+      title,
+      description,
+      questions,
+      invites,
+    } = await request.json();
 
-    if (!title || !options || options.length === 0) {
+    if (!title || !questions || questions.length === 0) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
@@ -34,21 +45,39 @@ export async function POST(request) {
     await db.transaction(async (tx) => {
       await tx.insert(polls).values({
         id: pollId,
+        type,
         title,
+        description,
         creatorId: session.sub,
         createdAt: now,
         updatedAt: now,
       });
 
-      if (options && options.length > 0) {
-        await tx.insert(pollOptions).values(
-          options.map((opt) => ({
-            id: crypto.randomUUID(),
-            pollId,
-            startAt: new Date(opt.startAt),
-            createdAt: now,
-          })),
-        );
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const questionId = crypto.randomUUID();
+
+        await tx.insert(pollQuestions).values({
+          id: questionId,
+          pollId,
+          title: q.title,
+          type: q.type,
+          order: i,
+          createdAt: now,
+        });
+
+        if (q.options && q.options.length > 0) {
+          await tx.insert(pollOptions).values(
+            q.options.map((opt, optIdx) => ({
+              id: crypto.randomUUID(),
+              questionId,
+              label: opt.label,
+              dateValue: opt.dateValue ? new Date(opt.dateValue) : null,
+              order: optIdx,
+              createdAt: now,
+            })),
+          );
+        }
       }
 
       if (invites && invites.length > 0) {

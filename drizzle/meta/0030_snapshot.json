@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "f7dad928-db1a-4f27-8698-30ba0aa31008",
-  "prevId": "78a50e90-935d-4515-9739-72465b5e4f9d",
+  "id": "a75a3853-95b7-4be4-80b3-dd7f8bb8a2de",
+  "prevId": "f7dad928-db1a-4f27-8698-30ba0aa31008",
   "tables": {
     "AlbumTrack": {
       "name": "AlbumTrack",
@@ -1363,19 +1363,34 @@
           "notNull": true,
           "autoincrement": false
         },
-        "pollId": {
-          "name": "pollId",
+        "questionId": {
+          "name": "questionId",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "startAt": {
-          "name": "startAt",
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dateValue": {
+          "name": "dateValue",
           "type": "datetime(3)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
+        },
+        "order": {
+          "name": "order",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "createdAt": {
           "name": "createdAt",
@@ -1396,6 +1411,64 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
+    "PollQuestion": {
+      "name": "PollQuestion",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "pollId": {
+          "name": "pollId",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "enum('checkbox','toggle','single_choice','multiple_choice','text','textarea','email','address','number','date')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "order": {
+          "name": "order",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "PollQuestion_id": {
+          "name": "PollQuestion_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
     "PollVote": {
       "name": "PollVote",
       "columns": {
@@ -1406,11 +1479,18 @@
           "notNull": true,
           "autoincrement": false
         },
+        "questionId": {
+          "name": "questionId",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "optionId": {
           "name": "optionId",
           "type": "varchar(191)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "userId": {
@@ -1420,11 +1500,18 @@
           "notNull": true,
           "autoincrement": false
         },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "availability": {
           "name": "availability",
           "type": "enum('yes','maybe','no')",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "updatedAt": {
@@ -1456,11 +1543,26 @@
           "notNull": true,
           "autoincrement": false
         },
+        "type": {
+          "name": "type",
+          "type": "enum('appointment','survey')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'appointment'"
+        },
         "title": {
           "name": "title",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "creatorId": {
@@ -2462,7 +2564,9 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"PollOption\".\"pollId\"": "\"PollOption\".\"questionId\""
+    }
   },
   "internal": {
     "tables": {},

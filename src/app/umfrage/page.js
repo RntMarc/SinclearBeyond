@@ -1,11 +1,11 @@
+import { CalendarCheck } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import AppShell from "@/components/layout/Appshell";
+import PageHeader from "@/components/layout/PageHeader";
 import { getSession } from "@/lib/auth/session";
 import { getPolls } from "@/lib/polls/utils";
 import PollsClient from "./PollsClient";
-import AppShell from "@/components/layout/Appshell";
-import PageHeader from "@/components/layout/PageHeader";
-import { getTranslations } from "next-intl/server";
-import { redirect } from "next/navigation";
-import { CalendarCheck } from "lucide-react";
 
 export default async function PollsPage() {
   const session = await getSession();

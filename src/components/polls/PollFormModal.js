@@ -1,5 +1,5 @@
 "use client";
-import { CheckCircle2, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import PollForm from "./PollForm";
 

@@ -1,20 +1,21 @@
-import { getSession } from "@/lib/auth/session";
-import { getPoll } from "@/lib/polls/utils";
-import PollDetailClient from "./PollDetailClient";
-import AppShell from "@/components/layout/Appshell";
-import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import AppShell from "@/components/layout/Appshell";
+import { getSession } from "@/lib/auth/session";
+import { getPoll } from "@/lib/polls/utils";
+import PollDetailClient from "./PollDetailClient";
 
 export default async function PollDetailPage({ params }) {
+  const { id } = await params;
   const session = await getSession();
 
   if (!session) {
     redirect("/login");
   }
 
-  const poll = await getPoll(params.id, session.sub);
+  const poll = await getPoll(id, session.sub);
   const t = await getTranslations("Polls");
 
   if (!poll) {
@@ -27,7 +28,7 @@ export default async function PollDetailPage({ params }) {
         <header className="bg-card border-b border-border px-6 py-6 shrink-0">
           <div className="max-w-5xl mx-auto flex items-center gap-4">
             <Link
-              href="/termin"
+              href="/umfrage"
               className="p-2 hover:bg-muted rounded-full transition-colors"
             >
               <ArrowLeft size={20} />
