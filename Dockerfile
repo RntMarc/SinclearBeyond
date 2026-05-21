@@ -6,7 +6,7 @@ WORKDIR /app
 RUN corepack enable pnpm
 
 # pnpm-lock.yaml statt package-lock.json verwenden
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 # --frozen-lockfile ist das pnpm-Äquivalent zu npm ci
 RUN pnpm install --frozen-lockfile
 
