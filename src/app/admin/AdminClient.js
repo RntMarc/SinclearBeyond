@@ -95,52 +95,7 @@ export default function AdminPage({ user, session }) {
   return (
     <AppShell user={{ ...user, hasSubscriptions: hasSubs }} session={session}>
       <div className="flex flex-col h-full bg-background">
-        <PageHeader subtitle="Verwaltung" title="Admin-Panel" icon={Lock}>
-          <button
-            type="button"
-            onClick={() => setShowSubscriptionModal(true)}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
-          >
-            <Banknote size={18} />
-            Abo anlegen
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowAccommodationModal(true)}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
-          >
-            <Hotel size={18} />
-            Unterkunft anlegen
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowEventModal(true)}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
-          >
-            <CalendarDays size={18} />
-            Event anlegen
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowForumModal(true)}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
-          >
-            <Hash size={18} />
-            Forum anlegen
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowTripModal(true)}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
-          >
-            <Plus size={18} />
-            Reise anlegen
-          </button>
-        </PageHeader>
+        <PageHeader subtitle="Verwaltung" title="Admin-Panel" icon={Lock} />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto">
@@ -166,14 +121,25 @@ export default function AdminPage({ user, session }) {
             {/* Tab Content */}
             {activeTab === "forums" && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-light flex items-center gap-2">
-                    <Hash className="text-primary" size={20} />
-                    Foren
-                  </h2>
-                  <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                    {forums.length}
-                  </span>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-light flex items-center gap-2">
+                      <Hash className="text-primary" size={20} />
+                      Foren
+                    </h2>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                      {forums.length}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowForumModal(true)}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+                  >
+                    <Plus size={16} />
+                    Forum anlegen
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -232,14 +198,25 @@ export default function AdminPage({ user, session }) {
 
             {activeTab === "subscriptions" && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-light flex items-center gap-2">
-                    <Banknote className="text-primary" size={20} />
-                    Abonnements
-                  </h2>
-                  <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                    {subscriptions.length}
-                  </span>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-light flex items-center gap-2">
+                      <Banknote className="text-primary" size={20} />
+                      Abonnements
+                    </h2>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                      {subscriptions.length}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowSubscriptionModal(true)}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+                  >
+                    <Plus size={16} />
+                    Abo anlegen
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -289,14 +266,25 @@ export default function AdminPage({ user, session }) {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Reisen Spalte */}
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-light flex items-center gap-2">
-                      <Plane className="text-primary" size={20} />
-                      Reisen
-                    </h2>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                      {trips.length}
-                    </span>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-xl font-light flex items-center gap-2">
+                        <Plane className="text-primary" size={20} />
+                        Reisen
+                      </h2>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                        {trips.length}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowTripModal(true)}
+                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-medium hover:opacity-90 transition-opacity shadow-sm"
+                    >
+                      <Plus size={14} />
+                      Reise
+                    </button>
                   </div>
 
                   <div className="space-y-3">
@@ -336,14 +324,25 @@ export default function AdminPage({ user, session }) {
                   </div>
 
                   {/* Eigenständige Events */}
-                  <div className="flex items-center justify-between pt-4">
-                    <h2 className="text-xl font-light flex items-center gap-2">
-                      <CalendarDays className="text-primary" size={20} />
-                      Eigenständige Events
-                    </h2>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                      {standaloneEvents.length}
-                    </span>
+                  <div className="flex items-center justify-between gap-4 pt-4">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-xl font-light flex items-center gap-2">
+                        <CalendarDays className="text-primary" size={20} />
+                        Events
+                      </h2>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                        {standaloneEvents.length}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowEventModal(true)}
+                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-lg text-xs font-medium hover:bg-sidebar-accent/80 transition-all"
+                    >
+                      <Plus size={14} />
+                      Event
+                    </button>
                   </div>
 
                   <div className="space-y-3">
@@ -390,14 +389,25 @@ export default function AdminPage({ user, session }) {
 
                 {/* Unterkünfte Spalte */}
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-light flex items-center gap-2">
-                      <Hotel className="text-primary" size={20} />
-                      Unterkünfte
-                    </h2>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                      {accommodations.length}
-                    </span>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-xl font-light flex items-center gap-2">
+                        <Hotel className="text-primary" size={20} />
+                        Unterkünfte
+                      </h2>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                        {accommodations.length}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowAccommodationModal(true)}
+                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-lg text-xs font-medium hover:bg-sidebar-accent/80 transition-all"
+                    >
+                      <Plus size={14} />
+                      Unterkunft
+                    </button>
                   </div>
 
                   <div className="space-y-3">
