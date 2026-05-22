@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { verifyToken } from "@/lib/auth/auth";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { feedbackSuggestions, feedbackVotes, users } from "@/lib/db/schema";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -48,46 +48,50 @@ export async function GET(req) {
     const userId = payload.sub;
 
     // Fetch suggestions with upvote count and whether the current user has upvoted
-    const suggestions = await db
-      .select({
-        id: feedbackSuggestions.id,
-        userId: feedbackSuggestions.userId,
-        userDisplayName: users.displayName,
-        userImage: users.image,
-        title: feedbackSuggestions.title,
-        description: feedbackSuggestions.description,
-        status: feedbackSuggestions.status,
-        createdAt: feedbackSuggestions.createdAt,
-        updatedAt: feedbackSuggestions.updatedAt,
-        upvotes: sql`count(${feedbackVotes.id})`.mapWith(Number),
-        hasUpvoted:
-          sql`max(case when ${feedbackVotes.userId} = ${userId} then 1 else 0 end)`.mapWith(
-            Boolean,
-          ),
-      })
-      .from(feedbackSuggestions)
-      .leftJoin(users, eq(feedbackSuggestions.userId, users.id))
-      .leftJoin(
-        feedbackVotes,
-        eq(feedbackSuggestions.id, feedbackVotes.suggestionId),
-      )
-      .groupBy(
-        feedbackSuggestions.id,
-        feedbackSuggestions.userId,
-        users.displayName,
-        users.image,
-        feedbackSuggestions.title,
-        feedbackSuggestions.description,
-        feedbackSuggestions.status,
-        feedbackSuggestions.createdAt,
-        feedbackSuggestions.updatedAt,
-      )
-      .orderBy(
-        desc(sql`count(${feedbackVotes.id})`),
-        desc(feedbackSuggestions.createdAt),
-      );
+    const { data: suggestions, error } = await safeQuery(
+      db
+        .select({
+          id: feedbackSuggestions.id,
+          userId: feedbackSuggestions.userId,
+          userDisplayName: users.displayName,
+          userImage: users.image,
+          title: feedbackSuggestions.title,
+          description: feedbackSuggestions.description,
+          status: feedbackSuggestions.status,
+          createdAt: feedbackSuggestions.createdAt,
+          updatedAt: feedbackSuggestions.updatedAt,
+          upvotes: sql`count(${feedbackVotes.id})`.mapWith(Number),
+          hasUpvoted:
+            sql`max(case when ${feedbackVotes.userId} = ${userId} then 1 else 0 end)`.mapWith(
+              Boolean,
+            ),
+        })
+        .from(feedbackSuggestions)
+        .leftJoin(users, eq(feedbackSuggestions.userId, users.id))
+        .leftJoin(
+          feedbackVotes,
+          eq(feedbackSuggestions.id, feedbackVotes.suggestionId),
+        )
+        .groupBy(
+          feedbackSuggestions.id,
+          feedbackSuggestions.userId,
+          users.displayName,
+          users.image,
+          feedbackSuggestions.title,
+          feedbackSuggestions.description,
+          feedbackSuggestions.status,
+          feedbackSuggestions.createdAt,
+          feedbackSuggestions.updatedAt,
+        )
+        .orderBy(
+          desc(sql`count(${feedbackVotes.id})`),
+          desc(feedbackSuggestions.createdAt),
+        ),
+    );
 
-    return NextResponse.json(suggestions);
+    if (error) throw error;
+
+    return NextResponse.json(suggestions || []);
   } catch (error) {
     console.error("Error fetching suggestions:", error);
     return NextResponse.json(
@@ -148,14 +152,18 @@ export async function POST(req) {
       const { title, description } = body;
 
       const newId = crypto.randomUUID();
-      await db.insert(feedbackSuggestions).values({
-        id: newId,
-        userId,
-        title,
-        description,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      const { error: insertError } = await safeQuery(
+        db.insert(feedbackSuggestions).values({
+          id: newId,
+          userId,
+          title,
+          description,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      );
+
+      if (insertError) throw insertError;
 
       return NextResponse.json({ id: newId });
     } else if (body.type === "missing_place") {

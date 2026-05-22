@@ -2,7 +2,7 @@ import { and, eq, inArray, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import {
   closeFriends,
   eventPermissions,
@@ -23,103 +23,159 @@ export async function GET() {
   const userId = session.sub;
 
   // 1. Standard Events
-  const viewPermRows = await db
-    .select({ eventId: eventPermissions.eventId })
-    .from(eventPermissions)
-    .where(
-      and(eq(eventPermissions.userId, userId), eq(eventPermissions.canView, 1)),
-    );
+  const { data: viewPermRows, error: viewPermError } = await safeQuery(
+    db
+      .select({ eventId: eventPermissions.eventId })
+      .from(eventPermissions)
+      .where(
+        and(
+          eq(eventPermissions.userId, userId),
+          eq(eventPermissions.canView, 1),
+        ),
+      ),
+  );
 
-  const permEventIds = viewPermRows.map((r) => r.eventId);
+  const permEventIds = viewPermRows?.map((r) => r.eventId) || [];
   const conditions = [eq(events.isPublic, 1), eq(events.creatorId, userId)];
   if (permEventIds.length > 0)
     conditions.push(inArray(events.id, permEventIds));
 
-  const rows = await db
-    .select()
-    .from(events)
-    .where(or(...conditions))
-    .orderBy(events.startAt);
+  const { data: rows, error: eventsError } = await safeQuery(
+    db
+      .select()
+      .from(events)
+      .where(or(...conditions))
+      .orderBy(events.startAt),
+  );
 
-  const editPermRows = await db
-    .select({ eventId: eventPermissions.eventId })
-    .from(eventPermissions)
-    .where(
-      and(eq(eventPermissions.userId, userId), eq(eventPermissions.canEdit, 1)),
-    );
+  const { data: editPermRows, error: editPermError } = await safeQuery(
+    db
+      .select({ eventId: eventPermissions.eventId })
+      .from(eventPermissions)
+      .where(
+        and(
+          eq(eventPermissions.userId, userId),
+          eq(eventPermissions.canEdit, 1),
+        ),
+      ),
+  );
 
-  const editEventIds = new Set(editPermRows.map((r) => r.eventId));
+  const editEventIds = new Set(editPermRows?.map((r) => r.eventId) || []);
 
-  const standardEvents = rows.map((ev) => ({
-    ...ev,
-    canEdit:
-      session.isAdmin || ev.creatorId === userId || editEventIds.has(ev.id),
-  }));
+  const standardEvents =
+    rows?.map((ev) => ({
+      ...ev,
+      canEdit:
+        session.isAdmin || ev.creatorId === userId || editEventIds.has(ev.id),
+    })) || [];
 
   // 2. Trips
-  const userRelations = await db
-    .select({ tripId: travelRelations.tripId })
-    .from(travelRelations)
-    .where(eq(travelRelations.userId, userId));
+  const { data: userRelations, error: travelRelError } = await safeQuery(
+    db
+      .select({ tripId: travelRelations.tripId })
+      .from(travelRelations)
+      .where(eq(travelRelations.userId, userId)),
+  );
 
-  const participantTripIds = userRelations.map((r) => r.tripId);
+  const participantTripIds = userRelations?.map((r) => r.tripId) || [];
 
-  const userEventRelations = await db
-    .select({ eventId: eventRelations.eventId })
-    .from(eventRelations)
-    .where(eq(eventRelations.userId, userId));
-  const participantEventIds = userEventRelations.map((r) => r.eventId);
+  const { data: userEventRelations, error: eventRelError } = await safeQuery(
+    db
+      .select({ eventId: eventRelations.eventId })
+      .from(eventRelations)
+      .where(eq(eventRelations.userId, userId)),
+  );
+  const participantEventIds = userEventRelations?.map((r) => r.eventId) || [];
 
   let trips = [];
+  let tripsError = false;
   if (session.isAdmin) {
-    trips = await db.select().from(travelTrips).orderBy(travelTrips.start);
+    const { data: adminTrips, error: adminTripsError } = await safeQuery(
+      db.select().from(travelTrips).orderBy(travelTrips.start),
+    );
+    trips = adminTrips || [];
+    tripsError = adminTripsError;
   } else if (participantTripIds.length > 0) {
-    trips = await db
-      .select()
-      .from(travelTrips)
-      .where(inArray(travelTrips.id, participantTripIds))
-      .orderBy(travelTrips.start);
+    const { data: userTrips, error: userTripsError } = await safeQuery(
+      db
+        .select()
+        .from(travelTrips)
+        .where(inArray(travelTrips.id, participantTripIds))
+        .orderBy(travelTrips.start),
+    );
+    trips = userTrips || [];
+    tripsError = userTripsError;
   }
 
   // 3. Travel Events
   let trvEvents = [];
+  let trvEventsError = false;
   if (participantEventIds.length > 0) {
-    trvEvents = await db
-      .select()
-      .from(travelEvents)
-      .where(inArray(travelEvents.id, participantEventIds))
-      .orderBy(travelEvents.start);
+    const { data: travelEventsData, error: travelEventsErr } = await safeQuery(
+      db
+        .select()
+        .from(travelEvents)
+        .where(inArray(travelEvents.id, participantEventIds))
+        .orderBy(travelEvents.start),
+    );
+    trvEvents = travelEventsData || [];
+    trvEventsError = travelEventsErr;
   }
 
   // 4. Birthdays
-  const allUsersWithBirthday = await db
-    .select({
-      id: users.id,
-      displayName: users.displayName,
-      birthday: users.birthday,
-      birthdayVisibility: users.birthdayVisibility,
-    })
-    .from(users)
-    .where(and(eq(users.id, users.id))); // Dummy to ensure select
+  const { data: allUsersWithBirthday, error: usersError } = await safeQuery(
+    db
+      .select({
+        id: users.id,
+        displayName: users.displayName,
+        birthday: users.birthday,
+        birthdayVisibility: users.birthdayVisibility,
+      })
+      .from(users)
+      .where(and(eq(users.id, users.id))),
+  ); // Dummy to ensure select
 
-  const whoMarkedMeAsCloseFriend = await db
-    .select({ userId: closeFriends.userId })
-    .from(closeFriends)
-    .where(eq(closeFriends.friendId, userId));
+  const { data: whoMarkedMeAsCloseFriend, error: closeFriendsError } =
+    await safeQuery(
+      db
+        .select({ userId: closeFriends.userId })
+        .from(closeFriends)
+        .where(eq(closeFriends.friendId, userId)),
+    );
 
   const visibilityCloseFriendIds = new Set(
-    whoMarkedMeAsCloseFriend.map((f) => f.userId),
+    whoMarkedMeAsCloseFriend?.map((f) => f.userId) || [],
   );
 
   // 5. CloseFriends abrufen, die ICH markiert habe (für Herzchen-Symbol)
-  const iMarkedAsCloseFriend = await db
-    .select({ friendId: closeFriends.friendId })
-    .from(closeFriends)
-    .where(eq(closeFriends.userId, userId));
+  const { data: iMarkedAsCloseFriend, error: myCloseFriendsError } =
+    await safeQuery(
+      db
+        .select({ friendId: closeFriends.friendId })
+        .from(closeFriends)
+        .where(eq(closeFriends.userId, userId)),
+    );
 
-  const myCloseFriendIds = new Set(iMarkedAsCloseFriend.map((f) => f.friendId));
+  const myCloseFriendIds = new Set(
+    iMarkedAsCloseFriend?.map((f) => f.friendId) || [],
+  );
 
-  const birthdays = allUsersWithBirthday
+  if (
+    viewPermError ||
+    eventsError ||
+    editPermError ||
+    travelRelError ||
+    eventRelError ||
+    tripsError ||
+    trvEventsError ||
+    usersError ||
+    closeFriendsError ||
+    myCloseFriendsError
+  ) {
+    return NextResponse.json({ error: t("dbError") }, { status: 500 });
+  }
+
+  const birthdays = (allUsersWithBirthday || [])
     .filter((u) => {
       if (!u.birthday) return false;
       if (u.id === userId) return true;

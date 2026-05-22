@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import {
   discoverBookmarks,
   discoverPlaces,
@@ -26,43 +26,52 @@ export default async function DiscoverPage() {
   if (!data) redirect("/login");
   const { user } = data;
 
-  const bookmarks = await db
-    .select({
-      id: discoverPlaces.id,
-      name: discoverPlaces.name,
-      category: discoverPlaces.category,
-      address: discoverPlaces.address,
-    })
-    .from(discoverBookmarks)
-    .innerJoin(discoverPlaces, eq(discoverBookmarks.placeId, discoverPlaces.id))
-    .where(eq(discoverBookmarks.userId, session.sub));
+  const { data: bookmarks } = await safeQuery(
+    db
+      .select({
+        id: discoverPlaces.id,
+        name: discoverPlaces.name,
+        category: discoverPlaces.category,
+        address: discoverPlaces.address,
+      })
+      .from(discoverBookmarks)
+      .innerJoin(
+        discoverPlaces,
+        eq(discoverBookmarks.placeId, discoverPlaces.id),
+      )
+      .where(eq(discoverBookmarks.userId, session.sub)),
+  );
 
   // Get 11 random places
-  const randomPlaces = await db
-    .select({
-      id: discoverPlaces.id,
-      name: discoverPlaces.name,
-      address: discoverPlaces.address,
-      category: discoverPlaces.category,
-      avgRating: sql`AVG(${discoverReviews.rating})`,
-      reviewCount: sql`COUNT(${discoverReviews.id})`,
-    })
-    .from(discoverPlaces)
-    .leftJoin(discoverReviews, eq(discoverPlaces.id, discoverReviews.placeId))
-    .groupBy(discoverPlaces.id)
-    .orderBy(sql`RAND()`)
-    .limit(11);
+  const { data: randomPlaces } = await safeQuery(
+    db
+      .select({
+        id: discoverPlaces.id,
+        name: discoverPlaces.name,
+        address: discoverPlaces.address,
+        category: discoverPlaces.category,
+        avgRating: sql`AVG(${discoverReviews.rating})`,
+        reviewCount: sql`COUNT(${discoverReviews.id})`,
+      })
+      .from(discoverPlaces)
+      .leftJoin(discoverReviews, eq(discoverPlaces.id, discoverReviews.placeId))
+      .groupBy(discoverPlaces.id)
+      .orderBy(sql`RAND()`)
+      .limit(11),
+  );
 
-  const allPlaces = await db
-    .select({
-      id: discoverPlaces.id,
-      name: discoverPlaces.name,
-      address: discoverPlaces.address,
-      latitude: discoverPlaces.latitude,
-      longitude: discoverPlaces.longitude,
-      category: discoverPlaces.category,
-    })
-    .from(discoverPlaces);
+  const { data: allPlaces } = await safeQuery(
+    db
+      .select({
+        id: discoverPlaces.id,
+        name: discoverPlaces.name,
+        address: discoverPlaces.address,
+        latitude: discoverPlaces.latitude,
+        longitude: discoverPlaces.longitude,
+        category: discoverPlaces.category,
+      })
+      .from(discoverPlaces),
+  );
 
   return (
     <AppShell user={user} session={session}>
@@ -75,9 +84,9 @@ export default async function DiscoverPage() {
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <DiscoverClient
-            initialRandomPlaces={randomPlaces}
-            bookmarks={bookmarks}
-            allPlaces={allPlaces}
+            initialRandomPlaces={randomPlaces || []}
+            bookmarks={bookmarks || []}
+            allPlaces={allPlaces || []}
           />
         </div>
       </div>

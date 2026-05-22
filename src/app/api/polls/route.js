@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import {
   pollInvites,
   pollOptions,
@@ -42,56 +42,60 @@ export async function POST(request) {
     const pollId = crypto.randomUUID();
     const now = new Date();
 
-    await db.transaction(async (tx) => {
-      await tx.insert(polls).values({
-        id: pollId,
-        type,
-        title,
-        description,
-        creatorId: session.sub,
-        createdAt: now,
-        updatedAt: now,
-      });
-
-      for (let i = 0; i < questions.length; i++) {
-        const q = questions[i];
-        const questionId = crypto.randomUUID();
-
-        await tx.insert(pollQuestions).values({
-          id: questionId,
-          pollId,
-          title: q.title,
-          type: q.type,
-          order: i,
+    const { error: txError } = await safeQuery(
+      db.transaction(async (tx) => {
+        await tx.insert(polls).values({
+          id: pollId,
+          type,
+          title,
+          description,
+          creatorId: session.sub,
           createdAt: now,
+          updatedAt: now,
         });
 
-        if (q.options && q.options.length > 0) {
-          await tx.insert(pollOptions).values(
-            q.options.map((opt, optIdx) => ({
+        for (let i = 0; i < questions.length; i++) {
+          const q = questions[i];
+          const questionId = crypto.randomUUID();
+
+          await tx.insert(pollQuestions).values({
+            id: questionId,
+            pollId,
+            title: q.title,
+            type: q.type,
+            order: i,
+            createdAt: now,
+          });
+
+          if (q.options && q.options.length > 0) {
+            await tx.insert(pollOptions).values(
+              q.options.map((opt, optIdx) => ({
+                id: crypto.randomUUID(),
+                questionId,
+                label: opt.label,
+                dateValue: opt.dateValue ? new Date(opt.dateValue) : null,
+                order: optIdx,
+                createdAt: now,
+              })),
+            );
+          }
+        }
+
+        if (invites && invites.length > 0) {
+          await tx.insert(pollInvites).values(
+            invites.map((invite) => ({
               id: crypto.randomUUID(),
-              questionId,
-              label: opt.label,
-              dateValue: opt.dateValue ? new Date(opt.dateValue) : null,
-              order: optIdx,
+              pollId,
+              userId: invite.userId,
+              isIndispensable: invite.isIndispensable ? 1 : 0,
               createdAt: now,
             })),
           );
         }
-      }
+      }),
+    );
 
-      if (invites && invites.length > 0) {
-        await tx.insert(pollInvites).values(
-          invites.map((invite) => ({
-            id: crypto.randomUUID(),
-            pollId,
-            userId: invite.userId,
-            isIndispensable: invite.isIndispensable ? 1 : 0,
-            createdAt: now,
-          })),
-        );
-      }
-    });
+    if (txError) throw new Error("Transaction failed");
 
     return NextResponse.json({ id: pollId });
   } catch (error) {

@@ -32,7 +32,8 @@
     },
     "tooManyRequests": "Zu viele Anfragen",
     "alreadyParticipant": "Bereits Teilnehmer.",
-    "genericError": "Ein Fehler ist aufgetreten."
+    "genericError": "Ein Fehler ist aufgetreten.",
+    "dbError": "Daten konnten nicht geladen werden. Bitte versuche es später erneut."
   },
   "Navigation": {
     "entertainment": "Unterhaltung",

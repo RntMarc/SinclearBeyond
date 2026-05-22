@@ -14,3 +14,18 @@ const pool = mysql.createPool({
 });
 
 export const db = drizzle(pool);
+
+/**
+ * Wraps a database query in a try-catch block to prevent full-page crashes.
+ * @param {Promise} query - The drizzle query promise.
+ * @returns {Promise<{data: any, error: boolean}>}
+ */
+export async function safeQuery(query) {
+  try {
+    const data = await query;
+    return { data, error: false };
+  } catch (err) {
+    console.error("Database query failed:", err);
+    return { data: null, error: true };
+  }
+}

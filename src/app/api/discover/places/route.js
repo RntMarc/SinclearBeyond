@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import {
   discoverGastronomy,
   discoverPlaces,
@@ -87,8 +87,10 @@ export async function GET(req) {
       query = query.orderBy(sql`${discoverPlaces.name} ASC`);
     }
 
-    const places = await query;
-    const placesWithStatus = places.map((p) => ({
+    const { data: places, error: queryError } = await safeQuery(query);
+    if (queryError) throw queryError;
+
+    const placesWithStatus = (places || []).map((p) => ({
       ...p,
       openingStatus: getOpeningStatus(p.openingHours, session?.timezone),
     }));
@@ -137,41 +139,51 @@ export async function POST(req) {
     const placeId = crypto.randomUUID();
     const now = new Date();
 
-    await db.insert(discoverPlaces).values({
-      id: placeId,
-      name,
-      category,
-      address,
-      latitude: latitude ? parseFloat(latitude) : null,
-      longitude: longitude ? parseFloat(longitude) : null,
-      osmId: osmId ? parseInt(osmId, 10) : null,
-      osmType: osmType || null,
-      phone,
-      website,
-      email,
-      openingHours,
-      lastUpdated: now,
-      creatorId: session.sub,
-      createdAt: now,
-    });
+    const { error: insertError } = await safeQuery(
+      db.insert(discoverPlaces).values({
+        id: placeId,
+        name,
+        category,
+        address,
+        latitude: latitude ? parseFloat(latitude) : null,
+        longitude: longitude ? parseFloat(longitude) : null,
+        osmId: osmId ? parseInt(osmId, 10) : null,
+        osmType: osmType || null,
+        phone,
+        website,
+        email,
+        openingHours,
+        lastUpdated: now,
+        creatorId: session.sub,
+        createdAt: now,
+      }),
+    );
+
+    if (insertError) throw insertError;
 
     if (category === "gastronomy") {
-      await db.insert(discoverGastronomy).values({
-        id: crypto.randomUUID(),
-        placeId,
-        cuisine,
-      });
+      const { error: gastroErr } = await safeQuery(
+        db.insert(discoverGastronomy).values({
+          id: crypto.randomUUID(),
+          placeId,
+          cuisine,
+        }),
+      );
+      if (gastroErr) throw gastroErr;
     }
 
     if (rating) {
-      await db.insert(discoverReviews).values({
-        id: crypto.randomUUID(),
-        placeId,
-        userId: session.sub,
-        rating: parseInt(rating, 10),
-        comment,
-        createdAt: now,
-      });
+      const { error: reviewErr } = await safeQuery(
+        db.insert(discoverReviews).values({
+          id: crypto.randomUUID(),
+          placeId,
+          userId: session.sub,
+          rating: parseInt(rating, 10),
+          comment,
+          createdAt: now,
+        }),
+      );
+      if (reviewErr) throw reviewErr;
     }
 
     return NextResponse.json({ ok: true, id: placeId });

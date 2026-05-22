@@ -1,7 +1,7 @@
 import { and, eq, ne, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth/auth";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { feedbackSuggestions, feedbackVotes, users } from "@/lib/db/schema";
 
 export async function PATCH(req, { params }) {
@@ -14,30 +14,37 @@ export async function PATCH(req, { params }) {
     const payload = await verifyToken(token);
     const userId = payload.sub;
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+    const { data: usersData, error: userFetchErr } = await safeQuery(
+      db.select().from(users).where(eq(users.id, userId)).limit(1),
+    );
+    if (userFetchErr) throw userFetchErr;
+    const user = usersData?.[0];
 
     const body = await req.json();
     const { title, description, status } = body;
 
-    const [suggestion] = await db
-      .select()
-      .from(feedbackSuggestions)
-      .where(eq(feedbackSuggestions.id, id))
-      .limit(1);
+    const { data: suggestions, error: suggestionFetchErr } = await safeQuery(
+      db
+        .select()
+        .from(feedbackSuggestions)
+        .where(eq(feedbackSuggestions.id, id))
+        .limit(1),
+    );
+    if (suggestionFetchErr) throw suggestionFetchErr;
+    const suggestion = suggestions?.[0];
 
     if (!suggestion)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     // Admin can update status
     if (user?.isAdmin && status && status !== suggestion.status) {
-      await db
-        .update(feedbackSuggestions)
-        .set({ status, updatedAt: new Date() })
-        .where(eq(feedbackSuggestions.id, id));
+      const { error: updateErr } = await safeQuery(
+        db
+          .update(feedbackSuggestions)
+          .set({ status, updatedAt: new Date() })
+          .where(eq(feedbackSuggestions.id, id)),
+      );
+      if (updateErr) throw updateErr;
 
       return NextResponse.json({ success: true });
     }
@@ -49,27 +56,34 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
 
     // Check if there are any upvotes from other users
-    const [votes] = await db
-      .select({ count: sql`count(*)` })
-      .from(feedbackVotes)
-      .where(
-        and(
-          eq(feedbackVotes.suggestionId, id),
-          ne(feedbackVotes.userId, userId),
+    const { data: votesData, error: votesErr } = await safeQuery(
+      db
+        .select({ count: sql`count(*)` })
+        .from(feedbackVotes)
+        .where(
+          and(
+            eq(feedbackVotes.suggestionId, id),
+            ne(feedbackVotes.userId, userId),
+          ),
         ),
-      );
+    );
+    if (votesErr) throw votesErr;
+    const votes = votesData?.[0];
 
-    if (Number(votes.count) > 0) {
+    if (votes && Number(votes.count) > 0) {
       return NextResponse.json(
         { error: "Cannot edit suggestion with existing upvotes from others" },
         { status: 400 },
       );
     }
 
-    await db
-      .update(feedbackSuggestions)
-      .set({ title, description, updatedAt: new Date() })
-      .where(eq(feedbackSuggestions.id, id));
+    const { error: finalUpdateErr } = await safeQuery(
+      db
+        .update(feedbackSuggestions)
+        .set({ title, description, updatedAt: new Date() })
+        .where(eq(feedbackSuggestions.id, id)),
+    );
+    if (finalUpdateErr) throw finalUpdateErr;
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -91,11 +105,15 @@ export async function DELETE(req, { params }) {
     const payload = await verifyToken(token);
     const userId = payload.sub;
 
-    const [suggestion] = await db
-      .select()
-      .from(feedbackSuggestions)
-      .where(eq(feedbackSuggestions.id, id))
-      .limit(1);
+    const { data: suggestions, error: suggestErr } = await safeQuery(
+      db
+        .select()
+        .from(feedbackSuggestions)
+        .where(eq(feedbackSuggestions.id, id))
+        .limit(1),
+    );
+    if (suggestErr) throw suggestErr;
+    const suggestion = suggestions?.[0];
 
     if (!suggestion)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -103,17 +121,21 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     // Check if there are any upvotes from other users
-    const [votes] = await db
-      .select({ count: sql`count(*)` })
-      .from(feedbackVotes)
-      .where(
-        and(
-          eq(feedbackVotes.suggestionId, id),
-          ne(feedbackVotes.userId, userId),
+    const { data: votesData, error: votesErr } = await safeQuery(
+      db
+        .select({ count: sql`count(*)` })
+        .from(feedbackVotes)
+        .where(
+          and(
+            eq(feedbackVotes.suggestionId, id),
+            ne(feedbackVotes.userId, userId),
+          ),
         ),
-      );
+    );
+    if (votesErr) throw votesErr;
+    const votes = votesData?.[0];
 
-    if (Number(votes.count) > 0) {
+    if (votes && Number(votes.count) > 0) {
       return NextResponse.json(
         { error: "Cannot delete suggestion with existing upvotes from others" },
         { status: 400 },
@@ -121,8 +143,15 @@ export async function DELETE(req, { params }) {
     }
 
     // Delete votes first (though there should only be the creator's vote if any, or none)
-    await db.delete(feedbackVotes).where(eq(feedbackVotes.suggestionId, id));
-    await db.delete(feedbackSuggestions).where(eq(feedbackSuggestions.id, id));
+    const { error: delVotesErr } = await safeQuery(
+      db.delete(feedbackVotes).where(eq(feedbackVotes.suggestionId, id)),
+    );
+    if (delVotesErr) throw delVotesErr;
+
+    const { error: delSuggestErr } = await safeQuery(
+      db.delete(feedbackSuggestions).where(eq(feedbackSuggestions.id, id)),
+    );
+    if (delSuggestErr) throw delSuggestErr;
 
     return NextResponse.json({ success: true });
   } catch (error) {

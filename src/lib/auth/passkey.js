@@ -6,7 +6,7 @@ import {
   verifyRegistrationResponse,
 } from "@simplewebauthn/server";
 import { and, eq, gt, isNull, lt } from "drizzle-orm";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { passkeys, users, webauthnChallenges } from "@/lib/db/schema";
 
 const RP_ID = process.env.NEXT_PUBLIC_RP_ID || "localhost";
@@ -20,9 +20,11 @@ if (ORIGIN && !ORIGIN.startsWith("http://") && !ORIGIN.startsWith("https://")) {
  * Purge expired challenges
  */
 async function purgeExpiredChallenges() {
-  await db
-    .delete(webauthnChallenges)
-    .where(lt(webauthnChallenges.expiresAt, new Date()));
+  await safeQuery(
+    db
+      .delete(webauthnChallenges)
+      .where(lt(webauthnChallenges.expiresAt, new Date())),
+  );
 }
 
 /**
@@ -31,10 +33,10 @@ async function purgeExpiredChallenges() {
 export async function getRegistrationOptions(user) {
   await purgeExpiredChallenges();
 
-  const userPasskeys = await db
-    .select()
-    .from(passkeys)
-    .where(eq(passkeys.userId, user.id));
+  const { data: userPasskeys, error } = await safeQuery(
+    db.select().from(passkeys).where(eq(passkeys.userId, user.id)),
+  );
+  if (error) throw error;
 
   const options = await generateRegistrationOptions({
     rpName: RP_NAME,
@@ -43,7 +45,7 @@ export async function getRegistrationOptions(user) {
     userID: new TextEncoder().encode(user.id),
     userName: user.email,
     userDisplayName: user.displayName,
-    excludeCredentials: userPasskeys.map((pk) => ({
+    excludeCredentials: (userPasskeys || []).map((pk) => ({
       id: pk.credentialId,
       type: "public-key",
       transports: pk.transports ? JSON.parse(pk.transports) : undefined,
@@ -54,13 +56,16 @@ export async function getRegistrationOptions(user) {
     },
   });
 
-  await db.insert(webauthnChallenges).values({
-    id: crypto.randomUUID(),
-    challenge: options.challenge,
-    userId: user.id,
-    expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    createdAt: new Date(),
-  });
+  const { error: inErr } = await safeQuery(
+    db.insert(webauthnChallenges).values({
+      id: crypto.randomUUID(),
+      challenge: options.challenge,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      createdAt: new Date(),
+    }),
+  );
+  if (inErr) throw inErr;
 
   return options;
 }
@@ -74,27 +79,34 @@ export async function verifyRegistration(userId, body, name) {
   );
   const challenge = clientData.challenge;
 
-  const [challengeEntry] = await db
-    .select()
-    .from(webauthnChallenges)
-    .where(
-      and(
-        eq(webauthnChallenges.userId, userId),
-        eq(webauthnChallenges.challenge, challenge),
-        // Verify challenge hasn't expired
-        gt(webauthnChallenges.expiresAt, new Date()),
-      ),
-    )
-    .limit(1);
+  const { data: challenges, error: fetchErr } = await safeQuery(
+    db
+      .select()
+      .from(webauthnChallenges)
+      .where(
+        and(
+          eq(webauthnChallenges.userId, userId),
+          eq(webauthnChallenges.challenge, challenge),
+          // Verify challenge hasn't expired
+          gt(webauthnChallenges.expiresAt, new Date()),
+        ),
+      )
+      .limit(1),
+  );
+
+  if (fetchErr) throw fetchErr;
+  const challengeEntry = challenges?.[0];
 
   if (!challengeEntry) {
     throw new Error("Challenge nicht gefunden oder abgelaufen.");
   }
 
   // Always delete challenge first — prevents replay regardless of outcome
-  await db
-    .delete(webauthnChallenges)
-    .where(eq(webauthnChallenges.id, challengeEntry.id));
+  await safeQuery(
+    db
+      .delete(webauthnChallenges)
+      .where(eq(webauthnChallenges.id, challengeEntry.id)),
+  );
 
   const verification = await verifyRegistrationResponse({
     response: body,
@@ -107,16 +119,19 @@ export async function verifyRegistration(userId, body, name) {
     // v13: credential info is nested under registrationInfo.credential
     const { credential } = verification.registrationInfo;
 
-    await db.insert(passkeys).values({
-      id: crypto.randomUUID(),
-      userId,
-      name: name || "Passkey",
-      credentialId: credential.id,
-      publicKey: Buffer.from(credential.publicKey).toString("base64url"),
-      counter: credential.counter,
-      transports: JSON.stringify(body.response.transports || []),
-      createdAt: new Date(),
-    });
+    const { error: inErr } = await safeQuery(
+      db.insert(passkeys).values({
+        id: crypto.randomUUID(),
+        userId,
+        name: name || "Passkey",
+        credentialId: credential.id,
+        publicKey: Buffer.from(credential.publicKey).toString("base64url"),
+        counter: credential.counter,
+        transports: JSON.stringify(body.response.transports || []),
+        createdAt: new Date(),
+      }),
+    );
+    if (inErr) throw inErr;
   }
 
   return verification;
@@ -134,13 +149,16 @@ export async function getAuthenticationOptions() {
   });
 
   // userId intentionally null — discoverable credential, user unknown at this point
-  await db.insert(webauthnChallenges).values({
-    id: crypto.randomUUID(),
-    challenge: options.challenge,
-    userId: null,
-    expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    createdAt: new Date(),
-  });
+  const { error: inErr } = await safeQuery(
+    db.insert(webauthnChallenges).values({
+      id: crypto.randomUUID(),
+      challenge: options.challenge,
+      userId: null,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      createdAt: new Date(),
+    }),
+  );
+  if (inErr) throw inErr;
 
   return options;
 }
@@ -154,35 +172,47 @@ export async function verifyAuthentication(body) {
   );
   const challenge = clientData.challenge;
 
-  const [challengeEntry] = await db
-    .select()
-    .from(webauthnChallenges)
-    .where(
-      and(
-        eq(webauthnChallenges.challenge, challenge),
-        // Only match login challenges (userId IS NULL) — prevents collision with registration challenges
-        isNull(webauthnChallenges.userId),
-        // Verify challenge hasn't expired
-        gt(webauthnChallenges.expiresAt, new Date()),
-      ),
-    )
-    .limit(1);
+  const { data: challenges, error: fetchErr } = await safeQuery(
+    db
+      .select()
+      .from(webauthnChallenges)
+      .where(
+        and(
+          eq(webauthnChallenges.challenge, challenge),
+          // Only match login challenges (userId IS NULL) — prevents collision with registration challenges
+          isNull(webauthnChallenges.userId),
+          // Verify challenge hasn't expired
+          gt(webauthnChallenges.expiresAt, new Date()),
+        ),
+      )
+      .limit(1),
+  );
+
+  if (fetchErr) throw fetchErr;
+  const challengeEntry = challenges?.[0];
 
   if (!challengeEntry) {
     throw new Error("Challenge nicht gefunden oder abgelaufen.");
   }
 
   // Always delete challenge first — prevents replay regardless of outcome
-  await db
-    .delete(webauthnChallenges)
-    .where(eq(webauthnChallenges.id, challengeEntry.id));
+  await safeQuery(
+    db
+      .delete(webauthnChallenges)
+      .where(eq(webauthnChallenges.id, challengeEntry.id)),
+  );
 
   const credId = body.id;
-  const [passkey] = await db
-    .select()
-    .from(passkeys)
-    .where(eq(passkeys.credentialId, credId))
-    .limit(1);
+  const { data: pkeys, error: pkErr } = await safeQuery(
+    db
+      .select()
+      .from(passkeys)
+      .where(eq(passkeys.credentialId, credId))
+      .limit(1),
+  );
+
+  if (pkErr) throw pkErr;
+  const passkey = pkeys?.[0];
 
   if (!passkey) {
     throw new Error("Passkey unbekannt.");
@@ -205,18 +235,20 @@ export async function verifyAuthentication(body) {
   if (verification.verified) {
     const { newCounter } = verification.authenticationInfo;
 
-    await db
-      .update(passkeys)
-      .set({ counter: newCounter, lastUsedAt: new Date() })
-      .where(eq(passkeys.id, passkey.id));
+    const { error: upErr } = await safeQuery(
+      db
+        .update(passkeys)
+        .set({ counter: newCounter, lastUsedAt: new Date() })
+        .where(eq(passkeys.id, passkey.id)),
+    );
+    if (upErr) throw upErr;
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, passkey.userId))
-      .limit(1);
+    const { data: usersData, error: uErr } = await safeQuery(
+      db.select().from(users).where(eq(users.id, passkey.userId)).limit(1),
+    );
+    if (uErr) throw uErr;
 
-    return { verified: true, user };
+    return { verified: true, user: usersData?.[0] };
   }
 
   return { verified: false };

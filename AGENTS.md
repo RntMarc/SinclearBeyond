@@ -27,3 +27,13 @@ This project uses `next-intl` for localization. All UI strings must be externali
     - Use a structured hierarchy: `PageName.SectionName.KeyName` (e.g., `Settings.Profile.UploadButton`).
     - Use `Common` for shared strings like "Save", "Cancel", "Error".
     - Keys should be camelCase.
+
+# Database Resilience
+
+To prevent full-page crashes caused by background database query failures in Server Components, all database interactions MUST be wrapped using the `safeQuery` utility (defined in `@/lib/db/db`).
+
+### Implementation Rules
+1. **Always use `safeQuery`:** Instead of `await db...`, use `const { data, error } = await safeQuery(db...)`.
+2. **Handle Errors in UI:** Server components MUST check the `error` flag and render the `InlineError` component (`@/components/ui/InlineError`) when data fetching fails.
+3. **Graceful Degradation:** Pages should still render their main structure (headers, navigation) even if specific content sections fail to load.
+4. **API Routes:** API routes should also use `safeQuery` and return appropriate error status codes (e.g., 500) if a critical database operation fails.

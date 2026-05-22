@@ -1,7 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { mediaItems, mediaReviews } from "@/lib/db/schema";
 import { searchGames } from "@/lib/kritik/igdb";
 import { searchMusic } from "@/lib/kritik/musicbrainz";
@@ -34,17 +34,29 @@ export async function GET(req) {
     // Enhance search results with existing database info
     const enhancedResults = await Promise.all(
       results.map(async (item) => {
-        const [existing] = await db
-          .select({
-            id: mediaItems.id,
-            avgRating: sql`AVG(${mediaReviews.rating})`,
-            reviewCount: sql`COUNT(${mediaReviews.id})`,
-          })
-          .from(mediaItems)
-          .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
-          .where(eq(mediaItems.externalId, item.externalId))
-          .groupBy(mediaItems.id)
-          .limit(1);
+        const { data: existingData, error } = await safeQuery(
+          db
+            .select({
+              id: mediaItems.id,
+              avgRating: sql`AVG(${mediaReviews.rating})`,
+              reviewCount: sql`COUNT(${mediaReviews.id})`,
+            })
+            .from(mediaItems)
+            .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
+            .where(eq(mediaItems.externalId, item.externalId))
+            .groupBy(mediaItems.id)
+            .limit(1),
+        );
+
+        if (error) {
+          console.error(
+            `[API/Kritik/Search] DB error for item ${item.externalId}:`,
+            error,
+          );
+          return item; // Fallback to raw item if DB check fails
+        }
+
+        const existing = existingData?.[0];
 
         if (existing) {
           return {

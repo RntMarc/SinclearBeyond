@@ -5,8 +5,9 @@ import { getTranslations } from "next-intl/server";
 import KalenderClient from "@/components/calendar/CalendarClient";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
+import { InlineError } from "@/components/ui/InlineError";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 
 export default async function KalenderPage({ searchParams }) {
@@ -14,15 +15,18 @@ export default async function KalenderPage({ searchParams }) {
   const session = await getSessionWithSubs();
   if (!session) redirect("/login");
 
-  const [user] = await db
-    .select({
-      displayName: users.displayName,
-      email: users.email,
-      image: users.image,
-    })
-    .from(users)
-    .where(eq(users.id, session.sub))
-    .limit(1);
+  const { data: userData, error: userError } = await safeQuery(
+    db
+      .select({
+        displayName: users.displayName,
+        email: users.email,
+        image: users.image,
+      })
+      .from(users)
+      .where(eq(users.id, session.sub))
+      .limit(1),
+  );
+  const user = userData?.[0];
 
   const view = (await searchParams)?.view || "month";
 
@@ -36,6 +40,11 @@ export default async function KalenderPage({ searchParams }) {
         />
 
         <div className="flex-1 overflow-hidden flex flex-col">
+          {userError && (
+            <div className="p-4">
+              <InlineError />
+            </div>
+          )}
           <KalenderClient
             userId={session.sub}
             initialView={view}

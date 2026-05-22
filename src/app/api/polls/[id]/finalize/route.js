@@ -2,13 +2,14 @@ import crypto from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import {
   eventPermissions,
   eventRelations,
   events,
   pollInvites,
   pollOptions,
+  pollQuestions,
   polls,
 } from "@/lib/db/schema";
 
@@ -22,81 +23,91 @@ export async function POST(request, { params }) {
   try {
     const { optionId } = await request.json();
 
-    const [poll] = await db
-      .select()
-      .from(polls)
-      .where(and(eq(polls.id, id), eq(polls.creatorId, session.sub)));
+    const { data: pollData, error: pollError } = await safeQuery(
+      db
+        .select()
+        .from(polls)
+        .where(and(eq(polls.id, id), eq(polls.creatorId, session.sub))),
+    );
 
-    if (!poll) {
+    if (pollError || !pollData?.[0]) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+    const poll = pollData[0];
 
-    const [option] = await db
-      .select()
-      .from(pollOptions)
-      .leftJoin(pollQuestions, eq(pollOptions.questionId, pollQuestions.id))
-      .where(and(eq(pollOptions.id, optionId), eq(pollQuestions.pollId, id)));
+    const { data: optionData, error: optionError } = await safeQuery(
+      db
+        .select()
+        .from(pollOptions)
+        .leftJoin(pollQuestions, eq(pollOptions.questionId, pollQuestions.id))
+        .where(and(eq(pollOptions.id, optionId), eq(pollQuestions.pollId, id))),
+    );
 
-    if (!option) {
+    if (optionError || !optionData?.[0]) {
       return NextResponse.json({ error: "Option not found" }, { status: 404 });
     }
+    const option = optionData[0];
 
     const now = new Date();
     const eventId = crypto.randomUUID();
 
-    await db.transaction(async (tx) => {
-      // 1. Mark poll as finalized
-      await tx
-        .update(polls)
-        .set({ finalizedOptionId: optionId, updatedAt: now })
-        .where(eq(polls.id, id));
+    const { error: txError } = await safeQuery(
+      db.transaction(async (tx) => {
+        // 1. Mark poll as finalized
+        await tx
+          .update(polls)
+          .set({ finalizedOptionId: optionId, updatedAt: now })
+          .where(eq(polls.id, id));
 
-      // 2. Create Kalender-Event
-      await tx.insert(events).values({
-        id: eventId,
-        title: poll.title,
-        startAt: option.PollOption.dateValue,
-        endAt: new Date(
-          new Date(option.PollOption.dateValue).getTime() + 60 * 60 * 1000,
-        ), // Default 1h
-        allDay: 0,
-        isPublic: 0,
-        creatorId: session.sub,
-        createdAt: now,
-      });
+        // 2. Create Kalender-Event
+        await tx.insert(events).values({
+          id: eventId,
+          title: poll.title,
+          startAt: option.pollOptions.dateValue,
+          endAt: new Date(
+            new Date(option.pollOptions.dateValue).getTime() + 60 * 60 * 1000,
+          ), // Default 1h
+          allDay: 0,
+          isPublic: 0,
+          creatorId: session.sub,
+          createdAt: now,
+        });
 
-      // 3. Add all participants to the event
-      const invites = await tx
-        .select()
-        .from(pollInvites)
-        .where(eq(pollInvites.pollId, id));
+        // 3. Add all participants to the event
+        const invites = await tx
+          .select()
+          .from(pollInvites)
+          .where(eq(pollInvites.pollId, id));
 
-      const participantUserIds = [
-        ...new Set([...invites.map((i) => i.userId), session.sub]),
-      ];
+        const participantUserIds = [
+          ...new Set([...invites.map((i) => i.userId), session.sub]),
+        ];
 
-      if (participantUserIds.length > 0) {
-        await tx.insert(eventRelations).values(
-          participantUserIds.map((uId) => ({
-            id: crypto.randomUUID(),
-            eventId,
-            userId: uId,
-            createdAt: now,
-          })),
-        );
+        if (participantUserIds.length > 0) {
+          await tx.insert(eventRelations).values(
+            participantUserIds.map((uId) => ({
+              id: crypto.randomUUID(),
+              eventId,
+              userId: uId,
+              createdAt: now,
+            })),
+          );
 
-        await tx.insert(eventPermissions).values(
-          participantUserIds.map((uId) => ({
-            id: crypto.randomUUID(),
-            eventId,
-            userId: uId,
-            canView: 1,
-            canEdit: uId === session.sub ? 1 : 0,
-            createdAt: now,
-          })),
-        );
-      }
-    });
+          await tx.insert(eventPermissions).values(
+            participantUserIds.map((uId) => ({
+              id: crypto.randomUUID(),
+              eventId,
+              userId: uId,
+              canView: 1,
+              canEdit: uId === session.sub ? 1 : 0,
+              createdAt: now,
+            })),
+          );
+        }
+      }),
+    );
+
+    if (txError) throw new Error("Transaction failed");
 
     return NextResponse.json({ success: true, eventId });
   } catch (error) {
