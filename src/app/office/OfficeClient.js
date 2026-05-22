@@ -12,7 +12,6 @@ import Link from "next/link";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
 import { InlineError } from "@/components/ui/InlineError";
 
 export default function OfficeClient({ user, session }) {
@@ -116,7 +115,7 @@ export default function OfficeClient({ user, session }) {
                   href={`/office/${doc.id}`}
                   className="block group"
                 >
-                  <Card className="p-4 hover:border-primary transition-colors h-full flex flex-col justify-between">
+                  <div className="p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors h-full flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <FileText className="w-8 h-8 text-primary" />
@@ -136,7 +135,7 @@ export default function OfficeClient({ user, session }) {
                     <div className="mt-4 flex justify-end">
                       <ChevronRight className="w-4 h-4 text-muted-foreground" />
                     </div>
-                  </Card>
+                  </div>
                 </Link>
               ))}
             </div>

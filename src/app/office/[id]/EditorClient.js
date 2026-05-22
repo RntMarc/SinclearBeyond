@@ -33,8 +33,8 @@ import Button from "@/components/ui/Button";
 import { InlineError } from "@/components/ui/InlineError";
 import mammoth from "mammoth";
 import { jsPDF } from "jspdf";
-import htmlToDocx from "html-to-docx";
-import { debounce } from "lodash";
+import { asBlob } from "html-docx-js-typescript";
+import { debounce } from "lodash-es";
 
 export default function EditorClient({ user, session, docId }) {
   const [docMetadata, setDocMetadata] = useState(null);
@@ -75,7 +75,6 @@ export default function EditorClient({ user, session, docId }) {
 
   const sync = useCallback(
     async (update = null) => {
-      // Debounce logic is partly handled by the caller or periodic sync
       setSyncing(true);
       try {
         const body = { presence: true };
@@ -118,7 +117,6 @@ export default function EditorClient({ user, session, docId }) {
     [docId, user.id],
   );
 
-  // Debounced sync for content updates to respect "at most every 10 seconds" for DB persistence
   const debouncedSync = useRef(
     debounce((update) => sync(update), 10000, { maxWait: 15000 }),
   ).current;
@@ -179,10 +177,9 @@ export default function EditorClient({ user, session, docId }) {
   useEffect(() => {
     fetchMetadata();
     fetchHistory();
-    sync(); // Initial sync
+    sync();
 
     const interval = setInterval(() => {
-      // Periodic presence sync and fetching others' changes
       if (Date.now() - lastSyncRef.current > 5000) {
         sync();
       }
@@ -215,20 +212,16 @@ export default function EditorClient({ user, session, docId }) {
       downloadBlob(blob, `${title}.txt`);
     } else if (format === "pdf") {
       const doc = new jsPDF();
-      // Simpler PDF export for robustness
       doc.text(editor.getText(), 10, 10);
       doc.save(`${title}.pdf`);
     } else if (format === "docx") {
-      const content = await htmlToDocx(html);
+      const content = await asBlob(html);
       downloadBlob(content, `${title}.docx`);
     } else if (format === "odt") {
-      // ODT is essentially a ZIP with content.xml.
-      // For a true implementation we'd need a lib.
-      // Since ODT is a requirement, I'll provide a placeholder alert or try a basic XML wrap.
       alert(
         "ODT Export wird vorbereitet... (In dieser Version als Word-Download verfügbar)",
       );
-      const content = await htmlToDocx(html);
+      const content = await asBlob(html);
       downloadBlob(content, `${title}.odt`);
     }
   };
@@ -240,10 +233,14 @@ export default function EditorClient({ user, session, docId }) {
     if (file.name.endsWith(".docx") || file.name.endsWith(".odt")) {
       const reader = new FileReader();
       reader.onload = async (event) => {
-        const result = await mammoth.convertToHtml({
-          arrayBuffer: event.target.result,
-        });
-        editor.commands.setContent(result.value);
+        try {
+            const result = await mammoth.convertToHtml({
+              arrayBuffer: event.target.result,
+            });
+            editor.commands.setContent(result.value);
+        } catch (err) {
+            console.error("Mammoth import error", err);
+        }
       };
       reader.readAsArrayBuffer(file);
     } else if (file.name.endsWith(".txt")) {
