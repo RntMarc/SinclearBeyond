@@ -38,7 +38,7 @@ export default async function PollsPage() {
         <main className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto space-y-6">
             {pollError && <InlineError />}
-            <PollsClient initialPolls={polls || []} />
+            <PollsClient initialPolls={polls || []} userId={session.sub} />
           </div>
         </main>
       </div>
