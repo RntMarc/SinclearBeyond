@@ -10,7 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
-    "@eigenpal/docx-editor-react": "^1.0.1",
+    "@eigenpal/docx-editor-react": "^1.0.2",
     "@formatjs/intl-localematcher": "^0.8.8",
     "@simplewebauthn/browser": "^13.3.0",
     "@simplewebauthn/server": "^13.3.0",
@@ -35,7 +35,7 @@
     "rate-limiter-flexible": "^11.1.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "shadcn": "^4.7.0",
+    "shadcn": "^4.8.0",
     "sharp": "^0.34.5",
     "simple-icons": "^16.20.0",
     "tailwind-merge": "^3.6.0",
