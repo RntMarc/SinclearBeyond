@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { and, eq, exists, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import {
   albumTracks,
   mediaItems,
@@ -63,8 +63,10 @@ export async function GET(req) {
       }
     }
 
-    const items = await query;
-    return NextResponse.json(items);
+    const { data: items, error } = await safeQuery(query);
+    if (error) throw error;
+
+    return NextResponse.json(items || []);
   } catch (error) {
     console.error("[API/Kritik/Items] GET Error:", error);
     return NextResponse.json(
@@ -94,13 +96,16 @@ export async function POST(req) {
 
     // Check if item already exists by externalId
     if (externalId) {
-      const existing = await db
-        .select()
-        .from(mediaItems)
-        .where(eq(mediaItems.externalId, externalId))
-        .limit(1);
+      const { data: existing, error: existError } = await safeQuery(
+        db
+          .select()
+          .from(mediaItems)
+          .where(eq(mediaItems.externalId, externalId))
+          .limit(1),
+      );
+      if (existError) throw existError;
 
-      if (existing.length > 0) {
+      if (existing && existing.length > 0) {
         return NextResponse.json(existing[0]);
       }
     }
@@ -108,34 +113,40 @@ export async function POST(req) {
     const id = crypto.randomUUID();
     const now = new Date();
 
-    await db.insert(mediaItems).values({
-      id,
-      title,
-      type,
-      format,
-      description,
-      image,
-      externalId,
-      releaseDate,
-      creatorId: session.sub,
-      createdAt: now,
-      updatedAt: now,
-    });
+    const { error: insertError } = await safeQuery(
+      db.insert(mediaItems).values({
+        id,
+        title,
+        type,
+        format,
+        description,
+        image,
+        externalId,
+        releaseDate,
+        creatorId: session.sub,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+
+    if (insertError) throw insertError;
 
     // Auto-populate episodes for series
     if (type === "movie" && format === "series" && externalId) {
       const episodes = await getSeriesEpisodes(externalId);
       if (episodes.length > 0) {
-        await db.insert(seriesEpisodes).values(
-          episodes.map((ep) => ({
-            id: crypto.randomUUID(),
-            seriesId: id,
-            seasonNumber: ep.seasonNumber,
-            episodeNumber: ep.episodeNumber,
-            title: ep.title,
-            externalId: ep.externalId,
-            releaseDate: ep.releaseDate,
-          })),
+        await safeQuery(
+          db.insert(seriesEpisodes).values(
+            episodes.map((ep) => ({
+              id: crypto.randomUUID(),
+              seriesId: id,
+              seasonNumber: ep.seasonNumber,
+              episodeNumber: ep.episodeNumber,
+              title: ep.title,
+              externalId: ep.externalId,
+              releaseDate: ep.releaseDate,
+            })),
+          ),
         );
       }
     }
@@ -146,48 +157,63 @@ export async function POST(req) {
       for (const track of tracks) {
         // Check if song already exists
         let songId;
-        const [existingSong] = await db
-          .select()
-          .from(mediaItems)
-          .where(eq(mediaItems.externalId, track.songExternalId))
-          .limit(1);
+        const { data: existingSongs, error: songExistErr } = await safeQuery(
+          db
+            .select()
+            .from(mediaItems)
+            .where(eq(mediaItems.externalId, track.songExternalId))
+            .limit(1),
+        );
+
+        if (songExistErr) {
+          console.error(
+            `[API/Kritik/Items] DB error checking for song ${track.songExternalId}:`,
+            songExistErr,
+          );
+        }
+
+        const existingSong = existingSongs?.[0];
 
         if (existingSong) {
           songId = existingSong.id;
         } else {
           songId = crypto.randomUUID();
           const songArtist = track.artist || title.split(" - ")[0];
-          await db.insert(mediaItems).values({
-            id: songId,
-            type: "music",
-            format: "song",
-            title: `${songArtist} - ${track.title}`,
-            image: image,
-            externalId: track.songExternalId,
-            releaseDate: track.releaseDate,
-            creatorId: session.sub,
-            createdAt: now,
-            updatedAt: now,
-          });
+          await safeQuery(
+            db.insert(mediaItems).values({
+              id: songId,
+              type: "music",
+              format: "song",
+              title: `${songArtist} - ${track.title}`,
+              image: image,
+              externalId: track.songExternalId,
+              releaseDate: track.releaseDate,
+              creatorId: session.sub,
+              createdAt: now,
+              updatedAt: now,
+            }),
+          );
         }
 
         // Link song to album
-        await db.insert(albumTracks).values({
-          id: crypto.randomUUID(),
-          albumId: id,
-          songId,
-          trackNumber: track.trackNumber,
-        });
+        await safeQuery(
+          db.insert(albumTracks).values({
+            id: crypto.randomUUID(),
+            albumId: id,
+            songId,
+            trackNumber: track.trackNumber,
+          }),
+        );
       }
     }
 
-    const newItem = await db
-      .select()
-      .from(mediaItems)
-      .where(eq(mediaItems.id, id))
-      .limit(1);
+    const { data: newItems, error: finalError } = await safeQuery(
+      db.select().from(mediaItems).where(eq(mediaItems.id, id)).limit(1),
+    );
 
-    return NextResponse.json(newItem[0]);
+    if (finalError) throw finalError;
+
+    return NextResponse.json(newItems?.[0]);
   } catch (error) {
     console.error("[API/Kritik/Items] POST Error:", error);
     return NextResponse.json(

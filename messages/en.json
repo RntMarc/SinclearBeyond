@@ -32,7 +32,8 @@
     },
     "tooManyRequests": "Too many requests",
     "alreadyParticipant": "Already a participant.",
-    "genericError": "An error occurred."
+    "genericError": "An error occurred.",
+    "dbError": "Could not load data. Please try again later."
   },
   "Navigation": {
     "entertainment": "Entertainment",

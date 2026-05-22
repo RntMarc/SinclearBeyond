@@ -10,7 +10,7 @@ import {
   processDiscordAvatar,
 } from "@/lib/auth/discord";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { contactInfo, users } from "@/lib/db/schema";
 import { normalizeOrigin, validateRelativeCallbackUrl } from "@/lib/utils";
 
@@ -40,18 +40,25 @@ export async function GET(req) {
       (g) => g.id === process.env.DISCORD_ALLOWED_GUILD_ID,
     );
 
-    const [existingByDiscordId, existingByEmail] = await Promise.all([
-      db
-        .select()
-        .from(users)
-        .where(eq(users.discordId, discordUser.id))
-        .limit(1),
-      db
-        .select()
-        .from(users)
-        .where(eq(users.email, discordUser.email))
-        .limit(1),
+    const [{ data: byId }, { data: byEmail }] = await Promise.all([
+      safeQuery(
+        db
+          .select()
+          .from(users)
+          .where(eq(users.discordId, discordUser.id))
+          .limit(1),
+      ),
+      safeQuery(
+        db
+          .select()
+          .from(users)
+          .where(eq(users.email, discordUser.email))
+          .limit(1),
+      ),
     ]);
+
+    const existingByDiscordId = byId || [];
+    const existingByEmail = byEmail || [];
 
     if (mode === "link") {
       const session = await getSession();
@@ -70,29 +77,40 @@ export async function GET(req) {
       }
 
       // Update current user
-      await db
-        .update(users)
-        .set({ discordId: discordUser.id })
-        .where(eq(users.id, session.sub));
+      const { error: upErr } = await safeQuery(
+        db
+          .update(users)
+          .set({ discordId: discordUser.id })
+          .where(eq(users.id, session.sub)),
+      );
+      if (upErr) throw upErr;
 
       // Update or create contact info
-      const [existingContact] = await db
-        .select()
-        .from(contactInfo)
-        .where(eq(contactInfo.userId, session.sub))
-        .limit(1);
+      const { data: contactRows, error: contactErr } = await safeQuery(
+        db
+          .select()
+          .from(contactInfo)
+          .where(eq(contactInfo.userId, session.sub))
+          .limit(1),
+      );
+      if (contactErr) throw contactErr;
+      const existingContact = contactRows?.[0];
 
       if (existingContact) {
-        await db
-          .update(contactInfo)
-          .set({ discordHandle: discordUser.username })
-          .where(eq(contactInfo.userId, session.sub));
+        await safeQuery(
+          db
+            .update(contactInfo)
+            .set({ discordHandle: discordUser.username })
+            .where(eq(contactInfo.userId, session.sub)),
+        );
       } else {
-        await db.insert(contactInfo).values({
-          id: crypto.randomUUID(),
-          userId: session.sub,
-          discordHandle: discordUser.username,
-        });
+        await safeQuery(
+          db.insert(contactInfo).values({
+            id: crypto.randomUUID(),
+            userId: session.sub,
+            discordHandle: discordUser.username,
+          }),
+        );
       }
 
       return NextResponse.redirect(
@@ -124,22 +142,27 @@ export async function GET(req) {
       const pendingDisplayName = cookieStore.get("pending_display_name")?.value;
 
       // Create user
-      await db.insert(users).values({
-        id: userId,
-        email: discordUser.email,
-        displayName: (pendingDisplayName || discordUser.username).trim(),
-        passwordHash: "OAUTH_USER",
-        discordId: discordUser.id,
-        image: imageBase64,
-        createdAt: new Date(),
-      });
+      const { error: inUserErr } = await safeQuery(
+        db.insert(users).values({
+          id: userId,
+          email: discordUser.email,
+          displayName: (pendingDisplayName || discordUser.username).trim(),
+          passwordHash: "OAUTH_USER",
+          discordId: discordUser.id,
+          image: imageBase64,
+          createdAt: new Date(),
+        }),
+      );
+      if (inUserErr) throw inUserErr;
 
       // Create contact info
-      await db.insert(contactInfo).values({
-        id: crypto.randomUUID(),
-        userId: userId,
-        discordHandle: discordUser.username,
-      });
+      await safeQuery(
+        db.insert(contactInfo).values({
+          id: crypto.randomUUID(),
+          userId: userId,
+          discordHandle: discordUser.username,
+        }),
+      );
 
       return await createSessionAndRedirect(
         userId,
@@ -160,31 +183,42 @@ export async function GET(req) {
 
     // Update discordId if it was found by email but not linked yet
     if (!user.discordId) {
-      await db
-        .update(users)
-        .set({ discordId: discordUser.id })
-        .where(eq(users.id, user.id));
+      const { error: upDisErr } = await safeQuery(
+        db
+          .update(users)
+          .set({ discordId: discordUser.id })
+          .where(eq(users.id, user.id)),
+      );
+      if (upDisErr) throw upDisErr;
 
       // Also update discordHandle if not set
-      const [existingContact] = await db
-        .select()
-        .from(contactInfo)
-        .where(eq(contactInfo.userId, user.id))
-        .limit(1);
+      const { data: contactRows, error: contactErr } = await safeQuery(
+        db
+          .select()
+          .from(contactInfo)
+          .where(eq(contactInfo.userId, user.id))
+          .limit(1),
+      );
+      if (contactErr) throw contactErr;
+      const existingContact = contactRows?.[0];
 
       if (existingContact) {
         if (!existingContact.discordHandle) {
-          await db
-            .update(contactInfo)
-            .set({ discordHandle: discordUser.username })
-            .where(eq(contactInfo.userId, user.id));
+          await safeQuery(
+            db
+              .update(contactInfo)
+              .set({ discordHandle: discordUser.username })
+              .where(eq(contactInfo.userId, user.id)),
+          );
         }
       } else {
-        await db.insert(contactInfo).values({
-          id: crypto.randomUUID(),
-          userId: user.id,
-          discordHandle: discordUser.username,
-        });
+        await safeQuery(
+          db.insert(contactInfo).values({
+            id: crypto.randomUUID(),
+            userId: user.id,
+            discordHandle: discordUser.username,
+          }),
+        );
       }
     }
 

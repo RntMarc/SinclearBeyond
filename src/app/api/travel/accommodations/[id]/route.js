@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { travelAccommodations } from "@/lib/db/schema";
 
 export async function PATCH(req, { params }) {
@@ -32,10 +32,14 @@ export async function PATCH(req, { params }) {
       updateData.osmId = data.osmId ? BigInt(data.osmId) : null;
     if (data.isHotel !== undefined) updateData.isHotel = data.isHotel ? 1 : 0;
 
-    await db
-      .update(travelAccommodations)
-      .set(updateData)
-      .where(eq(travelAccommodations.id, id));
+    const { error: updateError } = await safeQuery(
+      db
+        .update(travelAccommodations)
+        .set(updateData)
+        .where(eq(travelAccommodations.id, id)),
+    );
+
+    if (updateError) throw updateError;
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -54,9 +58,11 @@ export async function DELETE(_req, { params }) {
   }
 
   try {
-    await db
-      .delete(travelAccommodations)
-      .where(eq(travelAccommodations.id, id));
+    const { error: deleteError } = await safeQuery(
+      db.delete(travelAccommodations).where(eq(travelAccommodations.id, id)),
+    );
+    if (deleteError) throw deleteError;
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[API/Travel/Accommodations] DELETE Error:", error);

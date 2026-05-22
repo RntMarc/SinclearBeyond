@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { eventRelations, travelEvents } from "@/lib/db/schema";
 
 export async function POST(req) {
@@ -40,33 +40,45 @@ export async function POST(req) {
 
     const id = crypto.randomUUID();
 
-    await db.insert(travelEvents).values({
-      id,
-      tripId: tripId || null,
-      name,
-      description: description || null,
-      start: new Date(start),
-      end: new Date(end),
-      hasTickets: hasTickets || "0",
-      ticketId: ticketId || null,
-      ticketUrl: ticketUrl || null,
-      url: url || null,
-      image: image || null,
-      organizer: organizer || null,
-      address: address || null,
-      latitude: latitude ? parseFloat(latitude) : null,
-      longitude: longitude ? parseFloat(longitude) : null,
-      osmId: osmId ? BigInt(osmId) : null,
-    });
+    const { error: insertError } = await safeQuery(
+      db.insert(travelEvents).values({
+        id,
+        tripId: tripId || null,
+        name,
+        description: description || null,
+        start: new Date(start),
+        end: new Date(end),
+        hasTickets: hasTickets || "0",
+        ticketId: ticketId || null,
+        ticketUrl: ticketUrl || null,
+        url: url || null,
+        image: image || null,
+        organizer: organizer || null,
+        address: address || null,
+        latitude: latitude ? parseFloat(latitude) : null,
+        longitude: longitude ? parseFloat(longitude) : null,
+        osmId: osmId ? BigInt(osmId) : null,
+      }),
+    );
+
+    if (insertError) throw insertError;
 
     if (participantIds && Array.isArray(participantIds)) {
       for (const userId of participantIds) {
-        await db.insert(eventRelations).values({
-          id: crypto.randomUUID(),
-          eventId: id,
-          userId,
-          createdAt: new Date(),
-        });
+        const { error: relErr } = await safeQuery(
+          db.insert(eventRelations).values({
+            id: crypto.randomUUID(),
+            eventId: id,
+            userId,
+            createdAt: new Date(),
+          }),
+        );
+        if (relErr) {
+          console.error(
+            `Failed to insert event relation for user ${userId}:`,
+            relErr,
+          );
+        }
       }
     }
 

@@ -2,25 +2,35 @@ import crypto from "node:crypto";
 import { and, eq, gt, isNull, lt } from "drizzle-orm";
 import { createSessionToken } from "@/lib/auth/auth";
 import { sendOtpEmail } from "@/lib/auth/email";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { otpTokens, users } from "@/lib/db/schema";
 
 async function purgeExpiredTokens() {
-  await db.delete(otpTokens).where(lt(otpTokens.expiresAt, new Date()));
+  await safeQuery(
+    db.delete(otpTokens).where(lt(otpTokens.expiresAt, new Date())),
+  );
 }
 
 export async function requestOtp(email) {
-  const [user] = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  const { data: usersData, error: userError } = await safeQuery(
+    db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1),
+  );
+
+  if (userError) throw userError;
+  const user = usersData?.[0];
+
   if (!user) return { ok: false, error: "user_not_found" };
 
   // Invalidate all prior unused tokens for this email
-  await db
-    .delete(otpTokens)
-    .where(and(eq(otpTokens.email, email), isNull(otpTokens.usedAt)));
+  await safeQuery(
+    db
+      .delete(otpTokens)
+      .where(and(eq(otpTokens.email, email), isNull(otpTokens.usedAt))),
+  );
 
   // Purge all expired tokens across all users
   await purgeExpiredTokens();
@@ -28,13 +38,17 @@ export async function requestOtp(email) {
   const code = String(crypto.randomInt(100000, 999999));
   const now = new Date();
 
-  await db.insert(otpTokens).values({
-    id: crypto.randomUUID(),
-    email,
-    code,
-    expiresAt: new Date(now.getTime() + 10 * 60 * 1000),
-    createdAt: now,
-  });
+  const { error: insertError } = await safeQuery(
+    db.insert(otpTokens).values({
+      id: crypto.randomUUID(),
+      email,
+      code,
+      expiresAt: new Date(now.getTime() + 10 * 60 * 1000),
+      createdAt: now,
+    }),
+  );
+
+  if (insertError) throw insertError;
 
   await sendOtpEmail(email, code).catch((err) => {
     console.error("[OTP] sendOtpEmail failed:", err);
@@ -46,31 +60,37 @@ export async function requestOtp(email) {
 export async function verifyOtp(email, code) {
   const now = new Date();
 
-  const [token] = await db
-    .select()
-    .from(otpTokens)
-    .where(
-      and(
-        eq(otpTokens.email, email),
-        eq(otpTokens.code, code),
-        gt(otpTokens.expiresAt, now),
-        isNull(otpTokens.usedAt),
-      ),
-    )
-    .limit(1);
+  const { data: tokens, error: tokenError } = await safeQuery(
+    db
+      .select()
+      .from(otpTokens)
+      .where(
+        and(
+          eq(otpTokens.email, email),
+          eq(otpTokens.code, code),
+          gt(otpTokens.expiresAt, now),
+          isNull(otpTokens.usedAt),
+        ),
+      )
+      .limit(1),
+  );
+
+  if (tokenError) throw tokenError;
+  const token = tokens?.[0];
 
   if (!token) return { ok: false, error: "invalid_or_expired" };
 
-  await db
-    .update(otpTokens)
-    .set({ usedAt: now })
-    .where(eq(otpTokens.id, token.id));
+  await safeQuery(
+    db.update(otpTokens).set({ usedAt: now }).where(eq(otpTokens.id, token.id)),
+  );
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  const { data: usersData, error: userError } = await safeQuery(
+    db.select().from(users).where(eq(users.email, email)).limit(1),
+  );
+
+  if (userError) throw userError;
+  const user = usersData?.[0];
+
   if (!user) return { ok: false, error: "user_not_found" };
 
   const jwt = await createSessionToken(user);

@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import FeedbackClient from "@/components/feedback/FeedbackClient";
 import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 
 export default async function FeedbackPage() {
@@ -13,17 +13,20 @@ export default async function FeedbackPage() {
   if (!session) redirect("/login");
 
   const userId = session.sub;
-  const [user] = await db
-    .select({
-      id: users.id,
-      displayName: users.displayName,
-      email: users.email,
-      image: users.image,
-      isAdmin: users.isAdmin,
-    })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+  const { data: userData } = await safeQuery(
+    db
+      .select({
+        id: users.id,
+        displayName: users.displayName,
+        email: users.email,
+        image: users.image,
+        isAdmin: users.isAdmin,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1),
+  );
+  const user = userData?.[0];
 
   return (
     <AppShell user={user} session={session}>

@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { discoverBookmarks, discoverPlaces } from "@/lib/db/schema";
 
 export async function GET(_req) {
@@ -11,21 +11,25 @@ export async function GET(_req) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const bookmarks = await db
-      .select({
-        id: discoverPlaces.id,
-        name: discoverPlaces.name,
-        category: discoverPlaces.category,
-        address: discoverPlaces.address,
-      })
-      .from(discoverBookmarks)
-      .innerJoin(
-        discoverPlaces,
-        eq(discoverBookmarks.placeId, discoverPlaces.id),
-      )
-      .where(eq(discoverBookmarks.userId, session.sub));
+    const { data: bookmarks, error: bookmarksError } = await safeQuery(
+      db
+        .select({
+          id: discoverPlaces.id,
+          name: discoverPlaces.name,
+          category: discoverPlaces.category,
+          address: discoverPlaces.address,
+        })
+        .from(discoverBookmarks)
+        .innerJoin(
+          discoverPlaces,
+          eq(discoverBookmarks.placeId, discoverPlaces.id),
+        )
+        .where(eq(discoverBookmarks.userId, session.sub)),
+    );
 
-    return NextResponse.json(bookmarks);
+    if (bookmarksError) throw bookmarksError;
+
+    return NextResponse.json(bookmarks || []);
   } catch (error) {
     console.error("[API/Discover/Bookmarks] GET Error:", error);
     return NextResponse.json(
@@ -43,29 +47,40 @@ export async function POST(req) {
   try {
     const { placeId } = await req.json();
 
-    const [existing] = await db
-      .select()
-      .from(discoverBookmarks)
-      .where(
-        and(
-          eq(discoverBookmarks.userId, session.sub),
-          eq(discoverBookmarks.placeId, placeId),
-        ),
-      )
-      .limit(1);
+    const { data: existingData, error: existingError } = await safeQuery(
+      db
+        .select()
+        .from(discoverBookmarks)
+        .where(
+          and(
+            eq(discoverBookmarks.userId, session.sub),
+            eq(discoverBookmarks.placeId, placeId),
+          ),
+        )
+        .limit(1),
+    );
+
+    if (existingError) throw existingError;
+    const existing = existingData?.[0];
 
     if (existing) {
-      await db
-        .delete(discoverBookmarks)
-        .where(eq(discoverBookmarks.id, existing.id));
+      const { error: deleteError } = await safeQuery(
+        db
+          .delete(discoverBookmarks)
+          .where(eq(discoverBookmarks.id, existing.id)),
+      );
+      if (deleteError) throw deleteError;
       return NextResponse.json({ ok: true, bookmarked: false });
     } else {
-      await db.insert(discoverBookmarks).values({
-        id: crypto.randomUUID(),
-        userId: session.sub,
-        placeId,
-        createdAt: new Date(),
-      });
+      const { error: insertError } = await safeQuery(
+        db.insert(discoverBookmarks).values({
+          id: crypto.randomUUID(),
+          userId: session.sub,
+          placeId,
+          createdAt: new Date(),
+        }),
+      );
+      if (insertError) throw insertError;
       return NextResponse.json({ ok: true, bookmarked: true });
     }
   } catch (error) {

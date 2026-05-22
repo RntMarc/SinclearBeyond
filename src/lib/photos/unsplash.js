@@ -1,7 +1,7 @@
 "use server";
 import { and, eq, inArray, or } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { closeFriends, socialInfo, users } from "@/lib/db/schema";
 import { fetchWithTimeout } from "@/lib/utils";
 
@@ -15,42 +15,50 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
 
   // 1. Get all users who have an Unsplash handle and appropriate visibility
   // To do this efficiently, we first find who has me as a close friend
-  const whoHasMeAsCloseFriend = await db
-    .select({ userId: closeFriends.userId })
-    .from(closeFriends)
-    .where(eq(closeFriends.friendId, currentUserId));
+  const { data: whoMarkedMe, error: whoMarkedMeErr } = await safeQuery(
+    db
+      .select({ userId: closeFriends.userId })
+      .from(closeFriends)
+      .where(eq(closeFriends.friendId, currentUserId)),
+  );
 
-  const closeFriendIds = whoHasMeAsCloseFriend.map((f) => f.userId);
+  if (whoMarkedMeErr) throw whoMarkedMeErr;
+
+  const closeFriendIds = (whoMarkedMe || []).map((f) => f.userId);
 
   // Users I can see:
   // - Visibility = 1 (All)
   // - Visibility = 2 AND userId in closeFriendIds
   // - userId = currentUserId (Myself)
 
-  const visibleSocialInfos = await db
-    .select({
-      unsplashHandle: socialInfo.unsplashHandle,
-      userId: socialInfo.userId,
-      displayName: users.displayName,
-    })
-    .from(socialInfo)
-    .innerJoin(users, eq(socialInfo.userId, users.id))
-    .where(
-      and(
-        or(
-          eq(socialInfo.unsplashVisibility, 1),
-          and(
-            eq(socialInfo.unsplashVisibility, 2),
-            closeFriendIds.length > 0
-              ? inArray(socialInfo.userId, closeFriendIds)
-              : eq(socialInfo.userId, "none"),
+  const { data: visibleSocialInfos, error: visErr } = await safeQuery(
+    db
+      .select({
+        unsplashHandle: socialInfo.unsplashHandle,
+        userId: socialInfo.userId,
+        displayName: users.displayName,
+      })
+      .from(socialInfo)
+      .innerJoin(users, eq(socialInfo.userId, users.id))
+      .where(
+        and(
+          or(
+            eq(socialInfo.unsplashVisibility, 1),
+            and(
+              eq(socialInfo.unsplashVisibility, 2),
+              closeFriendIds.length > 0
+                ? inArray(socialInfo.userId, closeFriendIds)
+                : eq(socialInfo.userId, "none"),
+            ),
+            eq(socialInfo.userId, currentUserId),
           ),
-          eq(socialInfo.userId, currentUserId),
         ),
       ),
-    );
+  );
 
-  const handles = visibleSocialInfos
+  if (visErr) throw visErr;
+
+  const handles = (visibleSocialInfos || [])
     .filter((s) => s.unsplashHandle)
     .map((s) => ({
       handle: s.unsplashHandle,
@@ -66,14 +74,6 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
   }
 
   // 2. Fetch photos for each handle
-  // Note: Unsplash API doesn't have a "get photos from multiple users" endpoint in one go.
-  // We have to fetch for each user. To respect rate limits and order by "newest",
-  // we'll fetch a few from each and then merge/sort if possible,
-  // but since we want "Endless Scrolling", we'll just distribute the perPage across users.
-
-  // For simplicity and performance, we'll fetch perPage for each user and merge them.
-  // Then sort by createdAt.
-
   const allPhotos = await Promise.all(
     handles.map(async ({ handle, displayName }) => {
       try {
@@ -116,10 +116,6 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
   const mergedPhotos = allPhotos
     .flat()
     .sort((a, b) => b.createdAt - a.createdAt);
-
-  // Return a slice based on pagination if we merged too many
-  // Actually, since we fetch perPage for EACH, we might have handle.length * perPage.
-  // We'll return the whole thing for now, and let the frontend handle it or adjust perPage.
 
   return mergedPhotos;
 }

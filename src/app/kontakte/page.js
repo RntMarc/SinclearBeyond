@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import ContactList from "@/components/contacts/ContactList";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
+import { InlineError } from "@/components/ui/InlineError";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getContacts } from "@/lib/profile/contacts";
 import { getProfileData } from "@/lib/profile/profile";
@@ -15,7 +16,15 @@ export default async function KontaktePage() {
   const data = await getProfileData(session);
   if (!data) redirect("/login");
 
-  const contacts = await getContacts();
+  let contacts = [];
+  let contactError = false;
+  try {
+    contacts = await getContacts();
+  } catch (e) {
+    console.error("[KontaktePage] Error fetching contacts:", e);
+    contactError = true;
+  }
+
   const { user } = data;
 
   return (
@@ -24,8 +33,9 @@ export default async function KontaktePage() {
         <PageHeader subtitle={t("subtitle")} title={t("title")} icon={Users} />
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
-          <div className="max-w-5xl mx-auto">
-            <ContactList initialContacts={contacts} />
+          <div className="max-w-5xl mx-auto space-y-6">
+            {contactError && <InlineError />}
+            <ContactList initialContacts={contacts || []} />
           </div>
         </div>
       </div>

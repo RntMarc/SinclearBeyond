@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { episodeReviews } from "@/lib/db/schema";
 
 export async function GET(req) {
@@ -23,17 +23,21 @@ export async function GET(req) {
 
   try {
     // Only return the current user's rating for privacy
-    const reviews = await db
-      .select()
-      .from(episodeReviews)
-      .where(
-        and(
-          eq(episodeReviews.episodeId, episodeId),
-          eq(episodeReviews.userId, session.sub),
+    const { data: reviews, error } = await safeQuery(
+      db
+        .select()
+        .from(episodeReviews)
+        .where(
+          and(
+            eq(episodeReviews.episodeId, episodeId),
+            eq(episodeReviews.userId, session.sub),
+          ),
         ),
-      );
+    );
 
-    return NextResponse.json(reviews);
+    if (error) throw error;
+
+    return NextResponse.json(reviews || []);
   } catch (error) {
     console.error("[API/Kritik/Reviews/Episodes] GET Error:", error);
     return NextResponse.json(
@@ -63,41 +67,53 @@ export async function POST(req) {
     const now = new Date();
 
     // Check if review already exists
-    const [existing] = await db
-      .select()
-      .from(episodeReviews)
-      .where(
-        and(
-          eq(episodeReviews.episodeId, episodeId),
-          eq(episodeReviews.userId, session.sub),
-        ),
-      )
-      .limit(1);
+    const { data: existingData, error: existErr } = await safeQuery(
+      db
+        .select()
+        .from(episodeReviews)
+        .where(
+          and(
+            eq(episodeReviews.episodeId, episodeId),
+            eq(episodeReviews.userId, session.sub),
+          ),
+        )
+        .limit(1),
+    );
+
+    if (existErr) throw existErr;
+    const existing = existingData?.[0];
 
     if (existing) {
       if (rating === 0) {
         // Assume 0 means delete rating
-        await db
-          .delete(episodeReviews)
-          .where(eq(episodeReviews.id, existing.id));
+        const { error: delErr } = await safeQuery(
+          db.delete(episodeReviews).where(eq(episodeReviews.id, existing.id)),
+        );
+        if (delErr) throw delErr;
         return NextResponse.json({ ok: true, deleted: true });
       }
-      await db
-        .update(episodeReviews)
-        .set({
-          rating: parseInt(rating, 10),
-          createdAt: now,
-        })
-        .where(eq(episodeReviews.id, existing.id));
+      const { error: upErr } = await safeQuery(
+        db
+          .update(episodeReviews)
+          .set({
+            rating: parseInt(rating, 10),
+            createdAt: now,
+          })
+          .where(eq(episodeReviews.id, existing.id)),
+      );
+      if (upErr) throw upErr;
     } else {
       if (rating === 0) return NextResponse.json({ ok: true });
-      await db.insert(episodeReviews).values({
-        id: crypto.randomUUID(),
-        episodeId,
-        userId: session.sub,
-        rating: parseInt(rating, 10),
-        createdAt: now,
-      });
+      const { error: inErr } = await safeQuery(
+        db.insert(episodeReviews).values({
+          id: crypto.randomUUID(),
+          episodeId,
+          userId: session.sub,
+          rating: parseInt(rating, 10),
+          createdAt: now,
+        }),
+      );
+      if (inErr) throw inErr;
     }
 
     return NextResponse.json({ ok: true });
