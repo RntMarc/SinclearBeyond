@@ -75,24 +75,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
       .map((s) => s.id);
 
     const handleVoteClick = (optionId, availability) => {
-      // Gather all current votes of the user for this date question
-      const currentVotes = poll.votes.filter(
-        (v) => v.userId === userId && v.questionId === dateQuestion.id,
-      );
-
-      // Create new votes list
-      const otherVotes = currentVotes
-        .filter((v) => v.optionId !== optionId)
-        .map((v) => ({
-          questionId: v.questionId,
-          optionId: v.optionId,
-          availability: v.availability,
-        }));
-
-      onVote([
-        ...otherVotes,
-        { questionId: dateQuestion.id, optionId, availability },
-      ]);
+      onVote([{ questionId: dateQuestion.id, optionId, availability }]);
     };
 
     return (
@@ -165,33 +148,16 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                       {poll.creatorName}
                     </span>
                   </td>
-                  {options.map((option) => {
-                    const vote = poll.votes.find(
-                      (v) =>
-                        v.userId === poll.creatorId && v.optionId === option.id,
-                    );
-                    return (
-                      <td
-                        key={option.id}
-                        className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
-                      >
-                        <div className="flex justify-center">
-                          {vote?.availability === "yes" && (
-                            <Check size={18} className="text-emerald-500" />
-                          )}
-                          {vote?.availability === "maybe" && (
-                            <HelpCircle size={18} className="text-yellow-500" />
-                          )}
-                          {vote?.availability === "no" && (
-                            <X size={18} className="text-destructive" />
-                          )}
-                          {!vote && (
-                            <div className="w-4 h-px bg-muted-foreground/20" />
-                          )}
-                        </div>
-                      </td>
-                    );
-                  })}
+                  {options.map((option) => (
+                    <td
+                      key={option.id}
+                      className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
+                    >
+                      <div className="flex justify-center">
+                        <Check size={18} className="text-emerald-500" />
+                      </div>
+                    </td>
+                  ))}
                 </tr>
                 {/* Invitees rows */}
                 {poll.invites.map((invite) => (

@@ -486,3 +486,30 @@ export const pollVotes = mysqlTable("PollVote", {
   availability: mysqlEnum("availability", ["yes", "maybe", "no"]), // Only for appointments
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
 });
+
+// ── Office (Collaborative) ────────────────────────────────────────────────────
+
+export const officeDocuments = mysqlTable("OfficeDocument", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: longtext("content"), // Stores Yjs update state (base64)
+  creatorId: varchar("creatorId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const officeVersions = mysqlTable("OfficeVersion", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  documentId: varchar("documentId", { length: 191 }).notNull(),
+  content: longtext("content").notNull(),
+  label: varchar("label", { length: 255 }),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const officeCollaborators = mysqlTable("OfficeCollaborator", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  documentId: varchar("documentId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  color: varchar("color", { length: 7 }).notNull(),
+  lastActiveAt: datetime("lastActiveAt", { fsp: 3 }).notNull(),
+});
