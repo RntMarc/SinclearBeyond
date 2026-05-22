@@ -27,7 +27,14 @@ export async function GET(req, { params }) {
     );
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json(
+    (data || []).map((v) => ({
+      ...v,
+      createdAt: v.createdAt?.toISOString
+        ? v.createdAt.toISOString()
+        : v.createdAt,
+    })),
+  );
 }
 
 export async function POST(req, { params }) {

@@ -160,7 +160,12 @@ export async function POST(req, { params }) {
   );
 
   return NextResponse.json({
-    content: currentDoc?.[0]?.content,
-    collaborators: activeCollaborators,
+    content: currentDoc?.[0]?.content || null,
+    collaborators: (activeCollaborators || []).map((c) => ({
+      ...c,
+      lastActiveAt: c.lastActiveAt?.toISOString
+        ? c.lastActiveAt.toISOString()
+        : c.lastActiveAt,
+    })),
   });
 }
