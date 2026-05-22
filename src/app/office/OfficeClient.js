@@ -1,112 +1,148 @@
 "use client";
 
-import { FileUp, Save } from "lucide-react";
-import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import {
+  FilePlus,
+  Trash2,
+  FileText,
+  Loader2,
+  ChevronRight,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import Button from "@/components/ui/Button";
-
-// Dynamic import with ssr: false for components that use browser APIs
-const DocxEditor = dynamic(
-  () => import("@eigenpal/docx-editor-react").then((mod) => mod.DocxEditor),
-  { ssr: false },
-);
-
-// We still need to import styles
-import "@eigenpal/docx-editor-react/styles.css";
+import Card from "@/components/ui/Card";
+import { InlineError } from "@/components/ui/InlineError";
 
 export default function OfficeClient({ user, session }) {
-  const [buffer, setBuffer] = useState(null);
-  const [filename, setFilename] = useState("");
-  const editorRef = useRef(null);
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [creating, setCreating] = useState(false);
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
 
-    setFilename(file.name);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setBuffer(reader.result);
-    };
-    reader.readAsArrayBuffer(file);
+  const fetchDocuments = async () => {
+    try {
+      const res = await fetch("/api/office/documents");
+      if (!res.ok) throw new Error("Fehler beim Laden der Dokumente");
+      const data = await res.json();
+      setDocuments(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSave = async () => {
-    if (!editorRef.current) return;
-    const saved = await editorRef.current.save();
-    if (!saved) return;
+  const createDocument = async () => {
+    setCreating(true);
+    try {
+      const res = await fetch("/api/office/documents", {
+        method: "POST",
+        body: JSON.stringify({ title: "Neues Dokument" }),
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) throw new Error("Fehler beim Erstellen");
+      const newDoc = await res.json();
+      window.location.href = `/office/${newDoc.id}`;
+    } catch (err) {
+      setError(err.message);
+      setCreating(false);
+    }
+  };
 
-    const blob = new Blob([saved], {
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename || "dokument.docx";
-    a.click();
-    URL.revokeObjectURL(url);
+  const deleteDocument = async (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!confirm("Dokument wirklich löschen?")) return;
+
+    try {
+      const res = await fetch(`/api/office/documents/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Fehler beim Löschen");
+      setDocuments(documents.filter((d) => d.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <AppShell user={user} session={session}>
-      <div className="flex flex-col h-full overflow-hidden bg-background">
-        <PageHeader title="Office" subtitle="Client-seitig" icon={FileUp} />
+      <div className="flex flex-col h-full bg-background overflow-y-auto">
+        <PageHeader
+          title="Office"
+          subtitle="Kollaboratives Schreiben"
+          icon={FileText}
+        />
 
-        <div className="flex items-center gap-4 px-6 py-3 border-b border-border bg-muted/30 shrink-0">
-          <div className="flex items-center gap-2">
-            <input
-              type="file"
-              id="office-upload"
-              className="hidden"
-              accept=".docx"
-              onChange={handleFileUpload}
-            />
-            <Button
-              variant="outline"
-              size="compact"
-              onClick={() => document.getElementById("office-upload").click()}
-            >
-              <FileUp className="w-4 h-4 mr-2" />
-              Laden
-            </Button>
-
-            <Button
-              variant="primary"
-              size="compact"
-              onClick={handleSave}
-              disabled={!buffer}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Speichern & Download
+        <div className="p-6 max-w-5xl mx-auto w-full">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">Meine Dokumente</h2>
+            <Button onClick={createDocument} disabled={creating}>
+              {creating ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <FilePlus className="w-4 h-4 mr-2" />
+              )}
+              Neues Dokument
             </Button>
           </div>
 
-          {filename && (
-            <div className="text-sm font-medium truncate flex-1">
-              Aktuelle Datei:{" "}
-              <span className="text-muted-foreground">{filename}</span>
+          {error && <InlineError message={error} className="mb-4" />}
+
+          {loading ? (
+            <div className="flex justify-center p-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : documents.length === 0 ? (
+            <div className="text-center p-12 border-2 border-dashed border-border rounded-xl">
+              <p className="text-muted-foreground mb-4">
+                Noch keine Dokumente vorhanden.
+              </p>
+              <Button variant="outline" onClick={createDocument}>
+                Erstes Dokument erstellen
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {documents.map((doc) => (
+                <Link
+                  key={doc.id}
+                  href={`/office/${doc.id}`}
+                  className="block group"
+                >
+                  <Card className="p-4 hover:border-primary transition-colors h-full flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <FileText className="w-8 h-8 text-primary" />
+                        <button
+                          onClick={(e) => deleteDocument(e, doc.id)}
+                          className="p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <h3 className="font-medium truncate">{doc.title}</h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Zuletzt bearbeitet:{" "}
+                        {new Date(doc.updatedAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="mt-4 flex justify-end">
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                  </Card>
+                </Link>
+              ))}
             </div>
           )}
         </div>
-
-        <div className="flex-1 relative bg-slate-900 overflow-hidden">
-          <DocxEditor
-            ref={editorRef}
-            documentBuffer={buffer}
-            showToolbar
-            showRuler
-            showZoomControl
-          />
-        </div>
       </div>
-
-      <style jsx global>{`
-        .docx-editor-container {
-          height: 100%;
-        }
-      `}</style>
     </AppShell>
   );
 }
