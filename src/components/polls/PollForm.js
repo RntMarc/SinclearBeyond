@@ -13,7 +13,13 @@ import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SaveButton from "@/components/SaveButton";
 
-export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
+export default function PollForm({
+  initialData,
+  saving,
+  onSubmit,
+  onCancel,
+  userId,
+}) {
   const t = useTranslations("Polls");
   const tc = useTranslations("Common");
 
@@ -69,12 +75,16 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
 
       // If switching to choice/date types, ensure they have at least one option
       if (field === "type") {
-        if (["single_choice", "multiple_choice"].includes(value)) {
+        if (
+          ["single_choice", "multiple_choice", "checkbox", "toggle"].includes(
+            value,
+          )
+        ) {
           if (
             !newQuestions[qIdx].options ||
             newQuestions[qIdx].options.length === 0
           ) {
-            newQuestions[qIdx].options = [{ label: "" }];
+            newQuestions[qIdx].options = [{ label: "Option" }];
           }
         } else if (value === "date") {
           if (
@@ -156,6 +166,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
 
   const filteredUsers = users.filter(
     (u) =>
+      u.id !== userId &&
       u.displayName.toLowerCase().includes(search.toLowerCase()) &&
       !form.invites.some((i) => i.userId === u.id),
   );
