@@ -35,6 +35,7 @@ export default function AppShell({ children, user, session }) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const [unreadChangelog, setUnreadChangelog] = useState(0);
+  const [unreadForums, setUnreadForums] = useState(0);
 
   useEffect(() => {
     async function checkUnread() {
@@ -42,8 +43,15 @@ export default function AppShell({ children, user, session }) {
         const { getUnreadChangelogCount } = await import(
           "@/lib/changelog/actions"
         );
-        const count = await getUnreadChangelogCount();
-        setUnreadChangelog(count);
+        const { getUnreadForumsCount } = await import(
+            "@/lib/forums/actions"
+        );
+        const [changelogCount, forumsCount] = await Promise.all([
+            getUnreadChangelogCount(),
+            getUnreadForumsCount()
+        ]);
+        setUnreadChangelog(changelogCount);
+        setUnreadForums(forumsCount);
       } catch (error) {
         console.error("Failed to fetch unread count", error);
       }
@@ -54,7 +62,12 @@ export default function AppShell({ children, user, session }) {
   }, [user, session]);
 
   const navItems = [
-    { href: "/feed", label: t("entertainment"), icon: SquarePlay },
+    {
+        href: "/feed",
+        label: t("entertainment"),
+        icon: SquarePlay,
+        badge: unreadForums > 0 && !pathname.startsWith("/feed")
+    },
     { href: "/entdecken", label: t("discover"), icon: Compass },
     { href: "/kritik", label: t("reviews"), icon: Star },
     { href: "/reisen", label: t("travel"), icon: MapIcon },

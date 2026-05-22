@@ -3,6 +3,7 @@
 import {
   Banknote,
   CalendarDays,
+  Hash,
   Hotel,
   Lock,
   Palette,
@@ -13,6 +14,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import ForumFormModal from "@/components/admin/ForumFormModal";
 import SubscriptionFormModal from "@/components/admin/SubscriptionFormModal";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
@@ -30,10 +32,12 @@ export default function AdminPage({ user, session }) {
   const [showEventModal, setShowEventModal] = useState(false);
   const [showAccommodationModal, setShowAccommodationModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [showForumModal, setShowForumModal] = useState(false);
   const [trips, setTrips] = useState([]);
   const [standaloneEvents, setStandaloneEvents] = useState([]);
   const [accommodations, setAccommodations] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
+  const [forums, setForums] = useState([]);
   const hasSubs = useMemo(
     () => subscriptions.some((s) => s.isParticipant),
     [subscriptions],
@@ -42,17 +46,19 @@ export default function AdminPage({ user, session }) {
   const [editingEvent, setEditingEvent] = useState(null);
   const [editingAccommodation, setEditingAccommodation] = useState(null);
   const [editingSubscription, setEditingSubscription] = useState(null);
+  const [editingForum, setEditingForum] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [tripsRes, accommodationsRes, subscriptionsRes, eventsRes] =
+      const [tripsRes, accommodationsRes, subscriptionsRes, eventsRes, forumsRes] =
         await Promise.all([
           fetch("/api/reisen/data"),
           fetch("/api/travel/accommodations"),
           fetch("/api/subscriptions"),
           fetch("/api/reisen/data?standalone=1"),
+          fetch("/api/forums"),
         ]);
 
       if (tripsRes.ok) setTrips(await tripsRes.json());
@@ -60,6 +66,7 @@ export default function AdminPage({ user, session }) {
       if (accommodationsRes.ok)
         setAccommodations(await accommodationsRes.json());
       if (subscriptionsRes.ok) setSubscriptions(await subscriptionsRes.json());
+      if (forumsRes.ok) setForums(await forumsRes.json());
     } catch (error) {
       console.error("Error fetching admin data:", error);
     } finally {
@@ -74,6 +81,7 @@ export default function AdminPage({ user, session }) {
   const tabs = [
     { id: "reisen", label: "Reisen", icon: Plane },
     { id: "subscriptions", label: "Abos", icon: Banknote },
+    { id: "forums", label: "Foren", icon: Hash },
     { id: "users", label: "Nutzer", icon: Users },
     { id: "webhooks", label: "Webhooks", icon: Webhook },
     { id: "system", label: "System", icon: Palette },
@@ -112,6 +120,15 @@ export default function AdminPage({ user, session }) {
 
           <button
             type="button"
+            onClick={() => setShowForumModal(true)}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+          >
+            <Hash size={18} />
+            Forum anlegen
+          </button>
+
+          <button
+            type="button"
             onClick={() => setShowTripModal(true)}
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
           >
@@ -142,6 +159,66 @@ export default function AdminPage({ user, session }) {
             </div>
 
             {/* Tab Content */}
+            {activeTab === "forums" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-light flex items-center gap-2">
+                    <Hash className="text-primary" size={20} />
+                    Foren
+                  </h2>
+                  <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                    {forums.length}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {loading ? (
+                    <div className="animate-pulse space-y-3 col-span-full">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                      ))}
+                    </div>
+                  ) : forums.length > 0 ? (
+                    forums.map((forum) => (
+                      <div
+                        key={forum.id}
+                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden flex-shrink-0">
+                            {forum.image ? (
+                              <img src={forum.image} alt={forum.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                <Hash size={20} />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-sm">{forum.name}</h3>
+                            <p className="text-xs text-muted-foreground line-clamp-1">
+                              {forum.description || "Keine Beschreibung"}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingForum(forum)}
+                          className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Wrench size={18} />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                      Keine Foren vorhanden.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {activeTab === "subscriptions" && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -464,6 +541,21 @@ export default function AdminPage({ user, session }) {
           <AccommodationAdminModal
             accommodation={editingAccommodation}
             onClose={() => setEditingAccommodation(null)}
+            onUpdated={fetchData}
+          />
+        )}
+
+        {showForumModal && (
+          <ForumFormModal
+            onClose={() => setShowForumModal(false)}
+            onUpdated={fetchData}
+          />
+        )}
+
+        {editingForum && (
+          <ForumFormModal
+            forum={editingForum}
+            onClose={() => setEditingForum(null)}
             onUpdated={fetchData}
           />
         )}

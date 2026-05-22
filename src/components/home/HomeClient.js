@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Star } from "lucide-react";
+import { ChevronRight, Star, Hash } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -15,7 +15,7 @@ export default function HomeClient({
   upcomingEvents = [],
   upcomingTrips = [],
   upcomingBirthdays = [],
-  latestPosts = [],
+  forumPosts = [],
   latestPhotos = [],
   latestMediaReviews = [],
   latestDiscoverReviews = [],
@@ -26,7 +26,6 @@ export default function HomeClient({
   const hasEvents = upcomingEvents.length > 0;
   const hasTrips = upcomingTrips.length > 0;
   const hasBirthdays = upcomingBirthdays.length > 0;
-  const hasPosts = latestPosts.length > 0;
   const hasPhotos = latestPhotos.length > 0;
   const hasMediaReviews = latestMediaReviews.length > 0;
   const hasDiscoverReviews = latestDiscoverReviews.length > 0;
@@ -157,14 +156,19 @@ export default function HomeClient({
         </Section>
       )}
 
-      {/* Latest Posts */}
-      {hasPosts && (
-        <Section title={t("latestPosts")} href="/feed" className="space-y-6">
-          {latestPosts.map((post) => (
+      {/* Forum Posts */}
+      {forumPosts.map((forum) => (
+        <Section
+          key={forum.id}
+          title={forum.name}
+          href={`/feed/${forum.id}`}
+          className="space-y-6"
+        >
+          {forum.posts.map((post) => (
             <FeedItem key={post.id} post={post} />
           ))}
         </Section>
-      )}
+      ))}
 
       {/* Latest Photos */}
       {hasPhotos && (

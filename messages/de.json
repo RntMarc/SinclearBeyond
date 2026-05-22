@@ -353,8 +353,15 @@
   },
   "Feed": {
     "title": "Unterhaltung",
-    "subtitle": "Feed",
+      "subtitle": "Foren & Diskussionen",
     "newPost": "Neuer Beitrag",
+      "myForums": "Meine Foren",
+      "discoverForums": "Weitere Foren entdecken",
+      "noForums": "Du bist noch keinen Foren beigetreten.",
+      "join": "Beitreten",
+      "leave": "Verlassen",
+      "members": "Mitglieder",
+      "newPostsCount": "{count} neue Posts",
     "categories": {
       "all": "Alle",
       "music": "Musik",
