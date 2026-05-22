@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
+import { InlineError } from "@/components/ui/InlineError";
 import { getSession } from "@/lib/auth/session";
 import { getPolls } from "@/lib/polls/utils";
 import PollsClient from "./PollsClient";
@@ -14,7 +15,15 @@ export default async function PollsPage() {
     redirect("/login");
   }
 
-  const polls = await getPolls(session.sub);
+  let polls = [];
+  let pollError = false;
+  try {
+    polls = await getPolls(session.sub);
+  } catch (e) {
+    console.error("[PollsPage] Error fetching polls:", e);
+    pollError = true;
+  }
+
   const t = await getTranslations("Polls");
 
   return (
@@ -27,8 +36,9 @@ export default async function PollsPage() {
         />
 
         <main className="flex-1 overflow-y-auto p-6 md:p-10">
-          <div className="max-w-5xl mx-auto">
-            <PollsClient initialPolls={polls} />
+          <div className="max-w-5xl mx-auto space-y-6">
+            {pollError && <InlineError />}
+            <PollsClient initialPolls={polls || []} />
           </div>
         </main>
       </div>

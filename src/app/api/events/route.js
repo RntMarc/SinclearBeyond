@@ -3,7 +3,7 @@ import { and, eq, inArray, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { eventPermissions, events } from "@/lib/db/schema";
 
 export async function GET() {
@@ -14,35 +14,51 @@ export async function GET() {
 
   const userId = session.sub;
 
-  const viewPermRows = await db
-    .select({ eventId: eventPermissions.eventId })
-    .from(eventPermissions)
-    .where(
-      and(eq(eventPermissions.userId, userId), eq(eventPermissions.canView, 1)),
-    );
+  const { data: viewPermRows, error: viewPermError } = await safeQuery(
+    db
+      .select({ eventId: eventPermissions.eventId })
+      .from(eventPermissions)
+      .where(
+        and(
+          eq(eventPermissions.userId, userId),
+          eq(eventPermissions.canView, 1),
+        ),
+      ),
+  );
 
-  const permEventIds = viewPermRows.map((r) => r.eventId);
+  const permEventIds = viewPermRows?.map((r) => r.eventId) || [];
 
   const conditions = [eq(events.isPublic, 1), eq(events.creatorId, userId)];
   if (permEventIds.length > 0)
     conditions.push(inArray(events.id, permEventIds));
 
-  const rows = await db
-    .select()
-    .from(events)
-    .where(or(...conditions))
-    .orderBy(events.startAt);
+  const { data: rows, error: eventsError } = await safeQuery(
+    db
+      .select()
+      .from(events)
+      .where(or(...conditions))
+      .orderBy(events.startAt),
+  );
 
-  const editPermRows = await db
-    .select({ eventId: eventPermissions.eventId })
-    .from(eventPermissions)
-    .where(
-      and(eq(eventPermissions.userId, userId), eq(eventPermissions.canEdit, 1)),
-    );
+  const { data: editPermRows, error: editPermError } = await safeQuery(
+    db
+      .select({ eventId: eventPermissions.eventId })
+      .from(eventPermissions)
+      .where(
+        and(
+          eq(eventPermissions.userId, userId),
+          eq(eventPermissions.canEdit, 1),
+        ),
+      ),
+  );
 
-  const editEventIds = new Set(editPermRows.map((r) => r.eventId));
+  if (viewPermError || eventsError || editPermError) {
+    return NextResponse.json({ error: t("dbError") }, { status: 500 });
+  }
 
-  const result = rows.map((ev) => ({
+  const editEventIds = new Set(editPermRows?.map((r) => r.eventId) || []);
+
+  const result = (rows || []).map((ev) => ({
     ...ev,
     canEdit:
       session.isAdmin || ev.creatorId === userId || editEventIds.has(ev.id),
@@ -73,35 +89,47 @@ export async function POST(req) {
   const id = crypto.randomUUID();
   const now = new Date();
 
-  await db.insert(events).values({
-    id,
-    title: title.trim(),
-    description: description?.trim() || null,
-    startAt: new Date(startAt),
-    endAt: endAt ? new Date(endAt) : null,
-    allDay: allDay ? 1 : 0,
-    isPublic: isPublic === false ? 0 : 1,
-    createdAt: now,
-    creatorId: session.sub,
-  });
+  const { error: insertError } = await safeQuery(
+    db.insert(events).values({
+      id,
+      title: title.trim(),
+      description: description?.trim() || null,
+      startAt: new Date(startAt),
+      endAt: endAt ? new Date(endAt) : null,
+      allDay: allDay ? 1 : 0,
+      isPublic: isPublic === false ? 0 : 1,
+      createdAt: now,
+      creatorId: session.sub,
+    }),
+  );
 
-  if (permissions.length > 0) {
-    await db.insert(eventPermissions).values(
-      permissions.map((p) => ({
-        id: crypto.randomUUID(),
-        eventId: id,
-        userId: p.userId,
-        canView: p.canView ? 1 : 0,
-        canEdit: p.canEdit ? 1 : 0,
-        createdAt: now,
-      })),
-    );
+  if (insertError) {
+    return NextResponse.json({ error: t("dbError") }, { status: 500 });
   }
 
-  const [row] = await db
-    .select()
-    .from(events)
-    .where(eq(events.id, id))
-    .limit(1);
-  return NextResponse.json({ ...row, canEdit: true }, { status: 201 });
+  if (permissions.length > 0) {
+    const { error: permError } = await safeQuery(
+      db.insert(eventPermissions).values(
+        permissions.map((p) => ({
+          id: crypto.randomUUID(),
+          eventId: id,
+          userId: p.userId,
+          canView: p.canView ? 1 : 0,
+          canEdit: p.canEdit ? 1 : 0,
+          createdAt: now,
+        })),
+      ),
+    );
+    if (permError) {
+      return NextResponse.json({ error: t("dbError") }, { status: 500 });
+    }
+  }
+
+  const { data: rows, error: selectError } = await safeQuery(
+    db.select().from(events).where(eq(events.id, id)).limit(1),
+  );
+  if (selectError || !rows?.[0]) {
+    return NextResponse.json({ error: t("dbError") }, { status: 500 });
+  }
+  return NextResponse.json({ ...rows[0], canEdit: true }, { status: 201 });
 }

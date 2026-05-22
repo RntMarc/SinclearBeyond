@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { closeFriends } from "@/lib/db/schema";
 
 export const CONTACT_FIELDS = [
@@ -54,18 +54,22 @@ export async function canSeePrivateInfo(targetUserId, currentUserId) {
   if (currentUserId === targetUserId) return true;
 
   // Der Ziel-Nutzer muss den aktuellen Nutzer als engen Freund markiert haben
-  const [isCloseFriend] = await db
-    .select()
-    .from(closeFriends)
-    .where(
-      and(
-        eq(closeFriends.userId, targetUserId),
-        eq(closeFriends.friendId, currentUserId),
-      ),
-    )
-    .limit(1);
+  const { data: friends, error } = await safeQuery(
+    db
+      .select()
+      .from(closeFriends)
+      .where(
+        and(
+          eq(closeFriends.userId, targetUserId),
+          eq(closeFriends.friendId, currentUserId),
+        ),
+      )
+      .limit(1),
+  );
 
-  return !!isCloseFriend;
+  if (error) throw error;
+
+  return !!friends?.[0];
 }
 
 /**

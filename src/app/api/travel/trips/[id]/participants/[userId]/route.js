@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { travelRelations } from "@/lib/db/schema";
 
 export async function PATCH(req, { params }) {
@@ -17,12 +17,19 @@ export async function PATCH(req, { params }) {
   try {
     const { accommodationId } = await req.json();
 
-    await db
-      .update(travelRelations)
-      .set({ accommodationId: accommodationId || null })
-      .where(
-        and(eq(travelRelations.tripId, id), eq(travelRelations.userId, userId)),
-      );
+    const { error: updateError } = await safeQuery(
+      db
+        .update(travelRelations)
+        .set({ accommodationId: accommodationId || null })
+        .where(
+          and(
+            eq(travelRelations.tripId, id),
+            eq(travelRelations.userId, userId),
+          ),
+        ),
+    );
+
+    if (updateError) throw updateError;
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -41,11 +48,18 @@ export async function DELETE(_req, { params }) {
   }
 
   try {
-    await db
-      .delete(travelRelations)
-      .where(
-        and(eq(travelRelations.tripId, id), eq(travelRelations.userId, userId)),
-      );
+    const { error: deleteError } = await safeQuery(
+      db
+        .delete(travelRelations)
+        .where(
+          and(
+            eq(travelRelations.tripId, id),
+            eq(travelRelations.userId, userId),
+          ),
+        ),
+    );
+
+    if (deleteError) throw deleteError;
 
     return NextResponse.json({ ok: true });
   } catch (error) {

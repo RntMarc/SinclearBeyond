@@ -3,7 +3,7 @@ import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { userPreferences } from "@/lib/db/schema";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -13,13 +13,20 @@ export async function GET() {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const [prefs] = await db
-    .select()
-    .from(userPreferences)
-    .where(eq(userPreferences.userId, session.sub))
-    .limit(1);
+  const { data: prefsData, error: prefsError } = await safeQuery(
+    db
+      .select()
+      .from(userPreferences)
+      .where(eq(userPreferences.userId, session.sub))
+      .limit(1),
+  );
 
-  return NextResponse.json(prefs || { theme: "dark", primaryColor: "#7c3aed" });
+  if (prefsError)
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+
+  return NextResponse.json(
+    prefsData?.[0] || { theme: "dark", primaryColor: "#7c3aed" },
+  );
 }
 
 export async function POST(req) {
@@ -29,31 +36,46 @@ export async function POST(req) {
 
   const { theme, primaryColor, language, timezone } = await req.json();
 
-  const [existing] = await db
-    .select()
-    .from(userPreferences)
-    .where(eq(userPreferences.userId, session.sub))
-    .limit(1);
+  const { data: existingData, error: selectError } = await safeQuery(
+    db
+      .select()
+      .from(userPreferences)
+      .where(eq(userPreferences.userId, session.sub))
+      .limit(1),
+  );
+
+  if (selectError)
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+
+  const existing = existingData?.[0];
 
   if (existing) {
-    await db
-      .update(userPreferences)
-      .set({
-        theme: theme ?? existing.theme,
-        primaryColor: primaryColor ?? existing.primaryColor,
-        language: language ?? existing.language,
-        timezone: timezone ?? existing.timezone,
-      })
-      .where(eq(userPreferences.userId, session.sub));
+    const { error: updateError } = await safeQuery(
+      db
+        .update(userPreferences)
+        .set({
+          theme: theme ?? existing.theme,
+          primaryColor: primaryColor ?? existing.primaryColor,
+          language: language ?? existing.language,
+          timezone: timezone ?? existing.timezone,
+        })
+        .where(eq(userPreferences.userId, session.sub)),
+    );
+    if (updateError)
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
   } else {
-    await db.insert(userPreferences).values({
-      id: crypto.randomUUID(),
-      userId: session.sub,
-      theme: theme ?? "dark",
-      primaryColor: primaryColor ?? "#7c3aed",
-      language: language ?? "de",
-      timezone: timezone ?? null,
-    });
+    const { error: insertError } = await safeQuery(
+      db.insert(userPreferences).values({
+        id: crypto.randomUUID(),
+        userId: session.sub,
+        theme: theme ?? "dark",
+        primaryColor: primaryColor ?? "#7c3aed",
+        language: language ?? "de",
+        timezone: timezone ?? null,
+      }),
+    );
+    if (insertError)
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 
   const cookieStore = await cookies();

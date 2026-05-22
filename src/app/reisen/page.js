@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import TripList from "@/components/travel/TripList";
+import { InlineError } from "@/components/ui/InlineError";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
 import { getTrips } from "@/lib/travel/trips";
@@ -15,8 +16,22 @@ export default async function ReisenPage() {
   const data = await getProfileData(session);
   if (!data) redirect("/login");
 
-  const trips = await getTrips();
-  const standaloneEvents = await getTrips(true);
+  let trips = [];
+  let standaloneEvents = [];
+  let travelError = false;
+
+  try {
+    const [tripsData, eventsData] = await Promise.all([
+      getTrips(),
+      getTrips(true),
+    ]);
+    trips = tripsData || [];
+    standaloneEvents = eventsData || [];
+  } catch (e) {
+    console.error("[ReisenPage] Error fetching trips/events:", e);
+    travelError = true;
+  }
+
   const { user } = data;
 
   return (
@@ -30,10 +45,8 @@ export default async function ReisenPage() {
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto space-y-12">
-            <TripList
-              initialTrips={trips ?? []}
-              isAdmin={Boolean(session.isAdmin)}
-            />
+            {travelError && <InlineError />}
+            <TripList initialTrips={trips} isAdmin={Boolean(session.isAdmin)} />
 
             {standaloneEvents && standaloneEvents.length > 0 && (
               <div className="space-y-4">

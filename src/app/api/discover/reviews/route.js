@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { discoverReviews } from "@/lib/db/schema";
 
 export async function POST(req) {
@@ -20,14 +20,20 @@ export async function POST(req) {
     }
 
     const id = crypto.randomUUID();
-    await db.insert(discoverReviews).values({
-      id,
-      placeId,
-      userId: session.sub,
-      rating: parseInt(rating, 10),
-      comment,
-      createdAt: new Date(),
-    });
+    const { error: insertError } = await safeQuery(
+      db.insert(discoverReviews).values({
+        id,
+        placeId,
+        userId: session.sub,
+        rating: parseInt(rating, 10),
+        comment,
+        createdAt: new Date(),
+      }),
+    );
+
+    if (insertError) {
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true, id });
   } catch (error) {

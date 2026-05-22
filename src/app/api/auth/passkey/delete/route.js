@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { passkeys } from "@/lib/db/schema";
 
 export async function POST(req) {
@@ -14,9 +14,12 @@ export async function POST(req) {
 
   try {
     const { id } = await req.json();
-    await db
-      .delete(passkeys)
-      .where(and(eq(passkeys.id, id), eq(passkeys.userId, session.sub)));
+    const { error } = await safeQuery(
+      db
+        .delete(passkeys)
+        .where(and(eq(passkeys.id, id), eq(passkeys.userId, session.sub))),
+    );
+    if (error) throw error;
 
     return NextResponse.json({ ok: true });
   } catch (err) {

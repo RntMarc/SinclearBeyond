@@ -32,7 +32,8 @@
     },
     "tooManyRequests": "Langsam reit's",
     "alreadyParticipant": "Bisch scho dabei.",
-    "genericError": "Ebbes isch schiaf ganga."
+    "genericError": "Ebbes isch schiaf ganga.",
+    "dbError": "I konnt d'Date net lada. Probier's schbäder nomol."
   },
   "Navigation": {
     "entertainment": "Onderhaldong",

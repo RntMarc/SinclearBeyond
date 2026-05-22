@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { travelTrips } from "@/lib/db/schema";
 
 export async function POST(req) {
@@ -22,13 +22,15 @@ export async function POST(req) {
 
     const id = crypto.randomUUID();
 
-    await db.insert(travelTrips).values({
-      id,
-      name,
-      description: description || null,
-      start: new Date(start),
-      end: new Date(end),
-    });
+    await safeQuery(
+      db.insert(travelTrips).values({
+        id,
+        name,
+        description: description || null,
+        start: new Date(start),
+        end: new Date(end),
+      }),
+    );
 
     return NextResponse.json({ ok: true, id });
   } catch (error) {

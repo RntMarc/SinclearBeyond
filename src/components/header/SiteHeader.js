@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { getTranslations } from "next-intl/server";
 import LogoutButton from "@/components/auth/LogoutButton";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 import OpenAppButton from "./OpenAppButton";
 
@@ -13,15 +13,18 @@ export default async function SiteHeader({ variant = "default" }) {
   let user = null;
 
   if (session != null) {
-    [user] = await db
-      .select({
-        displayName: users.displayName,
-        email: users.email,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .where(eq(users.id, session.sub))
-      .limit(1);
+    const { data: usersData } = await safeQuery(
+      db
+        .select({
+          displayName: users.displayName,
+          email: users.email,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .where(eq(users.id, session.sub))
+        .limit(1),
+    );
+    user = usersData?.[0];
   }
 
   return (

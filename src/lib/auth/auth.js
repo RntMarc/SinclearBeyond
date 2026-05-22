@@ -1,17 +1,18 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { jwtVerify, SignJWT } from "jose";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { userPreferences, users } from "@/lib/db/schema";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function loginUser(email, password) {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  const { data: usersData, error } = await safeQuery(
+    db.select().from(users).where(eq(users.email, email)).limit(1),
+  );
+  if (error) throw error;
+  const user = usersData?.[0];
+
   if (!user) return null;
 
   const valid = await bcrypt.compare(password, user.passwordHash);
@@ -36,11 +37,15 @@ export async function verifyToken(token) {
 }
 
 export async function createSessionToken(user) {
-  const [prefs] = await db
-    .select()
-    .from(userPreferences)
-    .where(eq(userPreferences.userId, user.id))
-    .limit(1);
+  const { data: prefsData } = await safeQuery(
+    db
+      .select()
+      .from(userPreferences)
+      .where(eq(userPreferences.userId, user.id))
+      .limit(1),
+  );
+
+  const prefs = prefsData?.[0];
 
   return await new SignJWT({
     sub: user.id,

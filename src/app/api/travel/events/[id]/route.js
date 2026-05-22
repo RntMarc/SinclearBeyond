@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { eventRelations, travelEvents } from "@/lib/db/schema";
 
 export async function PATCH(req, { params }) {
@@ -39,23 +39,31 @@ export async function PATCH(req, { params }) {
       updateData.osmId = data.osmId ? BigInt(data.osmId) : null;
     if (data.tripId !== undefined) updateData.tripId = data.tripId || null;
 
-    await db
-      .update(travelEvents)
-      .set(updateData)
-      .where(eq(travelEvents.id, id));
+    const { error: updateError } = await safeQuery(
+      db.update(travelEvents).set(updateData).where(eq(travelEvents.id, id)),
+    );
+
+    if (updateError) throw updateError;
 
     if (
       data.participantIds !== undefined &&
       Array.isArray(data.participantIds)
     ) {
-      await db.delete(eventRelations).where(eq(eventRelations.eventId, id));
+      const { error: deleteError } = await safeQuery(
+        db.delete(eventRelations).where(eq(eventRelations.eventId, id)),
+      );
+      if (deleteError) throw deleteError;
+
       for (const userId of data.participantIds) {
-        await db.insert(eventRelations).values({
-          id: crypto.randomUUID(),
-          eventId: id,
-          userId,
-          createdAt: new Date(),
-        });
+        const { error: insertError } = await safeQuery(
+          db.insert(eventRelations).values({
+            id: crypto.randomUUID(),
+            eventId: id,
+            userId,
+            createdAt: new Date(),
+          }),
+        );
+        if (insertError) throw insertError;
       }
     }
 
@@ -75,21 +83,29 @@ export async function GET(_req, { params }) {
   }
 
   try {
-    const event = await db.query.travelEvents.findFirst({
-      where: eq(travelEvents.id, id),
-    });
+    const { data: event, error: eventError } = await safeQuery(
+      db.query.travelEvents.findFirst({
+        where: eq(travelEvents.id, id),
+      }),
+    );
+
+    if (eventError) throw eventError;
 
     if (!event) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const relations = await db.query.eventRelations.findMany({
-      where: eq(eventRelations.eventId, id),
-    });
+    const { data: relations, error: relationsError } = await safeQuery(
+      db.query.eventRelations.findMany({
+        where: eq(eventRelations.eventId, id),
+      }),
+    );
+
+    if (relationsError) throw relationsError;
 
     return NextResponse.json({
       ...event,
-      participantIds: relations.map((r) => r.userId),
+      participantIds: (relations || []).map((r) => r.userId),
     });
   } catch (error) {
     console.error("[API/Travel/Events] GET Error:", error);
@@ -110,8 +126,16 @@ export async function DELETE(_req, { params }) {
   }
 
   try {
-    await db.delete(eventRelations).where(eq(eventRelations.eventId, id));
-    await db.delete(travelEvents).where(eq(travelEvents.id, id));
+    const { error: deleteRelError } = await safeQuery(
+      db.delete(eventRelations).where(eq(eventRelations.eventId, id)),
+    );
+    if (deleteRelError) throw deleteRelError;
+
+    const { error: deleteEventError } = await safeQuery(
+      db.delete(travelEvents).where(eq(travelEvents.id, id)),
+    );
+    if (deleteEventError) throw deleteEventError;
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[API/Travel/Events] DELETE Error:", error);
