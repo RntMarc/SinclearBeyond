@@ -135,6 +135,11 @@ export async function getPoll(pollId, userId) {
 
   if (!isInvited && !isCreator) return null;
 
+  // Filter out creator from invites to avoid double entries
+  const filteredInvites = (invites || []).filter(
+    (i) => i.userId !== poll.creatorId,
+  );
+
   const { data: questions, error: qErr } = await safeQuery(
     db
       .select()
@@ -179,7 +184,7 @@ export async function getPoll(pollId, userId) {
 
   return {
     ...poll,
-    invites: invites || [],
+    invites: filteredInvites,
     questions: questions || [],
     options,
     votes: filteredVotes,
