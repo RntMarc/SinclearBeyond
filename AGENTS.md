@@ -32,6 +32,13 @@ This project uses `next-intl` for localization. All UI strings must be externali
 
 To prevent full-page crashes caused by background database query failures in Server Components, all database interactions MUST be wrapped using the `safeQuery` utility (defined in `@/lib/db/db`).
 
+### Charset and Collation
+The database explicitly uses `utf8mb4_unicode_ci` for all tables and columns. To avoid "Illegal mix of collations" errors (especially during joins or comparisons with UUIDs/strings), all database connections MUST use:
+- **Charset:** `utf8mb4`
+- **Collation:** `utf8mb4_unicode_ci`
+
+DO NOT use `utf8mb4_general_ci` or any other collation, as this will lead to runtime errors when comparing with existing data.
+
 ### Implementation Rules
 1. **Always use `safeQuery`:** Instead of `await db...`, use `const { data, error } = await safeQuery(db...)`.
 2. **Handle Errors in UI:** Server components MUST check the `error` flag and render the `InlineError` component (`@/components/ui/InlineError`) when data fetching fails.
