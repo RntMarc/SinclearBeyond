@@ -117,9 +117,9 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
-    const { category, content, visibility, ...details } = body;
+    const { category, content, visibility, forumId, ...details } = body;
 
-    if (!category)
+    if (!category || !forumId)
       return NextResponse.json({ error: t("missingFields") }, { status: 400 });
 
     // Server-side validation
@@ -195,6 +195,7 @@ export async function POST(req) {
       db.insert(feedPosts).values({
         id,
         userId: session.sub,
+        forumId,
         category,
         content: content?.trim() || null,
         visibility: visibility || 1,

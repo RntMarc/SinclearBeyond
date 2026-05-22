@@ -120,58 +120,76 @@ export default async function HomeContent({ userId, isAdmin }) {
   const upcomingBirthdays =
     allBirthdays?.filter((b) => b.daysUntil >= 0 && b.daysUntil <= 7) || [];
 
-  // 4. Latest Posts (last 7 days)
-  const { data: usersWhoMarkedMeAsCloseFriend, error: closeFriendsError } =
-    await safeQuery(
-      db
-        .select({ userId: closeFriends.userId })
-        .from(closeFriends)
-        .where(eq(closeFriends.friendId, userId)),
-    );
-  const usersWhoMarkedMeIds =
-    usersWhoMarkedMeAsCloseFriend?.map((r) => r.userId) || [];
-
-  const postVisibilityConditions = [
-    eq(feedPosts.visibility, 1),
-    eq(feedPosts.userId, userId),
-  ];
-  if (usersWhoMarkedMeIds.length > 0) {
-    postVisibilityConditions.push(
-      and(
-        eq(feedPosts.visibility, 2),
-        inArray(feedPosts.userId, usersWhoMarkedMeIds),
-      ),
-    );
-  }
-
-  const { data: latestPostsRows, error: postsError } = await safeQuery(
-    db
-      .select({
-        post: feedPosts,
-        user: {
-          id: users.id,
-          displayName: users.displayName,
-          image: users.image,
-        },
-      })
-      .from(feedPosts)
-      .innerJoin(users, eq(feedPosts.userId, users.id))
-      .where(
-        and(
-          or(...postVisibilityConditions),
-          gte(feedPosts.createdAt, sevenDaysAgo),
-        ),
-      )
-      .orderBy(desc(feedPosts.createdAt))
-      .limit(10),
+  // 4. Forum Posts (from joined forums)
+  const { data: joinedForums } = await safeQuery(
+    db.select({ forum: forums })
+      .from(forumMembers)
+      .innerJoin(forums, eq(forumMembers.forumId, forums.id))
+      .where(eq(forumMembers.userId, userId))
   );
 
-  const latestPosts =
-    latestPostsRows?.map((row) => ({
-      ...row.post,
-      user: row.user,
-      canEdit: row.post.userId === userId,
-    })) || [];
+  const forumsWithPosts = await Promise.all((joinedForums || []).map(async (row) => {
+    const { data: usersWhoMarkedMeAsCloseFriend } =
+      await safeQuery(
+        db
+          .select({ userId: closeFriends.userId })
+          .from(closeFriends)
+          .where(eq(closeFriends.friendId, userId)),
+      );
+    const usersWhoMarkedMeIds =
+      usersWhoMarkedMeAsCloseFriend?.map((r) => r.userId) || [];
+
+    const postVisibilityConditions = [
+      eq(feedPosts.visibility, 1),
+      eq(feedPosts.userId, userId),
+    ];
+    if (usersWhoMarkedMeIds.length > 0) {
+      postVisibilityConditions.push(
+        and(
+          eq(feedPosts.visibility, 2),
+          inArray(feedPosts.userId, usersWhoMarkedMeIds),
+        ),
+      );
+    }
+
+    const { data: postsRows } = await safeQuery(
+      db
+        .select({
+          post: feedPosts,
+          user: {
+            id: users.id,
+            displayName: users.displayName,
+            image: users.image,
+          },
+          voteCount: sql`(SELECT count(*) FROM FeedPostVote WHERE postId = ${feedPosts.id})`,
+          hasVoted: sql`(SELECT count(*) FROM FeedPostVote WHERE postId = ${feedPosts.id} AND userId = ${userId})`
+        })
+        .from(feedPosts)
+        .innerJoin(users, eq(feedPosts.userId, users.id))
+        .where(
+          and(
+            eq(feedPosts.forumId, row.forum.id),
+            or(...postVisibilityConditions),
+            gte(feedPosts.createdAt, sevenDaysAgo),
+          ),
+        )
+        .orderBy(desc(feedPosts.createdAt))
+        .limit(5),
+    );
+
+    return {
+      ...row.forum,
+      posts: postsRows?.map(r => ({
+        ...r.post,
+        user: r.user,
+        voteCount: Number(r.voteCount),
+        hasVoted: Number(r.hasVoted) > 0,
+        canEdit: r.post.userId === userId
+      })) || []
+    };
+  }));
+
+  const forumPosts = forumsWithPosts.filter(f => f.posts.length > 0);
 
   // 5. Latest Photos (last 7 days)
   const allPhotos = await getUnsplashPhotos({ page: 1, perPage: 20 });
@@ -353,8 +371,6 @@ export default async function HomeContent({ userId, isAdmin }) {
     eventsError ||
     tripRelError ||
     tripsError ||
-    closeFriendsError ||
-    postsError ||
     mediaReviewsError ||
     discoverReviewsError ||
     eventRelError ||
@@ -370,7 +386,7 @@ export default async function HomeContent({ userId, isAdmin }) {
         upcomingEvents={combinedEvents}
         upcomingTrips={trips}
         upcomingBirthdays={upcomingBirthdays}
-        latestPosts={latestPosts}
+        forumPosts={forumPosts}
         latestPhotos={latestPhotos}
         latestMediaReviews={latestMediaReviewsRows || []}
         latestDiscoverReviews={latestDiscoverReviewsRows || []}

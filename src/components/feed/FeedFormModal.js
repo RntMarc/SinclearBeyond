@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
 
-export default function FeedFormModal({ post, onClose, onSuccess }) {
+export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
   const t = useTranslations("Feed.form");
   const tFeed = useTranslations("Feed");
   const tCommon = useTranslations("Common");
@@ -140,7 +140,7 @@ export default function FeedFormModal({ post, onClose, onSuccess }) {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, category }),
+        body: JSON.stringify({ ...form, category, forumId: forumId || post?.forumId }),
       });
 
       if (res.ok) {
