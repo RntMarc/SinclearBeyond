@@ -172,7 +172,12 @@
     "latestPosts": "Neueste Beiträge",
     "latestPhotos": "Neueste Fotos",
     "latestMediaReviews": "Neueste Reviews",
-    "latestDiscoverReviews": "Neueste Entdeckungen"
+    "latestDiscoverReviews": "Neueste Entdeckungen",
+    "polls": "Umfragen & Termine",
+    "activePoll": "Laufend",
+    "finalizedPoll": "Abgeschlossen",
+    "finalizedDate": "Termin",
+    "pollBy": "Von {name}"
   },
   "LandingPage": {
     "badge": "Community-Plattform",
@@ -353,15 +358,15 @@
   },
   "Feed": {
     "title": "Unterhaltung",
-      "subtitle": "Foren & Diskussionen",
+    "subtitle": "Foren & Diskussionen",
     "newPost": "Neuer Beitrag",
-      "myForums": "Meine Foren",
-      "discoverForums": "Weitere Foren entdecken",
-      "noForums": "Du bist noch keinen Foren beigetreten.",
-      "join": "Beitreten",
-      "leave": "Verlassen",
-      "members": "Mitglieder",
-      "newPostsCount": "{count} neue Posts",
+    "myForums": "Meine Foren",
+    "discoverForums": "Weitere Foren entdecken",
+    "noForums": "Du bist noch keinen Foren beigetreten.",
+    "join": "Beitreten",
+    "leave": "Verlassen",
+    "members": "Mitglieder",
+    "newPostsCount": "{count} neue Posts",
     "categories": {
       "all": "Alle",
       "music": "Musik",

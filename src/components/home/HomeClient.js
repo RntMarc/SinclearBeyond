@@ -4,6 +4,7 @@ import { ChevronRight, Star, Hash } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { CalendarCheck } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import BirthdayModal from "@/components/birthdays/BirthdayModal";
 import EventDetailModal from "@/components/calendar/EventDetailModal";
@@ -19,6 +20,8 @@ export default function HomeClient({
   latestPhotos = [],
   latestMediaReviews = [],
   latestDiscoverReviews = [],
+  activePolls = [],
+  finalizedPolls = [],
 }) {
   const t = useTranslations("Home");
   const [selectedItem, setSelectedItem] = useState(null); // { type, data }
@@ -29,6 +32,7 @@ export default function HomeClient({
   const hasPhotos = latestPhotos.length > 0;
   const hasMediaReviews = latestMediaReviews.length > 0;
   const hasDiscoverReviews = latestDiscoverReviews.length > 0;
+  const hasPolls = activePolls.length > 0 || finalizedPolls.length > 0;
 
   return (
     <div className="columns-1 md:columns-2 gap-6 md:gap-10">
@@ -103,6 +107,80 @@ export default function HomeClient({
                 size={16}
                 className="text-muted-foreground group-hover:translate-x-1 transition-transform"
               />
+            </Link>
+          ))}
+        </Section>
+      )}
+
+      {/* Polls */}
+      {hasPolls && (
+        <Section title={t("polls")} href="/umfrage" className="space-y-3">
+          {activePolls.map((poll) => (
+            <Link
+              key={poll.id}
+              href={`/umfrage/${poll.id}`}
+              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2 text-primary">
+                  <CalendarCheck size={16} />
+                  <span className="text-xs font-bold uppercase tracking-wider">
+                    {t("activePoll")}
+                  </span>
+                </div>
+                <ChevronRight
+                  size={16}
+                  className="text-muted-foreground group-hover:translate-x-1 transition-transform"
+                />
+              </div>
+              <span className="font-medium text-foreground block">
+                {poll.title}
+              </span>
+              <span className="text-xs text-muted-foreground mt-1 block">
+                {t("pollBy", { name: poll.creatorName })}
+              </span>
+            </Link>
+          ))}
+          {finalizedPolls.map((poll) => (
+            <Link
+              key={poll.id}
+              href={`/umfrage/${poll.id}`}
+              className="block p-4 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-xl transition-all group"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2 text-primary">
+                  <CalendarCheck
+                    size={16}
+                    fill="currentColor"
+                    className="fill-primary/20"
+                  />
+                  <span className="text-xs font-bold uppercase tracking-wider">
+                    {t("finalizedPoll")}
+                  </span>
+                </div>
+                <ChevronRight
+                  size={16}
+                  className="text-primary group-hover:translate-x-1 transition-transform"
+                />
+              </div>
+              <span className="font-bold text-foreground block">
+                {poll.title}
+              </span>
+              {poll.options?.[0]?.dateValue && (
+                <span className="text-xs text-primary font-medium mt-1 block italic">
+                  {t("finalizedDate")}:{" "}
+                  {new Date(poll.options[0].dateValue).toLocaleDateString(
+                    "de-DE",
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    },
+                  )}
+                </span>
+              )}
             </Link>
           ))}
         </Section>

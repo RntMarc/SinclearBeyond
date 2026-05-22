@@ -108,10 +108,15 @@ export default function FeedDashboard() {
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <MessageSquare size={14} />
-                            <span>{t("newPostsCount", { count: forum.postCount })}</span>
+                            <span>
+                              {t("newPostsCount", { count: forum.postCount })}
+                            </span>
                           </div>
                         </div>
-                        <ArrowRight size={18} className="text-primary group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight
+                          size={18}
+                          className="text-primary group-hover:translate-x-1 transition-transform"
+                        />
                       </div>
                     </div>
                   </Link>
@@ -139,7 +144,11 @@ export default function FeedDashboard() {
                   >
                     <div className="w-12 h-12 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
                       {forum.image ? (
-                        <img src={forum.image} alt={forum.name} className="w-full h-full object-cover" />
+                        <img
+                          src={forum.image}
+                          alt={forum.name}
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                           <Hash size={20} />
@@ -147,7 +156,9 @@ export default function FeedDashboard() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm truncate">{forum.name}</h4>
+                      <h4 className="font-medium text-sm truncate">
+                        {forum.name}
+                      </h4>
                       <button
                         onClick={() => handleJoin(forum.id)}
                         className="text-xs text-primary hover:underline"
@@ -155,7 +166,10 @@ export default function FeedDashboard() {
                         {t("join")}
                       </button>
                     </div>
-                    <Link href={`/feed/${forum.id}`} className="p-2 text-muted-foreground hover:text-foreground">
+                    <Link
+                      href={`/feed/${forum.id}`}
+                      className="p-2 text-muted-foreground hover:text-foreground"
+                    >
                       <ArrowRight size={16} />
                     </Link>
                   </div>

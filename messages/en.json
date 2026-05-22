@@ -172,7 +172,12 @@
     "latestPosts": "Latest Posts",
     "latestPhotos": "Latest Photos",
     "latestMediaReviews": "Latest Reviews",
-    "latestDiscoverReviews": "Latest Discoveries"
+    "latestDiscoverReviews": "Latest Discoveries",
+    "polls": "Surveys & Polls",
+    "activePoll": "Active",
+    "finalizedPoll": "Finalized",
+    "finalizedDate": "Date",
+    "pollBy": "By {name}"
   },
   "LandingPage": {
     "badge": "Community Platform",

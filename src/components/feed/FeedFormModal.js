@@ -140,7 +140,11 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, category, forumId: forumId || post?.forumId }),
+        body: JSON.stringify({
+          ...form,
+          category,
+          forumId: forumId || post?.forumId,
+        }),
       });
 
       if (res.ok) {

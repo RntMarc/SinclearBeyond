@@ -52,14 +52,19 @@ export default function AdminPage({ user, session }) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [tripsRes, accommodationsRes, subscriptionsRes, eventsRes, forumsRes] =
-        await Promise.all([
-          fetch("/api/reisen/data"),
-          fetch("/api/travel/accommodations"),
-          fetch("/api/subscriptions"),
-          fetch("/api/reisen/data?standalone=1"),
-          fetch("/api/forums"),
-        ]);
+      const [
+        tripsRes,
+        accommodationsRes,
+        subscriptionsRes,
+        eventsRes,
+        forumsRes,
+      ] = await Promise.all([
+        fetch("/api/reisen/data"),
+        fetch("/api/travel/accommodations"),
+        fetch("/api/subscriptions"),
+        fetch("/api/reisen/data?standalone=1"),
+        fetch("/api/forums"),
+      ]);
 
       if (tripsRes.ok) setTrips(await tripsRes.json());
       if (eventsRes.ok) setStandaloneEvents(await eventsRes.json());
@@ -187,7 +192,11 @@ export default function AdminPage({ user, session }) {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden flex-shrink-0">
                             {forum.image ? (
-                              <img src={forum.image} alt={forum.name} className="w-full h-full object-cover" />
+                              <img
+                                src={forum.image}
+                                alt={forum.name}
+                                className="w-full h-full object-cover"
+                              />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                                 <Hash size={20} />
@@ -195,7 +204,9 @@ export default function AdminPage({ user, session }) {
                             )}
                           </div>
                           <div>
-                            <h3 className="font-medium text-sm">{forum.name}</h3>
+                            <h3 className="font-medium text-sm">
+                              {forum.name}
+                            </h3>
                             <p className="text-xs text-muted-foreground line-clamp-1">
                               {forum.description || "Keine Beschreibung"}
                             </p>
