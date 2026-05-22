@@ -43,12 +43,10 @@ export default function AppShell({ children, user, session }) {
         const { getUnreadChangelogCount } = await import(
           "@/lib/changelog/actions"
         );
-        const { getUnreadForumsCount } = await import(
-            "@/lib/forums/actions"
-        );
+        const { getUnreadForumsCount } = await import("@/lib/forums/actions");
         const [changelogCount, forumsCount] = await Promise.all([
-            getUnreadChangelogCount(),
-            getUnreadForumsCount()
+          getUnreadChangelogCount(),
+          getUnreadForumsCount(),
         ]);
         setUnreadChangelog(changelogCount);
         setUnreadForums(forumsCount);
@@ -63,10 +61,10 @@ export default function AppShell({ children, user, session }) {
 
   const navItems = [
     {
-        href: "/feed",
-        label: t("entertainment"),
-        icon: SquarePlay,
-        badge: unreadForums > 0 && !pathname.startsWith("/feed")
+      href: "/feed",
+      label: t("entertainment"),
+      icon: SquarePlay,
+      badge: unreadForums > 0 && !pathname.startsWith("/feed"),
     },
     { href: "/entdecken", label: t("discover"), icon: Compass },
     { href: "/kritik", label: t("reviews"), icon: Star },

@@ -6,13 +6,18 @@ import { forums } from "@/lib/db/schema";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { data, error } = await safeQuery(
-    db.select().from(forums).orderBy(desc(forums.createdAt))
+    db.select().from(forums).orderBy(desc(forums.createdAt)),
   );
 
-  if (error) return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  if (error)
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
 
   return NextResponse.json(data || []);
 }

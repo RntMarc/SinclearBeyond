@@ -102,19 +102,23 @@ export async function deleteForum(id) {
   // 5. Delete forum
 
   await safeQuery(
-    db.delete(feedPostVotes).where(
-      sql`${feedPostVotes.postId} IN (SELECT id FROM FeedPosts WHERE forumId = ${id})`
-    )
+    db
+      .delete(feedPostVotes)
+      .where(
+        sql`${feedPostVotes.postId} IN (SELECT id FROM FeedPosts WHERE forumId = ${id})`,
+      ),
   );
   await safeQuery(db.delete(feedPosts).where(eq(feedPosts.forumId, id)));
   await safeQuery(db.delete(forumMembers).where(eq(forumMembers.forumId, id)));
   await safeQuery(
-    db.delete(readStatuses).where(
-      and(
-        eq(readStatuses.entityType, "forum"),
-        eq(readStatuses.entityId, id)
-      )
-    )
+    db
+      .delete(readStatuses)
+      .where(
+        and(
+          eq(readStatuses.entityType, "forum"),
+          eq(readStatuses.entityId, id),
+        ),
+      ),
   );
   const { error } = await safeQuery(db.delete(forums).where(eq(forums.id, id)));
 
@@ -184,7 +188,11 @@ export async function votePost(postId) {
 
   // We need the forumId to revalidate.
   const { data } = await safeQuery(
-    db.select({ forumId: feedPosts.forumId }).from(feedPosts).where(eq(feedPosts.id, postId)).limit(1)
+    db
+      .select({ forumId: feedPosts.forumId })
+      .from(feedPosts)
+      .where(eq(feedPosts.id, postId))
+      .limit(1),
   );
   if (data?.[0]) {
     revalidatePath(`/feed/${data[0].forumId}`);
@@ -198,18 +206,24 @@ export async function unvotePost(postId) {
   if (!session) throw new Error("Unauthorized");
 
   const { error } = await safeQuery(
-    db.delete(feedPostVotes).where(
-      and(
-        eq(feedPostVotes.postId, postId),
-        eq(feedPostVotes.userId, session.sub)
-      )
-    )
+    db
+      .delete(feedPostVotes)
+      .where(
+        and(
+          eq(feedPostVotes.postId, postId),
+          eq(feedPostVotes.userId, session.sub),
+        ),
+      ),
   );
 
   if (error) throw error;
 
   const { data } = await safeQuery(
-    db.select({ forumId: feedPosts.forumId }).from(feedPosts).where(eq(feedPosts.id, postId)).limit(1)
+    db
+      .select({ forumId: feedPosts.forumId })
+      .from(feedPosts)
+      .where(eq(feedPosts.id, postId))
+      .limit(1),
   );
   if (data?.[0]) {
     revalidatePath(`/feed/${data[0].forumId}`);
@@ -224,11 +238,14 @@ export async function markForumAsRead(forumId) {
 
   // Get all post IDs in this forum
   const { data: posts, error: postsErr } = await safeQuery(
-    db.select({ id: feedPosts.id }).from(feedPosts).where(eq(feedPosts.forumId, forumId))
+    db
+      .select({ id: feedPosts.id })
+      .from(feedPosts)
+      .where(eq(feedPosts.forumId, forumId)),
   );
   if (postsErr) throw postsErr;
 
-  const postIds = (posts || []).map(p => p.id);
+  const postIds = (posts || []).map((p) => p.id);
   if (postIds.length === 0) return { ok: true };
 
   // Use readStatuses for tracking unread?
@@ -240,25 +257,28 @@ export async function markForumAsRead(forumId) {
   // /info uses readStatuses per changelog entry.
 
   const { data: alreadyRead, error: readErr } = await safeQuery(
-    db.select({ entityId: readStatuses.entityId })
+    db
+      .select({ entityId: readStatuses.entityId })
       .from(readStatuses)
-      .where(and(
-        eq(readStatuses.userId, session.sub),
-        eq(readStatuses.entityType, "feedPost")
-      ))
+      .where(
+        and(
+          eq(readStatuses.userId, session.sub),
+          eq(readStatuses.entityType, "feedPost"),
+        ),
+      ),
   );
   if (readErr) throw readErr;
 
-  const alreadyReadIds = new Set((alreadyRead || []).map(r => r.entityId));
-  const unreadIds = postIds.filter(id => !alreadyReadIds.has(id));
+  const alreadyReadIds = new Set((alreadyRead || []).map((r) => r.entityId));
+  const unreadIds = postIds.filter((id) => !alreadyReadIds.has(id));
 
   if (unreadIds.length > 0) {
-    const values = unreadIds.map(id => ({
+    const values = unreadIds.map((id) => ({
       id: crypto.randomUUID(),
       userId: session.sub,
       entityType: "feedPost",
       entityId: id,
-      createdAt: new Date()
+      createdAt: new Date(),
     }));
     await safeQuery(db.insert(readStatuses).values(values));
   }
@@ -274,34 +294,43 @@ export async function getUnreadForumsCount() {
 
   // 1. Get all joined forums
   const { data: joinedForums, error: joinedErr } = await safeQuery(
-    db.select({ forumId: forumMembers.forumId }).from(forumMembers).where(eq(forumMembers.userId, session.sub))
+    db
+      .select({ forumId: forumMembers.forumId })
+      .from(forumMembers)
+      .where(eq(forumMembers.userId, session.sub)),
   );
   if (joinedErr || !joinedForums?.length) return 0;
 
-  const forumIds = joinedForums.map(f => f.forumId);
+  const forumIds = joinedForums.map((f) => f.forumId);
 
   // 2. Get all posts in these forums
   const { data: posts, error: postsErr } = await safeQuery(
-    db.select({ id: feedPosts.id }).from(feedPosts).where(inArray(feedPosts.forumId, forumIds))
+    db
+      .select({ id: feedPosts.id })
+      .from(feedPosts)
+      .where(inArray(feedPosts.forumId, forumIds)),
   );
   if (postsErr || !posts?.length) return 0;
 
-  const postIds = posts.map(p => p.id);
+  const postIds = posts.map((p) => p.id);
 
   // 3. Get read statuses for these posts
   const { data: readPosts, error: readErr } = await safeQuery(
-    db.select({ entityId: readStatuses.entityId })
+    db
+      .select({ entityId: readStatuses.entityId })
       .from(readStatuses)
-      .where(and(
-        eq(readStatuses.userId, session.sub),
-        eq(readStatuses.entityType, "feedPost"),
-        inArray(readStatuses.entityId, postIds)
-      ))
+      .where(
+        and(
+          eq(readStatuses.userId, session.sub),
+          eq(readStatuses.entityType, "feedPost"),
+          inArray(readStatuses.entityId, postIds),
+        ),
+      ),
   );
   if (readErr) return 0;
 
-  const readIds = new Set((readPosts || []).map(r => r.entityId));
-  const unreadCount = postIds.filter(id => !readIds.has(id)).length;
+  const readIds = new Set((readPosts || []).map((r) => r.entityId));
+  const unreadCount = postIds.filter((id) => !readIds.has(id)).length;
 
   return unreadCount;
 }

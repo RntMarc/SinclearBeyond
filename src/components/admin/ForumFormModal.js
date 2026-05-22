@@ -36,7 +36,12 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
   }
 
   async function handleDelete() {
-    if (!confirm("Bist du sicher, dass du dieses Forum löschen willst? Alle Posts darin werden ebenfalls gelöscht!")) return;
+    if (
+      !confirm(
+        "Bist du sicher, dass du dieses Forum löschen willst? Alle Posts darin werden ebenfalls gelöscht!",
+      )
+    )
+      return;
 
     setLoading(true);
     try {
