@@ -28,7 +28,16 @@ export async function GET(req, { params }) {
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }
 
-  return NextResponse.json(documents[0]);
+  const doc = documents[0];
+  return NextResponse.json({
+    ...doc,
+    createdAt: doc.createdAt?.toISOString
+      ? doc.createdAt.toISOString()
+      : doc.createdAt,
+    updatedAt: doc.updatedAt?.toISOString
+      ? doc.updatedAt.toISOString()
+      : doc.updatedAt,
+  });
 }
 
 export async function DELETE(req, { params }) {
