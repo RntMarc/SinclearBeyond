@@ -33,6 +33,7 @@ export async function getPolls(userId) {
         createdAt: polls.createdAt,
         updatedAt: polls.updatedAt,
         creatorName: users.displayName,
+        creatorImage: users.image,
       })
       .from(polls)
       .leftJoin(users, eq(polls.creatorId, users.id))
@@ -48,46 +49,43 @@ export async function getPolls(userId) {
   );
   if (pollErr) throw pollErr;
 
-  // Enrich with questions and options to determine status/relevance
-  const enrichedPolls = await Promise.all(
-    (userPolls || []).map(async (poll) => {
-      const { data: questions, error: qErr } = await safeQuery(
-        db
-          .select()
-          .from(pollQuestions)
-          .where(eq(pollQuestions.pollId, poll.id))
-          .orderBy(pollQuestions.order),
-      );
-      if (qErr) {
-        console.error(`Error loading questions for poll ${poll.id}:`, qErr);
-        return { ...poll, questions: [], options: [] };
-      }
+  const pollIds = (userPolls || []).map((p) => p.id);
+  if (pollIds.length === 0) return [];
 
-      const questionIds = (questions || []).map((q) => q.id);
-
-      let options = [];
-      if (questionIds.length > 0) {
-        const { data: optData, error: optErr } = await safeQuery(
-          db
-            .select()
-            .from(pollOptions)
-            .where(inArray(pollOptions.questionId, questionIds))
-            .orderBy(pollOptions.order),
-        );
-        if (optErr) {
-          console.error(`Error loading options for poll ${poll.id}:`, optErr);
-        } else {
-          options = optData || [];
-        }
-      }
-
-      return {
-        ...poll,
-        questions: questions || [],
-        options,
-      };
-    }),
+  const { data: allQuestions, error: qErr } = await safeQuery(
+    db
+      .select()
+      .from(pollQuestions)
+      .where(inArray(pollQuestions.pollId, pollIds))
+      .orderBy(pollQuestions.order),
   );
+  if (qErr) throw qErr;
+
+  const questionIds = (allQuestions || []).map((q) => q.id);
+  let allOptions = [];
+  if (questionIds.length > 0) {
+    const { data: optData, error: optErr } = await safeQuery(
+      db
+        .select()
+        .from(pollOptions)
+        .where(inArray(pollOptions.questionId, questionIds))
+        .orderBy(pollOptions.order),
+    );
+    if (optErr) throw optErr;
+    allOptions = optData || [];
+  }
+
+  const enrichedPolls = (userPolls || []).map((poll) => {
+    const questions = (allQuestions || []).filter((q) => q.pollId === poll.id);
+    const qIds = questions.map((q) => q.id);
+    const options = allOptions.filter((o) => qIds.includes(o.questionId));
+
+    return {
+      ...poll,
+      questions,
+      options,
+    };
+  });
 
   return enrichedPolls;
 }
@@ -105,6 +103,7 @@ export async function getPoll(pollId, userId) {
         createdAt: polls.createdAt,
         updatedAt: polls.updatedAt,
         creatorName: users.displayName,
+        creatorImage: users.image,
       })
       .from(polls)
       .leftJoin(users, eq(polls.creatorId, users.id))

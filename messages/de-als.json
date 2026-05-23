@@ -52,7 +52,33 @@
     "subscriptions": "Abos",
     "reviews": "Reviews",
     "info": "Changelog",
+    "office": "Office",
     "polls": "Umfraga & Termie"
+  },
+  "Office": {
+    "title": "Office",
+    "subtitle": "Kollaboratives Schreiwa",
+    "myDocuments": "Meine Dokumente",
+    "newDocument": "Neies Dokument",
+    "noDocuments": "No gar koi Dokumente do.",
+    "createFirst": "S'erschte Dokument mache",
+    "lastEdited": "Zletzt bearbeitet",
+    "deleteConfirm": "Dokument echt löscha?",
+    "errorLoad": "Fähler beim Lade vo de Dokumente",
+    "errorCreate": "Fähler beim Erschdella",
+    "errorDelete": "Fähler beim Lescha",
+    "errorNotFound": "Dokument net gfonda",
+    "loading": "Wird glade...",
+    "syncing": "Synchronisier...",
+    "allSaved": "Älles gschbeichert",
+    "history": "Verlauf",
+    "restoreConfirm": "Widda de Sell echt uf de Stand zrücksetze? Älles was danach komma isch, isch dann weg.",
+    "writeHere": "Schreib do ebbes...",
+    "backToOverview": "Zurück zur Übersicht",
+    "export": "Export",
+    "import": "Import",
+    "chooseFile": "Datei wähle",
+    "defaultTitle": "Neies Dokument"
   },
   "Polls": {
     "title": "Umfraga & Termie",
@@ -110,8 +136,20 @@
       "successCreate": "Erfolgreich gmacht",
       "successUpdate": "Erfolgreich g'ändert",
       "successFinalize": "Erfolgreich fertig gmacht",
-      "deleteConfirm": "Willsch des wirklich lescha?"
-    }
+      "deleteConfirm": "Willsch des wirklich lescha?",
+      "errorCreate": "Fähler beim Erschdella",
+      "errorUpdate": "Fähler beim Agtualisiera",
+      "errorFinalize": "Fähler beim Fertigmacha",
+      "errorDelete": "Fähler beim Lescha",
+      "errorVote": "Fähler beim Abschdemma",
+      "errorFillAll": "Filla mal älles aus",
+      "networkError": "Netzwerk-Fähler"
+    },
+    "results": "Antworda",
+    "missing": "fählt",
+    "yes": "Ja",
+    "no": "Noi",
+    "questionPlaceholder": "Doi Frog..."
   },
   "Auth": {
     "login": "Neigauda",

@@ -1,12 +1,13 @@
 "use client";
 
 import {
+  ChevronRight,
   FilePlus,
-  Trash2,
   FileText,
   Loader2,
-  ChevronRight,
+  Trash2,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import AppShell from "@/components/layout/Appshell";
@@ -15,6 +16,7 @@ import Button from "@/components/ui/Button";
 import { InlineError } from "@/components/ui/InlineError";
 
 export default function OfficeClient({ user, session }) {
+  const t = useTranslations("Office");
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,7 +29,7 @@ export default function OfficeClient({ user, session }) {
   const fetchDocuments = async () => {
     try {
       const res = await fetch("/api/office/documents");
-      if (!res.ok) throw new Error("Fehler beim Laden der Dokumente");
+      if (!res.ok) throw new Error(t("errorLoad"));
       const data = await res.json();
       setDocuments(data);
     } catch (err) {
@@ -42,10 +44,10 @@ export default function OfficeClient({ user, session }) {
     try {
       const res = await fetch("/api/office/documents", {
         method: "POST",
-        body: JSON.stringify({ title: "Neues Dokument" }),
+        body: JSON.stringify({ title: t("defaultTitle") }),
         headers: { "Content-Type": "application/json" },
       });
-      if (!res.ok) throw new Error("Fehler beim Erstellen");
+      if (!res.ok) throw new Error(t("errorCreate"));
       const newDoc = await res.json();
       window.location.href = `/office/${newDoc.id}`;
     } catch (err) {
@@ -57,13 +59,13 @@ export default function OfficeClient({ user, session }) {
   const deleteDocument = async (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Dokument wirklich löschen?")) return;
+    if (!confirm(t("deleteConfirm"))) return;
 
     try {
       const res = await fetch(`/api/office/documents/${id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Fehler beim Löschen");
+      if (!res.ok) throw new Error(t("errorDelete"));
       setDocuments(documents.filter((d) => d.id !== id));
     } catch (err) {
       setError(err.message);
@@ -73,22 +75,18 @@ export default function OfficeClient({ user, session }) {
   return (
     <AppShell user={user} session={session}>
       <div className="flex flex-col h-full bg-background overflow-y-auto">
-        <PageHeader
-          title="Office"
-          subtitle="Kollaboratives Schreiben"
-          icon={FileText}
-        />
+        <PageHeader title={t("title")} subtitle={t("subtitle")} icon={FileText} />
 
         <div className="p-6 max-w-5xl mx-auto w-full">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Meine Dokumente</h2>
+            <h2 className="text-xl font-semibold">{t("myDocuments")}</h2>
             <Button onClick={createDocument} disabled={creating}>
               {creating ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <FilePlus className="w-4 h-4 mr-2" />
               )}
-              Neues Dokument
+              {t("newDocument")}
             </Button>
           </div>
 
@@ -100,11 +98,9 @@ export default function OfficeClient({ user, session }) {
             </div>
           ) : documents.length === 0 ? (
             <div className="text-center p-12 border-2 border-dashed border-border rounded-xl">
-              <p className="text-muted-foreground mb-4">
-                Noch keine Dokumente vorhanden.
-              </p>
+              <p className="text-muted-foreground mb-4">{t("noDocuments")}</p>
               <Button variant="outline" onClick={createDocument}>
-                Erstes Dokument erstellen
+                {t("createFirst")}
               </Button>
             </div>
           ) : (
@@ -128,8 +124,7 @@ export default function OfficeClient({ user, session }) {
                       </div>
                       <h3 className="font-medium truncate">{doc.title}</h3>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Zuletzt bearbeitet:{" "}
-                        {new Date(doc.updatedAt).toLocaleString()}
+                        {t("lastEdited")}: {new Date(doc.updatedAt).toLocaleString()}
                       </p>
                     </div>
                     <div className="mt-4 flex justify-end">

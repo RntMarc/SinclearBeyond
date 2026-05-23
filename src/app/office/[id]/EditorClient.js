@@ -53,13 +53,13 @@ export default function EditorClient({ user, session, docId }) {
   const fetchMetadata = useCallback(async () => {
     try {
       const res = await fetch(`/api/office/documents/${docId}`);
-      if (!res.ok) throw new Error("Dokument nicht gefunden");
+      if (!res.ok) throw new Error(t("errorNotFound"));
       const data = await res.json();
       setDocMetadata(data);
     } catch (err) {
       setError(err.message);
     }
-  }, [docId]);
+  }, [docId, t]);
 
   const fetchHistory = useCallback(async () => {
     try {
@@ -268,11 +268,7 @@ export default function EditorClient({ user, session, docId }) {
   };
 
   const restoreVersion = (v) => {
-    if (
-      confirm(
-        "Möchten Sie dieses Dokument wirklich auf diesen Stand zurücksetzen? Alle späteren Änderungen gehen verloren.",
-      )
-    ) {
+    if (confirm(t("restoreConfirm"))) {
       Y.applyUpdate(
         ydocRef.current,
         Buffer.from(v.content, "base64"),
@@ -303,7 +299,7 @@ export default function EditorClient({ user, session, docId }) {
       <div className="flex h-full bg-background overflow-hidden">
         <div className="flex-1 flex flex-col min-w-0">
           <SubPageHeader
-            title={docMetadata?.title || "Laden..."}
+            title={docMetadata?.title || t("loading")}
             backHref="/office"
           />
 
@@ -414,7 +410,7 @@ export default function EditorClient({ user, session, docId }) {
                   onClick={() => setShowHistory(!showHistory)}
                 >
                   <History className="w-4 h-4 mr-2" />
-                  Verlauf
+                  {t("history")}
                 </Button>
               </div>
 
@@ -427,13 +423,11 @@ export default function EditorClient({ user, session, docId }) {
                   ) : (
                     <div className="w-2 h-2 rounded-full bg-green-500" />
                   )}
-                  {syncing
-                    ? "Synchronisiere..."
-                    : "Alle Änderungen gespeichert"}
+                  {syncing ? t("syncing") : t("allSaved")}
                 </div>
                 <div className="flex gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">Export:</span>
+                    <span className="font-medium">{t("export")}:</span>
                     <button
                       onClick={() => handleExport("odt")}
                       className="hover:text-primary underline"
@@ -460,9 +454,9 @@ export default function EditorClient({ user, session, docId }) {
                     </button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">Import:</span>
+                    <span className="font-medium">{t("import")}:</span>
                     <label className="hover:text-primary underline cursor-pointer">
-                      Datei wählen
+                      {t("chooseFile")}
                       <input
                         type="file"
                         className="hidden"
@@ -481,7 +475,7 @@ export default function EditorClient({ user, session, docId }) {
           <div className="w-80 border-l border-border bg-card flex flex-col animate-in slide-in-from-right duration-300">
             <div className="p-4 border-b border-border flex justify-between items-center bg-muted/50">
               <h3 className="font-bold flex items-center gap-2">
-                <History className="w-4 h-4" /> Verlauf
+                <History className="w-4 h-4" /> {t("history")}
               </h3>
               <Button
                 variant="ghost"
@@ -511,34 +505,7 @@ export default function EditorClient({ user, session, docId }) {
 
       <style jsx global>{`
         .ProseMirror p.is-editor-empty:first-child::before {
-            content: "Schreibe hier etwas...";
-            float: left;
-            color: #64748b;
-            pointer-events: none;
-            height: 0;
-        }
-        .ProseMirror:focus { outline: none; }
-        .collaboration-cursor__caret {
-            position: relative;
-            border-left: 2px solid;
-            border-right: 2px solid;
-            margin-left: -1px;
-            margin-right: -1px;
-            pointer-events: none;
-            word-break: normal;
-        }
-        .collaboration-cursor__label {
-            position: absolute;
-            top: -1.4em;
-            left: -2px;
-            font-size: 10px;
-            font-style: normal;
-            font-weight: 600;
-            line-height: normal;
-            user-select: none;
-            color: #fff;
-            padding: 0.1rem 0.3rem;
-            border-radius: 3px 3px 3px 0; white-space: nowrap;
+            content: "${t("writeHere")}";
         }
       `}</style>
     </AppShell>

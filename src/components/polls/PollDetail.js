@@ -186,10 +186,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <Avatar
-                        user={{
-                          id: poll.creatorId,
-                          displayName: poll.creatorName,
-                        }}
+                        src={poll.creatorImage}
+                        displayName={poll.creatorName}
                         size="xs"
                       />
                       <div className="flex flex-col">
@@ -206,16 +204,33 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                       </div>
                     </div>
                   </td>
-                  {options.map((option) => (
-                    <td
-                      key={option.id}
-                      className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
-                    >
-                      <div className="flex justify-center">
-                        <Check size={18} className="text-emerald-500" />
-                      </div>
-                    </td>
-                  ))}
+                  {options.map((option) => {
+                    const vote = poll.votes.find(
+                      (v) =>
+                        v.userId === poll.creatorId && v.optionId === option.id,
+                    );
+                    return (
+                      <td
+                        key={option.id}
+                        className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
+                      >
+                        <div className="flex justify-center">
+                          {vote?.availability === "yes" && (
+                            <Check size={18} className="text-emerald-500" />
+                          )}
+                          {vote?.availability === "maybe" && (
+                            <HelpCircle size={18} className="text-yellow-500" />
+                          )}
+                          {vote?.availability === "no" && (
+                            <X size={18} className="text-destructive" />
+                          )}
+                          {!vote && (
+                            <div className="w-4 h-px bg-muted-foreground/20" />
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
                 </tr>
                 {/* Invitees rows */}
                 {poll.invites
@@ -225,11 +240,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <Avatar
-                            user={{
-                              id: invite.userId,
-                              displayName: invite.displayName,
-                              image: invite.image,
-                            }}
+                            src={invite.image}
+                            displayName={invite.displayName}
                             size="xs"
                           />
                           <div className="flex flex-col">
@@ -350,7 +362,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                           <div className="text-[10px] font-bold uppercase text-destructive tracking-tight leading-none">
                             {t("indispensable")}
                             <br />
-                            fehlt
+                            {t("missing")}
                           </div>
                         )}
                       </td>
@@ -438,7 +450,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
         )}
         <div className="flex items-center gap-2 pt-2">
           <Avatar
-            user={{ id: poll.creatorId, displayName: poll.creatorName }}
+            src={poll.creatorImage}
+            displayName={poll.creatorName}
             size="xs"
           />
           <span className="text-xs text-muted-foreground">
@@ -452,12 +465,15 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           const qOptions = poll.options.filter((o) => o.questionId === q.id);
           const currentAnswer =
             answers[q.id] ??
-            poll.votes.find((v) => v.questionId === q.id)?.value ??
+            poll.votes.find((v) => v.questionId === q.id && v.userId === userId)
+              ?.value ??
             (q.type === "multiple_choice"
               ? poll.votes
-                  .filter((v) => v.questionId === q.id)
+                  .filter((v) => v.questionId === q.id && v.userId === userId)
                   .map((v) => v.optionId)
-              : poll.votes.find((v) => v.questionId === q.id)?.optionId) ??
+              : poll.votes.find(
+                  (v) => v.questionId === q.id && v.userId === userId,
+                )?.optionId) ??
             "";
 
           return (
@@ -586,7 +602,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
       {isCreator && poll.type === "survey" && poll.votes.length > 0 && (
         <div className="pt-10 space-y-6">
           <h3 className="text-xl font-black">
-            Antworten ({new Set(poll.votes.map((v) => v.userId)).size})
+            {t("results")} ({new Set(poll.votes.map((v) => v.userId)).size})
           </h3>
           <div className="bg-card border border-border rounded-2xl overflow-hidden divide-y divide-border">
             {poll.questions.map((q) => {
@@ -602,12 +618,25 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                         key={idx}
                         className="flex items-center gap-3 text-sm"
                       >
-                        <Avatar user={{ id: v.userId }} size="xs" />
+                        <Avatar
+                          src={
+                            poll.invites.find((i) => i.userId === v.userId)
+                              ?.image ||
+                            (v.userId === poll.creatorId
+                              ? poll.creatorImage
+                              : null)
+                          }
+                          displayName={
+                            poll.invites.find((i) => i.userId === v.userId)
+                              ?.displayName || poll.creatorName
+                          }
+                          size="xs"
+                        />
                         <span className="bg-muted/30 px-3 py-1.5 rounded-lg flex-1">
                           {v.value ||
                             poll.options.find((o) => o.id === v.optionId)
                               ?.label ||
-                            (v.optionId ? "Ja" : "Nein")}
+                            (v.optionId ? t("yes") : t("no"))}
                         </span>
                       </div>
                     ))}
