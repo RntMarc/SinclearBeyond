@@ -24,7 +24,14 @@ export async function GET(req, { params }) {
       .limit(1),
   );
 
-  if (docError || !documents.length) {
+  if (docError) {
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+
+  if (!documents.length) {
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }
 
