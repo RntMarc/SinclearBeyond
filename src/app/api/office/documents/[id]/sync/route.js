@@ -52,6 +52,7 @@ export async function POST(req, { params }) {
   );
 
   if (collabError) {
+    console.error(`[Office API] POST /sync (${id}) collab check error:`, collabError);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -68,6 +69,7 @@ export async function POST(req, { params }) {
     );
 
     if (othersError) {
+      console.error(`[Office API] POST /sync (${id}) others colors error:`, othersError);
       return NextResponse.json(
         { error: "Internal Server Error" },
         { status: 500 },
@@ -108,6 +110,7 @@ export async function POST(req, { params }) {
     );
 
     if (insertCollabError) {
+      console.error(`[Office API] POST /sync (${id}) insert collab error:`, insertCollabError);
       return NextResponse.json(
         { error: "Internal Server Error" },
         { status: 500 },
@@ -122,6 +125,7 @@ export async function POST(req, { params }) {
     );
 
     if (updateCollabError) {
+      console.error(`[Office API] POST /sync (${id}) update collab error:`, updateCollabError);
       return NextResponse.json(
         { error: "Internal Server Error" },
         { status: 500 },
@@ -139,6 +143,7 @@ export async function POST(req, { params }) {
     );
 
     if (docDataError) {
+      console.error(`[Office API] POST /sync (${id}) fetch doc data error:`, docDataError);
       return NextResponse.json(
         { error: "Internal Server Error" },
         { status: 500 },
@@ -166,6 +171,7 @@ export async function POST(req, { params }) {
       );
 
       if (updateDocError) {
+        console.error(`[Office API] POST /sync (${id}) update doc content error:`, updateDocError);
         return NextResponse.json(
           { error: "Internal Server Error" },
           { status: 500 },
@@ -195,6 +201,7 @@ export async function POST(req, { params }) {
     );
 
   if (activeCollabError) {
+    console.error(`[Office API] POST /sync (${id}) fetch active collabs error:`, activeCollabError);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -210,6 +217,7 @@ export async function POST(req, { params }) {
   );
 
   if (currentDocError) {
+    console.error(`[Office API] POST /sync (${id}) fetch current doc error:`, currentDocError);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

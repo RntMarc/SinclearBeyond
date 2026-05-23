@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Collaboration from "@tiptap/extension-collaboration";
@@ -37,6 +38,7 @@ import { asBlob } from "html-docx-js-typescript";
 import { debounce } from "lodash-es";
 
 export default function EditorClient({ user, session, docId }) {
+  const t = useTranslations("Office");
   const [docMetadata, setDocMetadata] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,10 +55,15 @@ export default function EditorClient({ user, session, docId }) {
   const fetchMetadata = useCallback(async () => {
     try {
       const res = await fetch(`/api/office/documents/${docId}`);
-      if (!res.ok) throw new Error(t("errorNotFound"));
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error(`[Office] Fetch metadata for ${docId} failed:`, res.status, errorData);
+        throw new Error(t("errorNotFound"));
+      }
       const data = await res.json();
       setDocMetadata(data);
     } catch (err) {
+      console.error(`[Office] Fetch metadata for ${docId} exception:`, err);
       setError(err.message);
     }
   }, [docId, t]);
@@ -67,9 +74,12 @@ export default function EditorClient({ user, session, docId }) {
       if (res.ok) {
         const data = await res.json();
         setHistory(data);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.error(`[Office] Fetch history for ${docId} failed:`, res.status, errorData);
       }
     } catch (e) {
-      console.error("Failed to fetch history", e);
+      console.error(`[Office] Fetch history for ${docId} exception:`, e);
     }
   }, [docId]);
 
@@ -106,9 +116,12 @@ export default function EditorClient({ user, session, docId }) {
               "server",
             );
           }
+        } else {
+          const errorData = await res.json().catch(() => ({}));
+          console.error(`[Office] Sync for ${docId} failed:`, res.status, errorData);
         }
       } catch (e) {
-        console.error("Sync failed", e);
+        console.error(`[Office] Sync for ${docId} exception:`, e);
       } finally {
         setSyncing(false);
         lastSyncRef.current = Date.now();
@@ -128,14 +141,18 @@ export default function EditorClient({ user, session, docId }) {
         const content = Buffer.from(
           Y.encodeStateAsUpdate(ydocRef.current),
         ).toString("base64");
-        await fetch(`/api/office/documents/${docId}/history`, {
+        const res = await fetch(`/api/office/documents/${docId}/history`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content, label }),
         });
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          console.error(`[Office] Create version for ${docId} failed:`, res.status, errorData);
+        }
         fetchHistory();
       } catch (e) {
-        console.error("Failed to create version", e);
+        console.error(`[Office] Create version for ${docId} exception:`, e);
       }
     },
     [docId, fetchHistory],
