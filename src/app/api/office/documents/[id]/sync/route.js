@@ -38,7 +38,7 @@ export async function POST(req, { params }) {
 
   // 1. Update presence
   const collaboratorId = `${id}-${session.sub}`;
-  const { data: existingCollab } = await safeQuery(
+  const { data: existingCollab, error: collabError } = await safeQuery(
     db
       .select()
       .from(officeCollaborators)
@@ -51,14 +51,28 @@ export async function POST(req, { params }) {
       .limit(1),
   );
 
+  if (collabError) {
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+
   let color = existingCollab?.[0]?.color;
   if (!color) {
-    const { data: others } = await safeQuery(
+    const { data: others, error: othersError } = await safeQuery(
       db
         .select({ color: officeCollaborators.color })
         .from(officeCollaborators)
         .where(eq(officeCollaborators.documentId, id)),
     );
+
+    if (othersError) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
     const usedColors = others?.map((o) => o.color) || [];
 
     // Filter colors that are accessible against dark background (used in UI)
@@ -78,7 +92,7 @@ export async function POST(req, { params }) {
     // If still no color (highly unlikely), fallback
     if (!color) color = ACCESSIBLE_COLORS[0];
 
-    await safeQuery(
+    const { error: insertCollabError } = await safeQuery(
       db
         .insert(officeCollaborators)
         .values({
@@ -92,23 +106,44 @@ export async function POST(req, { params }) {
           set: { lastActiveAt: now },
         }),
     );
+
+    if (insertCollabError) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
   } else {
-    await safeQuery(
+    const { error: updateCollabError } = await safeQuery(
       db
         .update(officeCollaborators)
         .set({ lastActiveAt: now })
         .where(eq(officeCollaborators.id, collaboratorId)),
     );
+
+    if (updateCollabError) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
   }
 
   if (update) {
-    const { data: docData } = await safeQuery(
+    const { data: docData, error: docDataError } = await safeQuery(
       db
         .select()
         .from(officeDocuments)
         .where(eq(officeDocuments.id, id))
         .limit(1),
     );
+
+    if (docDataError) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
 
     if (docData && docData.length > 0) {
       const doc = new Y.Doc();
@@ -120,7 +155,7 @@ export async function POST(req, { params }) {
       const newState = Buffer.from(Y.encodeStateAsUpdate(doc)).toString(
         "base64",
       );
-      await safeQuery(
+      const { error: updateDocError } = await safeQuery(
         db
           .update(officeDocuments)
           .set({
@@ -129,35 +164,57 @@ export async function POST(req, { params }) {
           })
           .where(eq(officeDocuments.id, id)),
       );
+
+      if (updateDocError) {
+        return NextResponse.json(
+          { error: "Internal Server Error" },
+          { status: 500 },
+        );
+      }
     }
   }
 
   const activeThreshold = new Date(now.getTime() - 15000);
-  const { data: activeCollaborators } = await safeQuery(
-    db
-      .select({
-        userId: officeCollaborators.userId,
-        displayName: users.displayName,
-        color: officeCollaborators.color,
-        lastActiveAt: officeCollaborators.lastActiveAt,
-      })
-      .from(officeCollaborators)
-      .innerJoin(users, eq(officeCollaborators.userId, users.id))
-      .where(
-        and(
-          eq(officeCollaborators.documentId, id),
-          gt(officeCollaborators.lastActiveAt, activeThreshold),
+  const { data: activeCollaborators, error: activeCollabError } =
+    await safeQuery(
+      db
+        .select({
+          userId: officeCollaborators.userId,
+          displayName: users.displayName,
+          color: officeCollaborators.color,
+          lastActiveAt: officeCollaborators.lastActiveAt,
+        })
+        .from(officeCollaborators)
+        .innerJoin(users, eq(officeCollaborators.userId, users.id))
+        .where(
+          and(
+            eq(officeCollaborators.documentId, id),
+            gt(officeCollaborators.lastActiveAt, activeThreshold),
+          ),
         ),
-      ),
-  );
+    );
 
-  const { data: currentDoc } = await safeQuery(
+  if (activeCollabError) {
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+
+  const { data: currentDoc, error: currentDocError } = await safeQuery(
     db
       .select({ content: officeDocuments.content })
       .from(officeDocuments)
       .where(eq(officeDocuments.id, id))
       .limit(1),
   );
+
+  if (currentDocError) {
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
 
   return NextResponse.json({
     content: currentDoc?.[0]?.content || null,
