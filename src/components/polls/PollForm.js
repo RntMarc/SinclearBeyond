@@ -166,7 +166,6 @@ export default function PollForm({
 
   const filteredUsers = users.filter(
     (u) =>
-      u.id !== userId &&
       u.displayName.toLowerCase().includes(search.toLowerCase()) &&
       !form.invites.some((i) => i.userId === u.id),
   );
