@@ -25,12 +25,9 @@ export async function GET(req) {
 
   if (search) {
     query = query.where(
-      and(
-        ne(users.id, session.sub),
-        or(
-          like(users.displayName, `%${search}%`),
-          like(users.email, `%${search}%`),
-        ),
+      or(
+        like(users.displayName, `%${search}%`),
+        like(users.email, `%${search}%`),
       ),
     );
   }

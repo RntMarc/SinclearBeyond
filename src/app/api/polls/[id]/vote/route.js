@@ -91,9 +91,9 @@ export async function POST(request, { params }) {
 
           if (
             hasContent &&
-            value !== null &&
-            optionId !== null &&
-            availability !== null
+            ((value !== null && value !== undefined) ||
+              (optionId !== null && optionId !== undefined) ||
+              (availability !== null && availability !== undefined))
           ) {
             await tx.insert(pollVotes).values({
               id: crypto.randomUUID(),
