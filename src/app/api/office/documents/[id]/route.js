@@ -25,6 +25,7 @@ export async function GET(req, { params }) {
   );
 
   if (docError) {
+    console.error(`[Office API] GET /documents/${id} error:`, docError);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -87,6 +88,7 @@ export async function DELETE(req, { params }) {
   );
 
   if (deleteError) {
+    console.error(`[Office API] DELETE /documents/${id} error:`, deleteError);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

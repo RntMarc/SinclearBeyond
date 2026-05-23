@@ -15,6 +15,7 @@ export async function GET() {
   );
 
   if (error) {
+    console.error("[Office API] GET /documents error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -56,6 +57,7 @@ export async function POST(req) {
     );
 
     if (error) {
+      console.error("[Office API] POST /documents error:", error);
       return NextResponse.json(
         { error: "Internal Server Error" },
         { status: 500 },
@@ -64,6 +66,7 @@ export async function POST(req) {
 
     return NextResponse.json({ id, title });
   } catch (err) {
+    console.error("[Office API] POST /documents exception:", err);
     return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
   }
 }

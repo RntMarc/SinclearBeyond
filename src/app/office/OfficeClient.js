@@ -29,10 +29,15 @@ export default function OfficeClient({ user, session }) {
   const fetchDocuments = async () => {
     try {
       const res = await fetch("/api/office/documents");
-      if (!res.ok) throw new Error(t("errorLoad"));
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("[Office] Fetch documents failed:", res.status, errorData);
+        throw new Error(t("errorLoad"));
+      }
       const data = await res.json();
       setDocuments(data);
     } catch (err) {
+      console.error("[Office] Fetch documents exception:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -47,10 +52,15 @@ export default function OfficeClient({ user, session }) {
         body: JSON.stringify({ title: t("defaultTitle") }),
         headers: { "Content-Type": "application/json" },
       });
-      if (!res.ok) throw new Error(t("errorCreate"));
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("[Office] Create document failed:", res.status, errorData);
+        throw new Error(t("errorCreate"));
+      }
       const newDoc = await res.json();
       window.location.href = `/office/${newDoc.id}`;
     } catch (err) {
+      console.error("[Office] Create document exception:", err);
       setError(err.message);
       setCreating(false);
     }
@@ -65,9 +75,14 @@ export default function OfficeClient({ user, session }) {
       const res = await fetch(`/api/office/documents/${id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error(t("errorDelete"));
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error(`[Office] Delete document ${id} failed:`, res.status, errorData);
+        throw new Error(t("errorDelete"));
+      }
       setDocuments(documents.filter((d) => d.id !== id));
     } catch (err) {
+      console.error(`[Office] Delete document ${id} exception:`, err);
       setError(err.message);
     }
   };

@@ -21,6 +21,7 @@ export async function GET(req, { params }) {
   );
 
   if (error) {
+    console.error(`[Office API] GET /history (${id}) error:`, error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -58,6 +59,7 @@ export async function POST(req, { params }) {
   );
 
   if (error) {
+    console.error(`[Office API] POST /history (${id}) error:`, error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
