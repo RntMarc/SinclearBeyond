@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { safeQuery } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import {
   officeDocuments,
   officeCollaborators,
@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
 
   const { id } = await params;
 
-  const { data: documents, error: docError } = await safeQuery((db) =>
+  const { data: documents, error: docError } = await safeQuery(
     db
       .select()
       .from(officeDocuments)
@@ -49,7 +49,7 @@ export async function DELETE(req, { params }) {
   const { id } = await params;
 
   // Verify ownership or admin status
-  const { data: documents, error: docError } = await safeQuery((db) =>
+  const { data: documents, error: docError } = await safeQuery(
     db
       .select()
       .from(officeDocuments)
@@ -66,16 +66,16 @@ export async function DELETE(req, { params }) {
   }
 
   // Delete related data
-  await safeQuery((db) =>
+  await safeQuery(
     db
       .delete(officeCollaborators)
       .where(eq(officeCollaborators.documentId, id)),
   );
-  await safeQuery((db) =>
+  await safeQuery(
     db.delete(officeVersions).where(eq(officeVersions.documentId, id)),
   );
 
-  const { error: deleteError } = await safeQuery((db) =>
+  const { error: deleteError } = await safeQuery(
     db.delete(officeDocuments).where(eq(officeDocuments.id, id)),
   );
 

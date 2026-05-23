@@ -1,7 +1,7 @@
 import { eq, and, gt } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { safeQuery } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { officeDocuments, officeCollaborators, users } from "@/lib/db/schema";
 import * as Y from "yjs";
 import { isAccessible } from "@/lib/utils/color";
@@ -38,7 +38,7 @@ export async function POST(req, { params }) {
 
   // 1. Update presence
   const collaboratorId = `${id}-${session.sub}`;
-  const { data: existingCollab } = await safeQuery((db) =>
+  const { data: existingCollab } = await safeQuery(
     db
       .select()
       .from(officeCollaborators)
@@ -53,7 +53,7 @@ export async function POST(req, { params }) {
 
   let color = existingCollab?.[0]?.color;
   if (!color) {
-    const { data: others } = await safeQuery((db) =>
+    const { data: others } = await safeQuery(
       db
         .select({ color: officeCollaborators.color })
         .from(officeCollaborators)
@@ -78,7 +78,7 @@ export async function POST(req, { params }) {
     // If still no color (highly unlikely), fallback
     if (!color) color = ACCESSIBLE_COLORS[0];
 
-    await safeQuery((db) =>
+    await safeQuery(
       db
         .insert(officeCollaborators)
         .values({
@@ -93,7 +93,7 @@ export async function POST(req, { params }) {
         }),
     );
   } else {
-    await safeQuery((db) =>
+    await safeQuery(
       db
         .update(officeCollaborators)
         .set({ lastActiveAt: now })
@@ -102,7 +102,7 @@ export async function POST(req, { params }) {
   }
 
   if (update) {
-    const { data: docData } = await safeQuery((db) =>
+    const { data: docData } = await safeQuery(
       db
         .select()
         .from(officeDocuments)
@@ -120,7 +120,7 @@ export async function POST(req, { params }) {
       const newState = Buffer.from(Y.encodeStateAsUpdate(doc)).toString(
         "base64",
       );
-      await safeQuery((db) =>
+      await safeQuery(
         db
           .update(officeDocuments)
           .set({
@@ -133,7 +133,7 @@ export async function POST(req, { params }) {
   }
 
   const activeThreshold = new Date(now.getTime() - 15000);
-  const { data: activeCollaborators } = await safeQuery((db) =>
+  const { data: activeCollaborators } = await safeQuery(
     db
       .select({
         userId: officeCollaborators.userId,
@@ -151,7 +151,7 @@ export async function POST(req, { params }) {
       ),
   );
 
-  const { data: currentDoc } = await safeQuery((db) =>
+  const { data: currentDoc } = await safeQuery(
     db
       .select({ content: officeDocuments.content })
       .from(officeDocuments)

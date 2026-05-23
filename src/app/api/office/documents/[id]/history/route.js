@@ -1,7 +1,7 @@
 import { eq, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { safeQuery } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { officeVersions } from "@/lib/db/schema";
 
 export async function GET(req, { params }) {
@@ -12,7 +12,7 @@ export async function GET(req, { params }) {
 
   const { id } = await params;
 
-  const { data, error } = await safeQuery((db) =>
+  const { data, error } = await safeQuery(
     db
       .select()
       .from(officeVersions)
@@ -47,7 +47,7 @@ export async function POST(req, { params }) {
   const { content, label } = await req.json();
 
   const versionId = crypto.randomUUID();
-  const { error } = await safeQuery((db) =>
+  const { error } = await safeQuery(
     db.insert(officeVersions).values({
       id: versionId,
       documentId: id,
