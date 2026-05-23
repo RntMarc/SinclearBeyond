@@ -144,7 +144,6 @@ export default function PollDetailClient({ initialPoll, userId }) {
         }}
         onSubmit={handleUpdatePoll}
         saving={saving}
-        userId={userId}
       />
 
       {notification && (

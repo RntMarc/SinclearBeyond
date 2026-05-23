@@ -9,7 +9,6 @@ export default function PollFormModal({
   initialData,
   onSubmit,
   saving,
-  userId,
 }) {
   const t = useTranslations("Polls");
   if (!isOpen) return null;
@@ -45,7 +44,6 @@ export default function PollFormModal({
           saving={saving}
           onSubmit={onSubmit}
           onCancel={onClose}
-          userId={userId}
         />
       </div>
     </div>

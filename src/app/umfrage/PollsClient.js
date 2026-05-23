@@ -7,7 +7,7 @@ import Notification from "@/components/Notification";
 import PollFormModal from "@/components/polls/PollFormModal";
 import PollList from "@/components/polls/PollList";
 
-export default function PollsClient({ initialPolls, userId }) {
+export default function PollsClient({ initialPolls }) {
   const t = useTranslations("Polls");
   const [polls, _setPolls] = useState(initialPolls);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,7 +74,6 @@ export default function PollsClient({ initialPolls, userId }) {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreatePoll}
         saving={saving}
-        userId={userId}
       />
 
       {notification && (

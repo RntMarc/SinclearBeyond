@@ -206,33 +206,16 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                       </div>
                     </div>
                   </td>
-                  {options.map((option) => {
-                    const vote = poll.votes.find(
-                      (v) =>
-                        v.userId === poll.creatorId && v.optionId === option.id,
-                    );
-                    return (
-                      <td
-                        key={option.id}
-                        className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
-                      >
-                        <div className="flex justify-center">
-                          {vote?.availability === "yes" && (
-                            <Check size={18} className="text-emerald-500" />
-                          )}
-                          {vote?.availability === "maybe" && (
-                            <HelpCircle size={18} className="text-yellow-500" />
-                          )}
-                          {vote?.availability === "no" && (
-                            <X size={18} className="text-destructive" />
-                          )}
-                          {!vote && (
-                            <div className="w-4 h-px bg-muted-foreground/20" />
-                          )}
-                        </div>
-                      </td>
-                    );
-                  })}
+                  {options.map((option) => (
+                    <td
+                      key={option.id}
+                      className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
+                    >
+                      <div className="flex justify-center">
+                        <Check size={18} className="text-emerald-500" />
+                      </div>
+                    </td>
+                  ))}
                 </tr>
                 {/* Invitees rows */}
                 {poll.invites
