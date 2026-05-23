@@ -1,7 +1,7 @@
 import { eq, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { safeQuery } from "@/lib/db/db";
+import { db, safeQuery } from "@/lib/db/db";
 import { officeDocuments } from "@/lib/db/schema";
 
 export async function GET() {
@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await safeQuery((db) =>
+  const { data, error } = await safeQuery(
     db.select().from(officeDocuments).orderBy(desc(officeDocuments.updatedAt)),
   );
 
@@ -45,7 +45,7 @@ export async function POST(req) {
     const id = crypto.randomUUID();
     const now = new Date();
 
-    const { error } = await safeQuery((db) =>
+    const { error } = await safeQuery(
       db.insert(officeDocuments).values({
         id,
         title: title || "Unbenanntes Dokument",
