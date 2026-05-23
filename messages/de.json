@@ -55,6 +55,31 @@
     "office": "Office",
     "polls": "Umfragen & Termine"
   },
+  "Office": {
+    "title": "Office",
+    "subtitle": "Kollaboratives Schreiben",
+    "myDocuments": "Meine Dokumente",
+    "newDocument": "Neues Dokument",
+    "noDocuments": "Noch keine Dokumente vorhanden.",
+    "createFirst": "Erstes Dokument erstellen",
+    "lastEdited": "Zuletzt bearbeitet",
+    "deleteConfirm": "Dokument wirklich löschen?",
+    "errorLoad": "Fehler beim Laden der Dokumente",
+    "errorCreate": "Fehler beim Erstellen",
+    "errorDelete": "Fehler beim Löschen",
+    "errorNotFound": "Dokument nicht gefunden",
+    "loading": "Wird geladen...",
+    "syncing": "Synchronisiere...",
+    "allSaved": "Alle Änderungen gespeichert",
+    "history": "Verlauf",
+    "restoreConfirm": "Möchten Sie dieses Dokument wirklich auf diesen Stand zurücksetzen? Alle späteren Änderungen gehen verloren.",
+    "writeHere": "Schreibe hier etwas...",
+    "backToOverview": "Zurück zur Übersicht",
+    "export": "Export",
+    "import": "Import",
+    "chooseFile": "Datei wählen",
+    "defaultTitle": "Neues Dokument"
+  },
   "Polls": {
     "title": "Umfragen & Termine",
     "subtitle": "Planung",
@@ -111,8 +136,20 @@
       "successCreate": "Erfolgreich erstellt",
       "successUpdate": "Erfolgreich aktualisiert",
       "successFinalize": "Erfolgreich finalisiert",
-      "deleteConfirm": "Möchtest du diesen Eintrag wirklich löschen?"
-    }
+      "deleteConfirm": "Möchtest du diesen Eintrag wirklich löschen?",
+      "errorCreate": "Fehler beim Erstellen",
+      "errorUpdate": "Fehler beim Aktualisieren",
+      "errorFinalize": "Fehler beim Finalisieren",
+      "errorDelete": "Fehler beim Löschen",
+      "errorVote": "Fehler beim Abstimmen",
+      "errorFillAll": "Bitte alle Daten ausfüllen",
+      "networkError": "Netzwerkfehler"
+    },
+    "results": "Antworten",
+    "missing": "fehlt",
+    "yes": "Ja",
+    "no": "Nein",
+    "questionPlaceholder": "Deine Frage..."
   },
   "Auth": {
     "login": "Login",

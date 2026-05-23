@@ -55,6 +55,31 @@
     "office": "Office",
     "polls": "Surveys & Polls"
   },
+  "Office": {
+    "title": "Office",
+    "subtitle": "Collaborative Writing",
+    "myDocuments": "My Documents",
+    "newDocument": "New Document",
+    "noDocuments": "No documents yet.",
+    "createFirst": "Create first document",
+    "lastEdited": "Last edited",
+    "deleteConfirm": "Really delete document?",
+    "errorLoad": "Error loading documents",
+    "errorCreate": "Error creating",
+    "errorDelete": "Error deleting",
+    "errorNotFound": "Document not found",
+    "loading": "Loading...",
+    "syncing": "Syncing...",
+    "allSaved": "All changes saved",
+    "history": "History",
+    "restoreConfirm": "Do you really want to restore this document to this state? All later changes will be lost.",
+    "writeHere": "Write something here...",
+    "backToOverview": "Back to overview",
+    "export": "Export",
+    "import": "Import",
+    "chooseFile": "Choose file",
+    "defaultTitle": "New Document"
+  },
   "Polls": {
     "title": "Surveys & Polls",
     "subtitle": "Planning",
@@ -111,8 +136,20 @@
       "successCreate": "Successfully created",
       "successUpdate": "Successfully updated",
       "successFinalize": "Successfully finalized",
-      "deleteConfirm": "Do you really want to delete this entry?"
-    }
+      "deleteConfirm": "Do you really want to delete this entry?",
+      "errorCreate": "Error creating",
+      "errorUpdate": "Error updating",
+      "errorFinalize": "Error finalizing",
+      "errorDelete": "Error deleting",
+      "errorVote": "Error voting",
+      "errorFillAll": "Please fill in all data",
+      "networkError": "Network error"
+    },
+    "results": "Answers",
+    "missing": "missing",
+    "yes": "Yes",
+    "no": "No",
+    "questionPlaceholder": "Your question..."
   },
   "Auth": {
     "login": "Login",

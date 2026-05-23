@@ -52,7 +52,7 @@ function PollCard({ poll }) {
               </span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {isFinalized
+              {isFinalized && poll.type === "appointment"
                 ? t("finalizedOn", {
                     date: formatDate(
                       poll.options.find((o) => o.id === poll.finalizedOptionId)

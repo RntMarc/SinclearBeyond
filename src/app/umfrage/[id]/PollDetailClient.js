@@ -30,7 +30,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
         }
       }
     } catch (_error) {
-      setNotification({ message: "Fehler beim Abstimmen", type: "error" });
+      setNotification({ message: t("form.errorVote"), type: "error" });
     }
   };
 
@@ -55,7 +55,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
         }
       }
     } catch (_error) {
-      setNotification({ message: "Fehler beim Finalisieren", type: "error" });
+      setNotification({ message: t("form.errorFinalize"), type: "error" });
     }
   };
 
@@ -77,7 +77,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
         }
       }
     } catch (_error) {
-      setNotification({ message: "Fehler beim Aktualisieren", type: "error" });
+      setNotification({ message: t("form.errorUpdate"), type: "error" });
     } finally {
       setSaving(false);
     }
@@ -95,7 +95,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
         router.push("/umfrage");
       }
     } catch (_error) {
-      setNotification({ message: "Fehler beim Löschen", type: "error" });
+      setNotification({ message: t("form.errorDelete"), type: "error" });
     }
   };
 

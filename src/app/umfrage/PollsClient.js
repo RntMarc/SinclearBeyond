@@ -25,7 +25,7 @@ export default function PollsClient({ initialPolls }) {
         );
         if (hasInvalidDate) {
           setNotification({
-            message: "Bitte alle Daten ausfüllen",
+            message: t("form.errorFillAll"),
             type: "error",
           });
           setSaving(false);
@@ -45,10 +45,10 @@ export default function PollsClient({ initialPolls }) {
         setIsModalOpen(false);
         router.push(`/umfrage/${id}`);
       } else {
-        setNotification({ message: "Fehler beim Erstellen", type: "error" });
+        setNotification({ message: t("form.errorCreate"), type: "error" });
       }
     } catch (_error) {
-      setNotification({ message: "Netzwerkfehler", type: "error" });
+      setNotification({ message: t("form.networkError"), type: "error" });
     } finally {
       setSaving(false);
     }
