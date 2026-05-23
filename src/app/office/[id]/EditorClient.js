@@ -36,8 +36,10 @@ import mammoth from "mammoth";
 import { jsPDF } from "jspdf";
 import { asBlob } from "html-docx-js-typescript";
 import { debounce } from "lodash-es";
+import { arrayBufferToBase64, base64ToUint8Array } from "@/lib/utils";
 
 export default function EditorClient({ user, session, docId }) {
+  console.log(`[EditorClient] Rendering for ${docId}`);
   const t = useTranslations("Office");
   const [docMetadata, setDocMetadata] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
@@ -53,6 +55,7 @@ export default function EditorClient({ user, session, docId }) {
   const lastSaveRef = useRef(0);
 
   const fetchMetadata = useCallback(async () => {
+    console.log(`[EditorClient] Fetching metadata for ${docId}`);
     try {
       const res = await fetch(`/api/office/documents/${docId}`);
       if (!res.ok) {
@@ -85,11 +88,12 @@ export default function EditorClient({ user, session, docId }) {
 
   const sync = useCallback(
     async (update = null) => {
+      console.log(`[EditorClient] Sync triggered (update: ${!!update})`);
       setSyncing(true);
       try {
         const body = { presence: true };
         if (update) {
-          body.update = Buffer.from(update).toString("base64");
+          body.update = arrayBufferToBase64(update);
         }
 
         const res = await fetch(`/api/office/documents/${docId}/sync`, {
@@ -110,9 +114,10 @@ export default function EditorClient({ user, session, docId }) {
           }
 
           if (data.content && !update) {
+            console.log("[EditorClient] Applying remote update");
             Y.applyUpdate(
               ydocRef.current,
-              Buffer.from(data.content, "base64"),
+              base64ToUint8Array(data.content),
               "server",
             );
           }
@@ -136,11 +141,12 @@ export default function EditorClient({ user, session, docId }) {
 
   const createVersion = useCallback(
     async (label = null) => {
+      console.log("[EditorClient] Creating version with label:", label);
       if (!editor) return;
       try {
-        const content = Buffer.from(
+        const content = arrayBufferToBase64(
           Y.encodeStateAsUpdate(ydocRef.current),
-        ).toString("base64");
+        );
         const res = await fetch(`/api/office/documents/${docId}/history`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -158,6 +164,7 @@ export default function EditorClient({ user, session, docId }) {
     [docId, fetchHistory],
   );
 
+  console.log("[EditorClient] Initializing useEditor");
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -192,6 +199,7 @@ export default function EditorClient({ user, session, docId }) {
   });
 
   useEffect(() => {
+    console.log("[EditorClient] mounted, initial data fetch...");
     fetchMetadata();
     fetchHistory();
     sync();
@@ -285,10 +293,11 @@ export default function EditorClient({ user, session, docId }) {
   };
 
   const restoreVersion = (v) => {
+    console.log("[EditorClient] Restoring version:", v.id);
     if (confirm(t("restoreConfirm"))) {
       Y.applyUpdate(
         ydocRef.current,
-        Buffer.from(v.content, "base64"),
+        base64ToUint8Array(v.content),
         "server",
       );
       sync(Y.encodeStateAsUpdate(ydocRef.current));

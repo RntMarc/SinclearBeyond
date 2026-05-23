@@ -16,6 +16,7 @@ import Button from "@/components/ui/Button";
 import { InlineError } from "@/components/ui/InlineError";
 
 export default function OfficeClient({ user, session }) {
+  console.log("[OfficeClient] Rendering...");
   const t = useTranslations("Office");
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,10 +24,12 @@ export default function OfficeClient({ user, session }) {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
+    console.log("[OfficeClient] mounted, fetching documents...");
     fetchDocuments();
   }, []);
 
   const fetchDocuments = async () => {
+    console.log("[OfficeClient] fetchDocuments calling API...");
     try {
       const res = await fetch("/api/office/documents");
       if (!res.ok) {
@@ -45,6 +48,7 @@ export default function OfficeClient({ user, session }) {
   };
 
   const createDocument = async () => {
+    console.log("[OfficeClient] createDocument triggered");
     setCreating(true);
     try {
       const res = await fetch("/api/office/documents", {

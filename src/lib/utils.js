@@ -104,6 +104,32 @@ export function normalizeOrigin(origin, fallback) {
  * @param {number} timeout Timeout in milliseconds (default 20000).
  * @returns {Promise<Response>} The fetch response.
  */
+/**
+ * Utility to convert an array-like buffer to a base64 string (browser compatible).
+ */
+export function arrayBufferToBase64(buffer) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+/**
+ * Utility to convert a base64 string to a Uint8Array (browser compatible).
+ */
+export function base64ToUint8Array(base64) {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
 export async function fetchWithTimeout(url, options = {}, timeout = 20000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);

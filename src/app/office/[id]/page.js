@@ -4,12 +4,19 @@ import { getProfileData } from "@/lib/profile/profile";
 import EditorClient from "./EditorClient";
 
 export default async function EditorPage({ params }) {
-  const session = await getSessionWithSubs();
-  if (!session) redirect("/login");
-
   const { id } = await params;
+  console.log(`[EditorPage] Rendering for ID: ${id}`);
+
+  const session = await getSessionWithSubs();
+  console.log("[EditorPage] Session:", session ? "Authenticated" : "None", session?.sub);
+
+  if (!session) {
+    console.log("[EditorPage] No session, redirecting to /login");
+    redirect("/login");
+  }
 
   const data = await getProfileData(session);
+  console.log("[EditorPage] Profile data loaded:", !!data);
   const user = data?.user || {
     id: session.sub,
     email: session.email,
