@@ -11,6 +11,33 @@ export function HomeSkeleton() {
   );
 }
 
+export function OfficeSkeleton() {
+  return (
+    <div className="p-6 max-w-5xl mx-auto w-full">
+      <div className="flex justify-between items-center mb-6">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-10 w-32 rounded-xl" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-32 w-full rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function EditorSkeleton() {
+  return (
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+      <div className="max-w-4xl mx-auto space-y-4">
+        <Skeleton className="h-12 w-full rounded-t-xl" />
+        <Skeleton className="h-[600px] w-full rounded-b-xl" />
+      </div>
+    </div>
+  );
+}
+
 function SectionSkeleton() {
   return (
     <div className="flex flex-col break-inside-avoid mb-10">

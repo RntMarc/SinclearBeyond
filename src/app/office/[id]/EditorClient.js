@@ -32,9 +32,6 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { InlineError } from "@/components/ui/InlineError";
-import mammoth from "mammoth";
-import { jsPDF } from "jspdf";
-import { asBlob } from "html-docx-js-typescript";
 import { debounce } from "lodash-es";
 import { arrayBufferToBase64, base64ToUint8Array } from "@/lib/utils";
 
@@ -166,6 +163,12 @@ export default function EditorClient({ user, session, docId }) {
 
   console.log("[EditorClient] Initializing useEditor");
   const editor = useEditor({
+    onCreate: ({ editor }) => {
+      console.log("[EditorClient] Editor created successfully");
+    },
+    onDestroy: () => {
+      console.log("[EditorClient] Editor destroyed");
+    },
     extensions: [
       StarterKit.configure({
         history: false,
@@ -225,6 +228,7 @@ export default function EditorClient({ user, session, docId }) {
   }, [docId, sync, fetchMetadata, fetchHistory, debouncedSync]);
 
   const handleExport = async (format) => {
+    console.log("[EditorClient] handleExport triggered:", format);
     if (!editor) return;
     const html = editor.getHTML();
     const title = docMetadata?.title || "dokument";
@@ -236,16 +240,19 @@ export default function EditorClient({ user, session, docId }) {
       const blob = new Blob([editor.getText()], { type: "text/plain" });
       downloadBlob(blob, `${title}.txt`);
     } else if (format === "pdf") {
+      const { jsPDF } = await import("jspdf");
       const doc = new jsPDF();
       doc.text(editor.getText(), 10, 10);
       doc.save(`${title}.pdf`);
     } else if (format === "docx") {
+      const { asBlob } = await import("html-docx-js-typescript");
       const content = await asBlob(html);
       downloadBlob(content, `${title}.docx`);
     } else if (format === "odt") {
       alert(
         "ODT Export wird vorbereitet... (In dieser Version als Word-Download verfügbar)",
       );
+      const { asBlob } = await import("html-docx-js-typescript");
       const content = await asBlob(html);
       downloadBlob(content, `${title}.odt`);
     }
@@ -253,18 +260,20 @@ export default function EditorClient({ user, session, docId }) {
 
   const handleImport = async (e) => {
     const file = e.target.files[0];
+    console.log("[EditorClient] handleImport triggered:", file?.name);
     if (!file || !editor) return;
 
     if (file.name.endsWith(".docx") || file.name.endsWith(".odt")) {
       const reader = new FileReader();
       reader.onload = async (event) => {
         try {
-            const result = await mammoth.convertToHtml({
-              arrayBuffer: event.target.result,
-            });
-            editor.commands.setContent(result.value);
+          const mammoth = await import("mammoth");
+          const result = await mammoth.convertToHtml({
+            arrayBuffer: event.target.result,
+          });
+          editor.commands.setContent(result.value);
         } catch (err) {
-            console.error("Mammoth import error", err);
+          console.error("Mammoth import error", err);
         }
       };
       reader.readAsArrayBuffer(file);
@@ -440,7 +449,10 @@ export default function EditorClient({ user, session, docId }) {
                 </Button>
               </div>
 
-              <EditorContent editor={editor} />
+              <EditorContent
+                editor={editor}
+                data-placeholder={t("writeHere")}
+              />
 
               <div className="mt-4 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
                 <div className="flex items-center gap-2">
@@ -529,11 +541,6 @@ export default function EditorClient({ user, session, docId }) {
         )}
       </div>
 
-      <style jsx global>{`
-        .ProseMirror p.is-editor-empty:first-child::before {
-            content: "${t("writeHere")}";
-        }
-      `}</style>
     </AppShell>
   );
 }
