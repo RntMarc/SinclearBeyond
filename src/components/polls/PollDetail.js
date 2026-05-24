@@ -34,10 +34,13 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
             if (!initialAnswers[v.questionId])
               initialAnswers[v.questionId] = [];
             initialAnswers[v.questionId].push(v.optionId);
-          } else if (
-            ["single_choice", "checkbox", "toggle"].includes(question?.type)
-          ) {
+          } else if (["single_choice"].includes(question?.type)) {
             initialAnswers[v.questionId] = v.optionId;
+          } else if (["checkbox", "toggle"].includes(question?.type)) {
+            initialAnswers[v.questionId] =
+              v.value !== null && v.value !== undefined
+                ? v.value === "true" || v.value === "yes"
+                : v.optionId !== null && v.optionId !== undefined;
           } else {
             initialAnswers[v.questionId] = v.value;
           }
@@ -428,8 +431,16 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
         return val.map((v) => ({ questionId: qId, optionId: v }));
       }
       const question = poll.questions.find((q) => q.id === qId);
-      if (["single_choice", "checkbox", "toggle"].includes(question.type)) {
+      if (question.type === "single_choice") {
         return [{ questionId: qId, optionId: val }];
+      }
+      if (["checkbox", "toggle"].includes(question.type)) {
+        return [
+          {
+            questionId: qId,
+            value: val ? "yes" : "no",
+          },
+        ];
       }
       return [{ questionId: qId, value: val }];
     });
@@ -558,23 +569,45 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                 </div>
               )}
 
-              {["checkbox", "toggle"].includes(q.type) && (
+              {q.type === "checkbox" && (
                 <label className="flex items-center gap-3 cursor-pointer">
-                  <div className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={!!currentAnswer}
-                      onChange={(e) =>
-                        updateAnswer(
-                          q.id,
-                          e.target.checked ? qOptions[0]?.id : null,
-                        )
-                      }
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-muted rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                  </div>
+                  <input
+                    type="checkbox"
+                    checked={!!currentAnswer}
+                    onChange={(e) => updateAnswer(q.id, e.target.checked)}
+                    className="h-5 w-5 rounded border-sidebar-border text-primary focus:ring-primary"
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {t("yes")}
+                  </span>
                 </label>
+              )}
+
+              {q.type === "toggle" && (
+                <div className="inline-flex rounded-xl border border-sidebar-border bg-sidebar-accent/30 p-1">
+                  <button
+                    type="button"
+                    onClick={() => updateAnswer(q.id, true)}
+                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                      currentAnswer
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {t("yes")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateAnswer(q.id, false)}
+                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                      currentAnswer === false
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {t("no")}
+                  </button>
+                </div>
               )}
 
               {["email", "number", "address"].includes(q.type) && (
