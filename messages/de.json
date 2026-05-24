@@ -197,6 +197,18 @@
         "failed": "Passkey-Login fehlgeschlagen."
       },
       "displayNameRequired": "Bitte gib einen Anzeigenamen ein."
+    },
+    "discord": "Discord",
+    "registration": {
+      "required": "Pflicht",
+      "optional": "Optional",
+      "emailFlow": {
+        "title": "Registrierung per E-Mail",
+        "description": "Für die klassische Registrierung fülle bitte beide Felder aus."
+      },
+      "displayNamePlaceholder": "z. B. Max Mustermann",
+      "emailPlaceholder": "name@sinclear.de",
+      "emailHint": "Lass das Feld leer, wenn du stattdessen direkt mit Discord registrieren möchtest."
     }
   },
   "Home": {
