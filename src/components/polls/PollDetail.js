@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SaveButton from "@/components/SaveButton";
 
@@ -31,7 +31,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
         } else {
           const question = poll.questions.find((q) => q.id === v.questionId);
           if (question?.type === "multiple_choice") {
-            if (!initialAnswers[v.questionId]) initialAnswers[v.questionId] = [];
+            if (!initialAnswers[v.questionId])
+              initialAnswers[v.questionId] = [];
             initialAnswers[v.questionId].push(v.optionId);
           } else if (
             ["single_choice", "checkbox", "toggle"].includes(question?.type)
@@ -297,7 +298,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                       {t("voting.confirm")}
                     </td>
                     {options.map((option) => {
-                      const myAvailability = answers[dateQuestion.id]?.[option.id];
+                      const myAvailability =
+                        answers[dateQuestion.id]?.[option.id];
                       return (
                         <td
                           key={option.id}
