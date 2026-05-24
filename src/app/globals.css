@@ -224,11 +224,15 @@
 }
 
 /* Office Editor Styles */
-.ProseMirror p.is-editor-empty:first-child::before {
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
   float: left;
   color: #64748b;
   pointer-events: none;
   height: 0;
+}
+.tiptap {
+  outline: none !important;
 }
 .ProseMirror:focus {
   outline: none;

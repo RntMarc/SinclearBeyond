@@ -1,14 +1,18 @@
 import { redirect } from "next/navigation";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
-import EditorClient from "./EditorClient";
+import EditorClientWrapper from "./EditorClientWrapper";
 
 export default async function EditorPage({ params }) {
   const { id } = await params;
   console.log(`[EditorPage] Rendering for ID: ${id}`);
 
   const session = await getSessionWithSubs();
-  console.log("[EditorPage] Session:", session ? "Authenticated" : "None", session?.sub);
+  console.log(
+    "[EditorPage] Session:",
+    session ? "Authenticated" : "None",
+    session?.sub,
+  );
 
   if (!session) {
     console.log("[EditorPage] No session, redirecting to /login");
@@ -24,5 +28,5 @@ export default async function EditorPage({ params }) {
     isAdmin: session.isAdmin,
   };
 
-  return <EditorClient user={user} session={session} docId={id} />;
+  return <EditorClientWrapper user={user} session={session} docId={id} />;
 }
