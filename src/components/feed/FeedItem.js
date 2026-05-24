@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowBigUp,
   Edit2,
   ExternalLink,
   Heart,
@@ -15,9 +16,15 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
 import { useFeedPreview } from "@/hooks/feed/useFeedPreview";
+import { unvotePost, votePost } from "@/lib/forums/actions";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
-export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
+export default function FeedItem({
+  post,
+  onEdit,
+  onDeleteSuccess,
+  onVoteUpdate,
+}) {
   const { image: previewImage, loading: previewLoading } = useFeedPreview(post);
   const t = useTranslations("Feed");
   const locale = useLocale();
@@ -56,6 +63,31 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
   };
 
   const Icon = categoryIcons[post.category] || SquarePlay;
+
+  const [isVoting, setIsVoting] = useState(false);
+  const [voteCount, setVoteCount] = useState(post.voteCount || 0);
+  const [hasVoted, setHasVoted] = useState(post.hasVoted || false);
+
+  const handleVote = async () => {
+    if (isVoting) return;
+    setIsVoting(true);
+    try {
+      if (hasVoted) {
+        await unvotePost(post.id);
+        setVoteCount((prev) => prev - 1);
+        setHasVoted(false);
+      } else {
+        await votePost(post.id);
+        setVoteCount((prev) => prev + 1);
+        setHasVoted(true);
+      }
+      onVoteUpdate?.();
+    } catch (error) {
+      console.error("Voting failed:", error);
+    } finally {
+      setIsVoting(false);
+    }
+  };
 
   const handleDelete = async () => {
     setDeleteError("");
@@ -291,6 +323,26 @@ export default function FeedItem({ post, onEdit, onDeleteSuccess }) {
               </p>
             </div>
           )}
+
+          {/* Footer / Votes */}
+          <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+            <button
+              type="button"
+              onClick={handleVote}
+              disabled={isVoting}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+                hasVoted
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : "text-muted-foreground hover:bg-muted border border-transparent"
+              }`}
+            >
+              <ArrowBigUp
+                size={20}
+                className={hasVoted ? "fill-primary" : ""}
+              />
+              <span className="text-sm font-medium">{voteCount}</span>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -21,7 +21,7 @@ export default function PollFormModal({
         onKeyDown={(e) => e.key === "Escape" && onClose()}
         role="button"
         tabIndex={0}
-        aria-label={t("form.deleteConfirm")}
+        aria-label={t("close")}
       />
       <div className="relative w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
         <div className="px-6 py-6 border-b border-border flex items-center justify-between shrink-0">

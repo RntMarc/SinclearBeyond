@@ -307,7 +307,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                         placeholder={
                           form.type === "appointment"
                             ? t("pollTitlePlaceholder")
-                            : "Deine Frage..."
+                            : t("questionPlaceholder")
                         }
                         className="w-full bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
                       />
@@ -437,7 +437,11 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                   key={user.id}
                   className="flex items-center gap-2 bg-sidebar-accent/50 border border-sidebar-border rounded-full pl-1 pr-3 py-1"
                 >
-                  <Avatar user={user} size="xs" />
+                  <Avatar
+                    src={user.image}
+                    displayName={user.displayName}
+                    size="xs"
+                  />
                   <span className="text-xs font-medium">
                     {user.displayName}
                   </span>
@@ -490,7 +494,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2 hover:bg-sidebar-accent transition-colors text-left"
                   >
-                    <Avatar user={user} size="xs" />
+                    <Avatar src={user.image} displayName={user.displayName} size="xs" />
                     <span className="text-sm">{user.displayName}</span>
                   </button>
                 ))

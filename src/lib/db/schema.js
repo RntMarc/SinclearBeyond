@@ -212,9 +212,26 @@ export const passkeys = mysqlTable("Passkey", {
   lastUsedAt: datetime("lastUsedAt", { fsp: 3 }),
 });
 
+export const forums = mysqlTable("Forum", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  image: longtext("image"),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const forumMembers = mysqlTable("ForumMember", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  forumId: varchar("forumId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
 export const feedPosts = mysqlTable("FeedPosts", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
+  forumId: varchar("forumId", { length: 191 }).notNull(),
   category: mysqlEnum("category", [
     "music",
     "video",
@@ -247,6 +264,13 @@ export const feedPosts = mysqlTable("FeedPosts", {
   visibility: tinyint("visibility").notNull().default(1), // 1 = Alle, 2 = Enge Kontakte
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const feedPostVotes = mysqlTable("FeedPostVote", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  postId: varchar("postId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
 export const webauthnChallenges = mysqlTable("WebauthnChallenge", {
@@ -461,4 +485,31 @@ export const pollVotes = mysqlTable("PollVote", {
   value: text("value"), // For text/number/etc.
   availability: mysqlEnum("availability", ["yes", "maybe", "no"]), // Only for appointments
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+// ── Office (Collaborative) ────────────────────────────────────────────────────
+
+export const officeDocuments = mysqlTable("OfficeDocument", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: longtext("content"), // Stores Yjs update state (base64)
+  creatorId: varchar("creatorId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const officeVersions = mysqlTable("OfficeVersion", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  documentId: varchar("documentId", { length: 191 }).notNull(),
+  content: longtext("content").notNull(),
+  label: varchar("label", { length: 255 }),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const officeCollaborators = mysqlTable("OfficeCollaborator", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  documentId: varchar("documentId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  color: varchar("color", { length: 7 }).notNull(),
+  lastActiveAt: datetime("lastActiveAt", { fsp: 3 }).notNull(),
 });

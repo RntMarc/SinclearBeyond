@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SaveButton from "@/components/SaveButton";
 
@@ -18,6 +18,33 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
   const locale = useLocale();
   const [answers, setAnswers] = useState({});
   const [saving, setSaving] = useState(false);
+
+  // Initialize answers from poll votes
+  useEffect(() => {
+    const initialAnswers = {};
+    poll.votes
+      .filter((v) => v.userId === userId)
+      .forEach((v) => {
+        if (poll.type === "appointment") {
+          if (!initialAnswers[v.questionId]) initialAnswers[v.questionId] = {};
+          initialAnswers[v.questionId][v.optionId] = v.availability;
+        } else {
+          const question = poll.questions.find((q) => q.id === v.questionId);
+          if (question?.type === "multiple_choice") {
+            if (!initialAnswers[v.questionId])
+              initialAnswers[v.questionId] = [];
+            initialAnswers[v.questionId].push(v.optionId);
+          } else if (
+            ["single_choice", "checkbox", "toggle"].includes(question?.type)
+          ) {
+            initialAnswers[v.questionId] = v.optionId;
+          } else {
+            initialAnswers[v.questionId] = v.value;
+          }
+        }
+      });
+    setAnswers(initialAnswers);
+  }, [poll, userId]);
 
   const isFinalized = !!poll.finalizedOptionId;
   const isCreator = poll.creatorId === userId;
@@ -74,8 +101,29 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
       .filter((s) => s.score === maxScore && s.canHappen && maxScore > 0)
       .map((s) => s.id);
 
-    const handleVoteClick = (optionId, availability) => {
-      onVote([{ questionId: dateQuestion.id, optionId, availability }]);
+    const handleVoteClick = async (optionId, availability) => {
+      const qId = dateQuestion.id;
+      const newQuestionAnswers = {
+        ...(answers[qId] || {}),
+        [optionId]: availability,
+      };
+
+      // Update local state immediately for snappy UI
+      setAnswers((prev) => ({
+        ...prev,
+        [qId]: newQuestionAnswers,
+      }));
+
+      // Send all votes for this question
+      const votesToSend = Object.entries(newQuestionAnswers).map(
+        ([optId, avail]) => ({
+          questionId: qId,
+          optionId: optId,
+          availability: avail,
+        }),
+      );
+
+      await onVote(votesToSend);
     };
 
     return (
@@ -136,88 +184,113 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
               <tbody className="divide-y divide-border">
                 {/* Creator row */}
                 <tr>
-                  <td className="p-4 flex items-center gap-3">
-                    <Avatar
-                      user={{
-                        id: poll.creatorId,
-                        displayName: poll.creatorName,
-                      }}
-                      size="xs"
-                    />
-                    <span className="text-sm font-medium">
-                      {poll.creatorName}
-                    </span>
-                  </td>
-                  {options.map((option) => (
-                    <td
-                      key={option.id}
-                      className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
-                    >
-                      <div className="flex justify-center">
-                        <Check size={18} className="text-emerald-500" />
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar
+                        src={poll.creatorImage}
+                        displayName={poll.creatorName}
+                        size="xs"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">
+                          {poll.creatorName}
+                        </span>
+                        {poll.invites.find((i) => i.userId === poll.creatorId)
+                          ?.isIndispensable === 1 && (
+                          <div className="flex items-center gap-1 text-[10px] text-yellow-600 font-bold uppercase tracking-tight">
+                            <Star size={10} fill="currentColor" />
+                            {t("indispensable")}
+                          </div>
+                        )}
                       </div>
-                    </td>
-                  ))}
-                </tr>
-                {/* Invitees rows */}
-                {poll.invites.map((invite) => (
-                  <tr key={invite.id}>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar
-                          user={{
-                            id: invite.userId,
-                            displayName: invite.displayName,
-                            image: invite.image,
-                          }}
-                          size="xs"
-                        />
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium">
-                            {invite.displayName}
-                          </span>
-                          {invite.isIndispensable === 1 && (
-                            <div className="flex items-center gap-1 text-[10px] text-yellow-600 font-bold uppercase tracking-tight">
-                              <Star size={10} fill="currentColor" />
-                              {t("indispensable")}
-                            </div>
+                    </div>
+                  </td>
+                  {options.map((option) => {
+                    const vote = poll.votes.find(
+                      (v) =>
+                        v.userId === poll.creatorId && v.optionId === option.id,
+                    );
+                    return (
+                      <td
+                        key={option.id}
+                        className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
+                      >
+                        <div className="flex justify-center">
+                          {vote?.availability === "yes" && (
+                            <Check size={18} className="text-emerald-500" />
+                          )}
+                          {vote?.availability === "maybe" && (
+                            <HelpCircle size={18} className="text-yellow-500" />
+                          )}
+                          {vote?.availability === "no" && (
+                            <X size={18} className="text-destructive" />
+                          )}
+                          {!vote && (
+                            <div className="w-4 h-px bg-muted-foreground/20" />
                           )}
                         </div>
-                      </div>
-                    </td>
-                    {options.map((option) => {
-                      const vote = poll.votes.find(
-                        (v) =>
-                          v.userId === invite.userId &&
-                          v.optionId === option.id,
-                      );
-                      return (
-                        <td
-                          key={option.id}
-                          className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
-                        >
-                          <div className="flex justify-center">
-                            {vote?.availability === "yes" && (
-                              <Check size={18} className="text-emerald-500" />
-                            )}
-                            {vote?.availability === "maybe" && (
-                              <HelpCircle
-                                size={18}
-                                className="text-yellow-500"
-                              />
-                            )}
-                            {vote?.availability === "no" && (
-                              <X size={18} className="text-destructive" />
-                            )}
-                            {!vote && (
-                              <div className="w-4 h-px bg-muted-foreground/20" />
+                      </td>
+                    );
+                  })}
+                </tr>
+                {/* Invitees rows */}
+                {poll.invites
+                  .filter((i) => i.userId !== poll.creatorId)
+                  .map((invite) => (
+                    <tr key={invite.id}>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src={invite.image}
+                            displayName={invite.displayName}
+                            size="xs"
+                          />
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">
+                              {invite.displayName}
+                            </span>
+                            {invite.isIndispensable === 1 && (
+                              <div className="flex items-center gap-1 text-[10px] text-yellow-600 font-bold uppercase tracking-tight">
+                                <Star size={10} fill="currentColor" />
+                                {t("indispensable")}
+                              </div>
                             )}
                           </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                        </div>
+                      </td>
+                      {options.map((option) => {
+                        const vote = poll.votes.find(
+                          (v) =>
+                            v.userId === invite.userId &&
+                            v.optionId === option.id,
+                        );
+                        return (
+                          <td
+                            key={option.id}
+                            className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
+                          >
+                            <div className="flex justify-center">
+                              {vote?.availability === "yes" && (
+                                <Check size={18} className="text-emerald-500" />
+                              )}
+                              {vote?.availability === "maybe" && (
+                                <HelpCircle
+                                  size={18}
+                                  className="text-yellow-500"
+                                />
+                              )}
+                              {vote?.availability === "no" && (
+                                <X size={18} className="text-destructive" />
+                              )}
+                              {!vote && (
+                                <div className="w-4 h-px bg-muted-foreground/20" />
+                              )}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
                 {/* Voting row (only if not finalized) */}
                 {!isFinalized && (
                   <tr className="bg-muted/10 border-t-2 border-border">
@@ -225,9 +298,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                       {t("voting.confirm")}
                     </td>
                     {options.map((option) => {
-                      const myVote = poll.votes.find(
-                        (v) => v.userId === userId && v.optionId === option.id,
-                      );
+                      const myAvailability =
+                        answers[dateQuestion.id]?.[option.id];
                       return (
                         <td
                           key={option.id}
@@ -237,7 +309,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                             <button
                               type="button"
                               onClick={() => handleVoteClick(option.id, "yes")}
-                              className={`p-1.5 rounded-md transition-all ${myVote?.availability === "yes" ? "bg-emerald-500 text-white shadow-sm" : "hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-500"}`}
+                              className={`p-1.5 rounded-md transition-all ${myAvailability === "yes" ? "bg-emerald-500 text-white shadow-sm" : "hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-500"}`}
                             >
                               <Check size={16} />
                             </button>
@@ -246,14 +318,14 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                               onClick={() =>
                                 handleVoteClick(option.id, "maybe")
                               }
-                              className={`p-1.5 rounded-md transition-all ${myVote?.availability === "maybe" ? "bg-yellow-500 text-white shadow-sm" : "hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500"}`}
+                              className={`p-1.5 rounded-md transition-all ${myAvailability === "maybe" ? "bg-yellow-500 text-white shadow-sm" : "hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500"}`}
                             >
                               <HelpCircle size={16} />
                             </button>
                             <button
                               type="button"
                               onClick={() => handleVoteClick(option.id, "no")}
-                              className={`p-1.5 rounded-md transition-all ${myVote?.availability === "no" ? "bg-destructive text-white shadow-sm" : "hover:bg-destructive/10 text-muted-foreground hover:text-destructive"}`}
+                              className={`p-1.5 rounded-md transition-all ${myAvailability === "no" ? "bg-destructive text-white shadow-sm" : "hover:bg-destructive/10 text-muted-foreground hover:text-destructive"}`}
                             >
                               <X size={16} />
                             </button>
@@ -292,7 +364,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                           <div className="text-[10px] font-bold uppercase text-destructive tracking-tight leading-none">
                             {t("indispensable")}
                             <br />
-                            fehlt
+                            {t("missing")}
                           </div>
                         )}
                       </td>
@@ -380,7 +452,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
         )}
         <div className="flex items-center gap-2 pt-2">
           <Avatar
-            user={{ id: poll.creatorId, displayName: poll.creatorName }}
+            src={poll.creatorImage}
+            displayName={poll.creatorName}
             size="xs"
           />
           <span className="text-xs text-muted-foreground">
@@ -394,12 +467,15 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           const qOptions = poll.options.filter((o) => o.questionId === q.id);
           const currentAnswer =
             answers[q.id] ??
-            poll.votes.find((v) => v.questionId === q.id)?.value ??
+            poll.votes.find((v) => v.questionId === q.id && v.userId === userId)
+              ?.value ??
             (q.type === "multiple_choice"
               ? poll.votes
-                  .filter((v) => v.questionId === q.id)
+                  .filter((v) => v.questionId === q.id && v.userId === userId)
                   .map((v) => v.optionId)
-              : poll.votes.find((v) => v.questionId === q.id)?.optionId) ??
+              : poll.votes.find(
+                  (v) => v.questionId === q.id && v.userId === userId,
+                )?.optionId) ??
             "";
 
           return (
@@ -528,7 +604,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
       {isCreator && poll.type === "survey" && poll.votes.length > 0 && (
         <div className="pt-10 space-y-6">
           <h3 className="text-xl font-black">
-            Antworten ({new Set(poll.votes.map((v) => v.userId)).size})
+            {t("results")} ({new Set(poll.votes.map((v) => v.userId)).size})
           </h3>
           <div className="bg-card border border-border rounded-2xl overflow-hidden divide-y divide-border">
             {poll.questions.map((q) => {
@@ -544,12 +620,25 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                         key={idx}
                         className="flex items-center gap-3 text-sm"
                       >
-                        <Avatar user={{ id: v.userId }} size="xs" />
+                        <Avatar
+                          src={
+                            poll.invites.find((i) => i.userId === v.userId)
+                              ?.image ||
+                            (v.userId === poll.creatorId
+                              ? poll.creatorImage
+                              : null)
+                          }
+                          displayName={
+                            poll.invites.find((i) => i.userId === v.userId)
+                              ?.displayName || poll.creatorName
+                          }
+                          size="xs"
+                        />
                         <span className="bg-muted/30 px-3 py-1.5 rounded-lg flex-1">
                           {v.value ||
                             poll.options.find((o) => o.id === v.optionId)
                               ?.label ||
-                            (v.optionId ? "Ja" : "Nein")}
+                            (v.optionId ? t("yes") : t("no"))}
                         </span>
                       </div>
                     ))}

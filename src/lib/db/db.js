@@ -25,7 +25,11 @@ export async function safeQuery(query) {
     const data = await query;
     return { data, error: false };
   } catch (err) {
-    console.error("Database query failed:", err);
+    console.error("--- DATABASE QUERY FAILED ---");
+    console.error("Error:", err.message);
+    if (err.sql) console.error("SQL:", err.sql);
+    if (err.stack) console.error("Stack:", err.stack);
+    console.error("-----------------------------");
     return { data: null, error: true };
   }
 }
