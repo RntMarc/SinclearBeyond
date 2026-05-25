@@ -494,7 +494,11 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2 hover:bg-sidebar-accent transition-colors text-left"
                   >
-                    <Avatar src={user.image} displayName={user.displayName} size="xs" />
+                    <Avatar
+                      src={user.image}
+                      displayName={user.displayName}
+                      size="xs"
+                    />
                     <span className="text-sm">{user.displayName}</span>
                   </button>
                 ))

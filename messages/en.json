@@ -197,6 +197,23 @@
         "failed": "Passkey login failed."
       },
       "displayNameRequired": "Please enter a display name."
+    },
+    "discord": "Discord",
+    "registration": {
+      "required": "Required",
+      "optional": "Optional",
+      "emailFlow": {
+        "title": "Email registration",
+        "description": "For the classic registration flow, please fill in both fields."
+      },
+      "displayNamePlaceholder": "e.g. Max Mustermann",
+      "emailPlaceholder": "name@sinclear.de",
+      "emailHint": "Leave this field empty if you want to register directly with Discord instead.",
+      "methodHint": "Registration is possible either with an @sinclear.de email address or one of the methods below.",
+      "discordFlow": {
+        "title": "Registration with Discord",
+        "description": "Use Discord for quick registration. Only your display name is required."
+      }
     }
   },
   "Home": {
