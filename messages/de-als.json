@@ -53,7 +53,8 @@
     "reviews": "Reviews",
     "info": "Changelog",
     "office": "Office",
-    "polls": "Umfraga & Termie"
+    "polls": "Umfraga & Termie",
+    "chat": "Schwätz"
   },
   "Office": {
     "title": "Office",
@@ -682,7 +683,22 @@
       "passkeyLastUsed": "Zuletzt hergnomma",
       "passkeyDeleteConfirm": "Den Passkey wirklich lescha?",
       "passkeyModalTitle": "Passkey a Nama gäba",
-      "passkeyModalDesc": "Gib dem Passkey an Nama, damit en schbäder wiederkennsch (z.B. \"Moi iPhone\")."
+      "passkeyModalDesc": "Gib dem Passkey an Nama, damit en schbäder wiederkennsch (z.B. \"Moi iPhone\").",
+      "discordTitle": "Discord-Vrknüpfong",
+      "discordConnected": "Dei Kondo isch scho mit Discord vrknüpft.",
+      "discordDescription": "Vrknüpf dei Kondo mit Discord, no goht d Anmeldung leichter.",
+      "matrixTitle": "Matrix-Vrknüpfong",
+      "matrixDescription": "Vrknüpf dei Matrix-Kondo sicher über OAuth2 beim Homeserver. Mir speichret koi Matrix-Passwort.",
+      "matrixLink": "Matrix über OAuth2 vrknüpfä",
+      "matrixUnlink": "Matrix-Vrknüpfong wegmacha",
+      "matrixCurrent": "Grad vrknüpft: {matrixHandle}",
+      "matrixIdentifierPlaceholder": "Matrix-Login (z. B. @nutzer:matrix.org)",
+      "matrixHomeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+      "matrixPasswordPlaceholder": "Matrix-Passwort",
+      "matrixLinkError": "Matrix-Vrknüpfong hot net klappt. Bittschee Dada prüafa.",
+      "matrixLinkedSuccess": "Matrix erfolgräich vrknüpft: {matrixUserId}",
+      "matrixUnlinkError": "Matrix-Vrknüpfong hot net glöscht werda kenna.",
+      "matrixUnlinkedSuccess": "Matrix-Vrknüpfong entfernt."
     }
   },
   "Feedback": {
@@ -800,5 +816,23 @@
     "tracks": "Titel",
     "albums": "Albe",
     "openAlbum": "Album uffmacha"
+  },
+  "Chat": {
+    "subtitle": "Kommunikation",
+    "title": "Schwätz",
+    "linkRequired": "Vrknüpf zerscht dei Matrix-Kondo in de Aischtellonga (Profil), no goht dr Schwätz.",
+    "authError": "Matrix-Aameldong hot net klappt.",
+    "linkedAs": "Vrknüpft als {matrixUserId}",
+    "identifierPlaceholder": "Matrix-Benutzername odr @user:server",
+    "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+    "passwordPlaceholder": "Matrix-Passwort",
+    "loginButton": "OAuth2-Login starta",
+    "authSuccess": "Matrix-Aameldong hot klappt. Jetzt kannsch schicka.",
+    "availableUsers": "Vrknüpfte Leit",
+    "noSelection": "Koi Chat-Partner gwählt",
+    "messagePlaceholder": "Nåchricht neischreiba",
+    "send": "Nåchricht schicka",
+    "sessionRequired": "Bitte verifizier die Session über OAuth2 bei deim Homeserver.",
+    "oauthError": "OAuth2-Aameldong hot net klappt odr isch abbrocha."
   }
 }

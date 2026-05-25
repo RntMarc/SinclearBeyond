@@ -62,7 +62,6 @@ export async function saveProfile(_prevState, formData) {
 
     const discord = formData.get("discordHandle")?.toString().trim() || null;
     const fluxer = formData.get("fluxerHandle")?.toString().trim() || null;
-    const matrix = formData.get("matrixHandle")?.toString().trim() || null;
     const signal = formData.get("signalNumber")?.toString().trim() || null;
     const whatsapp = formData.get("whatsappNumber")?.toString().trim() || null;
 
@@ -149,7 +148,7 @@ export async function saveProfile(_prevState, formData) {
     const contactData = {
       discordHandle: user?.discordId ? existing?.discordHandle : discord,
       fluxerHandle: fluxer,
-      matrixHandle: matrix,
+      matrixHandle: existing?.matrixHandle ?? null,
       signalNumber: signal,
       whatsappNumber: whatsapp,
       discordVisibility: discordVis,
