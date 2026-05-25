@@ -2,6 +2,7 @@
 
 import { Download, Key, Palette, Settings, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import PageHeader from "@/components/layout/PageHeader";
 import AppearanceForm from "@/components/profile/AppearanceForm";
@@ -10,6 +11,71 @@ import EmailChangeForm from "@/components/profile/EmailChangeForm";
 import ExportManager from "@/components/profile/ExportManager";
 import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
+
+function MatrixLinkCard({ t, isLinked, matrixHandle }) {
+  const [identifier, setIdentifier] = useState("");
+  const [homeserver, setHomeserver] = useState("https://matrix.org");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState({ error: "", success: "", pending: false });
+
+  const onLink = async () => {
+    setStatus({ error: "", success: "", pending: true });
+    const response = await fetch("/api/matrix/link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier, homeserver, password }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setStatus({ error: t("login.matrixLinkError"), success: "", pending: false });
+      return;
+    }
+    setPassword("");
+    setStatus({ error: "", success: t("login.matrixLinkedSuccess", { matrixUserId: data.matrixUserId }), pending: false });
+    window.location.reload();
+  };
+
+  const onUnlink = async () => {
+    setStatus({ error: "", success: "", pending: true });
+    const response = await fetch("/api/matrix/unlink", { method: "POST" });
+    if (!response.ok) {
+      setStatus({ error: t("login.matrixUnlinkError"), success: "", pending: false });
+      return;
+    }
+    setStatus({ error: "", success: t("login.matrixUnlinkedSuccess"), pending: false });
+    window.location.reload();
+  };
+
+  return (
+    <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 space-y-4">
+      <div className="text-center">
+        <h3 className="text-lg font-medium mb-2">{t("login.matrixTitle")}</h3>
+        <p className="text-sm text-muted-foreground">{t("login.matrixDescription")}</p>
+      </div>
+      {status.error && <p className="text-sm text-destructive">{status.error}</p>}
+      {status.success && <p className="text-sm text-green-500">{status.success}</p>}
+
+      {isLinked ? (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">{t("login.matrixCurrent", { matrixHandle })}</p>
+          <button type="button" onClick={onUnlink} disabled={status.pending} className="w-full px-4 py-2 rounded-lg border border-destructive text-destructive text-sm font-medium hover:bg-destructive/5 transition-colors disabled:opacity-60">
+            {t("login.matrixUnlink")}
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder={t("login.matrixIdentifierPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+          <input value={homeserver} onChange={(e) => setHomeserver(e.target.value)} placeholder={t("login.matrixHomeserverPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder={t("login.matrixPasswordPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+          <button type="button" onClick={onLink} disabled={status.pending} className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60">
+            {t("login.matrixLink")}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 export default function EinstellungenClient({
   user,
@@ -93,12 +159,10 @@ export default function EinstellungenClient({
                       <title id="discord-logo-title">Discord Logo</title>
                       <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" />
                     </svg>
-                    Discord Verknüpfung
+                    {t("login.discordTitle")}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-6">
-                    {user.discordId
-                      ? "Dein Konto ist bereits mit Discord verknüpft."
-                      : "Verknüpfe dein Konto mit Discord, um dich einfacher anzumelden."}
+                    {user.discordId ? t("login.discordConnected") : t("login.discordDescription")}
                   </p>
                   {!user.discordId && (
                     <button
@@ -108,10 +172,15 @@ export default function EinstellungenClient({
                       }}
                       className="w-full px-4 py-2 rounded-lg border border-[#5865F2] text-[#5865F2] text-sm font-medium hover:bg-[#5865F2]/5 transition-colors flex items-center justify-center gap-2"
                     >
-                      Discord verknüpfen
+                      {t("profile.discordLink")}
                     </button>
                   )}
                 </div>
+                <MatrixLinkCard
+                  t={t}
+                  isLinked={Boolean(contact?.matrixHandle)}
+                  matrixHandle={contact?.matrixHandle || ""}
+                />
                 <PasskeyManager />
               </div>
             )}
