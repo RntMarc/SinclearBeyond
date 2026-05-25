@@ -2,6 +2,7 @@ import { and, eq, ne } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
+import { setMatrixSession } from "@/lib/matrix/session";
 import { contactInfo } from "@/lib/db/schema";
 
 function normalizeHomeserver(input) {
@@ -47,6 +48,8 @@ export async function POST(request) {
     const { error } = await safeQuery(db.insert(contactInfo).values({ id: crypto.randomUUID(), userId: session.sub, matrixHandle }));
     if (error) return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
+
+  await setMatrixSession({ accessToken: loginData.access_token, matrixUserId, homeserver, deviceId: loginData.device_id });
 
   return NextResponse.json({ ok: true, matrixUserId, homeserver });
 }

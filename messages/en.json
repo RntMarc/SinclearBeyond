@@ -612,7 +612,7 @@
       "discordConnected": "Your account is already linked with Discord.",
       "discordDescription": "Link your account with Discord for easier sign-in.",
       "matrixTitle": "Matrix Link",
-      "matrixDescription": "Add your Matrix handle in your profile to chat with linked users.",
+      "matrixDescription": "Link your Matrix account with real credentials. Your password is never stored.",
       "matrixLink": "Link Matrix",
       "matrixUnlink": "Remove Matrix link",
       "matrixCurrent": "Currently linked: {matrixHandle}",
@@ -828,7 +828,6 @@
     "subtitle": "Communication",
     "title": "Chat",
     "linkRequired": "Please link your Matrix account in settings (profile) first to use chat.",
-    "comingSoon": "Your Matrix account is linked. The matrix-js-sdk chat integration will follow in the next step.",
     "authError": "Matrix login failed.",
     "linkedAs": "Linked as {matrixUserId}",
     "identifierPlaceholder": "Matrix username or @user:server",
@@ -839,6 +838,7 @@
     "availableUsers": "Linked users",
     "noSelection": "No chat partner selected",
     "messagePlaceholder": "Type a message",
-    "send": "Send message"
+    "send": "Send message",
+    "sessionRequired": "Please verify this browser session once with your homeserver to start chatting."
   }
 }

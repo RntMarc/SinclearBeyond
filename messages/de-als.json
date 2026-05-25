@@ -688,7 +688,7 @@
       "discordConnected": "Dei Kondo isch scho mit Discord vrknüpft.",
       "discordDescription": "Vrknüpf dei Kondo mit Discord, no goht d Anmeldung leichter.",
       "matrixTitle": "Matrix-Vrknüpfong",
-      "matrixDescription": "Trag im Profil dei Matrix-Handle ei, no kannsch mit vrknüpfta Leit schwätza.",
+      "matrixDescription": "Vrknüpf dei Matrix-Kondo mit echte Zugangsdada. S Passwort wird net gspeichert.",
       "matrixLink": "Matrix vrknüpfä",
       "matrixUnlink": "Matrix-Vrknüpfong wegmacha",
       "matrixCurrent": "Grad vrknüpft: {matrixHandle}",
@@ -821,7 +821,6 @@
     "subtitle": "Kommunikation",
     "title": "Schwätz",
     "linkRequired": "Vrknüpf zerscht dei Matrix-Kondo in de Aischtellonga (Profil), no goht dr Schwätz.",
-    "comingSoon": "Dei Matrix-Kondo isch vrknüpft. D matrix-js-sdk-Chat-Integration kommt im nexschda Schrett.",
     "authError": "Matrix-Aameldong hot net klappt.",
     "linkedAs": "Vrknüpft als {matrixUserId}",
     "identifierPlaceholder": "Matrix-Benutzername odr @user:server",
@@ -832,6 +831,7 @@
     "availableUsers": "Vrknüpfte Leit",
     "noSelection": "Koi Chat-Partner gwählt",
     "messagePlaceholder": "Nåchricht neischreiba",
-    "send": "Nåchricht schicka"
+    "send": "Nåchricht schicka",
+    "sessionRequired": "Bitte verifizier die Browser-Session oimol bei deim Homeserver, no kannsch schwätza."
   }
 }
