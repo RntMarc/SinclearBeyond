@@ -11,6 +11,7 @@ import {
   Lock,
   Map as MapIcon,
   Menu,
+  MessageCircle,
   MessageSquarePlus,
   Settings,
   SquarePlay,
@@ -80,6 +81,7 @@ export default function AppShell({ children, user, session }) {
       icon: Banknote,
     },
     { href: "/feedback", label: t("feedback"), icon: MessageSquarePlus },
+    { href: "/chat", label: t("chat"), icon: MessageCircle },
     {
       href: "/info",
       label: t("info"),
