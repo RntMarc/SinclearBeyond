@@ -612,8 +612,8 @@
       "discordConnected": "Your account is already linked with Discord.",
       "discordDescription": "Link your account with Discord for easier sign-in.",
       "matrixTitle": "Matrix Link",
-      "matrixDescription": "Link your Matrix account with real credentials. Your password is never stored.",
-      "matrixLink": "Link Matrix",
+      "matrixDescription": "Link your Matrix account securely via OAuth2 on your homeserver. We never store your Matrix password.",
+      "matrixLink": "Link Matrix via OAuth2",
       "matrixUnlink": "Remove Matrix link",
       "matrixCurrent": "Currently linked: {matrixHandle}",
       "matrixIdentifierPlaceholder": "Matrix login (e.g. @user:matrix.org)",
@@ -833,12 +833,13 @@
     "identifierPlaceholder": "Matrix username or @user:server",
     "homeserverPlaceholder": "Homeserver (e.g. https://matrix.org)",
     "passwordPlaceholder": "Matrix password",
-    "loginButton": "Sign in to Matrix",
+    "loginButton": "Start OAuth2 login",
     "authSuccess": "Matrix login successful. You can now send messages.",
     "availableUsers": "Linked users",
     "noSelection": "No chat partner selected",
     "messagePlaceholder": "Type a message",
     "send": "Send message",
-    "sessionRequired": "Please verify this browser session once with your homeserver to start chatting."
+    "sessionRequired": "Please verify this session via OAuth2 with your homeserver.",
+    "oauthError": "OAuth2 sign-in failed or was cancelled."
   }
 }

@@ -688,8 +688,8 @@
       "discordConnected": "Dei Kondo isch scho mit Discord vrknüpft.",
       "discordDescription": "Vrknüpf dei Kondo mit Discord, no goht d Anmeldung leichter.",
       "matrixTitle": "Matrix-Vrknüpfong",
-      "matrixDescription": "Vrknüpf dei Matrix-Kondo mit echte Zugangsdada. S Passwort wird net gspeichert.",
-      "matrixLink": "Matrix vrknüpfä",
+      "matrixDescription": "Vrknüpf dei Matrix-Kondo sicher über OAuth2 beim Homeserver. Mir speichret koi Matrix-Passwort.",
+      "matrixLink": "Matrix über OAuth2 vrknüpfä",
       "matrixUnlink": "Matrix-Vrknüpfong wegmacha",
       "matrixCurrent": "Grad vrknüpft: {matrixHandle}",
       "matrixIdentifierPlaceholder": "Matrix-Login (z. B. @nutzer:matrix.org)",
@@ -826,12 +826,13 @@
     "identifierPlaceholder": "Matrix-Benutzername odr @user:server",
     "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
-    "loginButton": "Bei Matrix aamelda",
+    "loginButton": "OAuth2-Login starta",
     "authSuccess": "Matrix-Aameldong hot klappt. Jetzt kannsch schicka.",
     "availableUsers": "Vrknüpfte Leit",
     "noSelection": "Koi Chat-Partner gwählt",
     "messagePlaceholder": "Nåchricht neischreiba",
     "send": "Nåchricht schicka",
-    "sessionRequired": "Bitte verifizier die Browser-Session oimol bei deim Homeserver, no kannsch schwätza."
+    "sessionRequired": "Bitte verifizier die Session über OAuth2 bei deim Homeserver.",
+    "oauthError": "OAuth2-Aameldong hot net klappt odr isch abbrocha."
   }
 }

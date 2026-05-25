@@ -13,9 +13,7 @@ import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
 
 function MatrixLinkCard({ t, isLinked, matrixHandle }) {
-  const [identifier, setIdentifier] = useState("");
   const [homeserver, setHomeserver] = useState("https://matrix.org");
-  const [password, setPassword] = useState("");
   const [status, setStatus] = useState({ error: "", success: "", pending: false });
 
   const onLink = async () => {
@@ -23,16 +21,15 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
     const response = await fetch("/api/matrix/link", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identifier, homeserver, password }),
+      body: JSON.stringify({ homeserver }),
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       setStatus({ error: t("login.matrixLinkError"), success: "", pending: false });
       return;
     }
-    setPassword("");
-    setStatus({ error: "", success: t("login.matrixLinkedSuccess", { matrixUserId: data.matrixUserId }), pending: false });
-    window.location.reload();
+    if (data.redirectTo) { window.location.href = data.redirectTo; return; }
+    setStatus({ error: t("login.matrixLinkError"), success: "", pending: false });
   };
 
   const onUnlink = async () => {
@@ -64,9 +61,7 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
         </div>
       ) : (
         <div className="space-y-3">
-          <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder={t("login.matrixIdentifierPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
           <input value={homeserver} onChange={(e) => setHomeserver(e.target.value)} placeholder={t("login.matrixHomeserverPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
-          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder={t("login.matrixPasswordPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
           <button type="button" onClick={onLink} disabled={status.pending} className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60">
             {t("login.matrixLink")}
           </button>

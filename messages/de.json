@@ -719,8 +719,8 @@
       "discordConnected": "Dein Konto ist bereits mit Discord verknüpft.",
       "discordDescription": "Verknüpfe dein Konto mit Discord, um dich einfacher anzumelden.",
       "matrixTitle": "Matrix Verknüpfung",
-      "matrixDescription": "Verknüpfe deinen Matrix-Account mit echten Zugangsdaten. Das Passwort wird nicht gespeichert.",
-      "matrixLink": "Matrix verknüpfen",
+      "matrixDescription": "Verknüpfe deinen Matrix-Account sicher über OAuth2 beim Homeserver. Wir speichern kein Matrix-Passwort.",
+      "matrixLink": "Matrix via OAuth2 verknüpfen",
       "matrixUnlink": "Matrix-Verknüpfung entfernen",
       "matrixCurrent": "Aktuell verknüpft: {matrixHandle}",
       "matrixIdentifierPlaceholder": "Matrix-Login (z. B. @nutzer:matrix.org)",
@@ -858,12 +858,13 @@
     "identifierPlaceholder": "Matrix-Benutzername oder @user:server",
     "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
-    "loginButton": "Bei Matrix anmelden",
+    "loginButton": "OAuth2-Login starten",
     "authSuccess": "Matrix-Anmeldung erfolgreich. Du kannst jetzt Nachrichten senden.",
     "availableUsers": "Verknüpfte Nutzer",
     "noSelection": "Kein Chatpartner ausgewählt",
     "messagePlaceholder": "Nachricht eingeben",
     "send": "Nachricht senden",
-    "sessionRequired": "Bitte verifiziere diese Browser-Session einmalig bei deinem Homeserver, um zu chatten."
+    "sessionRequired": "Bitte verifiziere diese Session über OAuth2 bei deinem Homeserver.",
+    "oauthError": "OAuth2-Anmeldung fehlgeschlagen oder abgebrochen."
   }
 }

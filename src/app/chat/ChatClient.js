@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageCircle, Send } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import Avatar from "@/components/Avatar";
@@ -8,20 +9,26 @@ import PageHeader from "@/components/layout/PageHeader";
 
 export default function ChatClient({ matrixHandle }) {
   const t = useTranslations("Chat");
+  const searchParams = useSearchParams();
   const [users, setUsers] = useState([]);
   const [selected, setSelected] = useState(null);
   const [roomId, setRoomId] = useState("");
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [sessionReady, setSessionReady] = useState(false);
-  const [auth, setAuth] = useState({ identifier: "", homeserver: "https://matrix.org", password: "", pending: false, error: "" });
+  const [homeserver, setHomeserver] = useState("https://matrix.org");
+  const [authError, setAuthError] = useState("");
   const [pendingSend, setPendingSend] = useState(false);
   const isLinked = Boolean(matrixHandle);
 
   const parsedHandle = useMemo(() => {
-    const [matrixUserId] = (matrixHandle || "").split("|");
-    return { matrixUserId };
+    const [matrixUserId, linkedHomeserver] = (matrixHandle || "").split("|");
+    return { matrixUserId, linkedHomeserver };
   }, [matrixHandle]);
+
+  useEffect(() => {
+    if (parsedHandle.linkedHomeserver) setHomeserver(parsedHandle.linkedHomeserver);
+  }, [parsedHandle.linkedHomeserver]);
 
   const loadSession = async () => {
     const res = await fetch("/api/matrix/session");
@@ -45,9 +52,10 @@ export default function ChatClient({ matrixHandle }) {
 
   useEffect(() => {
     if (!isLinked) return;
+    if (searchParams.get("matrix_oauth") === "error") setAuthError(t("oauthError"));
     loadSession();
     loadUsers();
-  }, [isLinked]);
+  }, [isLinked, searchParams, t]);
 
   useEffect(() => {
     if (!roomId) return;
@@ -56,19 +64,15 @@ export default function ChatClient({ matrixHandle }) {
     return () => clearInterval(interval);
   }, [roomId]);
 
-  const verifySession = async () => {
-    setAuth((p) => ({ ...p, pending: true, error: "" }));
+  const startOAuthSession = async () => {
     const res = await fetch("/api/matrix/session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identifier: auth.identifier, homeserver: auth.homeserver, password: auth.password }),
+      body: JSON.stringify({ homeserver }),
     });
-    if (!res.ok) {
-      setAuth((p) => ({ ...p, pending: false, error: t("authError") }));
-      return;
-    }
-    setAuth((p) => ({ ...p, pending: false, password: "", error: "" }));
-    setSessionReady(true);
+    const data = await res.json().catch(() => ({}));
+    if (data.redirectTo) window.location.href = data.redirectTo;
+    else setAuthError(t("oauthError"));
   };
 
   const openChat = async (user) => {
@@ -107,13 +111,11 @@ export default function ChatClient({ matrixHandle }) {
           {isLinked && !sessionReady && (
             <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
               <p className="text-sm text-muted-foreground">{t("sessionRequired")}</p>
-              <div className="grid gap-3 md:grid-cols-4">
-                <input value={auth.identifier} onChange={(e) => setAuth((p) => ({ ...p, identifier: e.target.value }))} placeholder={t("identifierPlaceholder")} className="rounded-lg border border-border bg-background px-3 py-2 text-sm" />
-                <input value={auth.homeserver} onChange={(e) => setAuth((p) => ({ ...p, homeserver: e.target.value }))} placeholder={t("homeserverPlaceholder")} className="rounded-lg border border-border bg-background px-3 py-2 text-sm" />
-                <input type="password" value={auth.password} onChange={(e) => setAuth((p) => ({ ...p, password: e.target.value }))} placeholder={t("passwordPlaceholder")} className="rounded-lg border border-border bg-background px-3 py-2 text-sm" />
-                <button type="button" onClick={verifySession} disabled={auth.pending} className="rounded-lg border border-primary text-primary text-sm font-medium px-4 py-2">{t("loginButton")}</button>
+              <div className="flex gap-3">
+                <input value={homeserver} onChange={(e) => setHomeserver(e.target.value)} placeholder={t("homeserverPlaceholder")} className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+                <button type="button" onClick={startOAuthSession} className="rounded-lg border border-primary text-primary text-sm font-medium px-4 py-2">{t("loginButton")}</button>
               </div>
-              {auth.error && <p className="text-sm text-destructive">{auth.error}</p>}
+              {authError && <p className="text-sm text-destructive">{authError}</p>}
             </div>
           )}
 
