@@ -81,6 +81,7 @@ export const config = {
     "/fotos/:path*",
     "/admin/:path*",
     "/entdecken/:path*",
+    "/forum/:path*",
     "/feedback/:path*",
     "/abos/:path*",
     "/office/:path*",
