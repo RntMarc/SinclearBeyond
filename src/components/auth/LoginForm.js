@@ -266,7 +266,10 @@ export default function LoginPage() {
             <>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="displayName" className="text-sm font-medium text-foreground">
+                  <label
+                    htmlFor="displayName"
+                    className="text-sm font-medium text-foreground"
+                  >
                     {t("displayName")}
                   </label>
                   <span className="text-[11px] font-semibold uppercase tracking-wide text-primary">
@@ -283,7 +286,9 @@ export default function LoginPage() {
                   className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
-              <p className="text-xs text-muted-foreground">{t("registration.methodHint")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("registration.methodHint")}
+              </p>
 
               <details
                 className="rounded-xl border border-border bg-card"
@@ -293,7 +298,9 @@ export default function LoginPage() {
                   className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-foreground list-none"
                   onClick={(e) => {
                     e.preventDefault();
-                    setExpandedRegisterMethod((prev) => (prev === "email" ? "" : "email"));
+                    setExpandedRegisterMethod((prev) =>
+                      prev === "email" ? "" : "email",
+                    );
                   }}
                 >
                   {t("registration.emailFlow.title")}
@@ -308,7 +315,10 @@ export default function LoginPage() {
                     </p>
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <label htmlFor="email" className="text-sm font-medium text-foreground">
+                        <label
+                          htmlFor="email"
+                          className="text-sm font-medium text-foreground"
+                        >
                           {t("email")}
                         </label>
                         <span className="text-[11px] font-semibold uppercase tracking-wide text-primary">
@@ -330,7 +340,9 @@ export default function LoginPage() {
                       disabled={loading || !displayName.trim() || !email.trim()}
                       className="w-full"
                     >
-                      {loading ? t("sending") : `${t("createAccount")} & ${t("sendCode")}`}
+                      {loading
+                        ? t("sending")
+                        : `${t("createAccount")} & ${t("sendCode")}`}
                     </Button>
                   </div>
                 )}
@@ -344,7 +356,9 @@ export default function LoginPage() {
                   className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-foreground list-none"
                   onClick={(e) => {
                     e.preventDefault();
-                    setExpandedRegisterMethod((prev) => (prev === "discord" ? "" : "discord"));
+                    setExpandedRegisterMethod((prev) =>
+                      prev === "discord" ? "" : "discord",
+                    );
                   }}
                 >
                   {t("registration.discordFlow.title")}
@@ -391,7 +405,10 @@ export default function LoginPage() {
           ) : (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="email" className="text-sm font-medium text-foreground">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-foreground"
+                >
                   {t("email")}
                 </label>
                 <span className="text-[11px] font-semibold uppercase tracking-wide text-primary">
@@ -469,7 +486,6 @@ export default function LoginPage() {
               </Button>
             </>
           )}
-
         </form>
       </div>
     </main>

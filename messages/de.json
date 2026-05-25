@@ -36,7 +36,7 @@
     "dbError": "Daten konnten nicht geladen werden. Bitte versuche es später erneut."
   },
   "Navigation": {
-    "entertainment": "Unterhaltung",
+    "entertainment": "Forum",
     "travel": "Reisen & Events",
     "calendar": "Kalender",
     "birthdays": "Geburtstage",
@@ -53,7 +53,8 @@
     "reviews": "Reviews",
     "info": "Changelog",
     "office": "Office",
-    "polls": "Umfragen & Termine"
+    "polls": "Umfragen & Termine",
+    "chat": "Chat"
   },
   "Office": {
     "title": "Office",
@@ -411,7 +412,7 @@
     }
   },
   "Feed": {
-    "title": "Unterhaltung",
+    "title": "Forum",
     "subtitle": "Foren & Diskussionen",
     "newPost": "Neuer Beitrag",
     "myForums": "Meine Foren",
@@ -437,7 +438,13 @@
     "deleteSuccess": "Beitrag gelöscht",
     "deleteConfirmTitle": "Beitrag löschen?",
     "deleteConfirmDesc": "Möchtest du diesen Beitrag wirklich unwiderruflich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "leaveConfirmTitle": "Forum verlassen?",
+    "leaveConfirmDesc": "Möchtest du dieses Forum wirklich verlassen? Du erhältst dann keine Benachrichtigungen mehr über neue Beiträge.",
     "loadError": "Beiträge konnten nicht geladen werden.",
+    "tabs": {
+      "posts": "Beiträge",
+      "info": "Informationen"
+    },
     "form": {
       "modalTitleEdit": "Beitrag bearbeiten",
       "modalTitleNew": "Inhalt empfehlen",
@@ -713,7 +720,22 @@
       "passkeyLastUsed": "Zuletzt verwendet",
       "passkeyDeleteConfirm": "Diesen Passkey wirklich löschen?",
       "passkeyModalTitle": "Passkey benennen",
-      "passkeyModalDesc": "Gib diesem Passkey einen Namen, damit du ihn später wiedererkennst (z.B. \"Mein iPhone\")."
+      "passkeyModalDesc": "Gib diesem Passkey einen Namen, damit du ihn später wiedererkennst (z.B. \"Mein iPhone\").",
+      "discordTitle": "Discord Verknüpfung",
+      "discordConnected": "Dein Konto ist bereits mit Discord verknüpft.",
+      "discordDescription": "Verknüpfe dein Konto mit Discord, um dich einfacher anzumelden.",
+      "matrixTitle": "Matrix Verknüpfung",
+      "matrixDescription": "Verknüpfe deinen Matrix-Account sicher über OAuth2 beim Homeserver. Wir speichern kein Matrix-Passwort.",
+      "matrixLink": "Matrix via OAuth2 verknüpfen",
+      "matrixUnlink": "Matrix-Verknüpfung entfernen",
+      "matrixCurrent": "Aktuell verknüpft: {matrixHandle}",
+      "matrixIdentifierPlaceholder": "Matrix-Login (z. B. @nutzer:matrix.org)",
+      "matrixHomeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+      "matrixPasswordPlaceholder": "Matrix-Passwort",
+      "matrixLinkError": "Matrix-Verknüpfung fehlgeschlagen. Bitte Zugangsdaten prüfen.",
+      "matrixLinkedSuccess": "Matrix erfolgreich verknüpft: {matrixUserId}",
+      "matrixUnlinkError": "Matrix-Verknüpfung konnte nicht entfernt werden.",
+      "matrixUnlinkedSuccess": "Matrix-Verknüpfung entfernt."
     }
   },
   "Feedback": {
@@ -832,5 +854,23 @@
     "tracks": "Titel",
     "albums": "Alben",
     "openAlbum": "Album öffnen"
+  },
+  "Chat": {
+    "subtitle": "Kommunikation",
+    "title": "Chat",
+    "linkRequired": "Bitte verknüpfe zuerst deinen Matrix-Account in den Einstellungen (Profil), um den Chat zu nutzen.",
+    "authError": "Matrix-Anmeldung fehlgeschlagen.",
+    "linkedAs": "Verknüpft als {matrixUserId}",
+    "identifierPlaceholder": "Matrix-Benutzername oder @user:server",
+    "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+    "passwordPlaceholder": "Matrix-Passwort",
+    "loginButton": "OAuth2-Login starten",
+    "authSuccess": "Matrix-Anmeldung erfolgreich. Du kannst jetzt Nachrichten senden.",
+    "availableUsers": "Verknüpfte Nutzer",
+    "noSelection": "Kein Chatpartner ausgewählt",
+    "messagePlaceholder": "Nachricht eingeben",
+    "send": "Nachricht senden",
+    "sessionRequired": "Bitte verifiziere diese Session über OAuth2 bei deinem Homeserver.",
+    "oauthError": "OAuth2-Anmeldung fehlgeschlagen oder abgebrochen."
   }
 }
