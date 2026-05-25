@@ -61,10 +61,10 @@ export default function AppShell({ children, user, session }) {
 
   const navItems = [
     {
-      href: "/feed",
+      href: "/forum",
       label: t("entertainment"),
       icon: SquarePlay,
-      badge: unreadForums > 0 && !pathname.startsWith("/feed"),
+      badge: unreadForums > 0 && !pathname.startsWith("/forum"),
     },
     { href: "/entdecken", label: t("discover"), icon: Compass },
     { href: "/kritik", label: t("reviews"), icon: Star },
