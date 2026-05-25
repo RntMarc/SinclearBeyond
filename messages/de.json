@@ -719,7 +719,17 @@
       "discordConnected": "Dein Konto ist bereits mit Discord verknüpft.",
       "discordDescription": "Verknüpfe dein Konto mit Discord, um dich einfacher anzumelden.",
       "matrixTitle": "Matrix Verknüpfung",
-      "matrixDescription": "Trage im Profil deinen Matrix-Handle ein, um im Chat mit verknüpften Nutzern zu schreiben."
+      "matrixDescription": "Trage im Profil deinen Matrix-Handle ein, um im Chat mit verknüpften Nutzern zu schreiben.",
+      "matrixLink": "Matrix verknüpfen",
+      "matrixUnlink": "Matrix-Verknüpfung entfernen",
+      "matrixCurrent": "Aktuell verknüpft: {matrixHandle}",
+      "matrixIdentifierPlaceholder": "Matrix-Login (z. B. @nutzer:matrix.org)",
+      "matrixHomeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+      "matrixPasswordPlaceholder": "Matrix-Passwort",
+      "matrixLinkError": "Matrix-Verknüpfung fehlgeschlagen. Bitte Zugangsdaten prüfen.",
+      "matrixLinkedSuccess": "Matrix erfolgreich verknüpft: {matrixUserId}",
+      "matrixUnlinkError": "Matrix-Verknüpfung konnte nicht entfernt werden.",
+      "matrixUnlinkedSuccess": "Matrix-Verknüpfung entfernt."
     }
   },
   "Feedback": {
@@ -843,6 +853,17 @@
     "subtitle": "Kommunikation",
     "title": "Chat",
     "linkRequired": "Bitte verknüpfe zuerst deinen Matrix-Account in den Einstellungen (Profil), um den Chat zu nutzen.",
-    "comingSoon": "Dein Matrix-Account ist verknüpft. Die matrix-js-sdk Chat-Integration folgt im nächsten Schritt."
+    "comingSoon": "Dein Matrix-Account ist verknüpft. Die matrix-js-sdk Chat-Integration folgt im nächsten Schritt.",
+    "authError": "Matrix-Anmeldung fehlgeschlagen.",
+    "linkedAs": "Verknüpft als {matrixUserId}",
+    "identifierPlaceholder": "Matrix-Benutzername oder @user:server",
+    "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+    "passwordPlaceholder": "Matrix-Passwort",
+    "loginButton": "Bei Matrix anmelden",
+    "authSuccess": "Matrix-Anmeldung erfolgreich. Du kannst jetzt Nachrichten senden.",
+    "availableUsers": "Verknüpfte Nutzer",
+    "noSelection": "Kein Chatpartner ausgewählt",
+    "messagePlaceholder": "Nachricht eingeben",
+    "send": "Nachricht senden"
   }
 }

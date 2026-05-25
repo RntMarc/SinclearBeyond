@@ -17,5 +17,10 @@ export async function GET() {
   );
 
   if (error) return NextResponse.json({ error: "Database error" }, { status: 500 });
-  return NextResponse.json({ users: data ?? [] });
+  const usersWithHomeserver = (data ?? []).map((entry) => {
+    const [matrixUserId, homeserver] = (entry.matrixHandle || "").split("|");
+    return { ...entry, matrixUserId, homeserver };
+  });
+
+  return NextResponse.json({ users: usersWithHomeserver });
 }

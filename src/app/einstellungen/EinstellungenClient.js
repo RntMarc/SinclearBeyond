@@ -2,6 +2,7 @@
 
 import { Download, Key, Palette, Settings, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import PageHeader from "@/components/layout/PageHeader";
 import AppearanceForm from "@/components/profile/AppearanceForm";
@@ -10,6 +11,71 @@ import EmailChangeForm from "@/components/profile/EmailChangeForm";
 import ExportManager from "@/components/profile/ExportManager";
 import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
+
+function MatrixLinkCard({ t, isLinked, matrixHandle }) {
+  const [identifier, setIdentifier] = useState("");
+  const [homeserver, setHomeserver] = useState("https://matrix.org");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState({ error: "", success: "", pending: false });
+
+  const onLink = async () => {
+    setStatus({ error: "", success: "", pending: true });
+    const response = await fetch("/api/matrix/link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier, homeserver, password }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setStatus({ error: t("login.matrixLinkError"), success: "", pending: false });
+      return;
+    }
+    setPassword("");
+    setStatus({ error: "", success: t("login.matrixLinkedSuccess", { matrixUserId: data.matrixUserId }), pending: false });
+    window.location.reload();
+  };
+
+  const onUnlink = async () => {
+    setStatus({ error: "", success: "", pending: true });
+    const response = await fetch("/api/matrix/unlink", { method: "POST" });
+    if (!response.ok) {
+      setStatus({ error: t("login.matrixUnlinkError"), success: "", pending: false });
+      return;
+    }
+    setStatus({ error: "", success: t("login.matrixUnlinkedSuccess"), pending: false });
+    window.location.reload();
+  };
+
+  return (
+    <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 space-y-4">
+      <div className="text-center">
+        <h3 className="text-lg font-medium mb-2">{t("login.matrixTitle")}</h3>
+        <p className="text-sm text-muted-foreground">{t("login.matrixDescription")}</p>
+      </div>
+      {status.error && <p className="text-sm text-destructive">{status.error}</p>}
+      {status.success && <p className="text-sm text-green-500">{status.success}</p>}
+
+      {isLinked ? (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">{t("login.matrixCurrent", { matrixHandle })}</p>
+          <button type="button" onClick={onUnlink} disabled={status.pending} className="w-full px-4 py-2 rounded-lg border border-destructive text-destructive text-sm font-medium hover:bg-destructive/5 transition-colors disabled:opacity-60">
+            {t("login.matrixUnlink")}
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder={t("login.matrixIdentifierPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+          <input value={homeserver} onChange={(e) => setHomeserver(e.target.value)} placeholder={t("login.matrixHomeserverPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder={t("login.matrixPasswordPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+          <button type="button" onClick={onLink} disabled={status.pending} className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60">
+            {t("login.matrixLink")}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 export default function EinstellungenClient({
   user,
@@ -110,10 +176,11 @@ export default function EinstellungenClient({
                     </button>
                   )}
                 </div>
-                <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 flex flex-col items-center text-center">
-                  <h3 className="text-lg font-medium mb-2">{t("login.matrixTitle")}</h3>
-                  <p className="text-sm text-muted-foreground">{t("login.matrixDescription")}</p>
-                </div>
+                <MatrixLinkCard
+                  t={t}
+                  isLinked={Boolean(contact?.matrixHandle)}
+                  matrixHandle={contact?.matrixHandle || ""}
+                />
                 <PasskeyManager />
               </div>
             )}

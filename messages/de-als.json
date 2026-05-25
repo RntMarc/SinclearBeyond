@@ -688,7 +688,17 @@
       "discordConnected": "Dei Kondo isch scho mit Discord vrknüpft.",
       "discordDescription": "Vrknüpf dei Kondo mit Discord, no goht d Anmeldung leichter.",
       "matrixTitle": "Matrix-Vrknüpfong",
-      "matrixDescription": "Trag im Profil dei Matrix-Handle ei, no kannsch mit vrknüpfta Leit schwätza."
+      "matrixDescription": "Trag im Profil dei Matrix-Handle ei, no kannsch mit vrknüpfta Leit schwätza.",
+      "matrixLink": "Matrix vrknüpfä",
+      "matrixUnlink": "Matrix-Vrknüpfong wegmacha",
+      "matrixCurrent": "Grad vrknüpft: {matrixHandle}",
+      "matrixIdentifierPlaceholder": "Matrix-Login (z. B. @nutzer:matrix.org)",
+      "matrixHomeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+      "matrixPasswordPlaceholder": "Matrix-Passwort",
+      "matrixLinkError": "Matrix-Vrknüpfong hot net klappt. Bittschee Dada prüafa.",
+      "matrixLinkedSuccess": "Matrix erfolgräich vrknüpft: {matrixUserId}",
+      "matrixUnlinkError": "Matrix-Vrknüpfong hot net glöscht werda kenna.",
+      "matrixUnlinkedSuccess": "Matrix-Vrknüpfong entfernt."
     }
   },
   "Feedback": {
@@ -811,6 +821,17 @@
     "subtitle": "Kommunikation",
     "title": "Schwätz",
     "linkRequired": "Vrknüpf zerscht dei Matrix-Kondo in de Aischtellonga (Profil), no goht dr Schwätz.",
-    "comingSoon": "Dei Matrix-Kondo isch vrknüpft. D matrix-js-sdk-Chat-Integration kommt im nexschda Schrett."
+    "comingSoon": "Dei Matrix-Kondo isch vrknüpft. D matrix-js-sdk-Chat-Integration kommt im nexschda Schrett.",
+    "authError": "Matrix-Aameldong hot net klappt.",
+    "linkedAs": "Vrknüpft als {matrixUserId}",
+    "identifierPlaceholder": "Matrix-Benutzername odr @user:server",
+    "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+    "passwordPlaceholder": "Matrix-Passwort",
+    "loginButton": "Bei Matrix aamelda",
+    "authSuccess": "Matrix-Aameldong hot klappt. Jetzt kannsch schicka.",
+    "availableUsers": "Vrknüpfte Leit",
+    "noSelection": "Koi Chat-Partner gwählt",
+    "messagePlaceholder": "Nåchricht neischreiba",
+    "send": "Nåchricht schicka"
   }
 }
