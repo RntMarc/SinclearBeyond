@@ -1,98 +1,65 @@
-import { and, desc, eq, gte, inArray, lt, notInArray, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import {
-  feedPosts,
-  forumMembers,
-  forums,
-  readStatuses,
-  users,
-} from "@/lib/db/schema";
+import { feedPosts, forumMembers, forums, readStatuses } from "@/lib/db/schema";
 
-export async function GET(req) {
+export async function GET() {
   const session = await getSession();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const userId = session.sub;
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   try {
-    // 1. Get joined forums
-    const { data: joinedRows } = await safeQuery(
+    // 1. Get all forums where user is member
+    const { data: joined } = await safeQuery(
       db
-        .select({ forum: forums })
-        .from(forumMembers)
-        .innerJoin(forums, eq(forumMembers.forumId, forums.id))
+        .select({
+          id: forums.id,
+          name: forums.name,
+          description: forums.description,
+          image: forums.image,
+          postCount: sql`(SELECT count(*) FROM FeedPosts WHERE forumId = ${forums.id})`,
+          hasUnread: sql`EXISTS (
+            SELECT 1 FROM FeedPosts p
+            LEFT JOIN ReadStatuses rs ON rs.entityId = p.id AND rs.entityType = 'feedPost' AND rs.userId = ${userId}
+            WHERE p.forumId = ${forums.id} AND rs.id IS NULL
+          )`,
+        })
+        .from(forums)
+        .innerJoin(forumMembers, eq(forumMembers.forumId, forums.id))
         .where(eq(forumMembers.userId, userId))
-        .orderBy(desc(forums.name)),
+        .orderBy(desc(forums.createdAt)),
     );
-    const joined = joinedRows?.map((r) => r.forum) || [];
-    const joinedIds = joined.map((f) => f.id);
 
-    // 2. Get not joined forums
-    let notJoined = [];
+    // 2. Get all other forums
+    const joinedIds = (joined || []).map((f) => f.id);
+    const notJoinedQuery = db
+      .select({
+        id: forums.id,
+        name: forums.name,
+        description: forums.description,
+        image: forums.image,
+      })
+      .from(forums);
+
     if (joinedIds.length > 0) {
-      const { data: notJoinedRows } = await safeQuery(
-        db
-          .select()
-          .from(forums)
-          .where(notInArray(forums.id, joinedIds))
-          .orderBy(desc(forums.name)),
-      );
-      notJoined = notJoinedRows || [];
-    } else {
-      const { data: notJoinedRows } = await safeQuery(
-        db.select().from(forums).orderBy(desc(forums.name)),
-      );
-      notJoined = notJoinedRows || [];
+      // Corrected: use notInArray or similar, but for simplicity let's just filter or use a clean query
+      // For now, let's just fetch all and filter in JS if joinedIds is not empty
     }
 
-    // 3. For joined forums, count posts in last 7 days and check unread
-    const enrichedJoined = await Promise.all(
-      joined.map(async (forum) => {
-        const { data: countData } = await safeQuery(
-          db
-            .select({ count: sql`count(*)` })
-            .from(feedPosts)
-            .where(
-              and(
-                eq(feedPosts.forumId, forum.id),
-                gte(feedPosts.createdAt, sevenDaysAgo),
-              ),
-            ),
-        );
-        const postCount = Number(countData?.[0]?.count || 0);
-
-        // Unread logic: are there any posts in this forum that the user hasn't read?
-        const { data: unreadData } = await safeQuery(
-          db
-            .select({ id: feedPosts.id })
-            .from(feedPosts)
-            .where(
-              and(
-                eq(feedPosts.forumId, forum.id),
-                sql`${feedPosts.id} NOT IN (
-              SELECT entityId FROM ReadStatus
-              WHERE userId = ${userId} AND entityType = 'feedPost'
-            )`,
-              ),
-            )
-            .limit(1),
-        );
-        const hasUnread = (unreadData?.length || 0) > 0;
-
-        return { ...forum, postCount, hasUnread };
-      }),
+    const { data: allForums } = await safeQuery(notJoinedQuery);
+    const notJoined = (allForums || []).filter(
+      (f) => !joinedIds.includes(f.id),
     );
 
     return NextResponse.json({
-      joined: enrichedJoined,
-      notJoined,
+      joined: joined || [],
+      notJoined: notJoined || [],
     });
   } catch (error) {
-    console.error("[API/Forums/Overview] GET Error:", error);
+    console.error("[API/Forums/Overview] Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

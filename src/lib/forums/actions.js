@@ -48,7 +48,7 @@ export async function createForum(formData) {
   if (error) throw error;
 
   revalidatePath("/admin");
-  revalidatePath("/feed");
+  revalidatePath("/forum");
   return { ok: true };
 }
 
@@ -85,8 +85,8 @@ export async function updateForum(id, formData) {
   if (error) throw error;
 
   revalidatePath("/admin");
-  revalidatePath("/feed");
-  revalidatePath(`/feed/${id}`);
+  revalidatePath("/forum");
+  revalidatePath(`/forum/${id}`);
   return { ok: true };
 }
 
@@ -125,7 +125,7 @@ export async function deleteForum(id) {
   if (error) throw error;
 
   revalidatePath("/admin");
-  revalidatePath("/feed");
+  revalidatePath("/forum");
   return { ok: true };
 }
 
@@ -144,8 +144,8 @@ export async function joinForum(forumId) {
 
   if (error) throw error;
 
-  revalidatePath("/feed");
-  revalidatePath(`/feed/${forumId}`);
+  revalidatePath("/forum");
+  revalidatePath(`/forum/${forumId}`);
   return { ok: true };
 }
 
@@ -166,8 +166,8 @@ export async function leaveForum(forumId) {
 
   if (error) throw error;
 
-  revalidatePath("/feed");
-  revalidatePath(`/feed/${forumId}`);
+  revalidatePath("/forum");
+  revalidatePath(`/forum/${forumId}`);
   return { ok: true };
 }
 
@@ -195,7 +195,7 @@ export async function votePost(postId) {
       .limit(1),
   );
   if (data?.[0]) {
-    revalidatePath(`/feed/${data[0].forumId}`);
+    revalidatePath(`/forum/${data[0].forumId}`);
   }
 
   return { ok: true };
@@ -226,7 +226,7 @@ export async function unvotePost(postId) {
       .limit(1),
   );
   if (data?.[0]) {
-    revalidatePath(`/feed/${data[0].forumId}`);
+    revalidatePath(`/forum/${data[0].forumId}`);
   }
 
   return { ok: true };
@@ -283,7 +283,7 @@ export async function markForumAsRead(forumId) {
     await safeQuery(db.insert(readStatuses).values(values));
   }
 
-  revalidatePath("/feed");
+  revalidatePath("/forum");
   revalidatePath("/", "layout");
   return { ok: true };
 }

@@ -135,7 +135,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
 
     setSaving(true);
     try {
-      const url = post ? `/api/feed/${post.id}` : "/api/feed";
+      const url = post ? `/api/posts/${post.id}` : "/api/posts";
       const method = post ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
