@@ -14,12 +14,12 @@ export function normalizeHomeserver(input) {
   return `https://${value.replace(/\/$/, "")}`;
 }
 
-export async function createOAuthTx({ homeserver, mode }) {
+export async function createOAuthTx({ homeserver, mode, clientId }) {
   const state = b64url(crypto.randomBytes(24));
   const codeVerifier = b64url(crypto.randomBytes(48));
   const codeChallenge = b64url(crypto.createHash("sha256").update(codeVerifier).digest());
   const jar = await cookies();
-  jar.set(OAUTH_COOKIE, JSON.stringify({ state, codeVerifier, homeserver, mode }), {
+  jar.set(OAUTH_COOKIE, JSON.stringify({ state, codeVerifier, homeserver, mode, clientId }), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -68,4 +68,27 @@ export async function discoverOAuth(homeserver) {
   }
 
   return null;
+}
+
+export async function registerOAuthClient({ registrationEndpoint, origin, redirectUri }) {
+  const payload = {
+    client_name: "Sinclear Beyond",
+    client_uri: origin,
+    redirect_uris: [redirectUri],
+    grant_types: ["authorization_code", "refresh_token"],
+    response_types: ["code"],
+    token_endpoint_auth_method: "none",
+    application_type: "web",
+    scope: "openid profile",
+  };
+
+  const response = await fetch(registrationEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }).catch(() => null);
+
+  if (!response?.ok) return null;
+  const data = await response.json().catch(() => null);
+  return data?.client_id || null;
 }

@@ -14,7 +14,7 @@ export async function GET(request) {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const tx = await readOAuthTx();
-  if (!code || !state || !tx || tx.state !== state) return NextResponse.redirect(new URL("/chat?matrix_oauth=error", request.url));
+  if (!code || !state || !tx || tx.state !== state || !tx.clientId) return NextResponse.redirect(new URL("/chat?matrix_oauth=error", request.url));
 
   const cfg = await discoverOAuth(tx.homeserver);
   if (!cfg) return NextResponse.redirect(new URL("/chat?matrix_oauth=error", request.url));
@@ -25,7 +25,7 @@ export async function GET(request) {
     body: new URLSearchParams({
       grant_type: "authorization_code",
       code,
-      client_id: origin,
+      client_id: tx.clientId,
       redirect_uri: `${origin}/api/matrix/oauth/callback`,
       code_verifier: tx.codeVerifier,
     }),
