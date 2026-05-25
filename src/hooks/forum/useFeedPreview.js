@@ -44,7 +44,7 @@ export function useFeedPreview(post) {
 
     const controller = new AbortController();
 
-    fetch(`/api/feed/metadata?url=${encodeURIComponent(targetUrl)}`, {
+    fetch(`/api/posts/metadata?url=${encodeURIComponent(targetUrl)}`, {
       signal: controller.signal,
     })
       .then((res) => res.json())

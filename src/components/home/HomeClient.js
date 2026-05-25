@@ -9,7 +9,7 @@ import Avatar from "@/components/Avatar";
 import BirthdayModal from "@/components/birthdays/BirthdayModal";
 import EventDetailModal from "@/components/calendar/EventDetailModal";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
-import FeedItem from "@/components/feed/FeedItem";
+import FeedItem from "@/components/forum/FeedItem";
 import PhotoItem from "@/components/photos/PhotoItem";
 
 export default function HomeClient({
@@ -239,7 +239,7 @@ export default function HomeClient({
         <Section
           key={forum.id}
           title={forum.name}
-          href={`/feed/${forum.id}`}
+          href={`/forum/${forum.id}`}
           className="space-y-6"
         >
           {forum.posts.map((post) => (

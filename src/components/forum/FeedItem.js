@@ -15,7 +15,7 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
-import { useFeedPreview } from "@/hooks/feed/useFeedPreview";
+import { useFeedPreview } from "@/hooks/forum/useFeedPreview";
 import { unvotePost, votePost } from "@/lib/forums/actions";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
@@ -92,7 +92,7 @@ export default function FeedItem({
   const handleDelete = async () => {
     setDeleteError("");
     try {
-      const res = await fetch(`/api/feed/${post.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/posts/${post.id}`, { method: "DELETE" });
       if (res.ok) {
         onDeleteSuccess?.();
       } else {
