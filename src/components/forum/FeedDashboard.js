@@ -73,7 +73,7 @@ export default function FeedDashboard() {
                 {data.joined.map((forum) => (
                   <Link
                     key={forum.id}
-                    href={`/feed/${forum.id}`}
+                    href={`/forum/${forum.id}`}
                     className="group relative bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
                   >
                     <div className="aspect-[21/9] w-full bg-muted relative">
@@ -167,7 +167,7 @@ export default function FeedDashboard() {
                       </button>
                     </div>
                     <Link
-                      href={`/feed/${forum.id}`}
+                      href={`/forum/${forum.id}`}
                       className="p-2 text-muted-foreground hover:text-foreground"
                     >
                       <ArrowRight size={16} />

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import FeedDashboard from "@/components/feed/FeedDashboard";
+import FeedDashboard from "@/components/forum/FeedDashboard";
 import AppShell from "@/components/layout/Appshell";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
