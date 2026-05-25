@@ -42,9 +42,30 @@ export async function clearOAuthTx() {
 
 export async function discoverOAuth(homeserver) {
   const base = homeserver.replace(/\/$/, "");
-  const auth = await fetch(`${base}/.well-known/oauth-authorization-server`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  const oidc = await fetch(`${base}/.well-known/openid-configuration`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  const cfg = auth || oidc;
-  if (!cfg?.authorization_endpoint || !cfg?.token_endpoint) return null;
-  return cfg;
+
+  const authMetadata = await fetch(`${base}/_matrix/client/v1/auth_metadata`)
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+
+  if (authMetadata?.authorization_endpoint && authMetadata?.token_endpoint) {
+    return authMetadata;
+  }
+
+  const wellKnownOAuth = await fetch(`${base}/.well-known/oauth-authorization-server`)
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+
+  if (wellKnownOAuth?.authorization_endpoint && wellKnownOAuth?.token_endpoint) {
+    return wellKnownOAuth;
+  }
+
+  const oidc = await fetch(`${base}/.well-known/openid-configuration`)
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+
+  if (oidc?.authorization_endpoint && oidc?.token_endpoint) {
+    return oidc;
+  }
+
+  return null;
 }
