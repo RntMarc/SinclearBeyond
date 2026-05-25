@@ -196,6 +196,23 @@
         "failed": "Des mit dem Passkey hot net gklabbd."
       },
       "displayNameRequired": "Schreib mol dei Nama nei."
+    },
+    "discord": "Discord",
+    "registration": {
+      "required": "Muasch",
+      "optional": "Freiwillig",
+      "emailFlow": {
+        "title": "Registriera per E-Mail",
+        "description": "Für dr klassische Wäg musch beid Felder ausfilla."
+      },
+      "displayNamePlaceholder": "z. B. dr Max",
+      "emailPlaceholder": "name@sinclear.de",
+      "emailHint": "Lass des Feld leer, wenn du liabr direkt über Discord mitmacha willsch.",
+      "methodHint": "Registriera goht entweder mit ra @sinclear.de E-Mail-Adress oder mit oiner dr Methode drunter.",
+      "discordFlow": {
+        "title": "Registriera mit Discord",
+        "description": "Nimm Discord für a schnells Registriera. Drfür muasch bloß dei Anzeigename nei doa."
+      }
     }
   },
   "Home": {
