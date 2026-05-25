@@ -53,7 +53,8 @@
     "reviews": "Reviews",
     "info": "Changelog",
     "office": "Office",
-    "polls": "Surveys & Polls"
+    "polls": "Surveys & Polls",
+    "chat": "Chat"
   },
   "Office": {
     "title": "Office",
@@ -606,7 +607,22 @@
       "passkeyLastUsed": "Last used",
       "passkeyDeleteConfirm": "Really delete this passkey?",
       "passkeyModalTitle": "Name passkey",
-      "passkeyModalDesc": "Give this passkey a name so you can recognise it later (e.g. \"My iPhone\")."
+      "passkeyModalDesc": "Give this passkey a name so you can recognise it later (e.g. \"My iPhone\").",
+      "discordTitle": "Discord Link",
+      "discordConnected": "Your account is already linked with Discord.",
+      "discordDescription": "Link your account with Discord for easier sign-in.",
+      "matrixTitle": "Matrix Link",
+      "matrixDescription": "Link your Matrix account securely via OAuth2 on your homeserver. We never store your Matrix password.",
+      "matrixLink": "Link Matrix via OAuth2",
+      "matrixUnlink": "Remove Matrix link",
+      "matrixCurrent": "Currently linked: {matrixHandle}",
+      "matrixIdentifierPlaceholder": "Matrix login (e.g. @user:matrix.org)",
+      "matrixHomeserverPlaceholder": "Homeserver (e.g. https://matrix.org)",
+      "matrixPasswordPlaceholder": "Matrix password",
+      "matrixLinkError": "Failed to link Matrix account. Please check credentials.",
+      "matrixLinkedSuccess": "Matrix linked successfully: {matrixUserId}",
+      "matrixUnlinkError": "Could not remove Matrix link.",
+      "matrixUnlinkedSuccess": "Matrix link removed."
     }
   },
   "Feedback": {
@@ -807,5 +823,23 @@
       "map": "Map",
       "list": "List"
     }
+  },
+  "Chat": {
+    "subtitle": "Communication",
+    "title": "Chat",
+    "linkRequired": "Please link your Matrix account in settings (profile) first to use chat.",
+    "authError": "Matrix login failed.",
+    "linkedAs": "Linked as {matrixUserId}",
+    "identifierPlaceholder": "Matrix username or @user:server",
+    "homeserverPlaceholder": "Homeserver (e.g. https://matrix.org)",
+    "passwordPlaceholder": "Matrix password",
+    "loginButton": "Start OAuth2 login",
+    "authSuccess": "Matrix login successful. You can now send messages.",
+    "availableUsers": "Linked users",
+    "noSelection": "No chat partner selected",
+    "messagePlaceholder": "Type a message",
+    "send": "Send message",
+    "sessionRequired": "Please verify this session via OAuth2 with your homeserver.",
+    "oauthError": "OAuth2 sign-in failed or was cancelled."
   }
 }
