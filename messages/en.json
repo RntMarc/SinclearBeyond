@@ -208,7 +208,12 @@
       },
       "displayNamePlaceholder": "e.g. Max Mustermann",
       "emailPlaceholder": "name@sinclear.de",
-      "emailHint": "Leave this field empty if you want to register directly with Discord instead."
+      "emailHint": "Leave this field empty if you want to register directly with Discord instead.",
+      "methodHint": "Registration is possible either with an @sinclear.de email address or one of the methods below.",
+      "discordFlow": {
+        "title": "Registration with Discord",
+        "description": "Use Discord for quick registration. Only your display name is required."
+      }
     }
   },
   "Home": {

@@ -207,7 +207,12 @@
       },
       "displayNamePlaceholder": "z. B. dr Max",
       "emailPlaceholder": "name@sinclear.de",
-      "emailHint": "Lass des Feld leer, wenn du liabr direkt über Discord mitmacha willsch."
+      "emailHint": "Lass des Feld leer, wenn du liabr direkt über Discord mitmacha willsch.",
+      "methodHint": "Registriera goht entweder mit ra @sinclear.de E-Mail-Adress oder mit oiner dr Methode drunter.",
+      "discordFlow": {
+        "title": "Registriera mit Discord",
+        "description": "Nimm Discord für a schnells Registriera. Drfür muasch bloß dei Anzeigename nei doa."
+      }
     }
   },
   "Home": {
