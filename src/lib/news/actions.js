@@ -56,29 +56,28 @@ export async function getNewsArticles(page = 1) {
   let allItems = [];
 
   for (const source of sources) {
-    const { items } = await fetchRssFeed(source.url);
-    // Take itemsPerPage for this source, then paginate further if needed
-    // Actually, we want to mix them.
-    // If page 1, we take the first few from each source.
-    const start = (page - 1) * source.itemsPerPage;
-    const end = start + source.itemsPerPage;
-    const sourceItems = items.slice(start, end).map((item) => ({
-      ...item,
-      sourceId: source.id,
-      itemsPerPage: source.itemsPerPage,
-    }));
-    allItems = [...allItems, ...sourceItems];
+    try {
+      const { items } = await fetchRssFeed(source.url);
+      const start = (page - 1) * source.itemsPerPage;
+      const end = start + source.itemsPerPage;
+      const sourceItems = (items || []).slice(start, end).map((item) => ({
+        ...item,
+        sourceId: source.id,
+        itemsPerPage: source.itemsPerPage,
+      }));
+      allItems = [...allItems, ...sourceItems];
+    } catch (e) {
+      console.error(`Error processing source ${source.name}:`, e);
+    }
   }
 
-  // Interleave items from different sources to avoid long blocks of same source
-  // Simple shuffling or round-robin
-  const interleaved = [];
   const sourceGroups = sources.map((s) =>
     allItems.filter((i) => i.sourceId === s.id),
   );
 
   if (sourceGroups.length === 0) return [];
 
+  const interleaved = [];
   const maxLen = Math.max(...sourceGroups.map((g) => g.length));
   for (let i = 0; i < maxLen; i++) {
     for (const group of sourceGroups) {
@@ -93,7 +92,6 @@ export async function getImportantNews() {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  // Join newsArticles with upvotes to count them
   const result = await safeQuery(
     db
       .select({
@@ -103,9 +101,9 @@ export async function getImportantNews() {
         sourceName: newsArticles.sourceName,
         sourceIcon: newsArticles.sourceIcon,
         savedAt: newsArticles.savedAt,
-      upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
-        "upvoteCount",
-      ),
+        upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
+          "upvoteCount",
+        ),
       })
       .from(newsArticles)
       .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
@@ -114,7 +112,10 @@ export async function getImportantNews() {
       .orderBy(desc(sql`upvoteCount`), desc(newsArticles.savedAt)),
   );
 
-  return result.data || [];
+  return (result.data || []).map(r => ({
+    ...r,
+    savedAt: r.savedAt instanceof Date ? r.savedAt.toISOString() : r.savedAt,
+  }));
 }
 
 export async function getArchivedNews() {
@@ -130,9 +131,9 @@ export async function getArchivedNews() {
         sourceName: newsArticles.sourceName,
         sourceIcon: newsArticles.sourceIcon,
         savedAt: newsArticles.savedAt,
-      upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
-        "upvoteCount",
-      ),
+        upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
+          "upvoteCount",
+        ),
       })
       .from(newsArticles)
       .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
@@ -141,11 +142,13 @@ export async function getArchivedNews() {
       .orderBy(desc(newsArticles.savedAt)),
   );
 
-  return result.data || [];
+  return (result.data || []).map(r => ({
+    ...r,
+    savedAt: r.savedAt instanceof Date ? r.savedAt.toISOString() : r.savedAt,
+  }));
 }
 
 export async function upvoteArticle(article, userId) {
-  // Check if article already exists in DB by URL
   const dbArticle = await safeQuery(
     db.select().from(newsArticles).where(eq(newsArticles.url, article.link)),
   );
@@ -167,7 +170,6 @@ export async function upvoteArticle(article, userId) {
     articleId = dbArticle.data[0].id;
   }
 
-  // Check if user already upvoted
   const existingUpvote = await safeQuery(
     db
       .select()

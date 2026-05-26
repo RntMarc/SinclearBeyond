@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import Avatar from "@/components/Avatar";
-import MatrixOnboardingModal from "@/components/chat/MatrixOnboardingModal";
 import PageHeader from "@/components/layout/PageHeader";
 
 export default function ChatClient({ matrixHandle }) {
@@ -23,7 +22,6 @@ export default function ChatClient({ matrixHandle }) {
   const [method, setMethod] = useState("oauth");
   const [authError, setAuthError] = useState("");
   const [pendingSend, setPendingSend] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const isLinked = Boolean(matrixHandle);
 
   const parsedHandle = useMemo(() => {
@@ -67,10 +65,7 @@ export default function ChatClient({ matrixHandle }) {
   };
 
   useEffect(() => {
-    if (!isLinked) {
-      setShowOnboarding(true);
-      return;
-    }
+    if (!isLinked) return;
     if (searchParams.get("matrix_oauth") === "error")
       setAuthError(t("oauthError"));
     loadSession();
@@ -141,14 +136,6 @@ export default function ChatClient({ matrixHandle }) {
       />
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-5xl mx-auto space-y-6">
-          <MatrixOnboardingModal
-            isOpen={showOnboarding}
-            onClose={() => setShowOnboarding(false)}
-            onComplete={() => {
-              setShowOnboarding(false);
-              window.location.reload();
-            }}
-          />
           {!isLinked && (
             <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
               {t("linkRequired")}

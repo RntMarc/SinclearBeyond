@@ -36,7 +36,7 @@ export async function GET() {
     return {
       ...entry,
       matrixUserId,
-      homeserver: entry.matrixHomeserver,
+      homeserver: `https://${entry.matrixHomeserver}`,
     };
   });
 
