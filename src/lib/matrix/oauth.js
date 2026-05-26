@@ -15,29 +15,6 @@ export function normalizeHomeserver(input) {
   return `https://${value.replace(/\/$/, "")}`;
 }
 
-export async function resolveHomeserver(domainOrUrl) {
-  const normalized = normalizeHomeserver(domainOrUrl);
-  if (!normalized) return null;
-
-  try {
-    const domain = new URL(normalized).hostname;
-    const wellKnownRes = await fetch(
-      `https://${domain}/.well-known/matrix/client`,
-      { signal: AbortSignal.timeout(5000) },
-    );
-    if (wellKnownRes.ok) {
-      const data = await wellKnownRes.json();
-      if (data["m.homeserver"]?.base_url) {
-        return data["m.homeserver"].base_url.replace(/\/$/, "");
-      }
-    }
-  } catch (e) {
-    // Ignore and fallback to normalized URL
-  }
-
-  return normalized;
-}
-
 export async function createOAuthTx({ homeserver, mode, clientId }) {
   const state = b64url(crypto.randomBytes(24));
   const codeVerifier = b64url(crypto.randomBytes(48));

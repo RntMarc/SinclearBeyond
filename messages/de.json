@@ -750,21 +750,7 @@
       "matrixLinkError": "Matrix-Verknüpfung fehlgeschlagen. Bitte Zugangsdaten prüfen.",
       "matrixLinkedSuccess": "Matrix erfolgreich verknüpft: {matrixUserId}",
       "matrixUnlinkError": "Matrix-Verknüpfung konnte nicht entfernt werden.",
-      "matrixUnlinkedSuccess": "Matrix-Verknüpfung entfernt.",
-      "matrixCreate": "Konto automatisch erstellen",
-      "matrixCreateDescription": "Wir erstellen für dich ein Konto auf unserem empfohlenen Homeserver.",
-      "matrixCreating": "Wird erstellt...",
-      "matrixCreateSuccess": "Konto erfolgreich erstellt: {matrixUserId}",
-      "matrixCreateError": "Fehler bei der Kontoerstellung. Bitte versuche es manuell."
-    },
-    "onboarding": {
-      "matrixTitle": "Chat einrichten",
-      "matrixDescription": "Für die Nutzung bestimmter Community- und Chatfunktionen wird ein Matrix-Account empfohlen.\n\nDie integrierten Chatfunktionen dieses Projekts verwenden keine Ende-zu-Ende-Verschlüsselung (E2EE). Für private und verschlüsselte Unterhaltungen mit anderen Nutzern wird die Verwendung eines eigenständigen Matrix-Clients wie Element X empfohlen.",
-      "optionA": "Ich habe bereits einen Matrix-Account",
-      "optionB": "Empfohlenen Matrix-Account automatisch erstellen",
-      "optionC": "Jetzt nicht",
-      "linkExisting": "Bestehenden Account verknüpfen",
-      "createAutomatic": "Automatisch erstellen (Empfohlen)"
+      "matrixUnlinkedSuccess": "Matrix-Verknüpfung entfernt."
     }
   },
   "Feedback": {
