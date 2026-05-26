@@ -5,7 +5,8 @@ import { closeFriends } from "@/lib/db/schema";
 export const CONTACT_FIELDS = [
   { key: "discordHandle", vis: "discordVisibility" },
   { key: "fluxerHandle", vis: "fluxerVisibility" },
-  { key: "matrixHandle", vis: "matrixVisibility" },
+  { key: "matrixUser", vis: "matrixVisibility" },
+  { key: "matrixHomeserver", vis: "matrixVisibility" },
   { key: "signalNumber", vis: "signalVisibility" },
   { key: "whatsappNumber", vis: "whatsappVisibility" },
 ];

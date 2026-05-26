@@ -98,7 +98,9 @@ export default function ProfilForm({ user, contact, social }) {
   const [values, setValues] = useState({
     discordHandle: contact?.discordHandle ?? "",
     fluxerHandle: contact?.fluxerHandle ?? "",
-    matrixHandle: contact?.matrixHandle ?? "",
+    matrixHandle: contact?.matrixUser
+      ? `@${contact.matrixUser}:${contact.matrixHomeserver}`
+      : "",
     signalNumber: contact?.signalNumber ?? "",
     whatsappNumber: contact?.whatsappNumber ?? "",
     unsplashHandle: social?.unsplashHandle ?? "",

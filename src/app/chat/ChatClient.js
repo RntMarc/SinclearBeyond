@@ -16,20 +16,31 @@ export default function ChatClient({ matrixHandle }) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [sessionReady, setSessionReady] = useState(false);
-  const [homeserver, setHomeserver] = useState("https://matrix.org");
+  const [homeserver, setHomeserver] = useState("matrix.org");
+  const [matrixUser, setMatrixUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [method, setMethod] = useState("oauth");
   const [authError, setAuthError] = useState("");
   const [pendingSend, setPendingSend] = useState(false);
   const isLinked = Boolean(matrixHandle);
 
   const parsedHandle = useMemo(() => {
-    const [matrixUserId, linkedHomeserver] = (matrixHandle || "").split("|");
-    return { matrixUserId, linkedHomeserver };
+    if (!matrixHandle) return { matrixUserId: "", linkedHomeserver: "" };
+    const parts = matrixHandle.split(":");
+    const userPart = parts[0].replace(/^@/, "");
+    const hsPart = parts.slice(1).join(":");
+    return {
+      matrixUserId: matrixHandle,
+      linkedHomeserver: hsPart,
+      matrixUser: userPart,
+    };
   }, [matrixHandle]);
 
   useEffect(() => {
     if (parsedHandle.linkedHomeserver)
       setHomeserver(parsedHandle.linkedHomeserver);
-  }, [parsedHandle.linkedHomeserver]);
+    if (parsedHandle.matrixUser) setMatrixUser(parsedHandle.matrixUser);
+  }, [parsedHandle.linkedHomeserver, parsedHandle.matrixUser]);
 
   const loadSession = async () => {
     const res = await fetch("/api/matrix/session");
@@ -68,15 +79,26 @@ export default function ChatClient({ matrixHandle }) {
     return () => clearInterval(interval);
   }, [roomId]);
 
-  const startOAuthSession = async () => {
+  const startSession = async () => {
     const res = await fetch("/api/matrix/session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ homeserver }),
+      body: JSON.stringify({
+        homeserver,
+        method,
+        matrixUser,
+        password,
+      }),
     });
     const data = await res.json().catch(() => ({}));
-    if (data.redirectTo) window.location.href = data.redirectTo;
-    else setAuthError(t("oauthError"));
+    if (data.authenticated) {
+      setSessionReady(true);
+      setAuthError("");
+    } else if (data.redirectTo) {
+      window.location.href = data.redirectTo;
+    } else {
+      setAuthError(t("oauthError"));
+    }
   };
 
   const openChat = async (user) => {
@@ -121,23 +143,60 @@ export default function ChatClient({ matrixHandle }) {
           )}
 
           {isLinked && !sessionReady && (
-            <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
               <p className="text-sm text-muted-foreground">
                 {t("sessionRequired")}
               </p>
-              <div className="flex gap-3">
+
+              <div className="flex gap-2 p-1 bg-background border border-border rounded-lg max-w-xs">
+                <button
+                  type="button"
+                  onClick={() => setMethod("oauth")}
+                  className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "oauth" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  OAuth2
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMethod("password")}
+                  className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "password" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  Passwort
+                </button>
+              </div>
+
+              <div className="space-y-3">
                 <input
                   value={homeserver}
                   onChange={(e) => setHomeserver(e.target.value)}
                   placeholder={t("homeserverPlaceholder")}
-                  className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
                 />
+                {method === "password" && (
+                  <div className="flex gap-3">
+                    <input
+                      value={matrixUser}
+                      onChange={(e) => setMatrixUser(e.target.value)}
+                      placeholder={t("identifierPlaceholder")}
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={t("passwordPlaceholder")}
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                )}
                 <button
                   type="button"
-                  onClick={startOAuthSession}
-                  className="rounded-lg border border-primary text-primary text-sm font-medium px-4 py-2"
+                  onClick={startSession}
+                  className="w-full rounded-lg border border-primary text-primary text-sm font-medium px-4 py-2"
                 >
-                  {t("loginButton")}
+                  {method === "oauth"
+                    ? t("loginButton")
+                    : t("loginButton")}
                 </button>
               </div>
               {authError && (

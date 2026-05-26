@@ -20,9 +20,45 @@ export async function POST(request) {
   if (!session?.sub)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await request.json().catch(() => null);
+
   const homeserver = normalizeHomeserver(body?.homeserver);
   if (!homeserver)
     return NextResponse.json({ error: "Missing homeserver" }, { status: 400 });
+
+  if (body?.method === "password") {
+    const matrixUser = body?.matrixUser?.replace(/^@/, "").split(":")[0];
+    const password = body?.password;
+
+    if (!matrixUser || !password) {
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    }
+
+    const loginRes = await fetch(`${homeserver}/_matrix/client/v3/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "m.login.password",
+        identifier: { type: "m.id.user", user: matrixUser },
+        password: password,
+        initial_device_display_name: "Sinclear Beyond Session",
+      }),
+    });
+
+    const loginData = await loginRes.json().catch(() => null);
+    if (!loginRes.ok || !loginData?.access_token) {
+      return NextResponse.json({ error: "Login failed" }, { status: 401 });
+    }
+
+    await setMatrixSession({
+      accessToken: loginData.access_token,
+      matrixUserId: loginData.user_id,
+      homeserver: homeserver,
+      password: password,
+    });
+
+    return NextResponse.json({ authenticated: true });
+  }
+
   return NextResponse.json({
     redirectTo: `/api/matrix/oauth/start?mode=session&homeserver=${encodeURIComponent(homeserver)}`,
   });

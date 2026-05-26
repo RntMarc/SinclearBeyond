@@ -60,14 +60,17 @@ export async function GET(request) {
   });
 
   if (tx.mode === "link") {
-    const matrixHandle = `${whoami.user_id}|${tx.homeserver}`;
+    const matrixUser = whoami.user_id.replace(/^@/, "").split(":")[0];
+    const matrixHomeserver = tx.homeserver.replace(/^https?:\/\//, "");
+
     const { data: duplicate, error: duplicateError } = await safeQuery(
       db
         .select({ id: contactInfo.id })
         .from(contactInfo)
         .where(
           and(
-            eq(contactInfo.matrixHandle, matrixHandle),
+            eq(contactInfo.matrixUser, matrixUser),
+            eq(contactInfo.matrixHomeserver, matrixHomeserver),
             ne(contactInfo.userId, appSession.sub),
           ),
         )
@@ -85,18 +88,17 @@ export async function GET(request) {
         await safeQuery(
           db
             .update(contactInfo)
-            .set({ matrixHandle })
+            .set({ matrixUser, matrixHomeserver })
             .where(eq(contactInfo.id, existing[0].id)),
         );
       } else {
         await safeQuery(
-          db
-            .insert(contactInfo)
-            .values({
-              id: crypto.randomUUID(),
-              userId: appSession.sub,
-              matrixHandle,
-            }),
+          db.insert(contactInfo).values({
+            id: crypto.randomUUID(),
+            userId: appSession.sub,
+            matrixUser,
+            matrixHomeserver,
+          }),
         );
       }
     }
