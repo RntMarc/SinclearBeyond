@@ -46,6 +46,7 @@
     "rate-limiter-flexible": "^11.1.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "rss-parser": "^3.13.0",
     "shadcn": "^4.8.0",
     "sharp": "^0.34.5",
     "simple-icons": "^16.21.0",
@@ -57,10 +58,12 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/lodash": "^4.17.24",
     "@types/lodash-es": "^4.17.12",
     "drizzle-kit": "^0.31.10",
+    "playwright": "^1.60.0",
     "tailwindcss": "^4.3.0"
   },
   "packageManager": "pnpm@11.3.0+sha512.2c403d6594527287672b1f7056343a1f7c3634036a67ffabfcc2b3d7595d843768f8787148d1b57cf7956c90606bbd192857c363af19e96d2d0ec9ec5741d215"
