@@ -128,7 +128,9 @@ export default function AppShell({ children, user, session }) {
       icon: Banknote,
     },
     { href: "/feedback", label: t("feedback"), icon: MessageSquarePlus },
-    { href: "/chat", label: t("chat"), icon: MessageCircle },
+    ...(user?.isAdmin || session?.isAdmin
+      ? [{ href: "/chat", label: t("chat"), icon: MessageCircle }]
+      : []),
     {
       href: "/info",
       label: t("info"),

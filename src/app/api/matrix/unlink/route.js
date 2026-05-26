@@ -12,7 +12,7 @@ export async function POST() {
   const { error } = await safeQuery(
     db
       .update(contactInfo)
-      .set({ matrixHandle: null })
+      .set({ matrixUser: null, matrixHomeserver: null })
       .where(eq(contactInfo.userId, session.sub)),
   );
   if (error)

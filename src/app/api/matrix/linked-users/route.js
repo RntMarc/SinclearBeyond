@@ -15,14 +15,15 @@ export async function GET() {
         userId: users.id,
         displayName: users.displayName,
         image: users.image,
-        matrixHandle: contactInfo.matrixHandle,
+        matrixUser: contactInfo.matrixUser,
+        matrixHomeserver: contactInfo.matrixHomeserver,
       })
       .from(contactInfo)
       .innerJoin(users, eq(contactInfo.userId, users.id))
       .where(
         and(
-          isNotNull(contactInfo.matrixHandle),
-          ne(contactInfo.matrixHandle, ""),
+          isNotNull(contactInfo.matrixUser),
+          ne(contactInfo.matrixUser, ""),
           ne(contactInfo.userId, session.sub),
         ),
       ),
@@ -31,8 +32,12 @@ export async function GET() {
   if (error)
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   const usersWithHomeserver = (data ?? []).map((entry) => {
-    const [matrixUserId, homeserver] = (entry.matrixHandle || "").split("|");
-    return { ...entry, matrixUserId, homeserver };
+    const matrixUserId = `@${entry.matrixUser}:${entry.matrixHomeserver}`;
+    return {
+      ...entry,
+      matrixUserId,
+      homeserver: `https://${entry.matrixHomeserver}`,
+    };
   });
 
   return NextResponse.json({ users: usersWithHomeserver });
