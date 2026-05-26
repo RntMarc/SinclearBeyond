@@ -14,7 +14,11 @@ import ProfilForm from "@/components/profile/ProfilForm";
 
 function MatrixLinkCard({ t, isLinked, matrixHandle }) {
   const [homeserver, setHomeserver] = useState("https://matrix.org");
-  const [status, setStatus] = useState({ error: "", success: "", pending: false });
+  const [status, setStatus] = useState({
+    error: "",
+    success: "",
+    pending: false,
+  });
 
   const onLink = async () => {
     setStatus({ error: "", success: "", pending: true });
@@ -25,21 +29,40 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      setStatus({ error: t("login.matrixLinkError"), success: "", pending: false });
+      setStatus({
+        error: t("login.matrixLinkError"),
+        success: "",
+        pending: false,
+      });
       return;
     }
-    if (data.redirectTo) { window.location.href = data.redirectTo; return; }
-    setStatus({ error: t("login.matrixLinkError"), success: "", pending: false });
+    if (data.redirectTo) {
+      window.location.href = data.redirectTo;
+      return;
+    }
+    setStatus({
+      error: t("login.matrixLinkError"),
+      success: "",
+      pending: false,
+    });
   };
 
   const onUnlink = async () => {
     setStatus({ error: "", success: "", pending: true });
     const response = await fetch("/api/matrix/unlink", { method: "POST" });
     if (!response.ok) {
-      setStatus({ error: t("login.matrixUnlinkError"), success: "", pending: false });
+      setStatus({
+        error: t("login.matrixUnlinkError"),
+        success: "",
+        pending: false,
+      });
       return;
     }
-    setStatus({ error: "", success: t("login.matrixUnlinkedSuccess"), pending: false });
+    setStatus({
+      error: "",
+      success: t("login.matrixUnlinkedSuccess"),
+      pending: false,
+    });
     window.location.reload();
   };
 
@@ -47,22 +70,45 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
     <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 space-y-4">
       <div className="text-center">
         <h3 className="text-lg font-medium mb-2">{t("login.matrixTitle")}</h3>
-        <p className="text-sm text-muted-foreground">{t("login.matrixDescription")}</p>
+        <p className="text-sm text-muted-foreground">
+          {t("login.matrixDescription")}
+        </p>
       </div>
-      {status.error && <p className="text-sm text-destructive">{status.error}</p>}
-      {status.success && <p className="text-sm text-green-500">{status.success}</p>}
+      {status.error && (
+        <p className="text-sm text-destructive">{status.error}</p>
+      )}
+      {status.success && (
+        <p className="text-sm text-green-500">{status.success}</p>
+      )}
 
       {isLinked ? (
         <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">{t("login.matrixCurrent", { matrixHandle })}</p>
-          <button type="button" onClick={onUnlink} disabled={status.pending} className="w-full px-4 py-2 rounded-lg border border-destructive text-destructive text-sm font-medium hover:bg-destructive/5 transition-colors disabled:opacity-60">
+          <p className="text-sm text-muted-foreground">
+            {t("login.matrixCurrent", { matrixHandle })}
+          </p>
+          <button
+            type="button"
+            onClick={onUnlink}
+            disabled={status.pending}
+            className="w-full px-4 py-2 rounded-lg border border-destructive text-destructive text-sm font-medium hover:bg-destructive/5 transition-colors disabled:opacity-60"
+          >
             {t("login.matrixUnlink")}
           </button>
         </div>
       ) : (
         <div className="space-y-3">
-          <input value={homeserver} onChange={(e) => setHomeserver(e.target.value)} placeholder={t("login.matrixHomeserverPlaceholder")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
-          <button type="button" onClick={onLink} disabled={status.pending} className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60">
+          <input
+            value={homeserver}
+            onChange={(e) => setHomeserver(e.target.value)}
+            placeholder={t("login.matrixHomeserverPlaceholder")}
+            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          />
+          <button
+            type="button"
+            onClick={onLink}
+            disabled={status.pending}
+            className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60"
+          >
             {t("login.matrixLink")}
           </button>
         </div>
@@ -70,7 +116,6 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
     </div>
   );
 }
-
 
 export default function EinstellungenClient({
   user,
@@ -157,7 +202,9 @@ export default function EinstellungenClient({
                     {t("login.discordTitle")}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-6">
-                    {user.discordId ? t("login.discordConnected") : t("login.discordDescription")}
+                    {user.discordId
+                      ? t("login.discordConnected")
+                      : t("login.discordDescription")}
                   </p>
                   {!user.discordId && (
                     <button
