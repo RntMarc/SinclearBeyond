@@ -54,7 +54,8 @@
     "info": "Changelog",
     "office": "Office",
     "polls": "Umfragen & Termine",
-    "chat": "Chat"
+    "chat": "Chat",
+    "news": "Aktuell"
   },
   "Office": {
     "title": "Office",
@@ -382,6 +383,17 @@
     "subtitle": "Galerie",
     "title": "Fotografien",
     "photoBy": "Foto von"
+  },
+  "News": {
+    "title": "Aktuell",
+    "subtitle": "Nachrichten & Feeds",
+    "newArticles": "Neue Artikel",
+    "archive": "Archiv",
+    "important": "Als wichtig empfunden",
+    "loading": "Lade Artikel...",
+    "allLoaded": "Alle Artikel geladen",
+    "noArticles": "Momentan keine Artikel vorhanden.",
+    "read": "Lesen"
   },
   "Calendar": {
     "title": "Kalender",

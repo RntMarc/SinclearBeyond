@@ -194,9 +194,7 @@ export default function ChatClient({ matrixHandle }) {
                   onClick={startSession}
                   className="w-full rounded-lg border border-primary text-primary text-sm font-medium px-4 py-2"
                 >
-                  {method === "oauth"
-                    ? t("loginButton")
-                    : t("loginButton")}
+                  {method === "oauth" ? t("loginButton") : t("loginButton")}
                 </button>
               </div>
               {authError && (

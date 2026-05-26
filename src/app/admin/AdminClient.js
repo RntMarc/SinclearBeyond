@@ -6,6 +6,7 @@ import {
   Hash,
   Hotel,
   Lock,
+  Newspaper,
   Palette,
   Plane,
   Plus,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ForumFormModal from "@/components/admin/ForumFormModal";
+import RssSourceFormModal from "@/components/admin/RssSourceFormModal";
 import SubscriptionFormModal from "@/components/admin/SubscriptionFormModal";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
@@ -33,11 +35,13 @@ export default function AdminPage({ user, session }) {
   const [showAccommodationModal, setShowAccommodationModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showForumModal, setShowForumModal] = useState(false);
+  const [showRssModal, setShowRssModal] = useState(false);
   const [trips, setTrips] = useState([]);
   const [standaloneEvents, setStandaloneEvents] = useState([]);
   const [accommodations, setAccommodations] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [forums, setForums] = useState([]);
+  const [rssSources, setRssSources] = useState([]);
   const hasSubs = useMemo(
     () => subscriptions.some((s) => s.isParticipant),
     [subscriptions],
@@ -47,6 +51,7 @@ export default function AdminPage({ user, session }) {
   const [editingAccommodation, setEditingAccommodation] = useState(null);
   const [editingSubscription, setEditingSubscription] = useState(null);
   const [editingForum, setEditingForum] = useState(null);
+  const [editingRssSource, setEditingRssSource] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
@@ -58,12 +63,14 @@ export default function AdminPage({ user, session }) {
         subscriptionsRes,
         eventsRes,
         forumsRes,
+        rssRes,
       ] = await Promise.all([
         fetch("/api/reisen/data"),
         fetch("/api/travel/accommodations"),
         fetch("/api/subscriptions"),
         fetch("/api/reisen/data?standalone=1"),
         fetch("/api/forums"),
+        fetch("/api/admin/news/sources"),
       ]);
 
       if (tripsRes.ok) setTrips(await tripsRes.json());
@@ -72,6 +79,7 @@ export default function AdminPage({ user, session }) {
         setAccommodations(await accommodationsRes.json());
       if (subscriptionsRes.ok) setSubscriptions(await subscriptionsRes.json());
       if (forumsRes.ok) setForums(await forumsRes.json());
+      if (rssRes.ok) setRssSources(await rssRes.json());
     } catch (error) {
       console.error("Error fetching admin data:", error);
     } finally {
@@ -87,6 +95,7 @@ export default function AdminPage({ user, session }) {
     { id: "reisen", label: "Reisen", icon: Plane },
     { id: "subscriptions", label: "Abos", icon: Banknote },
     { id: "forums", label: "Foren", icon: Hash },
+    { id: "news", label: "Aktuell", icon: Newspaper },
     { id: "users", label: "Nutzer", icon: Users },
     { id: "webhooks", label: "Webhooks", icon: Webhook },
     { id: "system", label: "System", icon: Palette },
@@ -119,6 +128,87 @@ export default function AdminPage({ user, session }) {
             </div>
 
             {/* Tab Content */}
+            {activeTab === "news" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-light flex items-center gap-2">
+                      <Newspaper className="text-primary" size={20} />
+                      RSS-Quellen
+                    </h2>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                      {rssSources.length}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowRssModal(true)}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+                  >
+                    <Plus size={16} />
+                    Quelle anlegen
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {loading ? (
+                    <div className="animate-pulse space-y-3 col-span-full">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                      ))}
+                    </div>
+                  ) : rssSources.length > 0 ? (
+                    rssSources.map((source) => (
+                      <div
+                        key={source.id}
+                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground overflow-hidden">
+                            <img
+                              src={`https://www.google.com/s2/favicons?domain=${new URL(source.url).hostname}&sz=64`}
+                              alt={source.name}
+                              className="w-6 h-6 object-contain"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                                e.target.nextSibling.style.display = "flex";
+                              }}
+                            />
+                            <div className="hidden w-full h-full items-center justify-center">
+                              <Newspaper size={20} />
+                            </div>
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-sm">
+                              {source.name}
+                            </h3>
+                            <p className="text-xs text-muted-foreground line-clamp-1">
+                              {source.url}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+                              {source.itemsPerPage} Artikel pro Ladegang
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingRssSource(source)}
+                          className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Wrench size={18} />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                      Keine RSS-Quellen vorhanden.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {activeTab === "forums" && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between gap-4">
@@ -577,6 +667,21 @@ export default function AdminPage({ user, session }) {
           <ForumFormModal
             forum={editingForum}
             onClose={() => setEditingForum(null)}
+            onUpdated={fetchData}
+          />
+        )}
+
+        {showRssModal && (
+          <RssSourceFormModal
+            onClose={() => setShowRssModal(false)}
+            onUpdated={fetchData}
+          />
+        )}
+
+        {editingRssSource && (
+          <RssSourceFormModal
+            source={editingRssSource}
+            onClose={() => setEditingRssSource(null)}
             onUpdated={fetchData}
           />
         )}
