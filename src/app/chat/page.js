@@ -10,9 +10,13 @@ export default async function ChatPage() {
   const profile = await getProfileData(session);
   if (!profile) redirect("/login");
 
+  const matrixHandle = profile.contact?.matrixUser
+    ? `@${profile.contact.matrixUser}:${profile.contact.matrixHomeserver}`
+    : null;
+
   return (
     <AppShell user={profile.user} session={session}>
-      <ChatClient matrixHandle={profile.contact?.matrixHandle} />
+      <ChatClient matrixHandle={matrixHandle} />
     </AppShell>
   );
 }

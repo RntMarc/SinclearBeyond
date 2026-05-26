@@ -19,7 +19,13 @@ export default function ContactModal({ contact, onClose }) {
   const detailFields = [
     { label: "Discord", value: info.discordHandle, icon: MessageSquare },
     { label: "Fluxer", value: info.fluxerHandle, icon: MessageSquare },
-    { label: "Matrix", value: info.matrixHandle, icon: MessageSquare },
+    {
+      label: "Matrix",
+      value: info.matrixUser
+        ? `@${info.matrixUser}:${info.matrixHomeserver}`
+        : null,
+      icon: MessageSquare,
+    },
     { label: "Signal", value: info.signalNumber, icon: Phone },
     { label: "WhatsApp", value: info.whatsappNumber, icon: Phone },
   ];

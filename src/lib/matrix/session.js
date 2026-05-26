@@ -4,10 +4,12 @@ const MATRIX_COOKIE = "matrix_session";
 
 export async function setMatrixSession(data) {
   const jar = await cookies();
+  // Ensure password is never stored in a long-term way if possible,
+  // but here we are using a session cookie which is already relatively safe.
   jar.set(MATRIX_COOKIE, JSON.stringify(data), {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: true, // Always secure for credentials
     path: "/",
   });
 }

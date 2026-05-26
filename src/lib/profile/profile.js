@@ -148,7 +148,8 @@ export async function saveProfile(_prevState, formData) {
     const contactData = {
       discordHandle: user?.discordId ? existing?.discordHandle : discord,
       fluxerHandle: fluxer,
-      matrixHandle: existing?.matrixHandle ?? null,
+      matrixUser: existing?.matrixUser ?? null,
+      matrixHomeserver: existing?.matrixHomeserver ?? null,
       signalNumber: signal,
       whatsappNumber: whatsapp,
       discordVisibility: discordVis,
