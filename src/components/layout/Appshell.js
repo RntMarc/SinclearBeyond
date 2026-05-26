@@ -37,6 +37,10 @@ export default function AppShell({ children, user, session }) {
   const isMobile = useIsMobile();
   const [unreadChangelog, setUnreadChangelog] = useState(0);
   const [unreadForums, setUnreadForums] = useState(0);
+  const [unreadTravel, setUnreadTravel] = useState(0);
+  const [unreadCalendar, setUnreadCalendar] = useState(0);
+  const [unreadPolls, setUnreadPolls] = useState(0);
+  const [unreadBirthdays, setUnreadBirthdays] = useState(0);
 
   useEffect(() => {
     async function checkUnread() {
@@ -45,12 +49,35 @@ export default function AppShell({ children, user, session }) {
           "@/lib/changelog/actions"
         );
         const { getUnreadForumsCount } = await import("@/lib/forums/actions");
-        const [changelogCount, forumsCount] = await Promise.all([
+        const { getUnreadTravelCount } = await import("@/lib/travel/actions");
+        const { getUnreadCalendarCount } = await import(
+          "@/lib/calendar/actions"
+        );
+        const { getUnreadPollsCount } = await import("@/lib/polls/actions");
+        const { getUnreadBirthdaysCount } = await import(
+          "@/lib/profile/birthdayActions"
+        );
+        const [
+          changelogCount,
+          forumsCount,
+          travelCount,
+          calendarCount,
+          pollsCount,
+          birthdaysCount,
+        ] = await Promise.all([
           getUnreadChangelogCount(),
           getUnreadForumsCount(),
+          getUnreadTravelCount(),
+          getUnreadCalendarCount(),
+          getUnreadPollsCount(),
+          getUnreadBirthdaysCount(),
         ]);
         setUnreadChangelog(changelogCount);
         setUnreadForums(forumsCount);
+        setUnreadTravel(travelCount);
+        setUnreadCalendar(calendarCount);
+        setUnreadPolls(pollsCount);
+        setUnreadBirthdays(birthdaysCount);
       } catch (error) {
         console.error("Failed to fetch unread count", error);
       }
@@ -69,10 +96,30 @@ export default function AppShell({ children, user, session }) {
     },
     { href: "/entdecken", label: t("discover"), icon: Compass },
     { href: "/kritik", label: t("reviews"), icon: Star },
-    { href: "/reisen", label: t("travel"), icon: MapIcon },
-    { href: "/kalender", label: t("calendar"), icon: Calendar },
-    { href: "/umfrage", label: t("polls"), icon: CalendarCheck },
-    { href: "/geburtstage", label: t("birthdays"), icon: Gift },
+    {
+      href: "/reisen",
+      label: t("travel"),
+      icon: MapIcon,
+      badge: unreadTravel > 0 && !pathname.startsWith("/reisen"),
+    },
+    {
+      href: "/kalender",
+      label: t("calendar"),
+      icon: Calendar,
+      badge: unreadCalendar > 0 && !pathname.startsWith("/kalender"),
+    },
+    {
+      href: "/umfrage",
+      label: t("polls"),
+      icon: CalendarCheck,
+      badge: unreadPolls > 0 && !pathname.startsWith("/umfrage"),
+    },
+    {
+      href: "/geburtstage",
+      label: t("birthdays"),
+      icon: Gift,
+      badge: unreadBirthdays > 0 && pathname !== "/geburtstage",
+    },
     { href: "/kontakte", label: t("contacts"), icon: Users },
     { href: "/fotos", label: t("photos"), icon: Camera },
     {

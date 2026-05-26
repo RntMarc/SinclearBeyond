@@ -6,8 +6,8 @@ import sharp from "sharp";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
-  feedPostVotes,
   feedPosts,
+  feedPostVotes,
   forumMembers,
   forums,
   readStatuses,
@@ -105,7 +105,7 @@ export async function deleteForum(id) {
     db
       .delete(feedPostVotes)
       .where(
-        sql`${feedPostVotes.postId} IN (SELECT id FROM FeedPosts WHERE forumId = ${id})`,
+        sql`${feedPostVotes.postId} IN (SELECT id FROM ${feedPosts} WHERE ${feedPosts.forumId} = ${id})`,
       ),
   );
   await safeQuery(db.delete(feedPosts).where(eq(feedPosts.forumId, id)));
@@ -132,6 +132,24 @@ export async function deleteForum(id) {
 export async function joinForum(forumId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
+
+  // Check if already a member
+  const { data: existing } = await safeQuery(
+    db
+      .select()
+      .from(forumMembers)
+      .where(
+        and(
+          eq(forumMembers.forumId, forumId),
+          eq(forumMembers.userId, session.sub),
+        ),
+      )
+      .limit(1),
+  );
+
+  if (existing?.length > 0) {
+    return { ok: true, alreadyMember: true };
+  }
 
   const { error } = await safeQuery(
     db.insert(forumMembers).values({

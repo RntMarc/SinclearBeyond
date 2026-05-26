@@ -1,7 +1,7 @@
 "use client";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BirthdayModal from "@/components/birthdays/BirthdayModal";
 import CalendarAgenda from "@/components/calendar/CalendarAgenda";
 import CalendarDayLabels from "@/components/calendar/CalendarDayLabels";
@@ -13,6 +13,7 @@ import EventFormModal from "@/components/calendar/EventFormModal";
 import TimeGridView from "@/components/calendar/TimeGridView";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
 import TripDetailModal from "@/components/calendar/TripDetailModal";
+import { markAllCalendarAsRead } from "@/lib/calendar/actions";
 import { useCalendarEvents } from "@/hooks/useCalendarEvents";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import {
@@ -40,6 +41,10 @@ export default function KalenderClient({
 
   const { eventList, allUsers, addEvent, updateEvent, removeEvent } =
     useCalendarEvents();
+
+  useEffect(() => {
+    markAllCalendarAsRead();
+  }, []);
 
   function prev() {
     if (viewMode === "month") {
