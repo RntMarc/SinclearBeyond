@@ -32,7 +32,7 @@ export async function GET(request) {
 
   const clientId = await registerOAuthClient({
     registrationEndpoint,
-    origin: process.env.NEXT_PUBLIC_ORIGIN || origin,
+    origin,
     redirectUri,
   });
   if (!clientId)
