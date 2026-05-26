@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "89e7ab6c-54ed-4ffa-bf7b-5a4207626c76",
+  "id": "245e0e74-2c1d-489c-b6cb-cf5edcb16c6d",
   "prevId": "1ee7b488-9a98-4d8a-bd12-51b69ece85d1",
   "tables": {
     "AlbumTrack": {
@@ -1323,106 +1323,6 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "NewsArticle": {
-      "name": "NewsArticle",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "url": {
-          "name": "url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "sourceName": {
-          "name": "sourceName",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "sourceIcon": {
-          "name": "sourceIcon",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "savedAt": {
-          "name": "savedAt",
-          "type": "datetime(3)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "NewsArticle_id": {
-          "name": "NewsArticle_id",
-          "columns": ["id"]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "NewsUpvote": {
-      "name": "NewsUpvote",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "articleId": {
-          "name": "articleId",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "datetime(3)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "NewsUpvote_id": {
-          "name": "NewsUpvote_id",
-          "columns": ["id"]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
     "OfficeCollaborator": {
       "name": "OfficeCollaborator",
       "columns": {
@@ -2063,57 +1963,6 @@
       "compositePrimaryKeys": {
         "ReadStatus_id": {
           "name": "ReadStatus_id",
-          "columns": ["id"]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "RssSource": {
-      "name": "RssSource",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "url": {
-          "name": "url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "itemsPerPage": {
-          "name": "itemsPerPage",
-          "type": "tinyint",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 10
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "datetime(3)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "RssSource_id": {
-          "name": "RssSource_id",
           "columns": ["id"]
         }
       },

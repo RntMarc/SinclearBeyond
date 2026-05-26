@@ -67,8 +67,11 @@ export default function RssSourceFormModal({ source, onClose, onUpdated }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Name</label>
+            <label htmlFor="source-name" className="text-sm font-medium">
+              Name
+            </label>
             <input
+              id="source-name"
               type="text"
               required
               value={name}
@@ -79,8 +82,11 @@ export default function RssSourceFormModal({ source, onClose, onUpdated }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">RSS-URL</label>
+            <label htmlFor="source-url" className="text-sm font-medium">
+              RSS-URL
+            </label>
             <input
+              id="source-url"
               type="url"
               required
               value={url}
@@ -91,8 +97,11 @@ export default function RssSourceFormModal({ source, onClose, onUpdated }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Artikel pro Ladegang</label>
+            <label htmlFor="source-items" className="text-sm font-medium">
+              Artikel pro Ladegang
+            </label>
             <input
+              id="source-items"
               type="number"
               min="1"
               max="50"
