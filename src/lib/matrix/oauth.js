@@ -99,7 +99,8 @@ export async function registerOAuthClient({
     response_types: ["code"],
     token_endpoint_auth_method: "none",
     application_type: "web",
-    scope: "openid profile",
+    scope:
+      "openid profile offline_access urn:matrix:org.matrix.msc2967.client:api:*",
   };
 
   const response = await fetch(registrationEndpoint, {

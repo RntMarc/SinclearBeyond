@@ -33,7 +33,7 @@ export async function GET(request) {
       grant_type: "authorization_code",
       code,
       client_id: tx.clientId,
-      redirect_uri: `${origin}/api/matrix/oauth/callback`,
+      redirect_uri: `${process.env.NEXT_PUBLIC_ORIGIN || origin}/api/matrix/oauth/callback`,
       code_verifier: tx.codeVerifier,
     }),
   });

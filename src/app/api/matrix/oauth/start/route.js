@@ -22,7 +22,7 @@ export async function GET(request) {
   if (!cfg)
     return NextResponse.json({ error: "OAuth unsupported" }, { status: 400 });
 
-  const redirectUri = `${origin}/api/matrix/oauth/callback`;
+  const redirectUri = `${process.env.NEXT_PUBLIC_ORIGIN || origin}/api/matrix/oauth/callback`;
   const registrationEndpoint = cfg.registration_endpoint;
   if (!registrationEndpoint)
     return NextResponse.json(
@@ -50,7 +50,10 @@ export async function GET(request) {
   authUrl.searchParams.set("response_type", "code");
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("redirect_uri", redirectUri);
-  authUrl.searchParams.set("scope", "openid profile");
+  authUrl.searchParams.set(
+    "scope",
+    "openid profile offline_access urn:matrix:org.matrix.msc2967.client:api:*",
+  );
   authUrl.searchParams.set("state", state);
   authUrl.searchParams.set("code_challenge", codeChallenge);
   authUrl.searchParams.set("code_challenge_method", "S256");
