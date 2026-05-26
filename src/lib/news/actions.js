@@ -101,7 +101,9 @@ export async function getImportantNews() {
         sourceName: newsArticles.sourceName,
         sourceIcon: newsArticles.sourceIcon,
         savedAt: newsArticles.savedAt,
-        upvoteCount: sql`count(${newsUpvotes.id})`.as("upvoteCount"),
+      upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
+        "upvoteCount",
+      ),
       })
       .from(newsArticles)
       .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
@@ -126,7 +128,9 @@ export async function getArchivedNews() {
         sourceName: newsArticles.sourceName,
         sourceIcon: newsArticles.sourceIcon,
         savedAt: newsArticles.savedAt,
-        upvoteCount: sql`count(${newsUpvotes.id})`.as("upvoteCount"),
+      upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
+        "upvoteCount",
+      ),
       })
       .from(newsArticles)
       .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
@@ -204,7 +208,7 @@ export async function getUpvoteCounts() {
     db
       .select({
         url: newsArticles.url,
-        count: sql`count(${newsUpvotes.id})`,
+        count: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`,
       })
       .from(newsArticles)
       .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
