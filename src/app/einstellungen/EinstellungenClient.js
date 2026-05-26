@@ -13,7 +13,9 @@ import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
 
 function MatrixLinkCard({ t, isLinked, matrixHandle }) {
-  const [homeserver, setHomeserver] = useState("matrix.org");
+  const [homeserver, setHomeserver] = useState(
+    process.env.NEXT_PUBLIC_MATRIX_HOMESERVER || "matrix.org",
+  );
   const [matrixUser, setMatrixUser] = useState("");
   const [password, setPassword] = useState("");
   const [method, setMethod] = useState("oauth"); // 'oauth' or 'password'

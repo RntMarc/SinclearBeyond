@@ -15,7 +15,9 @@ import Button from "@/components/ui/Button";
 export default function MatrixOnboardingModal({ isOpen, onClose, onComplete }) {
   const t = useTranslations("Settings");
   const [step, setStep] = useState("selection"); // selection, link, creating
-  const [homeserver, setHomeserver] = useState("matrix.org");
+  const [homeserver, setHomeserver] = useState(
+    process.env.NEXT_PUBLIC_MATRIX_HOMESERVER || "matrix.org",
+  );
   const [matrixUser, setMatrixUser] = useState("");
   const [password, setPassword] = useState("");
   const [method, setMethod] = useState("oauth");
