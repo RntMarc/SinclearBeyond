@@ -77,6 +77,8 @@ export async function getNewsArticles(page = 1) {
     allItems.filter((i) => i.sourceId === s.id),
   );
 
+  if (sourceGroups.length === 0) return [];
+
   const maxLen = Math.max(...sourceGroups.map((g) => g.length));
   for (let i = 0; i < maxLen; i++) {
     for (const group of sourceGroups) {

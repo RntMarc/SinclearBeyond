@@ -1,14 +1,8 @@
-import Parser from "rss-parser";
+import { XMLParser } from "fast-xml-parser";
 
-const parser = new Parser({
-  customFields: {
-    item: [
-      ["media:content", "mediaContent", { keepArray: true }],
-      ["media:thumbnail", "mediaThumbnail"],
-      ["content:encoded", "contentEncoded"],
-      ["enclosure", "enclosure"],
-    ],
-  },
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: "@_",
 });
 
 // In-memory cache
@@ -24,10 +18,40 @@ function getNextHour() {
   return nextHour.getTime();
 }
 
+function extractImage(item) {
+  // 1. media:content
+  const mediaContent = item["media:content"];
+  if (mediaContent) {
+    if (Array.isArray(mediaContent)) {
+      const img = mediaContent.find(m => m["@_medium"] === "image" || m["@_type"]?.startsWith("image/"));
+      if (img) return img["@_url"];
+    } else if (mediaContent["@_medium"] === "image" || mediaContent["@_type"]?.startsWith("image/")) {
+      return mediaContent["@_url"];
+    }
+  }
+
+  // 2. enclosure
+  const enclosure = item.enclosure;
+  if (enclosure) {
+    if (Array.isArray(enclosure)) {
+      const img = enclosure.find(e => e["@_type"]?.startsWith("image/"));
+      if (img) return img["@_url"];
+    } else if (enclosure["@_type"]?.startsWith("image/")) {
+      return enclosure["@_url"];
+    }
+  }
+
+  // 3. content:encoded or description
+  const content = item["content:encoded"] || item.description || "";
+  const imgMatch = content.toString().match(/<img[^>]+src="([^">]+)"/);
+  if (imgMatch) return imgMatch[1];
+
+  return null;
+}
+
 export async function fetchRssFeed(url) {
   const now = Date.now();
 
-  // Reset cache if expired
   if (rssCache.expiresAt && now >= rssCache.expiresAt) {
     rssCache.data = {};
     rssCache.expiresAt = getNextHour();
@@ -42,52 +66,28 @@ export async function fetchRssFeed(url) {
   }
 
   try {
-    const feed = await parser.parseURL(url);
-    const sourceIcon =
-      feed.image?.url ||
-      `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`;
+    const response = await fetch(url);
+    const xmlData = await response.text();
+    const jsonObj = parser.parse(xmlData);
 
-    const items = feed.items.map((item) => {
-      // Try to find a preview image
-      let previewImage = null;
+    const channel = jsonObj.rss?.channel || jsonObj.feed;
+    if (!channel) return { items: [], sourceIcon: null };
 
-      // 1. Media content
-      if (item.mediaContent && item.mediaContent.length > 0) {
-        const img = item.mediaContent.find(
-          (m) => m.$?.medium === "image" || m.$?.type?.startsWith("image/"),
-        );
-        if (img) previewImage = img.$.url;
-      }
+    const sourceIcon = channel.image?.url || `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`;
 
-      // 2. Media thumbnail
-      if (!previewImage && item.mediaThumbnail) {
-        previewImage = item.mediaThumbnail.$.url;
-      }
+    const rawItems = channel.item || channel.entry || [];
+    const itemsList = Array.isArray(rawItems) ? rawItems : [rawItems];
 
-      // 3. Enclosure
-      if (
-        !previewImage &&
-        item.enclosure &&
-        item.enclosure.type?.startsWith("image/")
-      ) {
-        previewImage = item.enclosure.url;
-      }
-
-      // 4. Extract from content (rough regex)
-      if (!previewImage && (item.contentEncoded || item.content)) {
-        const content = item.contentEncoded || item.content;
-        const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
-        if (imgMatch) previewImage = imgMatch[1];
-      }
-
+    const items = itemsList.map((item) => {
+      const link = item.link?.["@_href"] || item.link || "";
       return {
-        id: item.guid || item.link,
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate,
-        content: item.contentSnippet || item.content,
-        previewImage,
-        sourceName: feed.title,
+        id: item.guid?.["#text"] || item.guid || item.id || link,
+        title: item.title?.["#text"] || item.title || "No Title",
+        link,
+        pubDate: item.pubDate || item.published || item.updated,
+        content: item.description || item.summary?.["#text"] || item.summary || "",
+        previewImage: extractImage(item),
+        sourceName: channel.title?.["#text"] || channel.title || "RSS Feed",
         sourceIcon,
       };
     });
