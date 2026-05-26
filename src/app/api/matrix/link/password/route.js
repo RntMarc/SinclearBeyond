@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import { contactInfo } from "@/lib/db/schema";
-import { normalizeHomeserver } from "@/lib/matrix/oauth";
+import { normalizeHomeserver, resolveHomeserver } from "@/lib/matrix/oauth";
 import { setMatrixSession } from "@/lib/matrix/session";
 
 export async function POST(request) {
@@ -12,16 +12,18 @@ export async function POST(request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json().catch(() => null);
-  const matrixUser = body?.matrixUser?.replace(/^@/, "").split(":")[0];
+  const matrixUserIdent = body?.matrixUser?.replace(/^@/, "").split(":")[0];
   const rawHomeserver = body?.homeserver;
   const password = body?.password;
 
-  if (!matrixUser || !rawHomeserver || !password) {
+  if (!matrixUserIdent || !rawHomeserver || !password) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
-  const homeserver = normalizeHomeserver(rawHomeserver);
-  const matrixHomeserver = homeserver.replace(/^https?:\/\//, "");
+  const homeserver = await resolveHomeserver(rawHomeserver);
+  if (!homeserver) {
+    return NextResponse.json({ error: "Invalid homeserver" }, { status: 400 });
+  }
 
   // Verify credentials with Matrix Homeserver
   const loginRes = await fetch(`${homeserver}/_matrix/client/v3/login`, {
@@ -31,7 +33,7 @@ export async function POST(request) {
       type: "m.login.password",
       identifier: {
         type: "m.id.user",
-        user: matrixUser,
+        user: matrixUserIdent,
       },
       password: password,
       initial_device_display_name: "Sinclear Beyond",
@@ -40,12 +42,17 @@ export async function POST(request) {
 
   const loginData = await loginRes.json().catch(() => null);
 
-  if (!loginRes.ok || !loginData?.access_token) {
+  if (!loginRes.ok || !loginData?.access_token || !loginData?.user_id) {
     return NextResponse.json(
       { error: "Invalid credentials or homeserver error" },
       { status: 401 },
     );
   }
+
+  // Extract real matrix user and homeserver domain from user_id
+  const mxidParts = loginData.user_id.replace(/^@/, "").split(":");
+  const matrixUser = mxidParts[0];
+  const matrixHomeserver = mxidParts.slice(1).join(":");
 
   // Check for duplicates
   const { data: duplicate, error: duplicateError } = await safeQuery(
