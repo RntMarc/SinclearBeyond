@@ -10,21 +10,28 @@ function b64url(buf) {
 export function normalizeHomeserver(input) {
   const value = (input || "").trim();
   if (!value) return null;
-  if (value.startsWith("http://") || value.startsWith("https://")) return value.replace(/\/$/, "");
+  if (value.startsWith("http://") || value.startsWith("https://"))
+    return value.replace(/\/$/, "");
   return `https://${value.replace(/\/$/, "")}`;
 }
 
 export async function createOAuthTx({ homeserver, mode, clientId }) {
   const state = b64url(crypto.randomBytes(24));
   const codeVerifier = b64url(crypto.randomBytes(48));
-  const codeChallenge = b64url(crypto.createHash("sha256").update(codeVerifier).digest());
+  const codeChallenge = b64url(
+    crypto.createHash("sha256").update(codeVerifier).digest(),
+  );
   const jar = await cookies();
-  jar.set(OAUTH_COOKIE, JSON.stringify({ state, codeVerifier, homeserver, mode, clientId }), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-  });
+  jar.set(
+    OAUTH_COOKIE,
+    JSON.stringify({ state, codeVerifier, homeserver, mode, clientId }),
+    {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    },
+  );
   return { state, codeChallenge };
 }
 
@@ -32,7 +39,11 @@ export async function readOAuthTx() {
   const jar = await cookies();
   const raw = jar.get(OAUTH_COOKIE)?.value;
   if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 export async function clearOAuthTx() {
@@ -51,11 +62,16 @@ export async function discoverOAuth(homeserver) {
     return authMetadata;
   }
 
-  const wellKnownOAuth = await fetch(`${base}/.well-known/oauth-authorization-server`)
+  const wellKnownOAuth = await fetch(
+    `${base}/.well-known/oauth-authorization-server`,
+  )
     .then((r) => (r.ok ? r.json() : null))
     .catch(() => null);
 
-  if (wellKnownOAuth?.authorization_endpoint && wellKnownOAuth?.token_endpoint) {
+  if (
+    wellKnownOAuth?.authorization_endpoint &&
+    wellKnownOAuth?.token_endpoint
+  ) {
     return wellKnownOAuth;
   }
 
@@ -70,7 +86,11 @@ export async function discoverOAuth(homeserver) {
   return null;
 }
 
-export async function registerOAuthClient({ registrationEndpoint, origin, redirectUri }) {
+export async function registerOAuthClient({
+  registrationEndpoint,
+  origin,
+  redirectUri,
+}) {
   const payload = {
     client_name: "Sinclear Beyond",
     client_uri: origin,

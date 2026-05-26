@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
+import MarkTravelAsRead from "@/components/travel/MarkTravelAsRead";
 import TripList from "@/components/travel/TripList";
 import { InlineError } from "@/components/ui/InlineError";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
@@ -36,6 +37,7 @@ export default async function ReisenPage() {
 
   return (
     <AppShell user={user} session={session}>
+      <MarkTravelAsRead />
       <div className="flex flex-col h-full bg-background">
         <PageHeader
           subtitle={t("subtitle")}
