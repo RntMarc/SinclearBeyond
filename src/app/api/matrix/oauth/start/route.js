@@ -3,7 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import {
   createOAuthTx,
   discoverOAuth,
-  normalizeHomeserver,
+  resolveHomeserver,
   registerOAuthClient,
 } from "@/lib/matrix/oauth";
 
@@ -13,7 +13,7 @@ export async function GET(request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams, origin } = new URL(request.url);
-  const homeserver = normalizeHomeserver(searchParams.get("homeserver"));
+  const homeserver = await resolveHomeserver(searchParams.get("homeserver"));
   const mode = searchParams.get("mode") || "session";
   if (!homeserver || !["session", "link"].includes(mode))
     return NextResponse.json({ error: "Invalid params" }, { status: 400 });

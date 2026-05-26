@@ -60,8 +60,9 @@ export async function GET(request) {
   });
 
   if (tx.mode === "link") {
-    const matrixUser = whoami.user_id.replace(/^@/, "").split(":")[0];
-    const matrixHomeserver = tx.homeserver.replace(/^https?:\/\//, "");
+    const mxidParts = whoami.user_id.replace(/^@/, "").split(":");
+    const matrixUser = mxidParts[0];
+    const matrixHomeserver = mxidParts.slice(1).join(":");
 
     const { data: duplicate, error: duplicateError } = await safeQuery(
       db

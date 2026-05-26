@@ -13,7 +13,9 @@ import PasskeyManager from "@/components/profile/PasskeyManager";
 import ProfilForm from "@/components/profile/ProfilForm";
 
 function MatrixLinkCard({ t, isLinked, matrixHandle }) {
-  const [homeserver, setHomeserver] = useState("matrix.org");
+  const [homeserver, setHomeserver] = useState(
+    process.env.NEXT_PUBLIC_MATRIX_HOMESERVER || "matrix.org",
+  );
   const [matrixUser, setMatrixUser] = useState("");
   const [password, setPassword] = useState("");
   const [method, setMethod] = useState("oauth"); // 'oauth' or 'password'
@@ -103,6 +105,26 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
     window.location.reload();
   };
 
+  const onCreateAccount = async () => {
+    setStatus({ error: "", success: "", pending: true });
+    try {
+      const res = await fetch("/api/matrix/register", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || t("login.matrixCreateError"));
+
+      setStatus({
+        error: "",
+        success: t("login.matrixCreateSuccess", {
+          matrixUserId: data.matrixUserId,
+        }),
+        pending: false,
+      });
+      window.location.reload();
+    } catch (err) {
+      setStatus({ error: err.message, success: "", pending: false });
+    }
+  };
+
   return (
     <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 space-y-4">
       <div className="text-center">
@@ -186,6 +208,25 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
               className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60"
             >
               {t("login.matrixLink")}
+            </button>
+          </div>
+
+          <div className="pt-4 border-t border-sidebar-border">
+            <p className="text-sm font-medium mb-2">
+              {t("login.matrixCreate")}
+            </p>
+            <p className="text-xs text-muted-foreground mb-4">
+              {t("login.matrixCreateDescription")}
+            </p>
+            <button
+              type="button"
+              onClick={onCreateAccount}
+              disabled={status.pending}
+              className="w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-60"
+            >
+              {status.pending
+                ? t("login.matrixCreating")
+                : t("login.matrixCreate")}
             </button>
           </div>
         </div>
