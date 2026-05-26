@@ -319,7 +319,10 @@ export default function ProfilForm({ user, contact, social }) {
           onVisibilityChange={(v) =>
             setVisibility((prev) => ({ ...prev, [visKey]: v }))
           }
-          disabled={(name === "discordHandle" && !!user.discordId) || name === "matrixHandle"}
+          disabled={
+            (name === "discordHandle" && !!user.discordId) ||
+            name === "matrixHandle"
+          }
         />
       ))}
 

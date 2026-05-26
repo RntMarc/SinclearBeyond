@@ -6,17 +6,30 @@ import { contactInfo, users } from "@/lib/db/schema";
 
 export async function GET() {
   const session = await getSession();
-  if (!session?.sub) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.sub)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { data, error } = await safeQuery(
     db
-      .select({ userId: users.id, displayName: users.displayName, image: users.image, matrixHandle: contactInfo.matrixHandle })
+      .select({
+        userId: users.id,
+        displayName: users.displayName,
+        image: users.image,
+        matrixHandle: contactInfo.matrixHandle,
+      })
       .from(contactInfo)
       .innerJoin(users, eq(contactInfo.userId, users.id))
-      .where(and(isNotNull(contactInfo.matrixHandle), ne(contactInfo.matrixHandle, ""), ne(contactInfo.userId, session.sub))),
+      .where(
+        and(
+          isNotNull(contactInfo.matrixHandle),
+          ne(contactInfo.matrixHandle, ""),
+          ne(contactInfo.userId, session.sub),
+        ),
+      ),
   );
 
-  if (error) return NextResponse.json({ error: "Database error" }, { status: 500 });
+  if (error)
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
   const usersWithHomeserver = (data ?? []).map((entry) => {
     const [matrixUserId, homeserver] = (entry.matrixHandle || "").split("|");
     return { ...entry, matrixUserId, homeserver };
