@@ -13,18 +13,20 @@ export async function GET() {
 
   try {
     // 1. Get all forums where user is member
-    const { data: joined } = await safeQuery(
+    const { data: joined, error: joinedError } = await safeQuery(
       db
         .select({
           id: forums.id,
           name: forums.name,
           description: forums.description,
           image: forums.image,
-          postCount: sql`(SELECT count(*) FROM FeedPosts WHERE forumId = ${forums.id})`,
+          postCount: sql`CAST((SELECT count(*) FROM ${feedPosts} WHERE ${feedPosts.forumId} = ${forums.id}) AS SIGNED)`,
           hasUnread: sql`EXISTS (
-            SELECT 1 FROM FeedPosts p
-            LEFT JOIN ReadStatuses rs ON rs.entityId = p.id AND rs.entityType = 'feedPost' AND rs.userId = ${userId}
-            WHERE p.forumId = ${forums.id} AND rs.id IS NULL
+            SELECT 1 FROM ${feedPosts}
+            LEFT JOIN ${readStatuses} ON ${readStatuses.entityId} = ${feedPosts.id}
+              AND ${readStatuses.entityType} = 'feedPost'
+              AND ${readStatuses.userId} = ${userId}
+            WHERE ${feedPosts.forumId} = ${forums.id} AND ${readStatuses.id} IS NULL
           )`,
         })
         .from(forums)
@@ -33,23 +35,33 @@ export async function GET() {
         .orderBy(desc(forums.createdAt)),
     );
 
-    // 2. Get all other forums
-    const joinedIds = (joined || []).map((f) => f.id);
-    const notJoinedQuery = db
-      .select({
-        id: forums.id,
-        name: forums.name,
-        description: forums.description,
-        image: forums.image,
-      })
-      .from(forums);
-
-    if (joinedIds.length > 0) {
-      // Corrected: use notInArray or similar, but for simplicity let's just filter or use a clean query
-      // For now, let's just fetch all and filter in JS if joinedIds is not empty
+    if (joinedError) {
+      return NextResponse.json(
+        { error: "Failed to fetch joined forums" },
+        { status: 500 },
+      );
     }
 
-    const { data: allForums } = await safeQuery(notJoinedQuery);
+    // 2. Get all other forums
+    const joinedIds = (joined || []).map((f) => f.id);
+    const { data: allForums, error: allForumsError } = await safeQuery(
+      db
+        .select({
+          id: forums.id,
+          name: forums.name,
+          description: forums.description,
+          image: forums.image,
+        })
+        .from(forums),
+    );
+
+    if (allForumsError) {
+      return NextResponse.json(
+        { error: "Failed to fetch all forums" },
+        { status: 500 },
+      );
+    }
+
     const notJoined = (allForums || []).filter(
       (f) => !joinedIds.includes(f.id),
     );
