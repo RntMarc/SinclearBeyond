@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Syne, Plus_Jakarta_Sans } from "next/font/google";
 import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
@@ -6,7 +6,14 @@ import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { getSession } from "@/lib/auth/session";
 import "./globals.css";
 
-const inter = Inter({
+const syne = Syne({
+  variable: "--font-display",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["700", "800"],
+});
+
+const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
@@ -27,19 +34,14 @@ export default async function RootLayout({ children }) {
   const messages = await getMessages();
   const session = await getSession();
 
-  const initialPreferences = {
-    theme: session?.theme || "dark",
-    primaryColor: session?.primaryColor || "#7c3aed",
-  };
-
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${initialPreferences.theme} h-full`}
+      className={`${syne.variable} ${jakarta.variable} dark h-full`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ThemeProvider initialPreferences={initialPreferences}>
+          <ThemeProvider>
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>
