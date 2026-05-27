@@ -16,39 +16,11 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
   const [homeserver, setHomeserver] = useState("matrix.org");
   const [matrixUser, setMatrixUser] = useState("");
   const [password, setPassword] = useState("");
-  const [method, setMethod] = useState("oauth"); // 'oauth' or 'password'
   const [status, setStatus] = useState({
     error: "",
     success: "",
     pending: false,
   });
-
-  const onLinkOAuth = async () => {
-    setStatus({ error: "", success: "", pending: true });
-    const response = await fetch("/api/matrix/link", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ homeserver }),
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      setStatus({
-        error: t("login.matrixLinkError"),
-        success: "",
-        pending: false,
-      });
-      return;
-    }
-    if (data.redirectTo) {
-      window.location.href = data.redirectTo;
-      return;
-    }
-    setStatus({
-      error: t("login.matrixLinkError"),
-      success: "",
-      pending: false,
-    });
-  };
 
   const onLinkPassword = async () => {
     if (!matrixUser || !homeserver || !password) {
@@ -103,28 +75,6 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
     window.location.reload();
   };
 
-  const onAutoCreate = async () => {
-    setStatus({ error: "", success: "", pending: true });
-    const response = await fetch("/api/matrix/register", { method: "POST" });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      setStatus({
-        error: data.error || t("login.matrixLinkError"),
-        success: "",
-        pending: false,
-      });
-      return;
-    }
-    setStatus({
-      error: "",
-      success: t("login.matrixLinkedSuccess", {
-        matrixUserId: data.matrixUserId,
-      }),
-      pending: false,
-    });
-    window.location.reload();
-  };
-
   return (
     <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 space-y-4">
       <div className="text-center">
@@ -156,70 +106,50 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={onAutoCreate}
-              disabled={status.pending}
-              className="w-full px-4 py-3 rounded-xl border-2 border-primary bg-primary/5 text-primary text-sm font-semibold hover:bg-primary/10 transition-all flex flex-col items-center gap-0.5 disabled:opacity-60"
-            >
-              <span>{t("login.matrixAutoCreate")}</span>
-              <span className="text-[10px] opacity-70 font-normal uppercase tracking-wider">
-                {t("login.matrixAutoCreateDesc")}
-              </span>
-            </button>
-
-            <div className="flex gap-2 p-1 bg-background border border-border rounded-lg">
-              <button
-                type="button"
-                onClick={() => setMethod("oauth")}
-                className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "oauth" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                {t("login.matrixMethodOAuth2")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setMethod("password")}
-                className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "password" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                {t("login.matrixMethodPassword")}
-              </button>
-            </div>
-          </div>
-
           <p className="text-xs text-muted-foreground italic">
             {t("login.matrixSecurityNote")}
           </p>
 
           <div className="space-y-3">
-            <input
-              value={homeserver}
-              onChange={(e) => setHomeserver(e.target.value)}
-              placeholder={t("login.matrixHomeserverPlaceholder")}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-            />
-            {method === "password" && (
-              <>
-                <input
-                  value={matrixUser}
-                  onChange={(e) => setMatrixUser(e.target.value)}
-                  placeholder={t("login.matrixUserPlaceholder")}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-                />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={t("login.matrixPasswordPlaceholder")}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-                />
-              </>
-            )}
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t("login.matrixHomeserverPlaceholder")}
+              </label>
+              <input
+                value={homeserver}
+                onChange={(e) => setHomeserver(e.target.value)}
+                placeholder={t("login.matrixHomeserverPlaceholder")}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t("login.matrixUserPlaceholder")}
+              </label>
+              <input
+                value={matrixUser}
+                onChange={(e) => setMatrixUser(e.target.value)}
+                placeholder={t("login.matrixUserPlaceholder")}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t("login.matrixPasswordPlaceholder")}
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t("login.matrixPasswordPlaceholder")}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
             <button
               type="button"
-              onClick={method === "oauth" ? onLinkOAuth : onLinkPassword}
+              onClick={onLinkPassword}
               disabled={status.pending}
-              className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60"
+              className="w-full px-4 py-2 mt-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors disabled:opacity-60"
             >
               {t("login.matrixLink")}
             </button>
