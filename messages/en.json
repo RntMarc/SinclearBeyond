@@ -845,6 +845,7 @@
     "identifierPlaceholder": "Matrix username or @user:server",
     "homeserverPlaceholder": "Homeserver (e.g. https://matrix.org)",
     "passwordPlaceholder": "Matrix password",
+    "username": "Username",
     "loginButton": "Start login",
     "loginButtonOAuth": "Start OAuth2 login",
     "authSuccess": "Matrix login successful. You can now send messages.",
@@ -852,7 +853,7 @@
     "noSelection": "No chat partner selected",
     "messagePlaceholder": "Type a message",
     "send": "Send message",
-    "sessionRequired": "Please verify your session with your homeserver.",
+    "sessionRequired": "Please confirm your Matrix password to access the chat again.",
     "oauthError": "Sign-in failed or was cancelled.",
     "methodOAuth2": "OAuth2",
     "methodPassword": "Password"

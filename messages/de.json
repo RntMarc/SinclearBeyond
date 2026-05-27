@@ -879,6 +879,7 @@
     "identifierPlaceholder": "Matrix-Benutzername oder @user:server",
     "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
+    "username": "Nutzername",
     "loginButton": "Anmeldung starten",
     "loginButtonOAuth": "OAuth2-Login starten",
     "authSuccess": "Matrix-Anmeldung erfolgreich. Du kannst jetzt Nachrichten senden.",
@@ -886,7 +887,7 @@
     "noSelection": "Kein Chatpartner ausgewählt",
     "messagePlaceholder": "Nachricht eingeben",
     "send": "Nachricht senden",
-    "sessionRequired": "Bitte verifiziere deine Sitzung bei deinem Homeserver.",
+    "sessionRequired": "Bitte bestätige dein Matrix-Passwort, um wieder auf den Chat zuzugreifen.",
     "oauthError": "Anmeldung fehlgeschlagen oder abgebrochen.",
     "methodOAuth2": "OAuth2",
     "methodPassword": "Passwort"

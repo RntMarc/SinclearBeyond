@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { clearMatrixSession, getMatrixSession } from "@/lib/matrix/session";
+import {
+  clearMatrixSession,
+  getMatrixSession,
+  setMatrixSession,
+} from "@/lib/matrix/session";
 import { normalizeHomeserver } from "@/lib/matrix/oauth";
 
 export async function GET() {
