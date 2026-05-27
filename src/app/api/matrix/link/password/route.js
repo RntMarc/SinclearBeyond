@@ -25,19 +25,22 @@ export async function POST(request) {
   const resolvedHomeserver = await resolveHomeserver(rawHomeserver);
 
   // Verify credentials with Matrix Homeserver
-  const loginRes = await fetch(`${resolvedHomeserver}/_matrix/client/v3/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      type: "m.login.password",
-      identifier: {
-        type: "m.id.user",
-        user: matrixUser,
-      },
-      password: password,
-      initial_device_display_name: "Sinclear Beyond",
-    }),
-  });
+  const loginRes = await fetch(
+    `${resolvedHomeserver}/_matrix/client/v3/login`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "m.login.password",
+        identifier: {
+          type: "m.id.user",
+          user: matrixUser,
+        },
+        password: password,
+        initial_device_display_name: "Sinclear Beyond",
+      }),
+    },
+  );
 
   const loginData = await loginRes.json().catch(() => null);
 

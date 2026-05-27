@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import Avatar from "@/components/Avatar";
 import PageHeader from "@/components/layout/PageHeader";
+import MatrixOnboardingModal from "@/components/chat/MatrixOnboardingModal";
 
 export default function ChatClient({ matrixHandle }) {
   const t = useTranslations("Chat");
@@ -22,6 +23,7 @@ export default function ChatClient({ matrixHandle }) {
   const [method, setMethod] = useState("password");
   const [authError, setAuthError] = useState("");
   const [pendingSend, setPendingSend] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(!matrixHandle);
   const isLinked = Boolean(matrixHandle);
 
   const parsedHandle = useMemo(() => {
@@ -140,10 +142,20 @@ export default function ChatClient({ matrixHandle }) {
       />
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-5xl mx-auto space-y-6">
-          {!isLinked && (
+          {!isLinked && !showOnboarding && (
             <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
               {t("linkRequired")}
             </div>
+          )}
+
+          {showOnboarding && (
+            <MatrixOnboardingModal
+              onComplete={() => {
+                setShowOnboarding(false);
+                window.location.reload();
+              }}
+              onCancel={() => setShowOnboarding(false)}
+            />
           )}
 
           {isLinked && !sessionReady && (

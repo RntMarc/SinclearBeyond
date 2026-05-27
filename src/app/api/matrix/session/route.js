@@ -44,16 +44,19 @@ export async function POST(request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const loginRes = await fetch(`${resolvedHomeserver}/_matrix/client/v3/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "m.login.password",
-        identifier: { type: "m.id.user", user: matrixUser },
-        password: password,
-        initial_device_display_name: "Sinclear Beyond Session",
-      }),
-    });
+    const loginRes = await fetch(
+      `${resolvedHomeserver}/_matrix/client/v3/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "m.login.password",
+          identifier: { type: "m.id.user", user: matrixUser },
+          password: password,
+          initial_device_display_name: "Sinclear Beyond Session",
+        }),
+      },
+    );
 
     const loginData = await loginRes.json().catch(() => null);
     if (!loginRes.ok || !loginData?.access_token) {

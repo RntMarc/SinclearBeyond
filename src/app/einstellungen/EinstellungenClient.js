@@ -103,6 +103,28 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
     window.location.reload();
   };
 
+  const onAutoCreate = async () => {
+    setStatus({ error: "", success: "", pending: true });
+    const response = await fetch("/api/matrix/register", { method: "POST" });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setStatus({
+        error: data.error || t("login.matrixLinkError"),
+        success: "",
+        pending: false,
+      });
+      return;
+    }
+    setStatus({
+      error: "",
+      success: t("login.matrixLinkedSuccess", {
+        matrixUserId: data.matrixUserId,
+      }),
+      pending: false,
+    });
+    window.location.reload();
+  };
+
   return (
     <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8 space-y-4">
       <div className="text-center">
@@ -134,21 +156,35 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="flex gap-2 p-1 bg-background border border-border rounded-lg">
+          <div className="flex flex-col gap-3">
             <button
               type="button"
-              onClick={() => setMethod("oauth")}
-              className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "oauth" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              onClick={onAutoCreate}
+              disabled={status.pending}
+              className="w-full px-4 py-3 rounded-xl border-2 border-primary bg-primary/5 text-primary text-sm font-semibold hover:bg-primary/10 transition-all flex flex-col items-center gap-0.5 disabled:opacity-60"
             >
-              {t("login.matrixMethodOAuth2")}
+              <span>{t("login.matrixAutoCreate")}</span>
+              <span className="text-[10px] opacity-70 font-normal uppercase tracking-wider">
+                {t("login.matrixAutoCreateDesc")}
+              </span>
             </button>
-            <button
-              type="button"
-              onClick={() => setMethod("password")}
-              className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "password" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              {t("login.matrixMethodPassword")}
-            </button>
+
+            <div className="flex gap-2 p-1 bg-background border border-border rounded-lg">
+              <button
+                type="button"
+                onClick={() => setMethod("oauth")}
+                className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "oauth" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {t("login.matrixMethodOAuth2")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMethod("password")}
+                className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "password" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {t("login.matrixMethodPassword")}
+              </button>
+            </div>
           </div>
 
           <p className="text-xs text-muted-foreground italic">

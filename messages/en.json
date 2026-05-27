@@ -634,7 +634,9 @@
       "matrixLinkError": "Failed to link Matrix account. Please check credentials.",
       "matrixLinkedSuccess": "Matrix linked successfully: {matrixUserId}",
       "matrixUnlinkError": "Could not remove Matrix link.",
-      "matrixUnlinkedSuccess": "Matrix link removed."
+      "matrixUnlinkedSuccess": "Matrix link removed.",
+      "matrixAutoCreate": "Automatically create recommended account",
+      "matrixAutoCreateDesc": "Automatically creates an account on our recommended homeserver."
     }
   },
   "Feedback": {
@@ -858,6 +860,23 @@
     "methodOAuth2": "OAuth2",
     "methodPassword": "Password",
     "switchOAuth": "Or login via OAuth2",
-    "switchPassword": "Or login via Password"
+    "switchPassword": "Or login via Password",
+    "onboarding": {
+      "title": "Setup Chat",
+      "description": "A Matrix account is recommended for using certain community and chat functions.\n\nThe integrated chat functions of this project do not use end-to-end encryption (E2EE). For private and encrypted conversations with other users, the use of a separate Matrix client like Element X is recommended.",
+      "optionA": "I already have a Matrix account",
+      "optionB": "Automatically create recommended Matrix account",
+      "optionC": "Not now",
+      "optionBRecommended": "Recommended",
+      "linkingTitle": "Link existing account",
+      "creatingAccount": "Creating account...",
+      "successCreate": "Account created successfully!",
+      "errorCreate": "Error during account creation.",
+      "errorFillAll": "Please fill in all fields.",
+      "errorLink": "Linking failed.",
+      "copyPassword": "Copy password",
+      "passwordNote": "Please save your password securely. It cannot be recovered.",
+      "continueToChat": "Continue to Chat"
+    }
   }
 }
