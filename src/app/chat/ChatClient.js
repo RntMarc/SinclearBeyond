@@ -19,7 +19,7 @@ export default function ChatClient({ matrixHandle }) {
   const [homeserver, setHomeserver] = useState("matrix.org");
   const [matrixUser, setMatrixUser] = useState("");
   const [password, setPassword] = useState("");
-  const [method, setMethod] = useState("oauth");
+  const [method, setMethod] = useState("password");
   const [authError, setAuthError] = useState("");
   const [pendingSend, setPendingSend] = useState(false);
   const isLinked = Boolean(matrixHandle);
@@ -143,65 +143,92 @@ export default function ChatClient({ matrixHandle }) {
           )}
 
           {isLinked && !sessionReady && (
-            <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-              <p className="text-sm text-muted-foreground">
-                {t("sessionRequired")}
-              </p>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+              <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-xl space-y-6 relative">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">{t("title")}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {t("sessionRequired")}
+                  </p>
+                </div>
 
-              <div className="flex gap-2 p-1 bg-background border border-border rounded-lg max-w-xs">
-                <button
-                  type="button"
-                  onClick={() => setMethod("oauth")}
-                  className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "oauth" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  {t("methodOAuth2")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMethod("password")}
-                  className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "password" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  {t("methodPassword")}
-                </button>
-              </div>
+                <div className="flex gap-2 p-1 bg-background border border-border rounded-lg">
+                  <button
+                    type="button"
+                    onClick={() => setMethod("oauth")}
+                    className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "oauth" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {t("methodOAuth2")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMethod("password")}
+                    className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "password" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {t("methodPassword")}
+                  </button>
+                </div>
 
-              <div className="space-y-3">
-                <input
-                  value={homeserver}
-                  onChange={(e) => setHomeserver(e.target.value)}
-                  placeholder={t("homeserverPlaceholder")}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-                />
-                {method === "password" && (
-                  <div className="flex gap-3">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Homeserver
+                    </label>
                     <input
-                      value={matrixUser}
-                      onChange={(e) => setMatrixUser(e.target.value)}
-                      placeholder={t("identifierPlaceholder")}
-                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
-                    />
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder={t("passwordPlaceholder")}
-                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                      value={homeserver}
+                      onChange={(e) => setHomeserver(e.target.value)}
+                      readOnly={isLinked}
+                      placeholder={t("homeserverPlaceholder")}
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm disabled:opacity-60"
                     />
                   </div>
+
+                  {method === "password" && (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted-foreground">
+                          {t("username")}
+                        </label>
+                        <input
+                          value={matrixUser}
+                          onChange={(e) => setMatrixUser(e.target.value)}
+                          readOnly={isLinked}
+                          placeholder={t("identifierPlaceholder")}
+                          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm disabled:opacity-60"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted-foreground">
+                          {t("passwordPlaceholder")}
+                        </label>
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder={t("passwordPlaceholder")}
+                          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={startSession}
+                    className="w-full rounded-lg bg-primary text-primary-foreground text-sm font-medium px-4 py-2.5 hover:opacity-90 transition-opacity"
+                  >
+                    {method === "oauth"
+                      ? t("loginButtonOAuth")
+                      : t("loginButton")}
+                  </button>
+                </div>
+
+                {authError && (
+                  <p className="text-sm text-destructive text-center">
+                    {authError}
+                  </p>
                 )}
-                <button
-                  type="button"
-                  onClick={startSession}
-                  className="w-full rounded-lg border border-primary text-primary text-sm font-medium px-4 py-2"
-                >
-                  {method === "oauth"
-                    ? t("loginButtonOAuth")
-                    : t("loginButton")}
-                </button>
               </div>
-              {authError && (
-                <p className="text-sm text-destructive">{authError}</p>
-              )}
             </div>
           )}
 
