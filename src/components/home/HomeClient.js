@@ -10,6 +10,8 @@ import EventDetailModal from "@/components/calendar/EventDetailModal";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
 import FeedItem from "@/components/forum/FeedItem";
 import PhotoItem from "@/components/photos/PhotoItem";
+import Card from "@/components/ui/Card";
+import { cn } from "@/lib/utils";
 
 export default function HomeClient({
   upcomingEvents = [],
@@ -34,108 +36,71 @@ export default function HomeClient({
   const hasPolls = activePolls.length > 0 || finalizedPolls.length > 0;
 
   return (
-    <div className="columns-1 md:columns-2 gap-6 md:gap-10">
+    <div className="columns-1 md:columns-2 gap-8 space-y-8">
       {/* Upcoming Events */}
       {hasEvents && (
         <Section
           title={t("upcomingEvents")}
           href="/kalender?view=agenda"
-          className="space-y-3"
+          className="space-y-4"
         >
           {upcomingEvents.map((event) => (
             <button
               key={event.id}
               type="button"
               onClick={() => setSelectedItem({ type: event.type, data: event })}
-              className="w-full text-left p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
+              className="w-full text-left p-5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-3xl transition-all group flex items-center justify-between active:scale-[0.98]"
             >
               <div className="flex flex-col">
-                <span className="font-medium text-foreground">
+                <span className="font-bold text-foreground text-lg tracking-tight">
                   {event.title}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground uppercase font-black tracking-widest mt-1">
                   {new Date(event.startAt).toLocaleDateString("de-DE", {
                     day: "2-digit",
                     month: "long",
                   })}
                   {event.allDay
                     ? ""
-                    : `, ${new Date(event.startAt).toLocaleTimeString("de-DE", {
+                    : ` • ${new Date(event.startAt).toLocaleTimeString("de-DE", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}`}
                 </span>
               </div>
-              <ChevronRight
-                size={16}
-                className="text-muted-foreground group-hover:translate-x-1 transition-transform"
-              />
-            </button>
-          ))}
-        </Section>
-      )}
-
-      {/* Upcoming Trips */}
-      {hasTrips && (
-        <Section
-          title={t("upcomingTrips")}
-          href="/reisen"
-          className="space-y-3"
-        >
-          {upcomingTrips.map((trip) => (
-            <Link
-              key={trip.id}
-              href={`/reisen/${trip.id}`}
-              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
-            >
-              <div className="flex flex-col">
-                <span className="font-medium text-foreground">{trip.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(trip.start).toLocaleDateString("de-DE", {
-                    day: "2-digit",
-                    month: "long",
-                  })}{" "}
-                  -{" "}
-                  {new Date(trip.end).toLocaleDateString("de-DE", {
-                    day: "2-digit",
-                    month: "long",
-                  })}
-                </span>
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                <ChevronRight size={18} />
               </div>
-              <ChevronRight
-                size={16}
-                className="text-muted-foreground group-hover:translate-x-1 transition-transform"
-              />
-            </Link>
+            </button>
           ))}
         </Section>
       )}
 
       {/* Polls */}
       {hasPolls && (
-        <Section title={t("polls")} href="/umfrage" className="space-y-3">
+        <Section title={t("polls")} href="/umfrage" className="space-y-4">
           {activePolls.map((poll) => (
             <Link
               key={poll.id}
               href={`/umfrage/${poll.id}`}
-              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+              className="block p-5 bg-electric-purple/10 border border-electric-purple/20 rounded-3xl transition-all group active:scale-[0.98]"
             >
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2 text-primary">
-                  <CalendarCheck size={16} />
-                  <span className="text-xs font-bold uppercase tracking-wider">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 text-electric-purple">
+                  <CalendarCheck size={18} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                     {t("activePoll")}
                   </span>
                 </div>
                 <ChevronRight
                   size={16}
-                  className="text-muted-foreground group-hover:translate-x-1 transition-transform"
+                  className="text-electric-purple group-hover:translate-x-1 transition-transform"
                 />
               </div>
-              <span className="font-medium text-foreground block">
+              <span className="font-bold text-foreground text-lg block tracking-tight">
                 {poll.title}
               </span>
-              <span className="text-xs text-muted-foreground mt-1 block">
+              <span className="text-xs text-muted-foreground mt-2 block font-medium">
                 {t("pollBy", { name: poll.creatorName })}
               </span>
             </Link>
@@ -144,16 +109,14 @@ export default function HomeClient({
             <Link
               key={poll.id}
               href={`/umfrage/${poll.id}`}
-              className="block p-4 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-xl transition-all group"
+              className="block p-5 bg-primary/10 border border-primary/20 rounded-3xl transition-all group active:scale-[0.98]"
             >
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2 text-primary">
                   <CalendarCheck
-                    size={16}
-                    fill="currentColor"
-                    className="fill-primary/20"
+                    size={18}
                   />
-                  <span className="text-xs font-bold uppercase tracking-wider">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                     {t("finalizedPoll")}
                   </span>
                 </div>
@@ -162,18 +125,16 @@ export default function HomeClient({
                   className="text-primary group-hover:translate-x-1 transition-transform"
                 />
               </div>
-              <span className="font-bold text-foreground block">
+              <span className="font-bold text-foreground text-lg block tracking-tight">
                 {poll.title}
               </span>
               {poll.options?.[0]?.dateValue && (
-                <span className="text-xs text-primary font-medium mt-1 block italic">
-                  {t("finalizedDate")}:{" "}
+                <span className="text-xs text-primary font-bold mt-2 block uppercase tracking-wider">
                   {new Date(poll.options[0].dateValue).toLocaleDateString(
                     "de-DE",
                     {
                       day: "2-digit",
                       month: "long",
-                      year: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
                     },
@@ -185,31 +146,67 @@ export default function HomeClient({
         </Section>
       )}
 
+      {/* Upcoming Trips */}
+      {hasTrips && (
+        <Section
+          title={t("upcomingTrips")}
+          href="/reisen"
+          className="space-y-4"
+        >
+          {upcomingTrips.map((trip) => (
+            <Link
+              key={trip.id}
+              href={`/reisen/${trip.id}`}
+              className="block p-5 bg-white/5 border border-white/5 rounded-3xl transition-all group flex items-center justify-between active:scale-[0.98]"
+            >
+              <div className="flex flex-col">
+                <span className="font-bold text-foreground text-lg tracking-tight">{trip.name}</span>
+                <span className="text-xs text-muted-foreground uppercase font-black tracking-widest mt-1">
+                  {new Date(trip.start).toLocaleDateString("de-DE", {
+                    day: "2-digit",
+                    month: "short",
+                  })}
+                  {" - "}
+                  {new Date(trip.end).toLocaleDateString("de-DE", {
+                    day: "2-digit",
+                    month: "short",
+                  })}
+                </span>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                <ChevronRight size={18} />
+              </div>
+            </Link>
+          ))}
+        </Section>
+      )}
+
       {/* Upcoming Birthdays */}
       {hasBirthdays && (
         <Section
           title={t("upcomingBirthdays")}
           href="/geburtstage"
-          className="space-y-3"
+          className="space-y-4"
         >
           {upcomingBirthdays.map((user) => (
             <button
               key={user.id}
               type="button"
               onClick={() => setSelectedItem({ type: "birthday", data: user })}
-              className="w-full text-left p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
+              className="w-full text-left p-5 bg-vibrant-magenta/5 border border-vibrant-magenta/10 rounded-3xl transition-all group flex items-center justify-between active:scale-[0.98]"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <Avatar
                   src={user.image}
                   displayName={user.displayName}
-                  size="sm"
+                  size="md"
+                  className="ring-2 ring-vibrant-magenta/20 ring-offset-4 ring-offset-background"
                 />
                 <div className="flex flex-col">
-                  <span className="font-medium text-foreground">
+                  <span className="font-bold text-foreground text-lg tracking-tight">
                     {user.displayName}
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-vibrant-magenta font-black uppercase tracking-widest mt-0.5">
                     {user.birthdayDay}.{" "}
                     {new Date(0, user.birthdayMonth).toLocaleString("de-DE", {
                       month: "long",
@@ -217,16 +214,13 @@ export default function HomeClient({
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-primary">
-                  {user.daysUntil === 0
-                    ? "Heute! 🎉"
-                    : `in ${user.daysUntil} Tage`}
+              <div className="flex flex-col items-end gap-1">
+                <span className={cn(
+                  "text-[10px] font-black uppercase px-2 py-1 rounded-sm rotate-3 shadow-lg",
+                  user.daysUntil === 0 ? "bg-primary text-primary-foreground" : "bg-white/10 text-white"
+                )}>
+                  {user.daysUntil === 0 ? "Heute! 🎉" : `${user.daysUntil} Tage`}
                 </span>
-                <ChevronRight
-                  size={16}
-                  className="text-muted-foreground group-hover:translate-x-1 transition-transform"
-                />
               </div>
             </button>
           ))}
@@ -242,7 +236,9 @@ export default function HomeClient({
           className="space-y-6"
         >
           {forum.posts.map((post) => (
-            <FeedItem key={post.id} post={post} />
+            <div key={post.id} className="glass-card rounded-[2rem] p-1">
+              <FeedItem post={post} />
+            </div>
           ))}
         </Section>
       ))}
@@ -252,9 +248,9 @@ export default function HomeClient({
         <Section
           title={t("latestPhotos")}
           href="/fotos"
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          className="grid grid-cols-2 gap-4"
         >
-          {latestPhotos.map((photo) => (
+          {latestPhotos.slice(0, 4).map((photo) => (
             <PhotoItem key={photo.id} photo={photo} />
           ))}
         </Section>
@@ -265,44 +261,39 @@ export default function HomeClient({
         <Section
           title={t("latestMediaReviews")}
           href="/kritik"
-          className="space-y-3"
+          className="space-y-4"
         >
           {latestMediaReviews.map(({ review, item, user }) => (
             <Link
               key={review.id}
               href={`/kritik/${item.type === "game" ? "spiele" : item.type === "movie" ? "filme" : "musik"}/${item.id}`}
-              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+              className="block p-5 bg-white/5 border border-white/5 rounded-3xl transition-all group active:scale-[0.98]"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
                   <Avatar
                     src={user.image}
                     displayName={user.displayName}
                     size="xs"
                   />
-                  <span className="text-xs font-medium text-foreground">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     {user.displayName}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-orange-500">
-                  <Star size={12} fill="currentColor" />
-                  <span className="text-xs font-bold">{review.rating}</span>
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-full text-primary">
+                  <Star size={10} fill="currentColor" />
+                  <span className="text-[10px] font-black">{review.rating}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-medium text-sm line-clamp-1">
+                <span className="font-bold text-lg tracking-tight line-clamp-1">
                   {item.title}
                 </span>
                 <ChevronRight
-                  size={14}
+                  size={16}
                   className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
                 />
               </div>
-              {review.comment && (
-                <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
-                  &quot;{review.comment}&quot;
-                </p>
-              )}
             </Link>
           ))}
         </Section>
@@ -313,44 +304,39 @@ export default function HomeClient({
         <Section
           title={t("latestDiscoverReviews")}
           href="/entdecken"
-          className="space-y-3"
+          className="space-y-4"
         >
           {latestDiscoverReviews.map(({ review, place, user }) => (
             <Link
               key={review.id}
               href={`/entdecken/orte/${place.id}`}
-              className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+              className="block p-5 bg-white/5 border border-white/5 rounded-3xl transition-all group active:scale-[0.98]"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
                   <Avatar
                     src={user.image}
                     displayName={user.displayName}
                     size="xs"
                   />
-                  <span className="text-xs font-medium text-foreground">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     {user.displayName}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-orange-500">
-                  <Star size={12} fill="currentColor" />
-                  <span className="text-xs font-bold">{review.rating}</span>
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-full text-primary">
+                  <Star size={10} fill="currentColor" />
+                  <span className="text-[10px] font-black">{review.rating}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-medium text-sm line-clamp-1">
+                <span className="font-bold text-lg tracking-tight line-clamp-1">
                   {place.name}
                 </span>
                 <ChevronRight
-                  size={14}
+                  size={16}
                   className="text-muted-foreground group-hover:translate-x-1 transition-transform shrink-0 ml-2"
                 />
               </div>
-              {review.comment && (
-                <p className="text-xs text-muted-foreground line-clamp-1 mt-1 italic">
-                  &quot;{review.comment}&quot;
-                </p>
-              )}
             </Link>
           ))}
         </Section>
@@ -382,18 +368,19 @@ export default function HomeClient({
 
 function Section({ title, href, children, className = "" }) {
   return (
-    <section className="flex flex-col break-inside-avoid mb-10">
+    <Card className="break-inside-avoid">
       <Link
         href={href}
-        className="group flex items-center justify-between mb-6 hover:text-primary transition-colors"
+        className="group flex items-center justify-between mb-8"
       >
-        <h2 className="text-lg font-bold">{title}</h2>
-        <ChevronRight
-          size={20}
-          className="text-muted-foreground group-hover:text-primary transition-colors"
-        />
+        <h2 className="text-2xl font-display font-black tracking-tighter uppercase leading-none">
+          <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">{title}</span>
+        </h2>
+        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+           <ChevronRight size={16} />
+        </div>
       </Link>
       <div className={className}>{children}</div>
-    </section>
+    </Card>
   );
 }

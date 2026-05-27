@@ -1,86 +1,51 @@
-# Design Guidelines
+# Sinclear Beyond Design System
 
-This document outlines the design principles and UI patterns used in this project, specifically following the structure established in the "Discover" (`/entdecken`) section.
+This document outlines the visual identity and design principles for "Sinclear Beyond" – a modern, immersive social hub.
 
-## Theme System
+## 1. Vision & Atmosphere
+The UI is designed to feel like "Spotify meets a creative Startup". It is bold, emotional, and social-first.
+- **Dark-First:** A unified immersive dark experience. No light mode.
+- **Bold Modern UI:** Large typography, high contrasts, and clear hierarchy.
+- **Retro-Futurism:** Y2K accents, neon glows, and noise textures.
 
-The application supports multiple visual themes. Themes are implemented using CSS variables and Tailwind CSS classes applied to the `<html>` element.
+## 2. Core Palette
+A curated, high-contrast palette for maximum impact.
+- **Background:** `oklch(0.12 0.02 260)` (Deep Night Blue)
+- **Primary:** `oklch(0.85 0.22 135)` (Neon Lime)
+- **Secondary:** `oklch(0.6 0.3 300)` (Electric Purple)
+- **Accent:** `oklch(0.7 0.3 340)` (Vibrant Magenta)
+- **Info/Blue:** `oklch(0.6 0.25 250)` (Electric Blue)
 
-### Available Themes
-- **Light Theme** (`.light`): A clean, professional look with high contrast and light backgrounds.
-- **Dark Theme** (`.dark`): A modern dark interface using deep shades derived from the primary color.
-- **Neo-Retro Community** (`.neo-retro`): A bold, energetic theme inspired by Y2K, music culture, and creative social apps.
+## 3. Typography
+- **Headlines:** **Syne** (Font-weight 700/800). Large, uppercase, tracking-tighter, editorial style.
+- **UI & Body:** **Plus Jakarta Sans**. Modern, highly readable, variable weights.
+- **Labels:** Small, uppercase, tracking-widest (0.2em), font-black.
 
-### Theme Implementation Rules
-1. **CSS Variables First**: All components MUST use CSS variables for colors, borders, and effects (e.g., `var(--background)`, `var(--primary)`).
-2. **Layer Separation**: Design systems are layered. Use `@layer base` for fundamental styles and `@layer components` for theme-specific overrides.
-3. **No Layout Shifts**: Switching themes MUST NOT change the layout, navigation, or information hierarchy.
-4. **Primary Color Support**: Themes MUST respect the user-selected `--primary-custom` color where appropriate.
+## 4. Components
+### Cards (Glassmorphism)
+- Deep layering with `bg-card/60` and `backdrop-blur-xl`.
+- Rounded corners: `rounded-3xl` or `rounded-[2rem]`.
+- Subtle internal borders: `border-white/5`.
+- Strong elevation shadows.
 
----
+### Buttons (Pill-shaped)
+- Rounded-full (Pill).
+- Bold weights & vibrant colors.
+- Soft-glow effects matching the variant color.
+- Active state: `scale-95`.
 
-## Layout Structure
+### Navigation (Mobile-First)
+- **Mobile:** Floating bottom navigation bar with 5 core categories + "More" drawer.
+- **Desktop:** Minimalist sidebar with grouped categories and glassmorphism effect.
 
-All pages should be wrapped in the `AppShell` component to provide consistent navigation and branding.
+## 5. Visual Accents
+- **Noise Texture:** A subtle global noise overlay (3% opacity) for a tactile, high-end feel.
+- **Glow Effects:** Soft halos behind primary elements and headlines.
+- **Stickers:** Asymmetric, rotated badge elements for subtitles and status indicators.
+- **Gradients:** Deep, colorful background blur gradients (Neon Lime & Electric Purple).
 
-### Header
-Each page should feature a prominent header section:
-- **Background**: `bg-card` with a bottom border `border-b border-border`.
-- **Padding**: `px-6 py-8 md:px-10 md:py-12`.
-- **Content Wrapper**: `max-w-5xl mx-auto`.
-- **Elements**:
-    - A subtitle/breadcrumb indicator using `text-xs font-bold uppercase tracking-widest text-primary`.
-    - A main title (`h1`) using `text-3xl md:text-4xl font-black tracking-tight`.
-
-## Sub-Pages (Secondary Pages)
-
-Sub-pages (like `/entdecken/gastronomie`) use a more compact header design to prioritize content and provide easy navigation back to the parent section.
-
-### Sub-Page Header
-- **Background**: Same as main header (`bg-card`, `border-b`).
-- **Padding**: `px-6 py-6` (consistent across all screen sizes).
-- **Back Button**:
-    - A `Link` component pointing to the parent page.
-    - Styling: `p-2 hover:bg-muted rounded-full transition-colors`.
-    - Icon: `ArrowLeft` (size 20).
-- **Typography**:
-    - **Subtitle**: `text-[10px] font-bold uppercase tracking-widest text-primary`.
-    - **Main Title**: `text-xl font-black`.
-- **Layout**:
-    - Uses `flex items-center gap-4` for the back button and title group.
-    - Title group uses `space-y-0.5`.
-
-### Main Content area
-- **Container**: `flex-1 overflow-y-auto p-6 md:p-10`.
-- **Max Width**: Inner content should be wrapped in `max-w-5xl mx-auto`.
-- **Sections**: Use `section` tags with `space-y-12` for vertical rhythm between major blocks.
-- **Section Headings**: `h2` with `text-lg font-bold mb-6`.
-
-## Typography
-
-The project uses the **Inter** font family (`--font-sans`).
-- **Headings**: Use `tracking-tight` and `font-black` for primary headings to give them a modern, bold look.
-- **Body**: Standard `text-foreground`.
-- **Subtle Text**: `text-muted-foreground`.
-
-## UI Components
-
-### Cards
-- **Style**: `bg-card`, `border border-border`, `rounded-2xl`, `shadow-sm`.
-- **Theme Overrides**:
-    - **Neo-Retro**: Uses `rounded-3xl`, elevated shadows, and subtle internal glow.
-- **Interactive**: For clickable cards, add `hover:border-primary/50 transition-all`.
-- **Icons**: Use `lucide-react` icons. Inside cards, icons are often placed in a `w-12 h-12 rounded-xl` container with a semi-transparent background (e.g., `bg-primary/10 text-primary`).
-
-### Buttons
-- **Primary**: High visibility, uses `var(--primary)`.
-- **Neo-Retro Style**: Large rounded corners, active scale effects, and neon glow.
-
-### Forms and Interactions
-- **Modals (Dialogs)**: By default, forms (creation, editing, details) should be implemented using **Modals**.
-- **Exception**: Only use full-page forms if explicitly requested or if the form complexity justifies a dedicated route.
-
-## Spacing and Grid
-- Use Tailwind's standard spacing scale.
-- Responsive grids: Typically `grid-cols-1 md:grid-cols-2` or `lg:grid-cols-3` for lists of items.
-- Consistent gap of `gap-4` or `gap-6` between grid items.
+## 6. Implementation Rules
+- **Layering:** Use absolute positioning and blur for depth.
+- **Motion:** Micro-interactions (hover scale, active scale) are mandatory for all interactive elements.
+- **Consistency:** Always use the defined CSS variables and utility classes (`btn-pill`, `glass-card`, `sticker`).
+- **Responsive:** Mobile-first thinking for all new components.

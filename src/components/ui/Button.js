@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTheme } from "@/components/layout/ThemeProvider";
 import { cn } from "@/lib/utils";
 
 export default function Button({
@@ -15,35 +14,25 @@ export default function Button({
   asChild = false,
   ...props
 }) {
-  const { activeEffects } = useTheme();
-
   const variants = {
-    primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-    destructive:
-      "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-    ghost: "hover:bg-accent hover:text-accent-foreground",
-    outline:
-      "border border-border bg-background hover:bg-accent hover:text-accent-foreground",
+    primary: "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.3)] hover:brightness-110",
+    secondary: "bg-secondary text-secondary-foreground shadow-[0_0_20px_rgba(150,0,255,0.2)] hover:brightness-110",
+    accent: "bg-accent text-accent-foreground shadow-[0_0_20px_rgba(255,0,150,0.2)] hover:brightness-110",
+    destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+    ghost: "hover:bg-white/10 text-foreground",
+    outline: "border border-white/10 bg-transparent hover:bg-white/5 text-foreground",
   };
 
   const sizes = {
-    normal: "px-6 py-2.5 text-sm font-medium",
-    compact: "px-4 py-1.5 text-xs font-medium",
-    icon: "p-2",
+    normal: "px-8 py-3 text-sm font-bold",
+    compact: "px-4 py-2 text-xs font-bold",
+    icon: "p-3",
   };
 
   const finalClassName = cn(
-    "rounded-full transition-colors disabled:opacity-50 flex items-center justify-center gap-2",
+    "btn-pill transition-all disabled:opacity-50 active:scale-95",
     variants[variant],
     sizes[size],
-    activeEffects.showPride &&
-      (variant === "primary" || variant === "secondary") &&
-      "effect-pride-button",
-    activeEffects.showSnow &&
-      (variant === "primary" || variant === "secondary") &&
-      "effect-snow-button",
-    variant === "primary" && "primary-glow",
     className,
   );
 
