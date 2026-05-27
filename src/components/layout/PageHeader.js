@@ -10,13 +10,13 @@ export default function PageHeader({
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
           {subtitle && (
-            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1 decorative-star">
               {subtitle}
             </p>
           )}
           <h1 className="text-3xl md:text-4xl font-black tracking-tight flex items-center gap-3">
             {Icon && <Icon className="text-primary" size={36} />}
-            {title}
+            <span className="brand-accent">{title}</span>
           </h1>
           {description && (
             <p className="text-muted-foreground mt-2">{description}</p>

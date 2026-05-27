@@ -1,8 +1,8 @@
+import { MessageCircle } from "lucide-react";
 import AppShell from "@/components/layout/Appshell";
+import PageHeader from "@/components/layout/PageHeader";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
-import PageHeader from "@/components/layout/PageHeader";
-import { MessageCircle } from "lucide-react";
 
 export default async function ChatPage() {
   const session = await getSessionWithSubs();

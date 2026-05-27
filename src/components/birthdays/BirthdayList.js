@@ -2,8 +2,8 @@
 import { ChevronRight, Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { markTodayBirthdaysAsRead } from "@/lib/profile/birthdayActions";
 import Avatar from "@/components/Avatar";
+import { markTodayBirthdaysAsRead } from "@/lib/profile/birthdayActions";
 import BirthdayModal from "./BirthdayModal";
 
 export default function BirthdayList({ initialBirthdays }) {
