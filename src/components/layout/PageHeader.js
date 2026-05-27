@@ -8,23 +8,23 @@ export default function PageHeader({
   icon: Icon,
 }) {
   return (
-    <header className="relative px-6 py-12 md:px-12 md:py-20 overflow-hidden">
+    <header className="relative px-6 py-8 md:px-12 md:py-12 overflow-hidden border-b border-white/5">
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -z-10" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -z-10" />
       <div className="absolute bottom-0 left-20 w-48 h-48 bg-accent/5 blur-[80px] -z-10" />
 
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="space-y-4 max-w-2xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3 min-w-0 flex-1">
             {subtitle && (
               <div className="flex items-center gap-2">
-                <span className="sticker sticker-lime">{subtitle}</span>
+                <span className="sticker sticker-lime text-[9px] px-2 py-0.5">{subtitle}</span>
               </div>
             )}
 
-            <div className="space-y-2">
-              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter leading-[0.9] flex items-center gap-4 flex-wrap">
-                {Icon && <Icon className="text-primary glow-primary shrink-0" size={48} />}
+            <div className="flex items-center gap-4 min-w-0">
+              {Icon && <Icon className="text-primary glow-primary shrink-0" size={32} />}
+              <h1 className="text-3xl md:text-5xl font-display font-black tracking-tighter leading-tight truncate">
                 <span className="bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent uppercase">
                   {title}
                 </span>
@@ -32,22 +32,19 @@ export default function PageHeader({
             </div>
 
             {description && (
-              <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl leading-relaxed">
+              <p className="text-sm md:text-base text-muted-foreground font-medium max-w-xl line-clamp-2 leading-relaxed">
                 {description}
               </p>
             )}
           </div>
 
           {children && (
-            <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex flex-wrap gap-3 items-center shrink-0">
               {children}
             </div>
           )}
         </div>
       </div>
-
-      {/* Visual Separator */}
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </header>
   );
 }

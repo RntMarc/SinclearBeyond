@@ -83,64 +83,64 @@ export default function HomeClient({
             <Link
               key={poll.id}
               href={`/umfrage/${poll.id}`}
-              className="block p-5 bg-electric-purple/10 border border-electric-purple/20 rounded-3xl transition-all group active:scale-[0.98]"
+              className="block p-6 bg-gradient-to-br from-electric-purple/20 to-electric-purple/5 border border-electric-purple/20 rounded-[2rem] transition-all group active:scale-[0.98] relative overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-electric-purple">
-                  <CalendarCheck size={18} />
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+                <CalendarCheck size={80} />
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 text-electric-purple mb-4">
+                   <div className="w-8 h-8 rounded-full bg-electric-purple/20 flex items-center justify-center">
+                    <CalendarCheck size={16} />
+                   </div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                     {t("activePoll")}
                   </span>
                 </div>
-                <ChevronRight
-                  size={16}
-                  className="text-electric-purple group-hover:translate-x-1 transition-transform"
-                />
+                <span className="font-display font-black text-2xl text-foreground block tracking-tighter uppercase leading-tight">
+                  {poll.title}
+                </span>
+                <div className="mt-6 flex items-center justify-between">
+                   <span className="text-xs text-muted-foreground font-bold">
+                    von {poll.creatorName}
+                  </span>
+                  <div className="px-4 py-2 bg-electric-purple text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(150,0,255,0.4)]">
+                    Abstimmen
+                  </div>
+                </div>
               </div>
-              <span className="font-bold text-foreground text-lg block tracking-tight">
-                {poll.title}
-              </span>
-              <span className="text-xs text-muted-foreground mt-2 block font-medium">
-                {t("pollBy", { name: poll.creatorName })}
-              </span>
             </Link>
           ))}
           {finalizedPolls.map((poll) => (
             <Link
               key={poll.id}
               href={`/umfrage/${poll.id}`}
-              className="block p-5 bg-primary/10 border border-primary/20 rounded-3xl transition-all group active:scale-[0.98]"
+              className="block p-6 bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 rounded-[2rem] transition-all group active:scale-[0.98] relative overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-primary">
-                  <CalendarCheck
-                    size={18}
-                  />
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform text-primary">
+                <CalendarCheck size={80} />
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 text-primary mb-4">
+                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                    <CalendarCheck size={16} />
+                   </div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                     {t("finalizedPoll")}
                   </span>
                 </div>
-                <ChevronRight
-                  size={16}
-                  className="text-primary group-hover:translate-x-1 transition-transform"
-                />
-              </div>
-              <span className="font-bold text-foreground text-lg block tracking-tight">
-                {poll.title}
-              </span>
-              {poll.options?.[0]?.dateValue && (
-                <span className="text-xs text-primary font-bold mt-2 block uppercase tracking-wider">
-                  {new Date(poll.options[0].dateValue).toLocaleDateString(
-                    "de-DE",
-                    {
-                      day: "2-digit",
-                      month: "long",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    },
-                  )}
+                <span className="font-display font-black text-2xl text-foreground block tracking-tighter uppercase leading-tight">
+                  {poll.title}
                 </span>
-              )}
+                {poll.options?.[0]?.dateValue && (
+                  <div className="mt-6 flex items-center justify-between">
+                    <span className="text-[10px] text-primary font-black uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">
+                      {new Date(poll.options[0].dateValue).toLocaleDateString("de-DE", { day: "2-digit", month: "long" })}
+                    </span>
+                    <ChevronRight size={20} className="text-primary" />
+                  </div>
+                )}
+              </div>
             </Link>
           ))}
         </Section>
@@ -368,7 +368,7 @@ export default function HomeClient({
 
 function Section({ title, href, children, className = "" }) {
   return (
-    <Card className="break-inside-avoid">
+    <Card className="break-inside-avoid shadow-2xl">
       <Link
         href={href}
         className="group flex items-center justify-between mb-8"
