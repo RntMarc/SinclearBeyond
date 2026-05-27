@@ -1,0 +1,1 @@
+ALTER TABLE `UserPreferences` MODIFY COLUMN `theme` enum('light','dark','neo-retro') NOT NULL DEFAULT 'dark';

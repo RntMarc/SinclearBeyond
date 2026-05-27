@@ -52,7 +52,7 @@ importers:
         version: 4.3.0
       drizzle-orm:
         specifier: ^0.45.2
-        version: 0.45.2(mysql2@3.22.3(@types/node@25.9.1))
+        version: 0.45.2(mysql2@3.22.4(@types/node@25.9.1))
       fast-xml-parser:
         specifier: ^5.8.0
         version: 5.8.0
@@ -90,8 +90,8 @@ importers:
         specifier: ^41.6.0
         version: 41.6.0
       mysql2:
-        specifier: ^3.22.3
-        version: 3.22.3(@types/node@25.9.1)
+        specifier: ^3.22.4
+        version: 3.22.4(@types/node@25.9.1)
       negotiator:
         specifier: ^1.0.0
         version: 1.0.0
@@ -3744,8 +3744,8 @@ packages:
     resolution: {integrity: sha512-gSrprq0fJ3EiOErzjdIZrjysVVmJ4uu1QWfCDss5LypA5OXvrMje5Ym5z6V6RLyJ2eF87lasX7t6a0AnFvZblg==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
-  mysql2@3.22.3:
-    resolution: {integrity: sha512-uWWxvZSRvRhtBdh2CdcuK83YcOfPdmEeEYB069bAmPnV93QApDGVPuvCQOLjlh7tYHEWdgQPrn6kosDxHBVLkA==}
+  mysql2@3.22.4:
+    resolution: {integrity: sha512-CtXYlmL7ZamiYKbmqkamQHWJROUHSfm+f3kByzGfknw7kW51mcB2ouMUqYq1XfYxbXmnWo6RhPydx6OCqdgcmQ==}
     engines: {node: '>= 8.0'}
     peerDependencies:
       '@types/node': '>= 8'
@@ -7034,9 +7034,9 @@ snapshots:
       esbuild: 0.25.12
       tsx: 4.22.3
 
-  drizzle-orm@0.45.2(mysql2@3.22.3(@types/node@25.9.1)):
+  drizzle-orm@0.45.2(mysql2@3.22.4(@types/node@25.9.1)):
     optionalDependencies:
-      mysql2: 3.22.3(@types/node@25.9.1)
+      mysql2: 3.22.4(@types/node@25.9.1)
 
   duck@0.1.12:
     dependencies:
@@ -7860,7 +7860,7 @@ snapshots:
 
   mute-stream@4.0.0: {}
 
-  mysql2@3.22.3(@types/node@25.9.1):
+  mysql2@3.22.4(@types/node@25.9.1):
     dependencies:
       '@types/node': 25.9.1
       aws-ssl-profiles: 1.1.2
