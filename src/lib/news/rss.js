@@ -23,9 +23,14 @@ function extractImage(item) {
   const mediaContent = item["media:content"];
   if (mediaContent) {
     if (Array.isArray(mediaContent)) {
-      const img = mediaContent.find(m => m["@_medium"] === "image" || m["@_type"]?.startsWith("image/"));
+      const img = mediaContent.find(
+        (m) => m["@_medium"] === "image" || m["@_type"]?.startsWith("image/"),
+      );
       if (img) return img["@_url"];
-    } else if (mediaContent["@_medium"] === "image" || mediaContent["@_type"]?.startsWith("image/")) {
+    } else if (
+      mediaContent["@_medium"] === "image" ||
+      mediaContent["@_type"]?.startsWith("image/")
+    ) {
       return mediaContent["@_url"];
     }
   }
@@ -34,7 +39,7 @@ function extractImage(item) {
   const enclosure = item.enclosure;
   if (enclosure) {
     if (Array.isArray(enclosure)) {
-      const img = enclosure.find(e => e["@_type"]?.startsWith("image/"));
+      const img = enclosure.find((e) => e["@_type"]?.startsWith("image/"));
       if (img) return img["@_url"];
     } else if (enclosure["@_type"]?.startsWith("image/")) {
       return enclosure["@_url"];
@@ -73,7 +78,9 @@ export async function fetchRssFeed(url) {
     const channel = jsonObj.rss?.channel || jsonObj.feed;
     if (!channel) return { items: [], sourceIcon: null };
 
-    const sourceIcon = channel.image?.url || `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`;
+    const sourceIcon =
+      channel.image?.url ||
+      `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`;
 
     const rawItems = channel.item || channel.entry || [];
     const itemsList = Array.isArray(rawItems) ? rawItems : [rawItems];
@@ -85,7 +92,8 @@ export async function fetchRssFeed(url) {
         title: item.title?.["#text"] || item.title || "No Title",
         link,
         pubDate: item.pubDate || item.published || item.updated,
-        content: item.description || item.summary?.["#text"] || item.summary || "",
+        content:
+          item.description || item.summary?.["#text"] || item.summary || "",
         previewImage: extractImage(item),
         sourceName: channel.title?.["#text"] || channel.title || "RSS Feed",
         sourceIcon,

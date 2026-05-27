@@ -838,13 +838,16 @@
     "identifierPlaceholder": "Matrix-Benutzername odr @user:server",
     "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
-    "loginButton": "OAuth2-Login starta",
+    "loginButton": "Aameldong starta",
+    "loginButtonOAuth": "OAuth2-Login starta",
     "authSuccess": "Matrix-Aameldong hot klappt. Jetzt kannsch schicka.",
     "availableUsers": "Vrknüpfte Leit",
     "noSelection": "Koi Chat-Partner gwählt",
     "messagePlaceholder": "Nåchricht neischreiba",
     "send": "Nåchricht schicka",
-    "sessionRequired": "Bitte verifizier die Session über OAuth2 bei deim Homeserver.",
-    "oauthError": "OAuth2-Aameldong hot net klappt odr isch abbrocha."
+    "sessionRequired": "Bitte verifizier dei Sitzong bei deim Homeserver.",
+    "oauthError": "Aameldong hot net klappt odr isch abbrocha.",
+    "methodOAuth2": "OAuth2",
+    "methodPassword": "Passwort"
   }
 }
