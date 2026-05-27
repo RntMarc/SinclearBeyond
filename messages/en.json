@@ -856,6 +856,8 @@
     "sessionRequired": "Please confirm your Matrix password to access the chat again.",
     "oauthError": "Sign-in failed or was cancelled.",
     "methodOAuth2": "OAuth2",
-    "methodPassword": "Password"
+    "methodPassword": "Password",
+    "switchOAuth": "Or login via OAuth2",
+    "switchPassword": "Or login via Password"
   }
 }

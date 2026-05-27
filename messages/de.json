@@ -877,7 +877,7 @@
     "authError": "Matrix-Anmeldung fehlgeschlagen.",
     "linkedAs": "Verknüpft als {matrixUserId}",
     "identifierPlaceholder": "Matrix-Benutzername oder @user:server",
-    "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+    "homeserverPlaceholder": "Homeserver (z. B. matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
     "username": "Nutzername",
     "loginButton": "Anmeldung starten",
@@ -890,6 +890,8 @@
     "sessionRequired": "Bitte bestätige dein Matrix-Passwort, um wieder auf den Chat zuzugreifen.",
     "oauthError": "Anmeldung fehlgeschlagen oder abgebrochen.",
     "methodOAuth2": "OAuth2",
-    "methodPassword": "Passwort"
+    "methodPassword": "Passwort",
+    "switchOAuth": "Oder via OAuth2 anmelden",
+    "switchPassword": "Oder via Passwort anmelden"
   }
 }

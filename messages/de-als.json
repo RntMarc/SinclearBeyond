@@ -849,6 +849,8 @@
     "sessionRequired": "Bitte bschdätig doi Matrix-Passwort, om wieder uf den Schwätz zuzugreifen.",
     "oauthError": "Aameldong hot net klappt odr isch abbrocha.",
     "methodOAuth2": "OAuth2",
-    "methodPassword": "Passwort"
+    "methodPassword": "Passwort",
+    "switchOAuth": "Odr via OAuth2 aamelda",
+    "switchPassword": "Odr via Passwort aamelda"
   }
 }

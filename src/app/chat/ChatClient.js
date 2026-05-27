@@ -80,13 +80,17 @@ export default function ChatClient({ matrixHandle }) {
   }, [roomId]);
 
   const startSession = async () => {
+    // If linked, use the linked credentials. If not (unlikely for the modal), use state.
+    const hs = isLinked ? parsedHandle.linkedHomeserver : homeserver;
+    const user = isLinked ? parsedHandle.matrixUser : matrixUser;
+
     const res = await fetch("/api/matrix/session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        homeserver,
+        homeserver: hs,
         method,
-        matrixUser,
+        matrixUser: user,
         password,
       }),
     });
@@ -152,51 +156,9 @@ export default function ChatClient({ matrixHandle }) {
                   </p>
                 </div>
 
-                <div className="flex gap-2 p-1 bg-background border border-border rounded-lg">
-                  <button
-                    type="button"
-                    onClick={() => setMethod("oauth")}
-                    className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "oauth" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                  >
-                    {t("methodOAuth2")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMethod("password")}
-                    className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${method === "password" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                  >
-                    {t("methodPassword")}
-                  </button>
-                </div>
-
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">
-                      Homeserver
-                    </label>
-                    <input
-                      value={homeserver}
-                      onChange={(e) => setHomeserver(e.target.value)}
-                      readOnly={isLinked}
-                      placeholder={t("homeserverPlaceholder")}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm disabled:opacity-60"
-                    />
-                  </div>
-
                   {method === "password" && (
                     <div className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-muted-foreground">
-                          {t("username")}
-                        </label>
-                        <input
-                          value={matrixUser}
-                          onChange={(e) => setMatrixUser(e.target.value)}
-                          readOnly={isLinked}
-                          placeholder={t("identifierPlaceholder")}
-                          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm disabled:opacity-60"
-                        />
-                      </div>
                       <div className="space-y-2">
                         <label className="text-xs font-medium text-muted-foreground">
                           {t("passwordPlaceholder")}
@@ -205,7 +167,11 @@ export default function ChatClient({ matrixHandle }) {
                           type="password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") startSession();
+                          }}
                           placeholder={t("passwordPlaceholder")}
+                          autoFocus
                           className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
                         />
                       </div>
@@ -221,6 +187,20 @@ export default function ChatClient({ matrixHandle }) {
                       ? t("loginButtonOAuth")
                       : t("loginButton")}
                   </button>
+
+                  <div className="pt-2 text-center">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMethod(method === "password" ? "oauth" : "password")
+                      }
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
+                    >
+                      {method === "password"
+                        ? t("switchOAuth")
+                        : t("switchPassword")}
+                    </button>
+                  </div>
                 </div>
 
                 {authError && (

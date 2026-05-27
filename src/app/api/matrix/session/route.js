@@ -33,6 +33,11 @@ export async function POST(request) {
     const matrixUser = body?.matrixUser?.replace(/^@/, "").split(":")[0];
     const password = body?.password;
 
+    console.log("[Matrix Session] Attempting password login for:", {
+      matrixUser,
+      homeserver,
+    });
+
     if (!matrixUser || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
@@ -50,6 +55,10 @@ export async function POST(request) {
 
     const loginData = await loginRes.json().catch(() => null);
     if (!loginRes.ok || !loginData?.access_token) {
+      console.error("[Matrix Session] Login failed:", {
+        status: loginRes.status,
+        data: loginData,
+      });
       return NextResponse.json({ error: "Login failed" }, { status: 401 });
     }
 
