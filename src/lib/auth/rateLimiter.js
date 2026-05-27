@@ -9,3 +9,8 @@ export const otpVerifyLimiter = new RateLimiterMemory({
   points: 10,
   duration: 60 * 10,
 });
+
+export const passkeyLimiter = new RateLimiterMemory({
+  points: 50, // 50 requests
+  duration: 60 * 10, // per 10 minutes
+});

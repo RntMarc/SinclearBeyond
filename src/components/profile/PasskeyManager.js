@@ -3,7 +3,7 @@
 import { startRegistration } from "@simplewebauthn/browser";
 import { Fingerprint, Plus, Trash2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function PasskeyManager() {
   const t = useTranslations("Settings.login");
@@ -17,11 +17,7 @@ export default function PasskeyManager() {
   const [tempAttestation, setTempAttestation] = useState(null);
   const [newName, setNewName] = useState("Mein Passkey");
 
-  useEffect(() => {
-    fetchPasskeys();
-  }, [fetchPasskeys]);
-
-  async function fetchPasskeys() {
+  const fetchPasskeys = useCallback(async () => {
     try {
       const res = await fetch("/api/auth/passkey/list");
       if (res.ok) {
@@ -33,7 +29,11 @@ export default function PasskeyManager() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchPasskeys();
+  }, [fetchPasskeys]);
 
   async function handleAddPasskey() {
     setError("");
@@ -172,6 +172,7 @@ export default function PasskeyManager() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium">{t("passkeyModalTitle")}</h3>
               <button
+                type="button"
                 onClick={() => setShowNameModal(false)}
                 className="text-muted-foreground hover:text-foreground"
               >
@@ -189,12 +190,14 @@ export default function PasskeyManager() {
             />
             <div className="flex gap-3">
               <button
+                type="button"
                 onClick={() => setShowNameModal(false)}
                 className="flex-1 px-4 py-2 rounded-full border border-border text-sm font-medium hover:bg-accent"
               >
                 {tCommon("cancel")}
               </button>
               <button
+                type="button"
                 onClick={confirmAddPasskey}
                 disabled={adding || !newName.trim()}
                 className="flex-1 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
