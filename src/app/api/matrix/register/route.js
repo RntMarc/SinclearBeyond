@@ -31,20 +31,74 @@ export async function POST(_request) {
     "_" +
     crypto.randomBytes(2).toString("hex");
 
-  const client = sdk.createClient({
-    baseUrl: resolvedHomeserver,
-  });
+  let registerData;
+  const sharedSecret = process.env.MATRIX_REGISTRATION_SHARED_SECRET;
 
   try {
-    const registerData = await client.register(
-      username,
-      password,
-      null, // session
-      { type: "m.login.dummy" }, // auth
-      null, // guest
-      null, // deviceId
-      "Sinclear Beyond (Auto-Created)", // initialDeviceDisplayName
-    );
+    if (sharedSecret) {
+      // Try Synapse Shared Secret Registration first
+      try {
+        const nonceRes = await fetch(
+          `${resolvedHomeserver}/_synapse/admin/v1/register`,
+          { method: "GET" },
+        );
+        const { nonce } = await nonceRes.json();
+
+        if (nonce) {
+          const hmacPayload = [nonce, username, password, "notadmin"].join(
+            "\0",
+          );
+          const mac = crypto
+            .createHmac("sha1", sharedSecret)
+            .update(hmacPayload)
+            .digest("hex");
+
+          const regRes = await fetch(
+            `${resolvedHomeserver}/_synapse/admin/v1/register`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                nonce,
+                username,
+                password,
+                admin: false,
+                mac,
+              }),
+            },
+          );
+
+          if (regRes.ok) {
+            registerData = await regRes.json();
+          } else {
+            const errorData = await regRes.json();
+            console.error(
+              "Synapse Shared Secret Registration failed:",
+              errorData,
+            );
+          }
+        }
+      } catch (adminErr) {
+        console.error("Error during Synapse Admin Registration:", adminErr);
+      }
+    }
+
+    if (!registerData) {
+      // Fallback to standard registration
+      const client = sdk.createClient({
+        baseUrl: resolvedHomeserver,
+      });
+
+      registerData = await client.register(
+        username,
+        password,
+        null, // session
+        { type: "m.login.dummy" }, // auth
+        null, // guest
+        null, // deviceId
+        "Sinclear Beyond (Auto-Created)", // initialDeviceDisplayName
+      );
+    }
 
     if (!registerData?.access_token) {
       throw new Error("Registration failed: No access token received");
