@@ -44,3 +44,7 @@ DO NOT use `utf8mb4_general_ci` or any other collation, as this will lead to run
 2. **Handle Errors in UI:** Server components MUST check the `error` flag and render the `InlineError` component (`@/components/ui/InlineError`) when data fetching fails.
 3. **Graceful Degradation:** Pages should still render their main structure (headers, navigation) even if specific content sections fail to load.
 4. **API Routes:** API routes should also use `safeQuery` and return appropriate error status codes (e.g., 500) if a critical database operation fails.
+
+### Editing Database Schema
+It is allowed to edit the schema of the database, if instructed to do so by the user. However, it is not allowed to do the migration after changing the schema. The user is responsible to migrate the database to the new schema after editing.
+Do not build any kind of fallback to support multiple schemas, always only build for the newest version of the schema - in case of editing it, the version you create. Just imagine the database to already be migrated to the newest schema change.
