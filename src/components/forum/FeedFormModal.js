@@ -209,7 +209,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
                   key={cat.id}
                   type="button"
                   onClick={() => setCategory(cat.id)}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg-custom border transition-all ${
                     category === cat.id
                       ? "bg-primary/5 border-primary text-primary shadow-sm"
                       : "bg-sidebar-accent/30 border-sidebar-border text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground"
@@ -365,7 +365,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
                 onChange={handleChange}
                 placeholder={t("commentPlaceholder")}
                 rows={3}
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-lg-custom px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               />
             </div>
 
@@ -424,7 +424,7 @@ function FormField({ label, name, value, onChange, placeholder, required }) {
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-lg-custom px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
       />
     </div>
   );

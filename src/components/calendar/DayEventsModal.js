@@ -14,7 +14,7 @@ export default function DayEventsModal({
       onClick={onClose}
     >
       <div
-        className="bg-background w-full max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] cursor-default"
+        className="bg-background w-full max-w-md rounded-t-2xl sm:rounded-lg-custom shadow-2xl overflow-hidden flex flex-col max-h-[80vh] cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">

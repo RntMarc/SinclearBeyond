@@ -172,7 +172,7 @@ export default function AddPlaceModal({ onClose }) {
                       type="button"
                       key={`${item.osmId}-${item.osmType}`}
                       onClick={() => setSelectedPlace(item)}
-                      className="w-full p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all text-left flex items-start gap-4 group"
+                      className="w-full p-4 bg-card border border-border rounded-lg-custom hover:border-primary/50 transition-all text-left flex items-start gap-4 group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                         {item.category === "gastronomy" ? (
@@ -250,7 +250,7 @@ export default function AddPlaceModal({ onClose }) {
                   </button>
                 </div>
 
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-start gap-3">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg-custom flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
                     <Check size={20} />
                   </div>

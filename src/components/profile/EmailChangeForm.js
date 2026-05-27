@@ -59,7 +59,7 @@ export default function EmailChangeForm({ currentEmail }) {
   };
 
   return (
-    <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8">
+    <div className="bg-sidebar border border-sidebar-border rounded-lg-custom p-8">
       <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
         <Mail size={20} className="text-primary" />
         {t("emailTitle")}

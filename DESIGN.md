@@ -2,6 +2,23 @@
 
 This document outlines the design principles and UI patterns used in this project, specifically following the structure established in the "Discover" (`/entdecken`) section.
 
+## Theme System
+
+The application supports multiple visual themes. Themes are implemented using CSS variables and Tailwind CSS classes applied to the `<html>` element.
+
+### Available Themes
+- **Light Theme** (`.light`): A clean, professional look with high contrast and light backgrounds.
+- **Dark Theme** (`.dark`): A modern dark interface using deep shades derived from the primary color.
+- **Neo-Retro Community** (`.neo-retro`): A bold, energetic theme inspired by Y2K, music culture, and creative social apps.
+
+### Theme Implementation Rules
+1. **CSS Variables First**: All components MUST use CSS variables for colors, borders, and effects (e.g., `var(--background)`, `var(--primary)`).
+2. **Layer Separation**: Design systems are layered. Use `@layer base` for fundamental styles and `@layer components` for theme-specific overrides.
+3. **No Layout Shifts**: Switching themes MUST NOT change the layout, navigation, or information hierarchy.
+4. **Primary Color Support**: Themes MUST respect the user-selected `--primary-custom` color where appropriate.
+
+---
+
 ## Layout Structure
 
 All pages should be wrapped in the `AppShell` component to provide consistent navigation and branding.
@@ -50,8 +67,14 @@ The project uses the **Inter** font family (`--font-sans`).
 
 ### Cards
 - **Style**: `bg-card`, `border border-border`, `rounded-2xl`, `shadow-sm`.
+- **Theme Overrides**:
+    - **Neo-Retro**: Uses `rounded-3xl`, elevated shadows, and subtle internal glow.
 - **Interactive**: For clickable cards, add `hover:border-primary/50 transition-all`.
 - **Icons**: Use `lucide-react` icons. Inside cards, icons are often placed in a `w-12 h-12 rounded-xl` container with a semi-transparent background (e.g., `bg-primary/10 text-primary`).
+
+### Buttons
+- **Primary**: High visibility, uses `var(--primary)`.
+- **Neo-Retro Style**: Large rounded corners, active scale effects, and neon glow.
 
 ### Forms and Interactions
 - **Modals (Dialogs)**: By default, forms (creation, editing, details) should be implemented using **Modals**.

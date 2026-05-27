@@ -108,7 +108,7 @@ export default function AddChangelogModal({ isOpen, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full p-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[150px] text-sm resize-none"
+              className="w-full p-4 bg-muted border border-border rounded-lg-custom focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[150px] text-sm resize-none"
               placeholder="..."
             />
           </div>

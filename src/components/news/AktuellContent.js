@@ -245,7 +245,7 @@ export default function AktuellContent({ _userId }) {
           </p>
         )}
         {!loading && items.length === 0 && (
-          <div className="text-center p-12 bg-sidebar border border-sidebar-border rounded-2xl w-full">
+          <div className="text-center p-12 bg-sidebar border border-sidebar-border rounded-lg-custom w-full">
             <p className="text-muted-foreground italic">{t("noArticles")}</p>
           </div>
         )}
@@ -266,7 +266,7 @@ function NewsItem({ article, onUpvote, _isSaved }) {
     : null;
 
   return (
-    <div className="group bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden flex flex-col hover:border-primary/50 transition-all hover:shadow-xl hover:-translate-y-1">
+    <div className="group bg-sidebar border border-sidebar-border rounded-lg-custom overflow-hidden flex flex-col hover:border-primary/50 transition-all hover:shadow-xl hover:-translate-y-1">
       {article.previewImage && (
         <div className="aspect-video overflow-hidden bg-muted">
           <img

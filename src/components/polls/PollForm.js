@@ -177,7 +177,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                   ],
                 }));
               }}
-              className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
+              className={`flex flex-col items-center gap-3 p-4 rounded-lg-custom border-2 transition-all ${
                 form.type === "appointment"
                   ? "border-primary bg-primary/5"
                   : "border-sidebar-border bg-sidebar-accent/30 opacity-60 hover:opacity-100"
@@ -204,7 +204,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                   questions: [{ title: "", type: "text", options: [] }],
                 }));
               }}
-              className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
+              className={`flex flex-col items-center gap-3 p-4 rounded-lg-custom border-2 transition-all ${
                 form.type === "survey"
                   ? "border-primary bg-primary/5"
                   : "border-sidebar-border bg-sidebar-accent/30 opacity-60 hover:opacity-100"
@@ -279,7 +279,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
             {form.questions.map((q, qIdx) => (
               <div
                 key={q.id || qIdx}
-                className="relative bg-sidebar-accent/30 border border-sidebar-border rounded-2xl p-5 space-y-4"
+                className="relative bg-sidebar-accent/30 border border-sidebar-border rounded-lg-custom p-5 space-y-4"
               >
                 {form.type === "survey" && form.questions.length > 1 && (
                   <button

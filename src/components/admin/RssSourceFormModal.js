@@ -51,7 +51,7 @@ export default function RssSourceFormModal({ source, onClose, onUpdated }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-sidebar border border-sidebar-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+      <div className="bg-sidebar border border-sidebar-border rounded-lg-custom w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between p-6 border-b border-sidebar-border">
           <h3 className="text-lg font-semibold">
             {source ? "Quelle bearbeiten" : "Neue RSS-Quelle"}

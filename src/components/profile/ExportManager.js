@@ -128,7 +128,7 @@ export default function ExportManager() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-sidebar border border-sidebar-border rounded-2xl p-6 md:p-8">
+      <div className="bg-sidebar border border-sidebar-border rounded-lg-custom p-6 md:p-8">
         <h3 className="text-xl font-semibold mb-2">{t("title")}</h3>
         <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
           {t("description")}

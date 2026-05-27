@@ -29,7 +29,7 @@ export default function SuggestionList({
 
   if (suggestions.length === 0) {
     return (
-      <div className="text-center py-12 bg-card border border-dashed border-border rounded-2xl">
+      <div className="text-center py-12 bg-card border border-dashed border-border rounded-lg-custom">
         <p className="text-muted-foreground">{t("noSuggestions")}</p>
       </div>
     );
@@ -48,7 +48,7 @@ export default function SuggestionList({
     return (
       <div
         key={suggestion.id}
-        className={`bg-card border border-border rounded-2xl p-6 shadow-sm flex gap-6 transition-opacity ${
+        className={`bg-card border border-border rounded-lg-custom p-6 shadow-sm flex gap-6 transition-opacity ${
           isFrozen ? "opacity-60 grayscale-[0.5]" : ""
         }`}
       >

@@ -74,7 +74,7 @@ export default function FeedDashboard() {
                   <Link
                     key={forum.id}
                     href={`/forum/${forum.id}`}
-                    className="group relative bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
+                    className="group relative bg-sidebar border border-sidebar-border rounded-lg-custom overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
                   >
                     <div className="aspect-[21/9] w-full bg-muted relative">
                       {forum.image ? (

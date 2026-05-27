@@ -168,7 +168,7 @@ export default function PasskeyManager() {
       {/* Name Modal */}
       {showNameModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-card border border-border w-full max-w-sm rounded-2xl shadow-2xl p-6">
+          <div className="bg-card border border-border w-full max-w-sm rounded-lg-custom shadow-2xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium">{t("passkeyModalTitle")}</h3>
               <button

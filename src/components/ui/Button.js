@@ -43,6 +43,7 @@ export default function Button({
     activeEffects.showSnow &&
       (variant === "primary" || variant === "secondary") &&
       "effect-snow-button",
+    variant === "primary" && "primary-glow",
     className,
   );
 

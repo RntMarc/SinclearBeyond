@@ -298,7 +298,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                 )}
 
                 {place.needsUpdate && (
-                  <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between gap-4">
+                  <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg-custom flex items-center justify-between gap-4">
                     <div className="space-y-1">
                       <p className="text-sm font-bold">Veraltete Daten?</p>
                       <p className="text-xs text-muted-foreground">
@@ -500,7 +500,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                       place.reviews.map((review) => (
                         <div
                           key={review.id}
-                          className="p-4 bg-card border border-border rounded-2xl space-y-3 shadow-sm"
+                          className="p-4 bg-card border border-border rounded-lg-custom space-y-3 shadow-sm"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">

@@ -27,7 +27,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-sidebar border border-sidebar-border w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+        className="bg-sidebar border border-sidebar-border w-full max-w-lg rounded-lg-custom shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative h-32 bg-trip/10 flex items-end px-6 pb-4 shrink-0">
@@ -39,7 +39,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
             <X size={18} />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-16 h-16 rounded-2xl bg-trip flex items-center justify-center text-white text-2xl font-semibold shadow-lg border-4 border-sidebar">
+            <div className="w-16 h-16 rounded-lg-custom bg-trip flex items-center justify-center text-white text-2xl font-semibold shadow-lg border-4 border-sidebar">
               <Ticket size={32} />
             </div>
             <div className="mb-1">
