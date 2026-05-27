@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getRegistrationOptions } from "@/lib/auth/passkey";
+import { passkeyLimiter } from "@/lib/auth/rateLimiter";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
@@ -11,6 +12,12 @@ export async function POST() {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
+  }
+
+  try {
+    await passkeyLimiter.consume(session.sub);
+  } catch {
+    return NextResponse.json({ error: t("tooManyRequests") }, { status: 429 });
   }
 
   const { data: usersData, error: fetchErr } = await safeQuery(

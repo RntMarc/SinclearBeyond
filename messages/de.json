@@ -750,7 +750,9 @@
       "matrixLinkError": "Matrix-Verknüpfung fehlgeschlagen. Bitte Zugangsdaten prüfen.",
       "matrixLinkedSuccess": "Matrix erfolgreich verknüpft: {matrixUserId}",
       "matrixUnlinkError": "Matrix-Verknüpfung konnte nicht entfernt werden.",
-      "matrixUnlinkedSuccess": "Matrix-Verknüpfung entfernt."
+      "matrixUnlinkedSuccess": "Matrix-Verknüpfung entfernt.",
+      "matrixAutoCreate": "Empfohlenen Account automatisch erstellen",
+      "matrixAutoCreateDesc": "Erstellt automatisch einen Account auf unserem empfohlenen Homeserver."
     }
   },
   "Feedback": {
@@ -892,6 +894,23 @@
     "methodOAuth2": "OAuth2",
     "methodPassword": "Passwort",
     "switchOAuth": "Oder via OAuth2 anmelden",
-    "switchPassword": "Oder via Passwort anmelden"
+    "switchPassword": "Oder via Passwort anmelden",
+    "onboarding": {
+      "title": "Chat einrichten",
+      "description": "Für die Nutzung bestimmter Community- und Chatfunktionen wird ein Matrix-Account empfohlen.\n\nDie integrierten Chatfunktionen dieses Projekts verwenden keine Ende-zu-Ende-Verschlüsselung (E2EE). Für private und verschlüsselte Unterhaltungen mit anderen Nutzern wird die Verwendung eines eigenständigen Matrix-Clients wie Element X empfohlen.",
+      "optionA": "Ich habe bereits einen Matrix-Account",
+      "optionB": "Empfohlenen Matrix-Account automatisch erstellen",
+      "optionC": "Jetzt nicht",
+      "optionBRecommended": "Empfohlen",
+      "linkingTitle": "Bestehendes Konto verknüpfen",
+      "creatingAccount": "Konto wird erstellt...",
+      "successCreate": "Konto erfolgreich erstellt!",
+      "errorCreate": "Fehler bei der Kontoerstellung.",
+      "errorFillAll": "Bitte fülle alle Felder aus.",
+      "errorLink": "Verknüpfung fehlgeschlagen.",
+      "copyPassword": "Passwort kopieren",
+      "passwordNote": "Bitte speichere dein Passwort sicher ab. Es kann nicht wiederhergestellt werden.",
+      "continueToChat": "Weiter zum Chat"
+    }
   }
 }

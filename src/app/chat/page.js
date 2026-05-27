@@ -1,22 +1,32 @@
-import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
-import ChatClient from "./ChatClient";
+import PageHeader from "@/components/layout/PageHeader";
+import { MessageCircle } from "lucide-react";
 
 export default async function ChatPage() {
   const session = await getSessionWithSubs();
-  if (!session) redirect("/login");
-  const profile = await getProfileData(session);
-  if (!profile) redirect("/login");
-
-  const matrixHandle = profile.contact?.matrixUser
-    ? `@${profile.contact.matrixUser}:${profile.contact.matrixHomeserver}`
-    : null;
+  const profile = session ? await getProfileData(session) : null;
 
   return (
-    <AppShell user={profile.user} session={session}>
-      <ChatClient matrixHandle={matrixHandle} />
+    <AppShell user={profile?.user} session={session}>
+      <div className="flex flex-col h-full bg-background">
+        <PageHeader
+          subtitle="Kommunikation"
+          title="Chat"
+          icon={MessageCircle}
+        />
+        <div className="flex-1 flex items-center justify-center p-6 md:p-10">
+          <div className="text-center space-y-4">
+            <div className="p-4 bg-primary/10 rounded-full w-fit mx-auto text-primary">
+              <MessageCircle size={32} />
+            </div>
+            <p className="text-muted-foreground font-medium">
+              Hier wird später noch etwas eingebaut.
+            </p>
+          </div>
+        </div>
+      </div>
     </AppShell>
   );
 }
