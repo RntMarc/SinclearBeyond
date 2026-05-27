@@ -1,0 +1,54 @@
+name: Build and Save Docker Image to Release
+
+on:
+  # Option 1: Trigger bei neuen Versionstags (z.B. git tag v1.0.0 && git push --tags)
+  push:
+    tags:
+      - 'v*.*.*'
+      - 'v*.*'
+  # Option 2: Manueller Trigger über die GitHub-Oberfläche (mit Eingabe der Version)
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versionsnummer für das manuelle Release (z.B. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Zwingend erforderlich, um Releases zu erstellen und Dateien hochzuladen
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      # Ermittelt die korrekte Versionsnummer (entweder vom Git-Tag oder aus der manuellen Eingabe)
+      - name: Versionsnummer bestimmen
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+
+      # Das Dockerfile bleibt unverändert und nutzt weiterhin dein pnpm-Setup
+      - name: Docker Image lokal bauen
+        run: |
+          docker build -t my-app:${{ env.VERSION }} .
+
+      # Das gebaute Image in eine .tar-Datei schreiben und mit gzip komprimieren
+      - name: Docker Image als Tarball exportieren
+        run: |
+          docker save my-app:${{ env.VERSION }} | gzip > my-app-${{ env.VERSION }}.tar.gz
+
+      # Erstellt das GitHub Release und lädt die .tar.gz-Datei hoch
+      - name: GitHub Release erstellen und Image anhängen
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          files: my-app-${{ env.VERSION }}.tar.gz
+          generate_release_notes: true # Erstellt automatisch Release Notes aus den Commits
