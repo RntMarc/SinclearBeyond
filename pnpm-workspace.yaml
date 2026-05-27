@@ -12,3 +12,8 @@ onlyBuiltDependencies:
   - esbuild
   - msw
   - sharp
+
+overrides:
+  uuid: '>=11.1.1'
+  postcss: '>=8.5.10'
+  esbuild: '>=0.24.3'
