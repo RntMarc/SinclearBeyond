@@ -126,7 +126,43 @@
   --birthday: oklch(0.75 0.15 340);
 }
 
+.neo-retro {
+  --primary-custom: oklch(0.85 0.22 135); /* Neon Lime */
+  --background: oklch(0.12 0.02 260); /* Near-black Blue */
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.16 0.03 260);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.18 0.04 260);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: var(--primary-custom);
+  --primary-foreground: oklch(0.2 0.05 135);
+  --secondary: oklch(0.6 0.3 300); /* Electric Purple */
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.2 0.05 260);
+  --muted-foreground: oklch(0.65 0.05 260);
+  --accent: oklch(0.7 0.3 340); /* Vibrant Magenta */
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.6 0.2 30);
+  --border: oklch(0.3 0.1 260 / 40%);
+  --input: oklch(0.3 0.1 260 / 30%);
+  --ring: var(--primary-custom);
+  --radius: 1.25rem;
+  --sidebar: oklch(0.14 0.02 260);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: var(--primary-custom);
+  --sidebar-primary-foreground: oklch(0.2 0.05 135);
+  --sidebar-accent: oklch(0.6 0.3 300 / 20%);
+  --sidebar-accent-foreground: oklch(0.6 0.3 300);
+  --sidebar-border: oklch(0.3 0.1 260 / 30%);
+  --sidebar-ring: var(--primary-custom);
+  --trip: oklch(0.75 0.2 250);
+  --birthday: oklch(0.8 0.25 340);
+}
+
 @layer base {
+  .rounded-lg-custom {
+    border-radius: var(--radius-2xl);
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -223,3 +259,68 @@
   }
 }
 
+/* Neo-Retro Theme Utilities and Components */
+@layer components {
+  .neo-retro .bg-card {
+    box-shadow: 0 10px 30px -10px oklch(0 0 0 / 50%);
+    border-width: 1px;
+    border-color: oklch(1 1 1 / 5%);
+  }
+
+  .neo-retro button:not(.ghost):not(.secondary) {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .neo-retro button:not(.ghost):not(.secondary):active {
+    transform: scale(0.96);
+  }
+
+  .neo-retro .primary-glow {
+    box-shadow: 0 0 20px -5px var(--primary-custom);
+  }
+
+  .neo-retro .badge-sticker {
+    transform: rotate(-2deg);
+    border-radius: 0.25rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .neo-retro .decorative-star {
+    position: relative;
+  }
+
+  .neo-retro .decorative-star::after {
+    content: "✦";
+    position: absolute;
+    top: -0.5rem;
+    right: -1.2rem;
+    color: var(--primary-custom);
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 5px var(--primary-custom));
+  }
+
+  .neo-retro .brand-accent {
+    font-family: var(--font-display, inherit);
+  }
+}
+
+/* Custom Scrollbar for Neo-Retro */
+.neo-retro ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.neo-retro ::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.neo-retro ::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 10px;
+}
+
+.neo-retro ::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-custom);
+}

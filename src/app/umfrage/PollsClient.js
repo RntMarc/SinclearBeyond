@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import Notification from "@/components/Notification";
-import { markAllPollsAsRead } from "@/lib/polls/actions";
 import PollFormModal from "@/components/polls/PollFormModal";
 import PollList from "@/components/polls/PollList";
+import { markAllPollsAsRead } from "@/lib/polls/actions";
 
 export default function PollsClient({ initialPolls }) {
   const t = useTranslations("Polls");

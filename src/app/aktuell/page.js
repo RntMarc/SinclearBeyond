@@ -4,9 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
+import AktuellContent from "@/components/news/AktuellContent";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
-import AktuellContent from "@/components/news/AktuellContent";
 
 export default async function AktuellPage() {
   const t = await getTranslations("News");
