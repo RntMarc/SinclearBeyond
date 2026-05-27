@@ -514,3 +514,29 @@ export const officeCollaborators = mysqlTable("OfficeCollaborator", {
   color: varchar("color", { length: 7 }).notNull(),
   lastActiveAt: datetime("lastActiveAt", { fsp: 3 }).notNull(),
 });
+
+// ── News / Aktuell ────────────────────────────────────────────────────────────
+
+export const rssSources = mysqlTable("RssSource", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  url: text("url").notNull(),
+  itemsPerPage: tinyint("itemsPerPage").notNull().default(10),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const newsArticles = mysqlTable("NewsArticle", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  url: text("url").notNull(),
+  sourceName: varchar("sourceName", { length: 255 }),
+  sourceIcon: text("sourceIcon"),
+  savedAt: datetime("savedAt", { fsp: 3 }).notNull(),
+});
+
+export const newsUpvotes = mysqlTable("NewsUpvote", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  articleId: varchar("articleId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});

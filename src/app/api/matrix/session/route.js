@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { clearMatrixSession, getMatrixSession } from "@/lib/matrix/session";
-import { normalizeHomeserver } from "@/lib/matrix/oauth";
+import {
+  clearMatrixSession,
+  getMatrixSession,
+  setMatrixSession,
+} from "@/lib/matrix/session";
+import { normalizeHomeserver, resolveHomeserver } from "@/lib/matrix/oauth";
 
 export async function GET() {
   const session = await getSession();
@@ -28,12 +32,19 @@ export async function POST(request) {
   if (body?.method === "password") {
     const matrixUser = body?.matrixUser?.replace(/^@/, "").split(":")[0];
     const password = body?.password;
+    const resolvedHomeserver = await resolveHomeserver(body?.homeserver);
+
+    console.log("[Matrix Session] Attempting password login for:", {
+      matrixUser,
+      homeserver,
+      resolvedHomeserver,
+    });
 
     if (!matrixUser || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const loginRes = await fetch(`${homeserver}/_matrix/client/v3/login`, {
+    const loginRes = await fetch(`${resolvedHomeserver}/_matrix/client/v3/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -46,13 +57,17 @@ export async function POST(request) {
 
     const loginData = await loginRes.json().catch(() => null);
     if (!loginRes.ok || !loginData?.access_token) {
+      console.error("[Matrix Session] Login failed:", {
+        status: loginRes.status,
+        data: loginData,
+      });
       return NextResponse.json({ error: "Login failed" }, { status: 401 });
     }
 
     await setMatrixSession({
       accessToken: loginData.access_token,
       matrixUserId: loginData.user_id,
-      homeserver: homeserver,
+      homeserver: resolvedHomeserver,
       password: password,
     });
 

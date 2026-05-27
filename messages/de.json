@@ -54,7 +54,8 @@
     "info": "Changelog",
     "office": "Office",
     "polls": "Umfragen & Termine",
-    "chat": "Chat"
+    "chat": "Chat",
+    "news": "Aktuell"
   },
   "Office": {
     "title": "Office",
@@ -382,6 +383,17 @@
     "subtitle": "Galerie",
     "title": "Fotografien",
     "photoBy": "Foto von"
+  },
+  "News": {
+    "title": "Aktuell",
+    "subtitle": "Nachrichten & Feeds",
+    "newArticles": "Neue Artikel",
+    "archive": "Archiv",
+    "important": "Als wichtig empfunden",
+    "loading": "Lade Artikel...",
+    "allLoaded": "Alle Artikel geladen",
+    "noArticles": "Momentan keine Artikel vorhanden.",
+    "read": "Lesen"
   },
   "Calendar": {
     "title": "Kalender",
@@ -865,15 +877,21 @@
     "authError": "Matrix-Anmeldung fehlgeschlagen.",
     "linkedAs": "Verknüpft als {matrixUserId}",
     "identifierPlaceholder": "Matrix-Benutzername oder @user:server",
-    "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
+    "homeserverPlaceholder": "Homeserver (z. B. matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
-    "loginButton": "OAuth2-Login starten",
+    "username": "Nutzername",
+    "loginButton": "Anmeldung starten",
+    "loginButtonOAuth": "OAuth2-Login starten",
     "authSuccess": "Matrix-Anmeldung erfolgreich. Du kannst jetzt Nachrichten senden.",
     "availableUsers": "Verknüpfte Nutzer",
     "noSelection": "Kein Chatpartner ausgewählt",
     "messagePlaceholder": "Nachricht eingeben",
     "send": "Nachricht senden",
-    "sessionRequired": "Bitte verifiziere diese Session über OAuth2 bei deinem Homeserver.",
-    "oauthError": "OAuth2-Anmeldung fehlgeschlagen oder abgebrochen."
+    "sessionRequired": "Bitte bestätige dein Matrix-Passwort, um wieder auf den Chat zuzugreifen.",
+    "oauthError": "Anmeldung fehlgeschlagen oder abgebrochen.",
+    "methodOAuth2": "OAuth2",
+    "methodPassword": "Passwort",
+    "switchOAuth": "Oder via OAuth2 anmelden",
+    "switchPassword": "Oder via Passwort anmelden"
   }
 }

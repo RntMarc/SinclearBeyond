@@ -54,7 +54,8 @@
     "info": "Changelog",
     "office": "Office",
     "polls": "Surveys & Polls",
-    "chat": "Chat"
+    "chat": "Chat",
+    "news": "News"
   },
   "Office": {
     "title": "Office",
@@ -382,6 +383,17 @@
     "subtitle": "Gallery",
     "title": "Photography",
     "photoBy": "Photo by"
+  },
+  "News": {
+    "title": "News",
+    "subtitle": "Feeds & Updates",
+    "newArticles": "New Articles",
+    "archive": "Archive",
+    "important": "Highly Rated",
+    "loading": "Loading articles...",
+    "allLoaded": "All articles loaded",
+    "noArticles": "No articles available right now.",
+    "read": "Read"
   },
   "Calendar": {
     "title": "Calendar",
@@ -833,13 +845,19 @@
     "identifierPlaceholder": "Matrix username or @user:server",
     "homeserverPlaceholder": "Homeserver (e.g. https://matrix.org)",
     "passwordPlaceholder": "Matrix password",
-    "loginButton": "Start OAuth2 login",
+    "username": "Username",
+    "loginButton": "Start login",
+    "loginButtonOAuth": "Start OAuth2 login",
     "authSuccess": "Matrix login successful. You can now send messages.",
     "availableUsers": "Linked users",
     "noSelection": "No chat partner selected",
     "messagePlaceholder": "Type a message",
     "send": "Send message",
-    "sessionRequired": "Please verify this session via OAuth2 with your homeserver.",
-    "oauthError": "OAuth2 sign-in failed or was cancelled."
+    "sessionRequired": "Please confirm your Matrix password to access the chat again.",
+    "oauthError": "Sign-in failed or was cancelled.",
+    "methodOAuth2": "OAuth2",
+    "methodPassword": "Password",
+    "switchOAuth": "Or login via OAuth2",
+    "switchPassword": "Or login via Password"
   }
 }

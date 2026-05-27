@@ -12,6 +12,7 @@ import {
   Map as MapIcon,
   Menu,
   MessageCircle,
+  Newspaper,
   MessageSquarePlus,
   Settings,
   SquarePlay,
@@ -121,6 +122,7 @@ export default function AppShell({ children, user, session }) {
       badge: unreadBirthdays > 0 && pathname !== "/geburtstage",
     },
     { href: "/kontakte", label: t("contacts"), icon: Users },
+    { href: "/aktuell", label: t("news"), icon: Newspaper },
     { href: "/fotos", label: t("photos"), icon: Camera },
     {
       href: "/abos",

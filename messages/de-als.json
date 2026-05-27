@@ -54,7 +54,8 @@
     "info": "Changelog",
     "office": "Office",
     "polls": "Umfraga & Termie",
-    "chat": "Schwätz"
+    "chat": "Chat",
+    "news": "Aktuell"
   },
   "Office": {
     "title": "Office",
@@ -375,6 +376,17 @@
     "subtitle": "Bildla",
     "title": "Fotografiena",
     "photoBy": "Bildle von"
+  },
+  "News": {
+    "title": "Aktuell",
+    "subtitle": "Nachrichta & Feeds",
+    "newArticles": "Neie Artikel",
+    "archive": "Archiv",
+    "important": "Als wichtig empfunde",
+    "loading": "Artikel lade...",
+    "allLoaded": "Alle Artikel gladde",
+    "noArticles": "Grad keine Artikel do.",
+    "read": "Lese"
   },
   "Calendar": {
     "title": "Kalender",
@@ -826,13 +838,19 @@
     "identifierPlaceholder": "Matrix-Benutzername odr @user:server",
     "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
-    "loginButton": "OAuth2-Login starta",
+    "username": "Nutzernama",
+    "loginButton": "Aameldong starta",
+    "loginButtonOAuth": "OAuth2-Login starta",
     "authSuccess": "Matrix-Aameldong hot klappt. Jetzt kannsch schicka.",
     "availableUsers": "Vrknüpfte Leit",
     "noSelection": "Koi Chat-Partner gwählt",
     "messagePlaceholder": "Nåchricht neischreiba",
     "send": "Nåchricht schicka",
-    "sessionRequired": "Bitte verifizier die Session über OAuth2 bei deim Homeserver.",
-    "oauthError": "OAuth2-Aameldong hot net klappt odr isch abbrocha."
+    "sessionRequired": "Bitte bschdätig doi Matrix-Passwort, om wieder uf den Schwätz zuzugreifen.",
+    "oauthError": "Aameldong hot net klappt odr isch abbrocha.",
+    "methodOAuth2": "OAuth2",
+    "methodPassword": "Passwort",
+    "switchOAuth": "Odr via OAuth2 aamelda",
+    "switchPassword": "Odr via Passwort aamelda"
   }
 }

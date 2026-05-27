@@ -85,5 +85,6 @@ export const config = {
     "/feedback/:path*",
     "/abos/:path*",
     "/office/:path*",
+    "/aktuell/:path*",
   ],
 };

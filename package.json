@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.3.0",
     "drizzle-orm": "^0.45.2",
+    "fast-xml-parser": "^5.8.0",
     "html-docx-js-typescript": "^0.1.5",
     "html2canvas": "^1.4.1",
     "jose": "^6.2.3",
@@ -57,10 +58,12 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/lodash": "^4.17.24",
     "@types/lodash-es": "^4.17.12",
     "drizzle-kit": "^0.31.10",
+    "playwright": "^1.60.0",
     "tailwindcss": "^4.3.0"
   },
   "packageManager": "pnpm@11.3.0+sha512.2c403d6594527287672b1f7056343a1f7c3634036a67ffabfcc2b3d7595d843768f8787148d1b57cf7956c90606bbd192857c363af19e96d2d0ec9ec5741d215"
