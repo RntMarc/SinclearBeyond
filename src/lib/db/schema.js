@@ -60,7 +60,9 @@ export const userPreferences = mysqlTable("UserPreferences", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
   language: varchar("language", { length: 10 }).notNull().default("de"),
-  theme: mysqlEnum("theme", ["light", "dark"]).notNull().default("dark"),
+  theme: mysqlEnum("theme", ["light", "dark", "neo-retro"])
+    .notNull()
+    .default("dark"),
   primaryColor: varchar("primaryColor", { length: 7 })
     .notNull()
     .default("#7c3aed"),

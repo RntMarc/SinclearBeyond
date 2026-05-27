@@ -36,16 +36,20 @@ export default function AppearanceForm({ initialPreferences }) {
   const suggestedColors = {
     light: ["#86680e", "#3568cc", "#0a7e0a", "#a42be0"], // Gold, Blue, Green, Violet
     dark: ["#8c7328", "#216bfe", "#0b890b", "#b22ff4"], // Gold, Blue, Green, Violet
+    "neo-retro": ["#9fff00", "#9b4dff", "#ff00d4", "#00f0ff"], // Neon Lime, Purple, Magenta, Cyan
   };
 
-  const currentSuggested =
-    localTheme === "light" ? suggestedColors.light : suggestedColors.dark;
+  const currentSuggested = suggestedColors[localTheme] || suggestedColors.dark;
 
   // Derive dynamic background color for contrast calculation (following globals.css logic)
-  const bgColor =
-    localTheme === "light"
-      ? mixColors(localColor, "#ffffff", 5) // color-mix(in oklch, var(--primary-custom), white 95%)
-      : mixColors(localColor, "#000000", 10); // color-mix(in oklch, var(--primary-custom), black 90%)
+  let bgColor;
+  if (localTheme === "light") {
+    bgColor = mixColors(localColor, "#ffffff", 5);
+  } else if (localTheme === "neo-retro") {
+    bgColor = "#0d111a"; // Fixed background for neo-retro
+  } else {
+    bgColor = mixColors(localColor, "#000000", 10);
+  }
 
   // Background contrast remains at 2.1, but text contrast (on white) must be 4.5
   const isBgContrastOk = isContrastAcceptable(localColor, bgColor, 2.1);
@@ -86,7 +90,7 @@ export default function AppearanceForm({ initialPreferences }) {
         <h2 className="text-xl font-bold mb-2">{t("title")}</h2>
         <p className="text-sm text-muted-foreground mb-6">{t("description")}</p>
 
-        <div className="space-y-8 bg-sidebar border border-sidebar-border rounded-2xl p-8">
+        <div className="space-y-8 bg-sidebar border border-sidebar-border rounded-lg-custom p-8">
           {/* Language selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -147,10 +151,14 @@ export default function AppearanceForm({ initialPreferences }) {
             >
               {t("themeLabel")}
             </label>
-            <div id="theme-mode" className="grid grid-cols-2 gap-4">
+            <div id="theme-mode" className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button
                 type="button"
-                onClick={() => setLocalTheme("light")}
+                onClick={() => {
+                  setLocalTheme("light");
+                  if (!suggestedColors.light.includes(localColor))
+                    setLocalColor(suggestedColors.light[0]);
+                }}
                 className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                   localTheme === "light"
                     ? "border-primary bg-primary/5"
@@ -165,7 +173,11 @@ export default function AppearanceForm({ initialPreferences }) {
               </button>
               <button
                 type="button"
-                onClick={() => setLocalTheme("dark")}
+                onClick={() => {
+                  setLocalTheme("dark");
+                  if (!suggestedColors.dark.includes(localColor))
+                    setLocalColor(suggestedColors.dark[0]);
+                }}
                 className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                   localTheme === "dark"
                     ? "border-primary bg-primary/5"
@@ -177,6 +189,25 @@ export default function AppearanceForm({ initialPreferences }) {
                   <div className="h-4 w-full bg-blue-600 rounded" />
                 </div>
                 <span className="text-sm font-medium">{t("dark")}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLocalTheme("neo-retro");
+                  setLocalColor(suggestedColors["neo-retro"][0]);
+                }}
+                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                  localTheme === "neo-retro"
+                    ? "border-primary bg-primary/5"
+                    : "border-transparent bg-background hover:bg-muted"
+                }`}
+              >
+                <div className="w-full h-20 bg-[#0d111a] rounded-md border border-gray-800 flex flex-col p-2 gap-2 overflow-hidden relative">
+                  <div className="h-2 w-1/2 bg-gray-700 rounded" />
+                  <div className="h-4 w-full bg-[#9fff00] rounded" />
+                  <div className="absolute -right-2 -bottom-2 w-8 h-8 bg-[#9b4dff] rounded-full blur-xl opacity-50" />
+                </div>
+                <span className="text-sm font-medium">{t("neo-retro")}</span>
               </button>
             </div>
           </div>

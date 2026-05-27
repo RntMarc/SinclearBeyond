@@ -189,7 +189,7 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
               {/* Location Results Dropdown */}
               {showLocationResults &&
                 (locationResults.length > 0 || loadingLocation) && (
-                  <div className="absolute z-[120] left-0 right-0 mt-2 bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
+                  <div className="absolute z-[120] left-0 right-0 mt-2 bg-card border border-border rounded-lg-custom shadow-xl overflow-hidden">
                     {loadingLocation ? (
                       <div className="p-4 flex items-center justify-center">
                         <Loader2

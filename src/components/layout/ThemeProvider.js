@@ -14,10 +14,17 @@ export function ThemeProvider({ children, initialPreferences }) {
   useEffect(() => {
     // Apply theme class to html element
     const html = document.documentElement;
-    if (theme === "dark") {
+    // Remove existing theme classes
+    html.classList.remove("light", "dark", "neo-retro");
+
+    if (theme === "neo-retro") {
+      html.classList.add("neo-retro");
+      // Neo-retro is dark-based, so also add dark for component compatibility if needed
+      html.classList.add("dark");
+    } else if (theme === "dark") {
       html.classList.add("dark");
     } else {
-      html.classList.remove("dark");
+      html.classList.add("light");
     }
 
     // Apply primary color as CSS variable

@@ -81,7 +81,7 @@ export default function ReviewSearch({ type = "game" }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length > 2 && setIsOpen(true)}
-          className="w-full pl-12 pr-4 py-4 bg-card border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+          className="w-full pl-12 pr-4 py-4 bg-card border border-border rounded-lg-custom focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
         />
         {loading && (
           <Loader2
@@ -92,7 +92,7 @@ export default function ReviewSearch({ type = "game" }) {
       </div>
 
       {isOpen && (results.length > 0 || loading) && (
-        <div className="absolute z-50 mt-2 w-full bg-card border border-border rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute z-50 mt-2 w-full bg-card border border-border rounded-lg-custom shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="max-h-[400px] overflow-y-auto p-2 space-y-1">
             {results.map((item) => (
               <button

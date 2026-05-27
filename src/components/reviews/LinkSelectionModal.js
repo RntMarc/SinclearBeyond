@@ -86,7 +86,7 @@ export default function LinkSelectionModal({ isOpen, onClose, links, type }) {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 rounded-2xl transition-all group"
+                  className="flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 rounded-lg-custom transition-all group"
                 >
                   <div className="flex items-center gap-4">
                     {info.icon ? (
@@ -120,7 +120,7 @@ export default function LinkSelectionModal({ isOpen, onClose, links, type }) {
         <Button
           onClick={onClose}
           variant="secondary"
-          className="w-full py-4 rounded-2xl"
+          className="w-full py-4 rounded-lg-custom"
         >
           {t("close")}
         </Button>

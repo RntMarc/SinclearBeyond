@@ -135,7 +135,7 @@ export default function ReviewModal({
               onChange={(e) => setComment(e.target.value)}
               placeholder="..."
               rows={4}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-lg-custom px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
           </div>
 

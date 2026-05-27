@@ -54,7 +54,7 @@ export default function NavigationFAB({ lat, lon, name }) {
                 href={googleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-2xl transition-colors group"
+                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-lg-custom transition-colors group"
                 onClick={() => setShowMenu(false)}
               >
                 <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
@@ -72,7 +72,7 @@ export default function NavigationFAB({ lat, lon, name }) {
                 href={appleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-2xl transition-colors group"
+                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-lg-custom transition-colors group"
                 onClick={() => setShowMenu(false)}
               >
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
@@ -90,7 +90,7 @@ export default function NavigationFAB({ lat, lon, name }) {
                 href={osmUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-2xl transition-colors group"
+                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-lg-custom transition-colors group"
                 onClick={() => setShowMenu(false)}
               >
                 <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0">

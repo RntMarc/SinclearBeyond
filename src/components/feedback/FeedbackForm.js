@@ -33,7 +33,7 @@ export default function FeedbackForm() {
   };
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+    <div className="bg-card border border-border rounded-lg-custom p-6 shadow-sm">
       <h2 className="text-lg font-bold mb-2">{t("generalFeedback")}</h2>
       <p className="text-sm text-muted-foreground mb-6">
         {t("generalFeedbackDesc")}

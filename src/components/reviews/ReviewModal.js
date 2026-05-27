@@ -116,7 +116,7 @@ export default function ReviewModal({
               onChange={(e) =>
                 setNewReview({ ...newReview, comment: e.target.value })
               }
-              className="w-full p-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[120px] text-sm resize-none"
+              className="w-full p-4 bg-muted border border-border rounded-lg-custom focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[120px] text-sm resize-none"
               placeholder="..."
             />
           </div>

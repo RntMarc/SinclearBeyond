@@ -19,7 +19,7 @@ import AccommodationDetailModal from "./AccommodationDetailModal";
 const TravelMap = dynamic(() => import("./TravelMap"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-2xl border border-border">
+    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-lg-custom border border-border">
       <p className="text-xs text-muted-foreground italic">
         Karte wird geladen...
       </p>
@@ -51,7 +51,7 @@ function StatusBadge({ isActive, isUpcoming, isPast }) {
 
 function SectionBox({ title, icon: Icon, children }) {
   return (
-    <div className="bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-sidebar border border-sidebar-border rounded-lg-custom overflow-hidden shadow-sm">
       <div className="px-5 py-4 border-b border-sidebar-border flex items-center gap-3">
         {Icon && (
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
@@ -345,7 +345,7 @@ export default function TripDashboard({ trip }) {
           ))}
         </div>
       ) : (
-        <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-2xl">
+        <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-lg-custom">
           <Calendar className="mx-auto mb-2 text-muted-foreground" size={24} />
           <p className="text-sm text-muted-foreground">{t("noEvents")}</p>
         </div>

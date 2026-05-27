@@ -105,7 +105,7 @@ export default function FeedItem({
   };
 
   return (
-    <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-card border border-border rounded-lg-custom overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="p-5">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">

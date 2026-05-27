@@ -40,7 +40,7 @@ export default function ReviewForm({ placeId, onAdded }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 bg-muted/30 border border-border rounded-2xl space-y-4"
+      className="p-6 bg-muted/30 border border-border rounded-lg-custom space-y-4"
     >
       <h3 className="font-bold text-sm">Eigene Bewertung schreiben</h3>
 

@@ -132,14 +132,14 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
     return (
       <div className="space-y-8">
         {poll.description && (
-          <div className="bg-sidebar-accent/30 border border-sidebar-border rounded-2xl p-6">
+          <div className="bg-sidebar-accent/30 border border-sidebar-border rounded-lg-custom p-6">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
               {poll.description}
             </p>
           </div>
         )}
 
-        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-card border border-border rounded-lg-custom overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
@@ -401,7 +401,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
         </div>
 
         {isFinalized && (
-          <div className="flex items-center gap-4 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+          <div className="flex items-center gap-4 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-lg-custom">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
               <CheckCircle2 size={24} />
             </div>
@@ -492,7 +492,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           return (
             <div
               key={q.id}
-              className="bg-card border border-border rounded-2xl p-6 space-y-4"
+              className="bg-card border border-border rounded-lg-custom p-6 space-y-4"
             >
               <label className="block text-sm font-bold">{q.title}</label>
 
@@ -626,7 +626,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           <SaveButton
             loading={saving}
             type="submit"
-            className="px-8 py-3 rounded-2xl shadow-xl shadow-primary/20"
+            className="px-8 py-3 rounded-lg-custom shadow-xl shadow-primary/20"
           >
             <Send size={18} className="mr-2" />
             {t("form.save")}
@@ -639,7 +639,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           <h3 className="text-xl font-black">
             {t("results")} ({new Set(poll.votes.map((v) => v.userId)).size})
           </h3>
-          <div className="bg-card border border-border rounded-2xl overflow-hidden divide-y divide-border">
+          <div className="bg-card border border-border rounded-lg-custom overflow-hidden divide-y divide-border">
             {poll.questions.map((q) => {
               const qVotes = poll.votes.filter((v) => v.questionId === q.id);
               return (

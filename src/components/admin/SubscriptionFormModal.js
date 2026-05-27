@@ -284,7 +284,7 @@ export default function SubscriptionFormModal({
               {members.map((member, idx) => (
                 <div
                   key={idx}
-                  className="p-4 bg-muted/30 border border-border rounded-2xl space-y-4"
+                  className="p-4 bg-muted/30 border border-border rounded-lg-custom space-y-4"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
