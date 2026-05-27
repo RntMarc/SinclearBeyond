@@ -15,6 +15,27 @@ export function normalizeHomeserver(input) {
   return `https://${value.replace(/\/$/, "")}`;
 }
 
+export async function resolveHomeserver(domain) {
+  const normalized = normalizeHomeserver(domain);
+  if (!normalized) return null;
+
+  try {
+    const res = await fetch(`${normalized}/.well-known/matrix/client`, {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data["m.homeserver"]?.base_url) {
+        return data["m.homeserver"].base_url.replace(/\/$/, "");
+      }
+    }
+  } catch (e) {
+    console.error("[Matrix Resolve] Failed to resolve .well-known:", e);
+  }
+
+  return normalized;
+}
+
 export async function createOAuthTx({ homeserver, mode, clientId }) {
   const state = b64url(crypto.randomBytes(24));
   const codeVerifier = b64url(crypto.randomBytes(48));
