@@ -879,13 +879,16 @@
     "identifierPlaceholder": "Matrix-Benutzername oder @user:server",
     "homeserverPlaceholder": "Homeserver (z. B. https://matrix.org)",
     "passwordPlaceholder": "Matrix-Passwort",
-    "loginButton": "OAuth2-Login starten",
+    "loginButton": "Anmeldung starten",
+    "loginButtonOAuth": "OAuth2-Login starten",
     "authSuccess": "Matrix-Anmeldung erfolgreich. Du kannst jetzt Nachrichten senden.",
     "availableUsers": "Verknüpfte Nutzer",
     "noSelection": "Kein Chatpartner ausgewählt",
     "messagePlaceholder": "Nachricht eingeben",
     "send": "Nachricht senden",
-    "sessionRequired": "Bitte verifiziere diese Session über OAuth2 bei deinem Homeserver.",
-    "oauthError": "OAuth2-Anmeldung fehlgeschlagen oder abgebrochen."
+    "sessionRequired": "Bitte verifiziere deine Sitzung bei deinem Homeserver.",
+    "oauthError": "Anmeldung fehlgeschlagen oder abgebrochen.",
+    "methodOAuth2": "OAuth2",
+    "methodPassword": "Passwort"
   }
 }

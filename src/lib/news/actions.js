@@ -112,7 +112,7 @@ export async function getImportantNews() {
       .orderBy(desc(sql`upvoteCount`), desc(newsArticles.savedAt)),
   );
 
-  return (result.data || []).map(r => ({
+  return (result.data || []).map((r) => ({
     ...r,
     savedAt: r.savedAt instanceof Date ? r.savedAt.toISOString() : r.savedAt,
   }));
@@ -142,7 +142,7 @@ export async function getArchivedNews() {
       .orderBy(desc(newsArticles.savedAt)),
   );
 
-  return (result.data || []).map(r => ({
+  return (result.data || []).map((r) => ({
     ...r,
     savedAt: r.savedAt instanceof Date ? r.savedAt.toISOString() : r.savedAt,
   }));

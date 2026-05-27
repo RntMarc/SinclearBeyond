@@ -32,14 +32,18 @@ export default async function AktuellPage() {
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-7xl mx-auto">
-            <Suspense fallback={<div className="animate-pulse space-y-8">
-              <div className="h-10 w-48 bg-muted rounded-lg" />
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map(i => (
-                  <div key={i} className="h-64 bg-muted rounded-2xl" />
-                ))}
-              </div>
-            </div>}>
+            <Suspense
+              fallback={
+                <div className="animate-pulse space-y-8">
+                  <div className="h-10 w-48 bg-muted rounded-lg" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                      <div key={i} className="h-64 bg-muted rounded-2xl" />
+                    ))}
+                  </div>
+                </div>
+              }
+            >
               <AktuellContent _userId={session.sub} />
             </Suspense>
           </div>
