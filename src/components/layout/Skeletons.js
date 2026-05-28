@@ -13,7 +13,7 @@ export function HomeSkeleton() {
 
 function SectionSkeleton() {
   return (
-    <div className="glass-card rounded-3xl p-8 break-inside-avoid">
+    <div className="glass-card rounded-[2rem] p-8 break-inside-avoid">
       <div className="flex items-center justify-between mb-8">
         <Skeleton className="h-8 w-40 rounded-full" />
         <Skeleton className="h-8 w-8 rounded-full" />
@@ -31,7 +31,7 @@ export function PhotosSkeleton() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {Array.from({ length: 12 }).map((_, i) => (
-        <Skeleton key={i} className="aspect-square w-full rounded-3xl shadow-xl" />
+        <Skeleton key={i} className="aspect-square w-full rounded-[2rem] shadow-xl" />
       ))}
     </div>
   );

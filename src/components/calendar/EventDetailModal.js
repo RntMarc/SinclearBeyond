@@ -16,7 +16,7 @@ export default function EventDetailModal({ event, onClose, onEdit, onDelete }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-card border border-border rounded-lg-custom shadow-2xl">
+      <div className="w-full max-w-md bg-card border border-border rounded-[2rem] shadow-2xl">
         <div className="flex items-start justify-between px-6 py-4 border-b border-border gap-3">
           <h3 className="text-base font-medium text-foreground leading-snug">
             {event.title}

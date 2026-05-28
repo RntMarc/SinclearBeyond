@@ -35,7 +35,7 @@ function TripCard({ trip, isAdmin, isEvent }) {
 
   const Content = (
     <div
-      className={`flex items-center justify-between p-4 bg-sidebar ${!isEvent ? "hover:bg-sidebar-accent cursor-pointer" : ""} border border-sidebar-border rounded-xl transition-all group text-left w-full ${isGrey ? "opacity-60 grayscale-[0.5]" : ""}`}
+      className={`flex items-center justify-between p-4 bg-sidebar ${!isEvent ? "hover:bg-sidebar-accent cursor-pointer" : ""} border border-sidebar-border rounded-[2rem] transition-all group text-left w-full ${isGrey ? "opacity-60 grayscale-[0.5]" : ""}`}
     >
       <div className="flex items-center gap-3">
         <div
@@ -91,7 +91,7 @@ export default function TripList({ initialTrips, isAdmin, isEventList }) {
 
   if (!trips || trips.length === 0) {
     return (
-      <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
+      <div className="bg-sidebar rounded-[2rem] border border-sidebar-border p-8 text-center">
         <MapPin className="mx-auto mb-3 text-muted-foreground" size={28} />
         <p className="text-muted-foreground">{t("noTrips")}</p>
       </div>

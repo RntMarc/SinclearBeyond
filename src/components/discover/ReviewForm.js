@@ -40,7 +40,7 @@ export default function ReviewForm({ placeId, onAdded }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 bg-muted/30 border border-border rounded-lg-custom space-y-4"
+      className="p-6 bg-muted/30 border border-border rounded-xl-custom space-y-4"
     >
       <h3 className="font-bold text-sm">Eigene Bewertung schreiben</h3>
 
@@ -64,7 +64,7 @@ export default function ReviewForm({ placeId, onAdded }) {
           Kommentar
         </label>
         <textarea
-          className="w-full bg-card border border-border rounded-xl px-4 py-2 text-sm min-h-[100px] focus:ring-2 ring-primary/20 outline-none"
+          className="w-full bg-card border border-border rounded-[2rem] px-4 py-2 text-sm min-h-[100px] focus:ring-2 ring-primary/20 outline-none"
           placeholder="Wie war dein Besuch?"
           value={comment}
           onChange={(e) => setComment(e.target.value)}

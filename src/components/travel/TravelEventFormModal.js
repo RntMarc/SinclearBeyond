@@ -138,7 +138,7 @@ export default function TravelEventFormModal({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg bg-card border border-border rounded-lg-custom shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="w-full max-w-lg bg-card border border-border rounded-[2rem] shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-3">
             <h3 className="text-sm font-medium">
@@ -168,7 +168,7 @@ export default function TravelEventFormModal({
           className="flex-1 overflow-y-auto p-6 space-y-4"
         >
           {error && (
-            <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-lg">
+            <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-[2rem]">
               {error}
             </div>
           )}
@@ -179,7 +179,7 @@ export default function TravelEventFormModal({
             </label>
             <input
               required
-              className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm"
+              className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
@@ -193,7 +193,7 @@ export default function TravelEventFormModal({
               <input
                 required
                 type="datetime-local"
-                className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm"
+                className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm"
                 value={form.start}
                 onChange={(e) => setForm({ ...form, start: e.target.value })}
               />
@@ -205,7 +205,7 @@ export default function TravelEventFormModal({
               <input
                 required
                 type="datetime-local"
-                className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm"
+                className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm"
                 value={form.end}
                 onChange={(e) => setForm({ ...form, end: e.target.value })}
               />
@@ -217,7 +217,7 @@ export default function TravelEventFormModal({
               Beschreibung
             </label>
             <textarea
-              className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm min-h-[80px]"
+              className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm min-h-[80px]"
               value={form.description}
               onChange={(e) =>
                 setForm({ ...form, description: e.target.value })
@@ -230,7 +230,7 @@ export default function TravelEventFormModal({
               Adresse
             </label>
             <input
-              className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm"
+              className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm"
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
             />
@@ -244,7 +244,7 @@ export default function TravelEventFormModal({
               <input
                 type="number"
                 step="any"
-                className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm"
+                className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm"
                 value={form.latitude}
                 onChange={(e) => setForm({ ...form, latitude: e.target.value })}
               />
@@ -256,7 +256,7 @@ export default function TravelEventFormModal({
               <input
                 type="number"
                 step="any"
-                className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm"
+                className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm"
                 value={form.longitude}
                 onChange={(e) =>
                   setForm({ ...form, longitude: e.target.value })
@@ -269,7 +269,7 @@ export default function TravelEventFormModal({
             <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
               Teilnehmer
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-sidebar border border-sidebar-border rounded-xl p-3 max-h-40 overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-sidebar border border-sidebar-border rounded-[2rem] p-3 max-h-40 overflow-y-auto">
               {loadingUsers ? (
                 <div className="col-span-full text-xs text-muted-foreground animate-pulse">
                   Lade Nutzer...

@@ -94,7 +94,7 @@ export default function ForumDetailClient({ forumId, userId }) {
   }
 
   const InfoSidebar = () => (
-    <div className="bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden">
+    <div className="bg-sidebar border border-sidebar-border rounded-[2rem] overflow-hidden">
       <div className="aspect-video w-full bg-muted">
         {data.forum.image ? (
           <img
@@ -143,7 +143,7 @@ export default function ForumDetailClient({ forumId, userId }) {
         <div className="pt-4 border-t border-sidebar-border">
           <button
             onClick={handleToggleJoin}
-            className={`w-full px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`w-full px-4 py-2 rounded-[2rem] text-sm font-medium transition-all ${
               data.isMember
                 ? "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20"
                 : "bg-primary text-primary-foreground hover:opacity-90"
@@ -163,7 +163,7 @@ export default function ForumDetailClient({ forumId, userId }) {
           {data.isMember && (
             <button
               onClick={() => setShowFormModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-all shadow-lg shadow-primary/20"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-[2rem] text-sm font-medium hover:opacity-90 transition-all shadow-lg shadow-primary/20"
             >
               <Plus size={18} />
               {t("newPost")}

@@ -169,7 +169,7 @@ export default function AppShell({ children, user, session }) {
         <aside className="w-72 flex flex-col border-r border-white/5 bg-black/20 backdrop-blur-3xl z-40 relative">
           <div className="p-8 shrink-0">
             <Link href="/home" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(135,255,157,0.4)] group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 bg-primary rounded-[2rem] flex items-center justify-center shadow-[0_0_20px_rgba(135,255,157,0.4)] group-hover:scale-110 transition-transform">
                 <span className="font-black text-primary-foreground text-xl">S</span>
               </div>
               <span className="font-display font-black text-xl tracking-tighter uppercase">Sinclear</span>
@@ -209,7 +209,7 @@ export default function AppShell({ children, user, session }) {
           </nav>
 
           <div className="p-4 border-t border-white/5 bg-white/5 backdrop-blur-md">
-            <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/5 border border-white/5">
+            <div className="flex items-center gap-3 p-2 rounded-[2rem] bg-white/5 border border-white/5">
               <Avatar src={user?.image} displayName={user?.displayName || session?.email} size="sm" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold truncate">{user?.displayName ?? session?.email}</p>
@@ -224,8 +224,8 @@ export default function AppShell({ children, user, session }) {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col relative overflow-hidden">
         {/* Background Gradients */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-electric-purple/10 blur-[120px] -z-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-neon-lime/5 blur-[120px] -z-10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/10 blur-[120px] -z-10 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] -z-10 pointer-events-none" />
 
         <div className="flex-1 overflow-y-auto scroll-smooth relative z-10 pb-24 md:pb-0">
           {children}
@@ -281,7 +281,7 @@ export default function AppShell({ children, user, session }) {
                       href={item.href}
                       onClick={() => setShowMoreMobile(false)}
                       className={cn(
-                        "flex flex-col gap-3 p-6 rounded-3xl border border-white/5 transition-all active:scale-95",
+                        "flex flex-col gap-3 p-6 rounded-[2rem] border border-white/5 transition-all active:scale-95",
                         pathname.startsWith(item.href) ? "bg-primary text-primary-foreground" : "bg-white/5 text-foreground"
                       )}
                     >
@@ -289,7 +289,7 @@ export default function AppShell({ children, user, session }) {
                       <span className="text-xs font-bold uppercase tracking-widest">{item.label}</span>
                     </Link>
                   ))}
-                  <div className="flex flex-col gap-3 p-6 rounded-3xl border border-destructive/20 bg-destructive/10 text-destructive text-left">
+                  <div className="flex flex-col gap-3 p-6 rounded-[2rem] border border-destructive/20 bg-destructive/10 text-destructive text-left">
                     <LogoutButton />
                   </div>
                 </div>
@@ -307,7 +307,7 @@ function SidebarItem({ href, label, icon: Icon, active, badge }) {
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group relative",
+        "flex items-center gap-4 px-4 py-3 rounded-[2rem] transition-all group relative",
         active
           ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.25)] font-bold scale-[1.02]"
           : "text-muted-foreground hover:bg-white/5 hover:text-foreground"

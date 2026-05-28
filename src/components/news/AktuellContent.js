@@ -159,11 +159,11 @@ export default function AktuellContent({ _userId }) {
   return (
     <div className="space-y-8">
       {/* Tabs */}
-      <div className="flex gap-2 p-1 bg-sidebar border border-sidebar-border rounded-xl w-fit">
+      <div className="flex gap-2 p-1 bg-sidebar border border-sidebar-border rounded-[2rem] w-fit">
         <button
           type="button"
           onClick={() => setActiveTab("new")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-[2rem] text-sm font-medium transition-all ${
             activeTab === "new"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
@@ -175,7 +175,7 @@ export default function AktuellContent({ _userId }) {
         <button
           type="button"
           onClick={() => setActiveTab("archive")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-[2rem] text-sm font-medium transition-all ${
             activeTab === "archive"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
@@ -245,7 +245,7 @@ export default function AktuellContent({ _userId }) {
           </p>
         )}
         {!loading && items.length === 0 && (
-          <div className="text-center p-12 bg-sidebar border border-sidebar-border rounded-lg-custom w-full">
+          <div className="text-center p-12 bg-sidebar border border-sidebar-border rounded-xl-custom w-full">
             <p className="text-muted-foreground italic">{t("noArticles")}</p>
           </div>
         )}
@@ -266,7 +266,7 @@ function NewsItem({ article, onUpvote, _isSaved }) {
     : null;
 
   return (
-    <div className="group bg-sidebar border border-sidebar-border rounded-lg-custom overflow-hidden flex flex-col hover:border-primary/50 transition-all hover:shadow-xl hover:-translate-y-1">
+    <div className="group bg-sidebar border border-sidebar-border rounded-xl-custom overflow-hidden flex flex-col hover:border-primary/50 transition-all hover:shadow-xl hover:-translate-y-1">
       {article.previewImage && (
         <div className="aspect-video overflow-hidden bg-muted">
           <img
@@ -318,7 +318,7 @@ function NewsItem({ article, onUpvote, _isSaved }) {
               onUpvote();
             }}
             disabled={article.isUpvoted}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[2rem] transition-all ${
               article.isUpvoted
                 ? "bg-primary/10 text-primary"
                 : "hover:bg-primary/10 text-muted-foreground hover:text-primary"
@@ -335,7 +335,7 @@ function NewsItem({ article, onUpvote, _isSaved }) {
             href={article.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground rounded-lg text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground rounded-[2rem] text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-all"
           >
             {t("read")}
             <ExternalLink size={14} />

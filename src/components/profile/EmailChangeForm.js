@@ -59,7 +59,7 @@ export default function EmailChangeForm({ currentEmail }) {
   };
 
   return (
-    <div className="bg-sidebar border border-sidebar-border rounded-lg-custom p-8">
+    <div className="bg-sidebar border border-sidebar-border rounded-xl-custom p-8">
       <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
         <Mail size={20} className="text-primary" />
         {t("emailTitle")}
@@ -70,14 +70,14 @@ export default function EmailChangeForm({ currentEmail }) {
       </p>
 
       {error && (
-        <div className="mb-4 p-3 bg-destructive/10 text-destructive text-sm rounded-lg flex items-center gap-2">
+        <div className="mb-4 p-3 bg-destructive/10 text-destructive text-sm rounded-[2rem] flex items-center gap-2">
           <AlertCircle size={16} />
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 p-3 bg-green-500/10 text-green-500 text-sm rounded-lg flex items-center gap-2">
+        <div className="mb-4 p-3 bg-green-500/10 text-green-500 text-sm rounded-[2rem] flex items-center gap-2">
           <Check size={16} />
           {success}
         </div>
@@ -98,14 +98,14 @@ export default function EmailChangeForm({ currentEmail }) {
               required
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+              className="w-full rounded-[2rem] border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
               placeholder={t("newEmailPlaceholder")}
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-[2rem] text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
             {t("requestCode")}
@@ -126,7 +126,7 @@ export default function EmailChangeForm({ currentEmail }) {
               required
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground text-center tracking-widest font-mono"
+              className="w-full rounded-[2rem] border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground text-center tracking-widest font-mono"
               placeholder={t("otpPlaceholder")}
               maxLength={6}
             />
@@ -135,14 +135,14 @@ export default function EmailChangeForm({ currentEmail }) {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="flex-1 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground rounded-lg text-sm font-medium hover:bg-sidebar-accent/80 transition-colors"
+              className="flex-1 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground rounded-[2rem] text-sm font-medium hover:bg-sidebar-accent/80 transition-colors"
             >
               {tCommon("cancel")}
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-[2] px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              className="flex-[2] px-4 py-2 bg-primary text-primary-foreground rounded-[2rem] text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
               {loading && <Loader2 size={16} className="animate-spin" />}
               {t("verifyEmail")}

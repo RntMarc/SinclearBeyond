@@ -74,7 +74,7 @@ export default function ReviewModal({
       />
 
       <div
-        className={`relative w-full max-w-lg bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-200 ${
+        className={`relative w-full max-w-lg bg-card border border-border rounded-[2rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-200 ${
           isClosing ? "opacity-0 scale-95" : "opacity-100 scale-100"
         }`}
       >
@@ -96,7 +96,7 @@ export default function ReviewModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-[2rem] text-destructive text-sm">
               {error}
             </div>
           )}
@@ -135,7 +135,7 @@ export default function ReviewModal({
               onChange={(e) => setComment(e.target.value)}
               placeholder="..."
               rows={4}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-lg-custom px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
           </div>
 

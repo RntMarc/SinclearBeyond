@@ -101,7 +101,7 @@ export default function DiscoverClient({
         {!isSearching && (
           <button
             onClick={() => setShowGlobalMap(!showGlobalMap)}
-            className={`px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shrink-0 w-full md:w-auto justify-center ${
+            className={`px-6 py-3 rounded-[2rem] font-bold flex items-center gap-2 transition-all shrink-0 w-full md:w-auto justify-center ${
               showGlobalMap
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                 : "bg-card border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground shadow-sm"
@@ -131,9 +131,9 @@ export default function DiscoverClient({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link
                 href="/entdecken/gastronomie"
-                className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+                className="group p-6 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
               >
-                <div className="w-12 h-12 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-[2rem] bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <Utensils size={24} />
                 </div>
                 <div>
@@ -146,9 +146,9 @@ export default function DiscoverClient({
 
               <Link
                 href="/entdecken/freizeit"
-                className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+                className="group p-6 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
               >
-                <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-[2rem] bg-green-500/10 text-green-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <TreePine size={24} />
                 </div>
                 <div>
@@ -170,7 +170,7 @@ export default function DiscoverClient({
               ))}
               <button
                 onClick={focusSearch}
-                className="p-6 border-2 border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center group hover:border-primary/50 transition-all bg-card/50"
+                className="p-6 border-2 border-dashed border-border rounded-[2rem] flex flex-col items-center justify-center text-center group hover:border-primary/50 transition-all bg-card/50"
               >
                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                   <SearchIcon size={24} />
@@ -194,7 +194,7 @@ export default function DiscoverClient({
                   <Link
                     key={place.id}
                     href={`/entdecken/orte/${place.id}`}
-                    className="p-4 bg-card border border-border rounded-xl hover:border-primary/50 transition-all shadow-sm"
+                    className="p-4 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all shadow-sm"
                   >
                     <h3 className="font-bold text-sm truncate">{place.name}</h3>
                     <p className="text-xs text-muted-foreground line-clamp-1">
@@ -204,7 +204,7 @@ export default function DiscoverClient({
                 ))}
               </div>
             ) : (
-              <div className="p-12 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
+              <div className="p-12 border-2 border-dashed border-border rounded-[2rem] flex flex-col items-center justify-center text-center">
                 <Bookmark size={32} className="text-muted-foreground/30 mb-4" />
                 <p className="text-sm text-muted-foreground max-w-xs">
                   {t("noBookmarks")}
@@ -227,16 +227,16 @@ export default function DiscoverClient({
           </div>
 
           {/* Mobile Tabs */}
-          <div className="flex md:hidden bg-muted p-1 rounded-xl">
+          <div className="flex md:hidden bg-muted p-1 rounded-[2rem]">
             <button
               onClick={() => setActiveTab("list")}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === "list" ? "bg-card shadow-sm" : "text-muted-foreground"}`}
+              className={`flex-1 py-2 text-xs font-bold rounded-[2rem] transition-all ${activeTab === "list" ? "bg-card shadow-sm" : "text-muted-foreground"}`}
             >
               {ts("list")}
             </button>
             <button
               onClick={() => setActiveTab("map")}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === "map" ? "bg-card shadow-sm" : "text-muted-foreground"}`}
+              className={`flex-1 py-2 text-xs font-bold rounded-[2rem] transition-all ${activeTab === "map" ? "bg-card shadow-sm" : "text-muted-foreground"}`}
             >
               {ts("map")}
             </button>
@@ -262,9 +262,9 @@ export default function DiscoverClient({
                   <Link
                     key={place.id}
                     href={`/entdecken/orte/${place.id}`}
-                    className="flex items-center gap-4 p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all group"
+                    className="flex items-center gap-4 p-4 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all group"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-black shrink-0">
+                    <div className="w-10 h-10 rounded-[2rem] bg-primary text-primary-foreground flex items-center justify-center font-black shrink-0">
                       {index + 1}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -295,7 +295,7 @@ export default function DiscoverClient({
                   </Link>
                 ))
               ) : (
-                <div className="p-20 border-2 border-dashed border-border rounded-3xl text-center">
+                <div className="p-20 border-2 border-dashed border-border rounded-[2rem] text-center">
                   <p className="text-muted-foreground">{ts("noResults")}</p>
                 </div>
               )}
@@ -318,7 +318,7 @@ function PlaceCard({ place, t }) {
   return (
     <Link
       href={`/entdecken/orte/${place.id}`}
-      className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
+      className="group bg-card border border-border rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
     >
       <div className="p-6 space-y-4">
         <div>

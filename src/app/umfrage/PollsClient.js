@@ -65,7 +65,7 @@ export default function PollsClient({ initialPolls }) {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+          className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-[2rem] font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
         >
           <Plus size={18} />
           {t("newPoll")}

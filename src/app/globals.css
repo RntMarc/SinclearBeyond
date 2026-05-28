@@ -62,9 +62,11 @@
 
   --secondary: oklch(0.6 0.3 300); /* Electric Purple */
   --secondary-foreground: oklch(0.98 0.01 300);
+  --secondary-glow: rgba(150, 0, 255, 0.4);
 
   --accent: oklch(0.7 0.3 340); /* Vibrant Magenta */
   --accent-foreground: oklch(0.98 0.01 340);
+  --accent-glow: rgba(255, 0, 150, 0.4);
 
   --muted: oklch(0.22 0.03 260);
   --muted-foreground: oklch(0.65 0.05 260);

@@ -132,14 +132,14 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
     return (
       <div className="space-y-8">
         {poll.description && (
-          <div className="bg-sidebar-accent/30 border border-sidebar-border rounded-lg-custom p-6">
+          <div className="bg-sidebar-accent/30 border border-sidebar-border rounded-xl-custom p-6">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
               {poll.description}
             </p>
           </div>
         )}
 
-        <div className="bg-card border border-border rounded-lg-custom overflow-hidden shadow-sm">
+        <div className="bg-card border border-border rounded-xl-custom overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
@@ -308,11 +308,11 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                           key={option.id}
                           className={`p-4 ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
                         >
-                          <div className="flex items-center justify-center gap-1 bg-sidebar-accent/50 rounded-lg p-1">
+                          <div className="flex items-center justify-center gap-1 bg-sidebar-accent/50 rounded-[2rem] p-1">
                             <button
                               type="button"
                               onClick={() => handleVoteClick(option.id, "yes")}
-                              className={`p-1.5 rounded-md transition-all ${myAvailability === "yes" ? "bg-emerald-500 text-white shadow-sm" : "hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-500"}`}
+                              className={`p-1.5 rounded-2xl transition-all ${myAvailability === "yes" ? "bg-emerald-500 text-white shadow-sm" : "hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-500"}`}
                             >
                               <Check size={16} />
                             </button>
@@ -321,14 +321,14 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                               onClick={() =>
                                 handleVoteClick(option.id, "maybe")
                               }
-                              className={`p-1.5 rounded-md transition-all ${myAvailability === "maybe" ? "bg-yellow-500 text-white shadow-sm" : "hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500"}`}
+                              className={`p-1.5 rounded-2xl transition-all ${myAvailability === "maybe" ? "bg-yellow-500 text-white shadow-sm" : "hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500"}`}
                             >
                               <HelpCircle size={16} />
                             </button>
                             <button
                               type="button"
                               onClick={() => handleVoteClick(option.id, "no")}
-                              className={`p-1.5 rounded-md transition-all ${myAvailability === "no" ? "bg-destructive text-white shadow-sm" : "hover:bg-destructive/10 text-muted-foreground hover:text-destructive"}`}
+                              className={`p-1.5 rounded-2xl transition-all ${myAvailability === "no" ? "bg-destructive text-white shadow-sm" : "hover:bg-destructive/10 text-muted-foreground hover:text-destructive"}`}
                             >
                               <X size={16} />
                             </button>
@@ -387,7 +387,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                         <button
                           type="button"
                           onClick={() => onFinalize(option.id)}
-                          className="px-3 py-1.5 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary/90 transition-all shadow-sm"
+                          className="px-3 py-1.5 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider rounded-[2rem] hover:bg-primary/90 transition-all shadow-sm"
                         >
                           {t("finalize")}
                         </button>
@@ -401,8 +401,8 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
         </div>
 
         {isFinalized && (
-          <div className="flex items-center gap-4 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-lg-custom">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
+          <div className="flex items-center gap-4 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl-custom">
+            <div className="w-12 h-12 rounded-[2rem] bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
               <CheckCircle2 size={24} />
             </div>
             <div>
@@ -454,7 +454,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
-      <div className="bg-sidebar-accent/30 border border-sidebar-border rounded-3xl p-8 space-y-2">
+      <div className="bg-sidebar-accent/30 border border-sidebar-border rounded-[2rem] p-8 space-y-2">
         <h2 className="text-2xl font-black">{poll.title}</h2>
         {poll.description && (
           <p className="text-muted-foreground whitespace-pre-wrap">
@@ -492,7 +492,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           return (
             <div
               key={q.id}
-              className="bg-card border border-border rounded-lg-custom p-6 space-y-4"
+              className="bg-card border border-border rounded-xl-custom p-6 space-y-4"
             >
               <label className="block text-sm font-bold">{q.title}</label>
 
@@ -501,7 +501,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                   type="text"
                   value={currentAnswer}
                   onChange={(e) => updateAnswer(q.id, e.target.value)}
-                  className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none transition-all"
+                  className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none transition-all"
                 />
               )}
 
@@ -510,7 +510,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                   value={currentAnswer}
                   onChange={(e) => updateAnswer(q.id, e.target.value)}
                   rows={4}
-                  className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none transition-all resize-none"
+                  className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none transition-all resize-none"
                 />
               )}
 
@@ -519,7 +519,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                   {qOptions.map((opt) => (
                     <label
                       key={opt.id}
-                      className="flex items-center gap-3 p-3 bg-sidebar-accent/30 border border-sidebar-border rounded-xl cursor-pointer hover:bg-sidebar-accent transition-all"
+                      className="flex items-center gap-3 p-3 bg-sidebar-accent/30 border border-sidebar-border rounded-[2rem] cursor-pointer hover:bg-sidebar-accent transition-all"
                     >
                       <input
                         type="radio"
@@ -540,7 +540,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                   {qOptions.map((opt) => (
                     <label
                       key={opt.id}
-                      className="flex items-center gap-3 p-3 bg-sidebar-accent/30 border border-sidebar-border rounded-xl cursor-pointer hover:bg-sidebar-accent transition-all"
+                      className="flex items-center gap-3 p-3 bg-sidebar-accent/30 border border-sidebar-border rounded-[2rem] cursor-pointer hover:bg-sidebar-accent transition-all"
                     >
                       <input
                         type="checkbox"
@@ -584,11 +584,11 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
               )}
 
               {q.type === "toggle" && (
-                <div className="inline-flex rounded-xl border border-sidebar-border bg-sidebar-accent/30 p-1">
+                <div className="inline-flex rounded-[2rem] border border-sidebar-border bg-sidebar-accent/30 p-1">
                   <button
                     type="button"
                     onClick={() => updateAnswer(q.id, true)}
-                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                    className={`px-4 py-2 text-sm font-semibold rounded-[2rem] transition-all ${
                       currentAnswer
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
@@ -599,7 +599,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                   <button
                     type="button"
                     onClick={() => updateAnswer(q.id, false)}
-                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                    className={`px-4 py-2 text-sm font-semibold rounded-[2rem] transition-all ${
                       currentAnswer === false
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
@@ -615,7 +615,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                   type={q.type === "number" ? "number" : "text"}
                   value={currentAnswer}
                   onChange={(e) => updateAnswer(q.id, e.target.value)}
-                  className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none transition-all"
+                  className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none transition-all"
                 />
               )}
             </div>
@@ -626,7 +626,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           <SaveButton
             loading={saving}
             type="submit"
-            className="px-8 py-3 rounded-lg-custom shadow-xl shadow-primary/20"
+            className="px-8 py-3 rounded-xl-custom shadow-xl shadow-primary/20"
           >
             <Send size={18} className="mr-2" />
             {t("form.save")}
@@ -639,7 +639,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           <h3 className="text-xl font-black">
             {t("results")} ({new Set(poll.votes.map((v) => v.userId)).size})
           </h3>
-          <div className="bg-card border border-border rounded-lg-custom overflow-hidden divide-y divide-border">
+          <div className="bg-card border border-border rounded-xl-custom overflow-hidden divide-y divide-border">
             {poll.questions.map((q) => {
               const qVotes = poll.votes.filter((v) => v.questionId === q.id);
               return (
@@ -667,7 +667,7 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
                           }
                           size="xs"
                         />
-                        <span className="bg-muted/30 px-3 py-1.5 rounded-lg flex-1">
+                        <span className="bg-muted/30 px-3 py-1.5 rounded-[2rem] flex-1">
                           {v.value ||
                             poll.options.find((o) => o.id === v.optionId)
                               ?.label ||

@@ -65,7 +65,7 @@ export const userPreferences = mysqlTable("UserPreferences", {
     .default("dark"),
   primaryColor: varchar("primaryColor", { length: 7 })
     .notNull()
-    .default("#7c3aed"),
+    .default("var(--primary)"),
   timezone: varchar("timezone", { length: 191 }),
 });
 

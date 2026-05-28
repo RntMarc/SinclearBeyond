@@ -35,10 +35,10 @@ export default async function AktuellPage() {
             <Suspense
               fallback={
                 <div className="animate-pulse space-y-8">
-                  <div className="h-10 w-48 bg-muted rounded-lg" />
+                  <div className="h-10 w-48 bg-muted rounded-[2rem]" />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <div key={i} className="h-64 bg-muted rounded-2xl" />
+                      <div key={i} className="h-64 bg-muted rounded-[2rem]" />
                     ))}
                   </div>
                 </div>

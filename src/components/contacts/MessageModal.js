@@ -43,7 +43,7 @@ export default function MessageModal({ contact, onClose }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-sidebar border border-sidebar-border w-full max-w-md rounded-lg-custom shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-sidebar border border-sidebar-border w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -93,7 +93,7 @@ export default function MessageModal({ contact, onClose }) {
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder={t("messageSubjectPlaceholder")}
-                  className="w-full bg-sidebar-accent border border-sidebar-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  className="w-full bg-sidebar-accent border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                 />
               </div>
 
@@ -107,12 +107,12 @@ export default function MessageModal({ contact, onClose }) {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={t("messageBodyPlaceholder")}
-                  className="w-full bg-sidebar-accent border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
+                  className="w-full bg-sidebar-accent border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
                 />
               </div>
 
               {error && (
-                <p className="text-xs text-destructive bg-destructive/10 p-3 rounded-lg">
+                <p className="text-xs text-destructive bg-destructive/10 p-3 rounded-[2rem]">
                   {error}
                 </p>
               )}

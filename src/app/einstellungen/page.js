@@ -36,7 +36,7 @@ export default async function EinstellungenPage({ searchParams }) {
         preferences={
           preferences || {
             theme: "dark",
-            primaryColor: "#7c3aed",
+            primaryColor: "var(--primary)",
             language: "de",
           }
         }

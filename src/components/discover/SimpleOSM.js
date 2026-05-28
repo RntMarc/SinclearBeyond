@@ -55,7 +55,7 @@ export default function SimpleOSM({ lat, lon, zoom = 15, name }) {
     <div className="relative w-full h-full">
       <div
         ref={mapRef}
-        className="w-full h-full rounded-lg-custom overflow-hidden border border-border shadow-inner bg-muted z-10"
+        className="w-full h-full rounded-xl-custom overflow-hidden border border-border shadow-inner bg-muted z-10"
       ></div>
       <NavigationFAB lat={lat} lon={lon} name={name} />
     </div>

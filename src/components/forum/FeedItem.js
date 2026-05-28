@@ -145,7 +145,7 @@ export default function FeedItem({
               </button>
 
               {showOptions && (
-                <div className="absolute right-0 mt-2 w-48 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute right-0 mt-2 w-48 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   <button
                     type="button"
                     onClick={() => {
@@ -255,7 +255,7 @@ export default function FeedItem({
             {post.category === "news" && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="sticker text-[8px] bg-electric-purple text-white">{post.newsSite}</span>
+                  <span className="sticker text-[8px] bg-secondary text-white">{post.newsSite}</span>
                 </div>
                 <a
                   href={post.newsUrl}

@@ -27,7 +27,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-sidebar border border-sidebar-border w-full max-w-lg rounded-lg-custom shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+        className="bg-sidebar border border-sidebar-border w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative h-32 bg-trip/10 flex items-end px-6 pb-4 shrink-0">
@@ -39,7 +39,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
             <X size={18} />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-16 h-16 rounded-lg-custom bg-trip flex items-center justify-center text-white text-2xl font-semibold shadow-lg border-4 border-sidebar">
+            <div className="w-16 h-16 rounded-[2rem] bg-trip flex items-center justify-center text-white text-2xl font-semibold shadow-lg border-4 border-sidebar">
               <Ticket size={32} />
             </div>
             <div className="mb-1">
@@ -63,7 +63,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
             </div>
           )}
           {event.participantIds && !event.isParticipant && (
-            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl">
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-[2rem]">
               <p className="text-xs text-destructive font-medium flex items-center gap-2">
                 <X size={14} />
                 {t("notParticipant")}
@@ -72,7 +72,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
           )}
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground shrink-0">
+              <div className="w-8 h-8 rounded-[2rem] bg-sidebar-accent flex items-center justify-center text-muted-foreground shrink-0">
                 <Info size={16} />
               </div>
               <div>
@@ -86,7 +86,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground shrink-0">
+              <div className="w-8 h-8 rounded-[2rem] bg-sidebar-accent flex items-center justify-center text-muted-foreground shrink-0">
                 <CalendarIcon size={16} />
               </div>
               <div>
@@ -102,7 +102,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
 
             {event.address && (
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground shrink-0">
+                <div className="w-8 h-8 rounded-[2rem] bg-sidebar-accent flex items-center justify-center text-muted-foreground shrink-0">
                   <MapPin size={16} />
                 </div>
                 <div>
@@ -119,7 +119,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
             {event.tripId && (
               <a
                 href={`/reisen/${event.tripId}`}
-                className="flex-1 py-3 bg-trip hover:bg-trip/90 text-white rounded-xl font-medium transition-colors text-center shadow-sm"
+                className="flex-1 py-3 bg-trip hover:bg-trip/90 text-white rounded-[2rem] font-medium transition-colors text-center shadow-sm"
               >
                 {t("openTrip")}
               </a>
@@ -127,7 +127,7 @@ export default function TravelEventDetailModal({ event, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-xl font-medium transition-colors border border-sidebar-border"
+              className="flex-1 py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-[2rem] font-medium transition-colors border border-sidebar-border"
             >
               {tc("close")}
             </button>

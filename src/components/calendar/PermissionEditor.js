@@ -55,7 +55,7 @@ export default function PermissionEditor({
         <select
           value={selectedUserId}
           onChange={(e) => setSelectedUserId(e.target.value)}
-          className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="flex-1 px-3 py-2 rounded-[2rem] bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
         >
           <option value="">{t("addUser")}</option>
           {available.map((u) => (
@@ -68,13 +68,13 @@ export default function PermissionEditor({
           type="button"
           onClick={addUser}
           disabled={!selectedUserId}
-          className="px-3 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-40"
+          className="px-3 py-2 rounded-[2rem] bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-40"
         >
           <Plus size={15} />
         </button>
       </div>
       {permissions.length > 0 && (
-        <div className="rounded-lg border border-border overflow-hidden">
+        <div className="rounded-[2rem] border border-border overflow-hidden">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/30">
