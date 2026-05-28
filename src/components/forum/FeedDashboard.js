@@ -41,7 +41,7 @@ export default function FeedDashboard() {
   if (loading) {
     return (
       <div className="flex flex-col h-full bg-background">
-        <PageHeader title="Unterhaltung" icon={MessageSquare} />
+        <PageHeader title={t("title")} icon={MessageSquare} />
         <div className="flex-1 flex items-center justify-center">
           <Loader2 className="animate-spin text-primary" size={32} />
         </div>
