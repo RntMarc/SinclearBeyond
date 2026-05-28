@@ -36,6 +36,7 @@
     "dbError": "Daten konnten nicht geladen werden. Bitte versuche es später erneut."
   },
   "Navigation": {
+    "home": "Start",
     "entertainment": "Forum",
     "travel": "Reisen & Events",
     "calendar": "Kalender",
