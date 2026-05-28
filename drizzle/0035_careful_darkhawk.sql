@@ -1,0 +1,2 @@
+ALTER TABLE `UserPreferences` MODIFY COLUMN `theme` enum('light','dark') NOT NULL DEFAULT 'dark';--> statement-breakpoint
+ALTER TABLE `UserPreferences` MODIFY COLUMN `primaryColor` varchar(7) NOT NULL DEFAULT '#7c3aed';

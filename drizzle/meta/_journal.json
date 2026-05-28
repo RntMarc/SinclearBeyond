@@ -239,6 +239,20 @@
       "when": 1779802682703,
       "tag": "0033_illegal_catseye",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1780011502704,
+      "tag": "0034_flowery_diamondback",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "5",
+      "when": 1780011535899,
+      "tag": "0035_careful_darkhawk",
+      "breakpoints": true
     }
   ]
 }
