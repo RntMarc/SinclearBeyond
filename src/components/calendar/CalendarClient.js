@@ -13,9 +13,9 @@ import EventFormModal from "@/components/calendar/EventFormModal";
 import TimeGridView from "@/components/calendar/TimeGridView";
 import TravelEventDetailModal from "@/components/calendar/TravelEventDetailModal";
 import TripDetailModal from "@/components/calendar/TripDetailModal";
+import { markAllCalendarAsRead } from "@/lib/calendar/actions";
 import { useCalendarEvents } from "@/hooks/useCalendarEvents";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { markAllCalendarAsRead } from "@/lib/calendar/actions";
 import {
   addDays,
   getStartOfWeek,

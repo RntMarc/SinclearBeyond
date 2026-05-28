@@ -4,8 +4,8 @@ import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
   closeFriends,
-  feedPosts,
   feedPostVotes,
+  feedPosts,
   forumMembers,
   forums,
   users,

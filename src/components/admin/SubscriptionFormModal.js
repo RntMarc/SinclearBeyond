@@ -144,7 +144,7 @@ export default function SubscriptionFormModal({
         aria-label="Close modal"
       />
 
-      <div className="relative w-full max-w-2xl bg-card border border-border rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <div className="relative w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         <div className="px-6 py-6 border-b border-border flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-xl font-black tracking-tight">
@@ -164,7 +164,7 @@ export default function SubscriptionFormModal({
           className="flex-1 overflow-y-auto p-6 space-y-6"
         >
           {error && (
-            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-[2rem] flex items-center gap-3 text-destructive text-sm">
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl flex items-center gap-3 text-destructive text-sm">
               <AlertCircle size={18} />
               {error}
             </div>
@@ -188,7 +188,7 @@ export default function SubscriptionFormModal({
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-muted/50 border border-border rounded-[2rem] py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full bg-muted/50 border border-border rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   placeholder="e.g. Spotify"
                 />
               </div>
@@ -210,7 +210,7 @@ export default function SubscriptionFormModal({
                   required
                   value={basePrice}
                   onChange={(e) => setBasePrice(e.target.value)}
-                  className="w-full bg-muted/50 border border-border rounded-[2rem] py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full bg-muted/50 border border-border rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   placeholder="23.76"
                   type="text"
                 />
@@ -235,7 +235,7 @@ export default function SubscriptionFormModal({
                   type="date"
                   value={billingPeriodStart}
                   onChange={(e) => setBillingPeriodStart(e.target.value)}
-                  className="w-full bg-muted/50 border border-border rounded-[2rem] py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full bg-muted/50 border border-border rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </div>
             </div>
@@ -258,7 +258,7 @@ export default function SubscriptionFormModal({
                   type="date"
                   value={billingPeriodEnd}
                   onChange={(e) => setBillingPeriodEnd(e.target.value)}
-                  className="w-full bg-muted/50 border border-border rounded-[2rem] py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full bg-muted/50 border border-border rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function SubscriptionFormModal({
               {members.map((member, idx) => (
                 <div
                   key={idx}
-                  className="p-4 bg-muted/30 border border-border rounded-[2rem] space-y-4"
+                  className="p-4 bg-muted/30 border border-border rounded-2xl space-y-4"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -340,7 +340,7 @@ export default function SubscriptionFormModal({
                         onChange={(e) =>
                           updateMember(idx, "userId", e.target.value)
                         }
-                        className="w-full bg-background border border-border rounded-[2rem] py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        className="w-full bg-background border border-border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
                         <option value="">{t("selectUser")}</option>
                         {allUsers.map((u) => (
@@ -357,7 +357,7 @@ export default function SubscriptionFormModal({
                           updateMember(idx, "userName", e.target.value)
                         }
                         placeholder={t("userName")}
-                        className="w-full bg-background border border-border rounded-[2rem] py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        className="w-full bg-background border border-border rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                       />
                     )}
                   </div>
@@ -378,7 +378,7 @@ export default function SubscriptionFormModal({
               type="button"
               disabled={loading}
               onClick={handleDelete}
-              className="flex items-center gap-2 px-5 py-2.5 text-destructive font-medium hover:bg-destructive/10 rounded-[2rem] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2.5 text-destructive font-medium hover:bg-destructive/10 rounded-xl transition-colors disabled:opacity-50"
             >
               <Trash2 size={18} />
               {t("deleteSubscription")}
@@ -391,14 +391,14 @@ export default function SubscriptionFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-sm font-medium hover:bg-muted rounded-[2rem] transition-colors"
+              className="px-5 py-2.5 text-sm font-medium hover:bg-muted rounded-xl transition-colors"
             >
               {tc("cancel")}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-[2rem] text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

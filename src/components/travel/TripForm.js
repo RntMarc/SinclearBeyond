@@ -23,7 +23,7 @@ export default function TripForm({
     <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0">
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {formError && (
-          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-[2rem] text-destructive text-xs">
+          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-xs">
             {formError}
           </div>
         )}
@@ -40,7 +40,7 @@ export default function TripForm({
               onChange={handleChange}
               required
               placeholder={t("placeholders.name")}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
 
@@ -54,7 +54,7 @@ export default function TripForm({
               onChange={handleChange}
               placeholder={t("placeholders.description")}
               rows={3}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
           </div>
 
@@ -69,7 +69,7 @@ export default function TripForm({
                 value={form.start}
                 onChange={handleChange}
                 required
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
@@ -83,7 +83,7 @@ export default function TripForm({
                 value={form.end}
                 onChange={handleChange}
                 required
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
           </div>

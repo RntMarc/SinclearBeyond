@@ -112,7 +112,7 @@ export default async function Home() {
               {t("featuresTitle")}
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-px bg-border/40 rounded-[2rem] overflow-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-px bg-border/40 rounded-2xl overflow-hidden">
               {features.map((f) => (
                 <div
                   key={f.title}

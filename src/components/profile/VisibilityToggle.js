@@ -9,7 +9,7 @@ const OPTIONS = [
 
 export default function VisibilityToggle({ value, onChange }) {
   return (
-    <div className="flex rounded-[2rem] border border-border overflow-hidden shrink-0">
+    <div className="flex rounded-lg border border-border overflow-hidden shrink-0">
       {OPTIONS.map(({ value: v, icon: Icon, title }) => (
         <button
           key={v}

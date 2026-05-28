@@ -35,7 +35,7 @@ function PollCard({ poll }) {
 
   return (
     <Link href={`/umfrage/${poll.id}`} className="block">
-      <div className="flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-[2rem] transition-all group">
+      <div className="flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-xl transition-all group">
         <div className="flex items-center gap-3">
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isFinalized ? "bg-emerald-500/10 text-emerald-500" : "bg-primary/10 text-primary"}`}
@@ -77,7 +77,7 @@ export default function PollList({ polls }) {
 
   if (!polls || polls.length === 0) {
     return (
-      <div className="bg-sidebar rounded-[2rem] border border-sidebar-border p-8 text-center">
+      <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
         <Clock className="mx-auto mb-3 text-muted-foreground" size={28} />
         <p className="text-muted-foreground">{t("noPolls")}</p>
       </div>

@@ -158,7 +158,7 @@ export default function MusicDetailPageClient({
         <div className="max-w-5xl mx-auto p-6 md:p-10 space-y-12">
           <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
-              <div className="aspect-square rounded-[2rem] overflow-hidden bg-muted shadow-xl border border-border">
+              <div className="aspect-square rounded-3xl overflow-hidden bg-muted shadow-xl border border-border">
                 {music.image ? (
                   <img
                     src={music.image}
@@ -205,7 +205,7 @@ export default function MusicDetailPageClient({
                 <button
                   type="button"
                   onClick={() => setShowReviewModal(true)}
-                  className="px-6 py-3 bg-primary text-primary-foreground rounded-[2rem] font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all"
+                  className="px-6 py-3 bg-primary text-primary-foreground rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all"
                 >
                   <Plus size={20} />
                   {t("addReview")}
@@ -219,7 +219,7 @@ export default function MusicDetailPageClient({
               )}
 
               {music.needsUpdate && (
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-[2rem] flex items-center justify-between gap-4">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between gap-4">
                   <div className="space-y-1">
                     <p className="text-sm font-bold">{t("outdatedData")}</p>
                     <p className="text-xs text-muted-foreground">
@@ -231,7 +231,7 @@ export default function MusicDetailPageClient({
                     onClick={refreshData}
                     disabled={updating}
                     size="icon"
-                    className="rounded-[2rem]"
+                    className="rounded-lg"
                   >
                     <RefreshCcw
                       size={16}
@@ -246,7 +246,7 @@ export default function MusicDetailPageClient({
                   <Button
                     onClick={() => setLinkModal({ open: true, type: "buy" })}
                     variant="outline"
-                    className="rounded-[2rem] border-primary/20 hover:bg-primary/10 text-primary"
+                    className="rounded-xl border-blue-500/20 hover:bg-blue-500/10 text-blue-500"
                   >
                     <ShoppingCart size={18} />
                     {t("buy")}
@@ -254,7 +254,7 @@ export default function MusicDetailPageClient({
                   <Button
                     onClick={() => setLinkModal({ open: true, type: "stream" })}
                     variant="outline"
-                    className="rounded-[2rem] border-green-500/20 hover:bg-green-500/10 text-green-500"
+                    className="rounded-xl border-green-500/20 hover:bg-green-500/10 text-green-500"
                   >
                     <Play size={18} />
                     {t("stream")}
@@ -271,7 +271,7 @@ export default function MusicDetailPageClient({
                 <Disc size={28} />
                 {t("tracks")}
               </h2>
-              <div className="bg-muted/30 rounded-[2rem] overflow-hidden border border-border divide-y divide-border">
+              <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
                 {music.tracks.map((track) => (
                   <Link
                     key={track.id}
@@ -311,7 +311,7 @@ export default function MusicDetailPageClient({
               {music.albums.map((album) => (
                 <div key={album.id} className="space-y-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-[2rem] overflow-hidden bg-muted border border-border flex-shrink-0">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted border border-border flex-shrink-0">
                       {album.image ? (
                         <img
                           src={album.image}
@@ -338,7 +338,7 @@ export default function MusicDetailPageClient({
                     </div>
                   </div>
 
-                  <div className="bg-muted/30 rounded-[2rem] overflow-hidden border border-border divide-y divide-border">
+                  <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
                     {album.tracks.map((track) => (
                       <Link
                         key={track.id}

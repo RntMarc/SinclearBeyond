@@ -15,7 +15,7 @@ export default function ContactList({
 
   if (!initialContacts || initialContacts.length === 0) {
     return (
-      <div className="bg-sidebar rounded-[2rem] border border-sidebar-border p-8 text-center">
+      <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
         <p className="text-muted-foreground">{t("noEntries")}</p>
       </div>
     );
@@ -35,7 +35,7 @@ export default function ContactList({
             key={contact.id}
             type="button"
             onClick={() => setSelectedContact(contact)}
-            className={`flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-[2rem] transition-all group text-left ${isGrid ? "bg-background" : ""}`}
+            className={`flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-xl transition-all group text-left ${isGrid ? "bg-background" : ""}`}
           >
             <div className="flex items-center gap-3 min-w-0">
               <Avatar src={contact.image} displayName={contact.displayName} />

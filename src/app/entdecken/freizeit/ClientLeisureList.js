@@ -61,7 +61,7 @@ export default function ClientLeisureList({ initialPlaces }) {
       <div className="flex-1 overflow-y-auto p-6 md:p-10 relative">
         <div className="max-w-5xl mx-auto space-y-8">
           {showMap && initialPlaces.length > 0 && (
-            <div className="h-[300px] w-full rounded-[2rem] overflow-hidden border border-border shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="h-[300px] w-full rounded-2xl overflow-hidden border border-border shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
               <ResultsMap places={initialPlaces} showNumbers={true} />
             </div>
           )}
@@ -72,10 +72,10 @@ export default function ClientLeisureList({ initialPlaces }) {
                 <Link
                   key={place.id}
                   href={`/entdecken/orte/${place.id}`}
-                  className="group bg-card border border-border rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col relative"
+                  className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col relative"
                 >
                   {showMap && (
-                    <div className="absolute top-4 right-4 w-7 h-7 rounded-[2rem] bg-green-500 text-white flex items-center justify-center font-bold text-xs shadow-sm z-10">
+                    <div className="absolute top-4 right-4 w-7 h-7 rounded-lg bg-green-500 text-white flex items-center justify-center font-bold text-xs shadow-sm z-10">
                       {index + 1}
                     </div>
                   )}
@@ -112,7 +112,7 @@ export default function ClientLeisureList({ initialPlaces }) {
               ))}
             </div>
           ) : (
-            <div className="p-20 border-2 border-dashed border-border rounded-[2rem] flex flex-col items-center justify-center text-center">
+            <div className="p-20 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center">
               <TreePine size={48} className="text-muted-foreground/20 mb-4" />
               <p className="text-muted-foreground mb-6">{t("noLeisure")}</p>
               <Button type="button" onClick={() => setShowAddModal(true)}>

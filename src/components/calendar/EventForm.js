@@ -26,7 +26,7 @@ export default function EventForm({
         value={form.title}
         onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
         required
-        className="w-full px-4 py-2.5 rounded-[2rem] bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+        className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
       />
       <textarea
         placeholder={t("description")}
@@ -35,7 +35,7 @@ export default function EventForm({
           setForm((f) => ({ ...f, description: e.target.value }))
         }
         rows={2}
-        className="w-full px-4 py-2.5 rounded-[2rem] bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm resize-none"
+        className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm resize-none"
       />
 
       <button
@@ -63,7 +63,7 @@ export default function EventForm({
               setForm((f) => ({ ...f, startAt: e.target.value }))
             }
             required
-            className="px-4 py-2.5 rounded-[2rem] bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+            className="px-4 py-2.5 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
           />
         </div>
       ) : (
@@ -79,7 +79,7 @@ export default function EventForm({
                 setForm((f) => ({ ...f, startAt: e.target.value }))
               }
               required
-              className="px-3 py-2 rounded-[2rem] bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+              className="px-3 py-2 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -90,7 +90,7 @@ export default function EventForm({
               onChange={(e) =>
                 setForm((f) => ({ ...f, endAt: e.target.value }))
               }
-              className="px-3 py-2 rounded-[2rem] bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+              className="px-3 py-2 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
             />
           </div>
         </div>

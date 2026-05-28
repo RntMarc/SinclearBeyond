@@ -177,7 +177,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                   ],
                 }));
               }}
-              className={`flex flex-col items-center gap-3 p-4 rounded-xl-custom border-2 transition-all ${
+              className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
                 form.type === "appointment"
                   ? "border-primary bg-primary/5"
                   : "border-sidebar-border bg-sidebar-accent/30 opacity-60 hover:opacity-100"
@@ -204,7 +204,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                   questions: [{ title: "", type: "text", options: [] }],
                 }));
               }}
-              className={`flex flex-col items-center gap-3 p-4 rounded-xl-custom border-2 transition-all ${
+              className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
                 form.type === "survey"
                   ? "border-primary bg-primary/5"
                   : "border-sidebar-border bg-sidebar-accent/30 opacity-60 hover:opacity-100"
@@ -239,7 +239,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
               }
               required
               placeholder={t("pollTitlePlaceholder")}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -253,7 +253,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
               }
               placeholder={t("descriptionPlaceholder")}
               rows={2}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
           </div>
         </div>
@@ -279,7 +279,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
             {form.questions.map((q, qIdx) => (
               <div
                 key={q.id || qIdx}
-                className="relative bg-sidebar-accent/30 border border-sidebar-border rounded-xl-custom p-5 space-y-4"
+                className="relative bg-sidebar-accent/30 border border-sidebar-border rounded-2xl p-5 space-y-4"
               >
                 {form.type === "survey" && form.questions.length > 1 && (
                   <button
@@ -309,7 +309,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                             ? t("pollTitlePlaceholder")
                             : t("questionPlaceholder")
                         }
-                        className="w-full bg-background border border-sidebar-border rounded-[2rem] px-4 py-2.5 text-sm focus:outline-none transition-all"
+                        className="w-full bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
                       />
                     </div>
                     {form.type === "survey" && (
@@ -322,7 +322,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                           onChange={(e) =>
                             handleQuestionChange(qIdx, "type", e.target.value)
                           }
-                          className="w-full bg-background border border-sidebar-border rounded-[2rem] px-4 py-2.5 text-sm focus:outline-none transition-all"
+                          className="w-full bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
                         >
                           {Object.keys(t.raw("questionTypes"))
                             .filter((k) => k !== "date")
@@ -375,7 +375,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                                   )
                                 }
                                 required
-                                className="flex-1 bg-background border border-sidebar-border rounded-[2rem] px-4 py-2.5 text-sm focus:outline-none transition-all"
+                                className="flex-1 bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
                               />
                             ) : (
                               <input
@@ -391,7 +391,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                                 }
                                 required
                                 placeholder={`Option ${optIdx + 1}`}
-                                className="flex-1 bg-background border border-sidebar-border rounded-[2rem] px-4 py-2.5 text-sm focus:outline-none transition-all"
+                                className="flex-1 bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
                               />
                             )}
                             {q.options.length > 1 && (
@@ -408,7 +408,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                         <button
                           type="button"
                           onClick={() => addOption(qIdx)}
-                          className="w-full flex items-center justify-center gap-2 py-2 border border-dashed border-sidebar-border rounded-[2rem] text-xs text-muted-foreground hover:border-primary/50 hover:text-primary transition-all"
+                          className="w-full flex items-center justify-center gap-2 py-2 border border-dashed border-sidebar-border rounded-xl text-xs text-muted-foreground hover:border-primary/50 hover:text-primary transition-all"
                         >
                           <Plus size={14} />
                           {t("addOption")}
@@ -477,12 +477,12 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("inviteUsers")}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
 
           {search && (
-            <div className="bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] overflow-hidden divide-y divide-sidebar-border max-h-48 overflow-y-auto">
+            <div className="bg-sidebar-accent/50 border border-sidebar-border rounded-xl overflow-hidden divide-y divide-sidebar-border max-h-48 overflow-y-auto">
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                   <button

@@ -137,7 +137,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl bg-card border border-border rounded-[2rem] shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="w-full max-w-2xl bg-card border border-border rounded-2xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
           <div>
             <h3 className="text-sm font-medium text-foreground">
@@ -185,7 +185,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                   Titel
                 </label>
                 <input
-                  className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
@@ -196,7 +196,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                   Beschreibung
                 </label>
                 <textarea
-                  className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[100px]"
+                  className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[100px]"
                   value={form.description}
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
@@ -210,7 +210,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                   </label>
                   <input
                     type="datetime-local"
-                    className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                     value={form.start}
                     onChange={(e) =>
                       setForm({ ...form, start: e.target.value })
@@ -224,7 +224,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                   </label>
                   <input
                     type="datetime-local"
-                    className="w-full bg-sidebar border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full bg-sidebar border border-sidebar-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                     value={form.end}
                     onChange={(e) => setForm({ ...form, end: e.target.value })}
                     required
@@ -234,7 +234,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-primary-foreground py-2.5 rounded-[2rem] text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 Änderungen speichern
               </button>
@@ -245,7 +245,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
             <div className="space-y-6">
               <div className="flex gap-2">
                 <select
-                  className="flex-1 bg-sidebar border border-sidebar-border rounded-[2rem] px-3 py-2 text-sm focus:outline-none"
+                  className="flex-1 bg-sidebar border border-sidebar-border rounded-xl px-3 py-2 text-sm focus:outline-none"
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                 >
@@ -259,7 +259,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                 <button
                   onClick={addParticipant}
                   disabled={!selectedUser || loading}
-                  className="bg-primary/10 text-primary px-4 py-2 rounded-[2rem] hover:bg-primary/20 transition-colors disabled:opacity-50 flex items-center gap-2 text-sm font-medium"
+                  className="bg-primary/10 text-primary px-4 py-2 rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50 flex items-center gap-2 text-sm font-medium"
                 >
                   <Plus size={18} />
                   Hinzufügen
@@ -274,7 +274,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                   {participants.map((p) => (
                     <div
                       key={p.id}
-                      className="flex flex-col gap-3 p-4 bg-sidebar border border-sidebar-border rounded-[2rem]"
+                      className="flex flex-col gap-3 p-4 bg-sidebar border border-sidebar-border rounded-xl"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col">
@@ -340,7 +340,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                     <div
                       key={event.id}
                       onClick={() => setEditingEvent(event)}
-                      className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-[2rem] cursor-pointer hover:bg-sidebar-accent/50 transition-colors"
+                      className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl cursor-pointer hover:bg-sidebar-accent/50 transition-colors"
                     >
                       <div className="min-w-0">
                         <p className="text-sm font-medium truncate">
@@ -359,7 +359,7 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                     </div>
                   ))
                 ) : (
-                  <div className="p-8 text-center bg-muted/20 border border-dashed border-sidebar-border rounded-[2rem] text-muted-foreground text-xs">
+                  <div className="p-8 text-center bg-muted/20 border border-dashed border-sidebar-border rounded-xl text-muted-foreground text-xs">
                     Keine Events geplant.
                   </div>
                 )}

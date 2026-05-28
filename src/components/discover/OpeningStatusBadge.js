@@ -14,7 +14,7 @@ export default function OpeningStatusBadge({ status, size = "sm" }) {
 
   return (
     <div
-      className={`${sizeClasses} rounded-2xl font-bold uppercase tracking-wider inline-block ${
+      className={`${sizeClasses} rounded-md font-bold uppercase tracking-wider inline-block ${
         isOpen
           ? "bg-green-500/10 text-green-500 border border-green-500/20"
           : "bg-red-500/10 text-red-500 border border-red-500/20"

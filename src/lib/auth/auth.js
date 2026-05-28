@@ -53,7 +53,7 @@ export async function createSessionToken(user) {
     isAdmin: user.isAdmin,
     language: prefs?.language || "de",
     theme: prefs?.theme || "dark",
-    primaryColor: prefs?.primaryColor || "var(--primary)",
+    primaryColor: prefs?.primaryColor || "#7c3aed",
     timezone: prefs?.timezone || null,
   })
     .setProtectedHeader({ alg: "HS256" })

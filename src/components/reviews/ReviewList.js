@@ -14,7 +14,7 @@ export default function ReviewList({
 
   if (reviews.length === 0) {
     return (
-      <div className="py-20 border-2 border-dashed border-border rounded-[2rem] text-center">
+      <div className="py-20 border-2 border-dashed border-border rounded-3xl text-center">
         <p className="text-muted-foreground italic">{t("noReviews")}</p>
       </div>
     );
@@ -25,7 +25,7 @@ export default function ReviewList({
       {reviews.map((review) => (
         <div
           key={review.id}
-          className="p-6 bg-card border border-border rounded-[2rem] shadow-sm space-y-4"
+          className="p-6 bg-card border border-border rounded-3xl shadow-sm space-y-4"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -48,7 +48,7 @@ export default function ReviewList({
           </div>
 
           {review.platform && (
-            <div className="inline-block px-2 py-0.5 rounded-2xl bg-muted text-muted-foreground text-[10px] font-bold uppercase">
+            <div className="inline-block px-2 py-0.5 rounded-md bg-muted text-muted-foreground text-[10px] font-bold uppercase">
               {t(`platforms.${review.platform}`)}
             </div>
           )}

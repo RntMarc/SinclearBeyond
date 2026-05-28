@@ -165,7 +165,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
       <div className="absolute inset-0" onClick={handleClose} />
 
       <div
-        className={`relative w-full max-w-xl bg-card border border-border rounded-[2rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-200 max-h-[90vh] ${
+        className={`relative w-full max-w-xl bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-200 max-h-[90vh] ${
           isClosing ? "opacity-0 scale-95" : "opacity-100 scale-100"
         }`}
       >
@@ -193,7 +193,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
           className="flex-1 overflow-y-auto p-6 space-y-8"
         >
           {error && (
-            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-[2rem] text-destructive text-sm">
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
               {error}
             </div>
           )}
@@ -209,7 +209,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
                   key={cat.id}
                   type="button"
                   onClick={() => setCategory(cat.id)}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-[2rem] border transition-all ${
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${
                     category === cat.id
                       ? "bg-primary/5 border-primary text-primary shadow-sm"
                       : "bg-sidebar-accent/30 border-sidebar-border text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground"
@@ -365,7 +365,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
                 onChange={handleChange}
                 placeholder={t("commentPlaceholder")}
                 rows={3}
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               />
             </div>
 
@@ -424,7 +424,7 @@ function FormField({ label, name, value, onChange, placeholder, required }) {
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
       />
     </div>
   );

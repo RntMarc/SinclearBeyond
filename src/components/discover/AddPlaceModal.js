@@ -107,7 +107,7 @@ export default function AddPlaceModal({ onClose }) {
       />
 
       <div
-        className={`relative w-full max-w-2xl bg-card border border-border rounded-[2rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-200 max-h-[90vh] ${
+        className={`relative w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-200 max-h-[90vh] ${
           isClosing ? "opacity-0 scale-95" : "opacity-100 scale-100"
         }`}
       >
@@ -146,7 +146,7 @@ export default function AddPlaceModal({ onClose }) {
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
                     />
                     <input
-                      className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] pl-12 pr-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
+                      className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
                       placeholder={t("searchPlaceholder")}
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
@@ -155,7 +155,7 @@ export default function AddPlaceModal({ onClose }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-6 py-3 bg-primary text-primary-foreground rounded-[2rem] text-sm font-bold hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
+                    className="px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
                   >
                     {loading ? (
                       <Loader2 size={18} className="animate-spin" />
@@ -172,9 +172,9 @@ export default function AddPlaceModal({ onClose }) {
                       type="button"
                       key={`${item.osmId}-${item.osmType}`}
                       onClick={() => setSelectedPlace(item)}
-                      className="w-full p-4 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all text-left flex items-start gap-4 group"
+                      className="w-full p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all text-left flex items-start gap-4 group"
                     >
-                      <div className="w-10 h-10 rounded-[2rem] bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                         {item.category === "gastronomy" ? (
                           <Utensils size={20} />
                         ) : item.category === "leisure" ? (
@@ -195,7 +195,7 @@ export default function AddPlaceModal({ onClose }) {
                   ))}
 
                   {query && results.length === 0 && !loading && (
-                    <div className="p-10 border-2 border-dashed border-border rounded-[2rem] text-center space-y-4">
+                    <div className="p-10 border-2 border-dashed border-border rounded-3xl text-center space-y-4">
                       <p className="text-muted-foreground text-sm">
                         {t("noResults")}
                       </p>
@@ -250,8 +250,8 @@ export default function AddPlaceModal({ onClose }) {
                   </button>
                 </div>
 
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-[2rem] flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-[2rem] bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
                     <Check size={20} />
                   </div>
                   <div className="min-w-0">
@@ -270,7 +270,7 @@ export default function AddPlaceModal({ onClose }) {
                       <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground ml-1">
                         {t("categoryLabel")}
                       </span>
-                      <div className="p-3 rounded-[2rem] border bg-primary/10 border-primary text-primary flex flex-col items-center gap-1">
+                      <div className="p-3 rounded-xl border bg-primary/10 border-primary text-primary flex flex-col items-center gap-1">
                         {selectedPlace.category === "gastronomy" ? (
                           <Utensils size={18} />
                         ) : (
@@ -314,7 +314,7 @@ export default function AddPlaceModal({ onClose }) {
                       </label>
                       <textarea
                         id="place-comment"
-                        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-2 text-sm min-h-[80px] focus:ring-2 ring-primary/20 outline-none resize-none"
+                        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-2 text-sm min-h-[80px] focus:ring-2 ring-primary/20 outline-none resize-none"
                         placeholder="..."
                         value={form.comment}
                         onChange={(e) =>
@@ -326,7 +326,7 @@ export default function AddPlaceModal({ onClose }) {
                 </div>
 
                 {error && (
-                  <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-[2rem] border border-destructive/20">
+                  <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-lg border border-destructive/20">
                     {error}
                   </div>
                 )}

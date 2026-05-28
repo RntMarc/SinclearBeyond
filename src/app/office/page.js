@@ -47,7 +47,7 @@ export default async function OfficePage() {
         icon={FileText}
       />
       <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-2xl mx-auto">
-        <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6">
+        <div className="w-16 h-16 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center mb-6">
           <Wrench size={32} />
         </div>
         <h2 className="text-2xl font-bold mb-4">In Überarbeitung</h2>
@@ -56,7 +56,7 @@ export default async function OfficePage() {
           überarbeitet und neu implementiert. Wir arbeiten daran, eine
           verbesserte und stabilere Version bereitzustellen.
         </p>
-        <div className="mt-8 p-4 bg-sidebar rounded-[2rem] border border-sidebar-border text-sm text-sidebar-foreground italic">
+        <div className="mt-8 p-4 bg-sidebar rounded-lg border border-sidebar-border text-sm text-sidebar-foreground italic">
           Deine Dokumente sind sicher in der Datenbank gespeichert, aber der
           Zugriff ist vorübergehend deaktiviert.
         </div>

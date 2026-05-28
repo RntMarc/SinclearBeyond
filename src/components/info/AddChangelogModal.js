@@ -49,7 +49,7 @@ export default function AddChangelogModal({ isOpen, onClose }) {
         onClick={() => !loading && onClose()}
         aria-label={tc("close")}
       />
-      <div className="relative w-full max-w-lg bg-card border border-border rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-card border border-border rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="p-6 border-b border-border">
           <h3 className="text-xl font-black">{t("newEntryTitle")}</h3>
         </div>
@@ -68,7 +68,7 @@ export default function AddChangelogModal({ isOpen, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
-              className="w-full p-3 bg-muted border border-border rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium"
+              className="w-full p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function AddChangelogModal({ isOpen, onClose }) {
                   key={cat}
                   type="button"
                   onClick={() => setFormData({ ...formData, category: cat })}
-                  className={`px-3 py-2 rounded-[2rem] text-xs font-bold transition-all border ${
+                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
                     formData.category === cat
                       ? "bg-primary text-primary-foreground border-primary"
                       : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
@@ -108,7 +108,7 @@ export default function AddChangelogModal({ isOpen, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full p-4 bg-muted border border-border rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[150px] text-sm resize-none"
+              className="w-full p-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[150px] text-sm resize-none"
               placeholder="..."
             />
           </div>

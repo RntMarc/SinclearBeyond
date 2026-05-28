@@ -216,7 +216,7 @@ export default function TimeGridView({
                             e.stopPropagation();
                             onEventClick(ev);
                           }}
-                          className={`absolute left-1 right-1 rounded-2xl border-l-2 p-1 overflow-hidden cursor-pointer transition-colors z-[5] ${styleClass}`}
+                          className={`absolute left-1 right-1 rounded-md border-l-2 p-1 overflow-hidden cursor-pointer transition-colors z-[5] ${styleClass}`}
                           style={{
                             top: `${startHour * 64}px`,
                             height: `${Math.max(duration * 64, 24)}px`,

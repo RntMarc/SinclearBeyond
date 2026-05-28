@@ -60,12 +60,10 @@ export const userPreferences = mysqlTable("UserPreferences", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
   language: varchar("language", { length: 10 }).notNull().default("de"),
-  theme: mysqlEnum("theme", ["light", "dark", "neo-retro"])
+  theme: mysqlEnum("theme", ["light", "dark"]).notNull().default("dark"),
+  primaryColor: varchar("primaryColor", { length: 7 })
     .notNull()
-    .default("dark"),
-  primaryColor: varchar("primaryColor", { length: 20 })
-    .notNull()
-    .default("var(--primary)"),
+    .default("#7c3aed"),
   timezone: varchar("timezone", { length: 191 }),
 });
 

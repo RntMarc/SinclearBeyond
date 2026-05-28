@@ -21,7 +21,7 @@ export function validateRelativeCallbackUrl(url) {
 
 /**
  * Calculates the relative luminance of a color.
- * @param {string} hex Hex color string (e.g. var(--primary))
+ * @param {string} hex Hex color string (e.g. #7c3aed)
  * @returns {number} Luminance value between 0 and 1
  */
 export function getLuminance(hex) {

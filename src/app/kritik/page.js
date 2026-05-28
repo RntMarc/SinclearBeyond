@@ -33,9 +33,9 @@ export default async function ReviewsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Link
                   href="/kritik/spiele"
-                  className="group p-6 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+                  className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
                 >
-                  <div className="w-12 h-12 rounded-[2rem] bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <Gamepad2 size={24} />
                   </div>
                   <div>
@@ -48,9 +48,9 @@ export default async function ReviewsPage() {
 
                 <Link
                   href="/kritik/filme"
-                  className="group p-6 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+                  className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
                 >
-                  <div className="w-12 h-12 rounded-[2rem] bg-red-500/10 text-red-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <Clapperboard size={24} />
                   </div>
                   <div>
@@ -63,9 +63,9 @@ export default async function ReviewsPage() {
 
                 <Link
                   href="/kritik/musik"
-                  className="group p-6 bg-card border border-border rounded-[2rem] hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
+                  className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
                 >
-                  <div className="w-12 h-12 rounded-[2rem] bg-secondary/10 text-secondary flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <Music size={24} />
                   </div>
                   <div>

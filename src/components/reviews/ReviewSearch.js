@@ -81,7 +81,7 @@ export default function ReviewSearch({ type = "game" }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length > 2 && setIsOpen(true)}
-          className="w-full pl-12 pr-4 py-4 bg-card border border-border rounded-xl-custom focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+          className="w-full pl-12 pr-4 py-4 bg-card border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
         />
         {loading && (
           <Loader2
@@ -92,23 +92,23 @@ export default function ReviewSearch({ type = "game" }) {
       </div>
 
       {isOpen && (results.length > 0 || loading) && (
-        <div className="absolute z-50 mt-2 w-full bg-card border border-border rounded-xl-custom shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute z-50 mt-2 w-full bg-card border border-border rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="max-h-[400px] overflow-y-auto p-2 space-y-1">
             {results.map((item) => (
               <button
                 type="button"
                 key={item.externalId}
                 onClick={() => handleImport(item)}
-                className="w-full flex items-center gap-4 p-3 hover:bg-muted rounded-[2rem] transition-colors text-left group"
+                className="w-full flex items-center gap-4 p-3 hover:bg-muted rounded-xl transition-colors text-left group"
               >
                 {item.image ? (
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-12 h-16 object-cover rounded-2xl shadow-sm"
+                    className="w-12 h-16 object-cover rounded-md shadow-sm"
                   />
                 ) : (
-                  <div className="w-12 h-16 bg-muted rounded-2xl flex items-center justify-center">
+                  <div className="w-12 h-16 bg-muted rounded-md flex items-center justify-center">
                     <Plus className="text-muted-foreground/30" size={20} />
                   </div>
                 )}
@@ -120,7 +120,7 @@ export default function ReviewSearch({ type = "game" }) {
                     {item.releaseDate}
                   </p>
                 </div>
-                <div className="px-3 py-1 bg-primary/10 text-primary rounded-[2rem] text-[10px] font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="px-3 py-1 bg-primary/10 text-primary rounded-lg text-[10px] font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
                   {t("import")}
                 </div>
               </button>

@@ -1,8 +1,8 @@
 "use client";
 
 import { ImageIcon, Loader2, Trash2, X } from "lucide-react";
-import { useRef, useState } from "react";
-import { createForum, deleteForum, updateForum } from "@/lib/forums/actions";
+import { useState, useRef } from "react";
+import { createForum, updateForum, deleteForum } from "@/lib/forums/actions";
 
 export default function ForumFormModal({ forum, onClose, onUpdated }) {
   const [loading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-sidebar border border-sidebar-border rounded-[2rem] w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-sidebar border border-sidebar-border rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between px-6 py-4 border-b border-sidebar-border">
           <h2 className="text-lg font-medium">
             {forum ? "Forum bearbeiten" : "Neues Forum anlegen"}
@@ -88,7 +88,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             {/* Image Upload */}
             <div className="flex flex-col items-center gap-4">
               <div className="relative group">
-                <div className="w-32 h-32 rounded-[2rem] bg-muted overflow-hidden border-2 border-dashed border-sidebar-border flex items-center justify-center">
+                <div className="w-32 h-32 rounded-2xl bg-muted overflow-hidden border-2 border-dashed border-sidebar-border flex items-center justify-center">
                   {imagePreview && !removeImage ? (
                     <img
                       src={imagePreview}
@@ -102,7 +102,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-[2rem] text-xs font-medium"
+                  className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl text-xs font-medium"
                 >
                   Bild wählen
                 </button>
@@ -140,7 +140,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
                 name="name"
                 defaultValue={forum?.name}
                 placeholder="z.B. Gaming, Musik, News..."
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
@@ -153,7 +153,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
                 defaultValue={forum?.description}
                 placeholder="Worum geht es in diesem Forum?"
                 rows={3}
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               />
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
                 type="button"
                 onClick={handleDelete}
                 disabled={loading}
-                className="p-2.5 text-destructive hover:bg-destructive/10 rounded-[2rem] transition-colors border border-transparent hover:border-destructive/20"
+                className="p-2.5 text-destructive hover:bg-destructive/10 rounded-xl transition-colors border border-transparent hover:border-destructive/20"
               >
                 <Trash2 size={20} />
               </button>
@@ -173,14 +173,14 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 text-sm font-medium hover:bg-sidebar-accent rounded-[2rem] transition-colors"
+              className="px-6 py-2.5 text-sm font-medium hover:bg-sidebar-accent rounded-xl transition-colors"
             >
               Abbrechen
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-[2rem] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 min-w-[120px]"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 min-w-[120px]"
             >
               {loading ? (
                 <Loader2 size={18} className="animate-spin" />

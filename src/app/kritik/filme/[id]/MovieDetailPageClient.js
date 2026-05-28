@@ -176,7 +176,7 @@ export default function MovieDetailPageClient({
         <div className="max-w-5xl mx-auto p-6 md:p-10 space-y-12">
           <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
-              <div className="aspect-[2/3] rounded-[2rem] overflow-hidden bg-muted shadow-xl border border-border">
+              <div className="aspect-[2/3] rounded-3xl overflow-hidden bg-muted shadow-xl border border-border">
                 {movie.image ? (
                   <img
                     src={movie.image}
@@ -226,7 +226,7 @@ export default function MovieDetailPageClient({
                 <button
                   type="button"
                   onClick={() => setShowReviewModal(true)}
-                  className="px-6 py-3 bg-primary text-primary-foreground rounded-[2rem] font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all"
+                  className="px-6 py-3 bg-primary text-primary-foreground rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all"
                 >
                   <Plus size={20} />
                   {t("addReview")}
@@ -240,7 +240,7 @@ export default function MovieDetailPageClient({
               )}
 
               {movie.needsUpdate && (
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-[2rem] flex items-center justify-between gap-4">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between gap-4">
                   <div className="space-y-1">
                     <p className="text-sm font-bold">{t("outdatedData")}</p>
                     <p className="text-xs text-muted-foreground">
@@ -252,7 +252,7 @@ export default function MovieDetailPageClient({
                     onClick={refreshData}
                     disabled={updating}
                     size="icon"
-                    className="rounded-[2rem]"
+                    className="rounded-lg"
                   >
                     <RefreshCcw
                       size={16}
@@ -284,7 +284,7 @@ export default function MovieDetailPageClient({
                 return (
                   <div
                     key={season}
-                    className="bg-muted/30 rounded-[2rem] overflow-hidden border border-border"
+                    className="bg-muted/30 rounded-3xl overflow-hidden border border-border"
                   >
                     <div className="p-6 bg-muted/50 flex justify-between items-center border-b border-border">
                       <h3 className="text-xl font-bold">

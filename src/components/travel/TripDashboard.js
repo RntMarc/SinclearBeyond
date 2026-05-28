@@ -19,7 +19,7 @@ import AccommodationDetailModal from "./AccommodationDetailModal";
 const TravelMap = dynamic(() => import("./TravelMap"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-xl-custom border border-border">
+    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-2xl border border-border">
       <p className="text-xs text-muted-foreground italic">
         Karte wird geladen...
       </p>
@@ -51,10 +51,10 @@ function StatusBadge({ isActive, isUpcoming, isPast }) {
 
 function SectionBox({ title, icon: Icon, children }) {
   return (
-    <div className="bg-sidebar border border-sidebar-border rounded-xl-custom overflow-hidden shadow-sm">
+    <div className="bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden shadow-sm">
       <div className="px-5 py-4 border-b border-sidebar-border flex items-center gap-3">
         {Icon && (
-          <div className="w-8 h-8 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
             <Icon size={16} />
           </div>
         )}
@@ -86,7 +86,7 @@ function EventCard({ event, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`w-full p-4 bg-background border border-sidebar-border rounded-[2rem] flex flex-col gap-2 text-left hover:border-primary/50 transition-all group ${isNotParticipant ? "opacity-50 grayscale-[0.5]" : ""}`}
+      className={`w-full p-4 bg-background border border-sidebar-border rounded-xl flex flex-col gap-2 text-left hover:border-primary/50 transition-all group ${isNotParticipant ? "opacity-50 grayscale-[0.5]" : ""}`}
     >
       <div className="flex items-start justify-between gap-2 w-full">
         <h4 className="font-medium text-foreground leading-tight">
@@ -238,7 +238,7 @@ export default function TripDashboard({ trip }) {
             <button
               type="button"
               onClick={() => setSelectedAccommodation(trip.userAccommodation)}
-              className="w-full text-left p-4 bg-primary/5 border border-primary/10 rounded-[2rem] hover:border-primary/30 transition-all"
+              className="w-full text-left p-4 bg-primary/5 border border-primary/10 rounded-xl hover:border-primary/30 transition-all"
             >
               <h4 className="font-medium text-foreground mb-1">
                 {trip.userAccommodation.name}
@@ -345,7 +345,7 @@ export default function TripDashboard({ trip }) {
           ))}
         </div>
       ) : (
-        <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl-custom">
+        <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-2xl">
           <Calendar className="mx-auto mb-2 text-muted-foreground" size={24} />
           <p className="text-sm text-muted-foreground">{t("noEvents")}</p>
         </div>
@@ -371,11 +371,11 @@ export default function TripDashboard({ trip }) {
 
       {/* Mobile Layout */}
       <div className={`${isMobile ? "block" : "md:hidden"}`}>
-        <div className="flex bg-sidebar border border-sidebar-border rounded-[2rem] p-1 mb-6">
+        <div className="flex bg-sidebar border border-sidebar-border rounded-xl p-1 mb-6">
           <button
             type="button"
             onClick={() => setMobileTab("details")}
-            className={`flex-1 py-2 text-sm font-medium rounded-[2rem] transition-colors ${
+            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
               mobileTab === "details"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -386,7 +386,7 @@ export default function TripDashboard({ trip }) {
           <button
             type="button"
             onClick={() => setMobileTab("events")}
-            className={`flex-1 py-2 text-sm font-medium rounded-[2rem] transition-colors ${
+            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
               mobileTab === "events"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -397,7 +397,7 @@ export default function TripDashboard({ trip }) {
           <button
             type="button"
             onClick={() => setMobileTab("map")}
-            className={`flex-1 py-2 text-sm font-medium rounded-[2rem] transition-colors ${
+            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
               mobileTab === "map"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"

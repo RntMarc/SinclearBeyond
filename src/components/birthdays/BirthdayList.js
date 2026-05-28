@@ -2,8 +2,8 @@
 import { ChevronRight, Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import Avatar from "@/components/Avatar";
 import { markTodayBirthdaysAsRead } from "@/lib/profile/birthdayActions";
+import Avatar from "@/components/Avatar";
 import BirthdayModal from "./BirthdayModal";
 
 export default function BirthdayList({ initialBirthdays }) {
@@ -17,7 +17,7 @@ export default function BirthdayList({ initialBirthdays }) {
 
   if (!initialBirthdays || initialBirthdays.length === 0) {
     return (
-      <div className="bg-sidebar rounded-[2rem] border border-sidebar-border p-8 text-center">
+      <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
         <p className="text-muted-foreground">{tc("noEntries")}</p>
       </div>
     );
@@ -31,7 +31,7 @@ export default function BirthdayList({ initialBirthdays }) {
             key={user.id}
             type="button"
             onClick={() => setSelectedUser(user)}
-            className="flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-[2rem] transition-all group text-left"
+            className="flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-xl transition-all group text-left"
           >
             <div className="flex items-center gap-3">
               <Avatar src={user.image} displayName={user.displayName} />

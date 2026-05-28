@@ -85,7 +85,7 @@ export default function ResultsMap({ places, showNumbers = true }) {
   return (
     <div
       ref={mapRef}
-      className="w-full h-full rounded-[2rem] overflow-hidden border border-border shadow-inner bg-muted z-10"
+      className="w-full h-full rounded-3xl overflow-hidden border border-border shadow-inner bg-muted z-10"
     />
   );
 }
