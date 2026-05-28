@@ -7,7 +7,7 @@ import SaveButton from "@/components/SaveButton";
 const TravelMap = dynamic(() => import("./TravelMap"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-xl border border-sidebar-border">
+    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-[2rem] border border-sidebar-border">
       <p className="text-[10px] text-muted-foreground italic">
         Karte wird geladen...
       </p>
@@ -37,7 +37,7 @@ export default function AccommodationForm({
     <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0">
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {formError && (
-          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-xs">
+          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-[2rem] text-destructive text-xs">
             {formError}
           </div>
         )}
@@ -54,7 +54,7 @@ export default function AccommodationForm({
               onChange={handleChange}
               required
               placeholder={t("placeholders.name")}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
 
@@ -68,7 +68,7 @@ export default function AccommodationForm({
               onChange={handleChange}
               placeholder={t("placeholders.description")}
               rows={2}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function AccommodationForm({
               value={form.address}
               onChange={handleChange}
               placeholder={t("placeholders.address")}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
 
@@ -99,7 +99,7 @@ export default function AccommodationForm({
                 onChange={handleChange}
                 required
                 placeholder={t("placeholders.latitude")}
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
@@ -115,7 +115,7 @@ export default function AccommodationForm({
                 onChange={handleChange}
                 required
                 placeholder={t("placeholders.longitude")}
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function AccommodationForm({
             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
               {t("mapIntegration")}
             </label>
-            <div className="h-48 rounded-xl border border-sidebar-border overflow-hidden">
+            <div className="h-48 rounded-[2rem] border border-sidebar-border overflow-hidden">
               <TravelMap
                 items={
                   form.latitude && form.longitude
@@ -156,7 +156,7 @@ export default function AccommodationForm({
                 value={form.phone}
                 onChange={handleChange}
                 placeholder={t("placeholders.phone")}
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
@@ -170,7 +170,7 @@ export default function AccommodationForm({
                 value={form.mail}
                 onChange={handleChange}
                 placeholder={t("placeholders.email")}
-                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
           </div>
@@ -185,11 +185,11 @@ export default function AccommodationForm({
               value={form.osmId}
               onChange={handleChange}
               placeholder={t("placeholders.osmId")}
-              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
           </div>
 
-          <label className="flex items-center gap-3 p-4 bg-sidebar-accent/50 border border-sidebar-border rounded-xl cursor-pointer hover:bg-sidebar-accent/70 transition-all">
+          <label className="flex items-center gap-3 p-4 bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] cursor-pointer hover:bg-sidebar-accent/70 transition-all">
             <input
               type="checkbox"
               name="isHotel"

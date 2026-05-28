@@ -77,7 +77,7 @@ export default function CalendarAgenda({ eventList, onEventClick }) {
                   <div
                     key={ev.id}
                     onClick={() => onEventClick(ev)}
-                    className={`flex items-center gap-4 p-4 rounded-xl border transition-colors cursor-pointer group
+                    className={`flex items-center gap-4 p-4 rounded-[2rem] border transition-colors cursor-pointer group
                         ${
                           ev.type === "trip" || ev.type === "travelEvent"
                             ? "border-trip/30 bg-trip/5 hover:bg-trip/10"

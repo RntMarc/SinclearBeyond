@@ -11,7 +11,7 @@ export default function FeedList({ posts, loading, onEdit, onDeleteSuccess }) {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-48 bg-sidebar-accent/50 rounded-2xl animate-pulse"
+            className="h-48 bg-sidebar-accent/50 rounded-xl-custom animate-pulse"
           />
         ))}
       </div>
@@ -20,7 +20,7 @@ export default function FeedList({ posts, loading, onEdit, onDeleteSuccess }) {
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-20 px-6 bg-sidebar-accent/30 rounded-3xl border border-dashed border-sidebar-border">
+      <div className="text-center py-20 px-6 bg-sidebar-accent/30 rounded-[2rem] border border-dashed border-sidebar-border">
         <p className="text-muted-foreground">{t("noPosts")}</p>
       </div>
     );

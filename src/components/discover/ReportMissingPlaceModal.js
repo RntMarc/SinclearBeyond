@@ -9,7 +9,7 @@ import SaveButton from "@/components/SaveButton";
 const LocationPickerMap = dynamic(() => import("./LocationPickerMap"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-xl border border-border">
+    <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center rounded-[2rem] border border-border">
       <p className="text-xs text-muted-foreground italic">
         Karte wird geladen...
       </p>
@@ -103,7 +103,7 @@ export default function ReportMissingPlaceModal({ onClose }) {
       />
 
       <div
-        className={`relative w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-200 max-h-[90vh] ${
+        className={`relative w-full max-w-2xl bg-card border border-border rounded-[2rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-200 max-h-[90vh] ${
           isClosing ? "opacity-0 scale-95" : "opacity-100 scale-100"
         }`}
       >
@@ -146,7 +146,7 @@ export default function ReportMissingPlaceModal({ onClose }) {
                   <input
                     id="place-name"
                     type="text"
-                    className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
+                    className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     placeholder="..."
@@ -163,7 +163,7 @@ export default function ReportMissingPlaceModal({ onClose }) {
                   <input
                     id="place-address"
                     type="text"
-                    className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
+                    className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
                     value={form.address}
                     onChange={(e) =>
                       setForm({ ...form, address: e.target.value })
@@ -183,7 +183,7 @@ export default function ReportMissingPlaceModal({ onClose }) {
                     <input
                       id="google-maps-link"
                       type="url"
-                      className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
+                      className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
                       value={form.googleMapsLink}
                       onChange={(e) =>
                         setForm({ ...form, googleMapsLink: e.target.value })
@@ -201,7 +201,7 @@ export default function ReportMissingPlaceModal({ onClose }) {
                     <input
                       id="place-website"
                       type="url"
-                      className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
+                      className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-[2rem] px-4 py-3 text-sm focus:ring-2 ring-primary/20 outline-none"
                       value={form.website}
                       onChange={(e) =>
                         setForm({ ...form, website: e.target.value })
@@ -215,7 +215,7 @@ export default function ReportMissingPlaceModal({ onClose }) {
                   <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold ml-1">
                     {t("coordinates")}
                   </span>
-                  <div className="h-48 rounded-xl border border-border overflow-hidden">
+                  <div className="h-48 rounded-[2rem] border border-border overflow-hidden">
                     <LocationPickerMap
                       lat={form.latitude}
                       lon={form.longitude}
@@ -228,7 +228,7 @@ export default function ReportMissingPlaceModal({ onClose }) {
               </div>
 
               {error && (
-                <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-lg border border-destructive/20">
+                <div className="p-3 bg-destructive/10 text-destructive text-xs rounded-[2rem] border border-destructive/20">
                   {error}
                 </div>
               )}

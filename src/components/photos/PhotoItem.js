@@ -6,7 +6,7 @@ import BrandIcon from "@/components/BrandIcon";
 export default function PhotoItem({ photo }) {
   const t = useTranslations("Photos");
   return (
-    <div className="break-inside-avoid group relative overflow-hidden rounded-xl bg-sidebar border border-sidebar-border transition-all hover:shadow-xl hover:-translate-y-1">
+    <div className="break-inside-avoid group relative overflow-hidden rounded-[2rem] bg-sidebar border border-sidebar-border transition-all hover:shadow-xl hover:-translate-y-1">
       <img
         src={photo.url}
         alt={photo.description || "Unsplash Photo"}

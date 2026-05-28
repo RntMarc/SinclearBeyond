@@ -38,7 +38,7 @@ export default function NavigationFAB({ lat, lon, name }) {
 
       {showMenu && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-card border border-border rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-card border border-border rounded-[2rem] shadow-2xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-border flex items-center justify-between">
               <h3 className="font-bold text-lg">{t("title")}</h3>
               <button
@@ -54,10 +54,10 @@ export default function NavigationFAB({ lat, lon, name }) {
                 href={googleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-2xl transition-colors group"
+                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-xl-custom transition-colors group"
                 onClick={() => setShowMenu(false)}
               >
-                <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-[2rem] bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
                   <ExternalLink size={20} />
                 </div>
                 <div className="flex-1">
@@ -72,10 +72,10 @@ export default function NavigationFAB({ lat, lon, name }) {
                 href={appleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-2xl transition-colors group"
+                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-xl-custom transition-colors group"
                 onClick={() => setShowMenu(false)}
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-[2rem] bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <ExternalLink size={20} />
                 </div>
                 <div className="flex-1">
@@ -90,10 +90,10 @@ export default function NavigationFAB({ lat, lon, name }) {
                 href={osmUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-2xl transition-colors group"
+                className="flex items-center gap-3 p-4 bg-muted/50 hover:bg-muted rounded-xl-custom transition-colors group"
                 onClick={() => setShowMenu(false)}
               >
-                <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-[2rem] bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0">
                   <MapIcon size={20} />
                 </div>
                 <div className="flex-1">

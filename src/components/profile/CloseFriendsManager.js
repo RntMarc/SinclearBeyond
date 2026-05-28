@@ -74,12 +74,12 @@ export default function CloseFriendsManager({ initialFriends }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}
-            className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+            className="w-full rounded-[2rem] border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
           />
         </div>
 
         {searchResults.length > 0 && (
-          <div className="mt-2 bg-sidebar border border-sidebar-border rounded-xl overflow-hidden divide-y divide-sidebar-border">
+          <div className="mt-2 bg-sidebar border border-sidebar-border rounded-[2rem] overflow-hidden divide-y divide-sidebar-border">
             {searchResults.map((user) => (
               <div
                 key={user.id}
@@ -98,7 +98,7 @@ export default function CloseFriendsManager({ initialFriends }) {
                 <button
                   type="button"
                   onClick={() => handleAdd(user)}
-                  className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                  className="p-1.5 text-primary hover:bg-primary/10 rounded-[2rem] transition-colors"
                 >
                   <UserPlus size={18} />
                 </button>
@@ -122,7 +122,7 @@ export default function CloseFriendsManager({ initialFriends }) {
             {friends.map((friend) => (
               <div
                 key={friend.id}
-                className="flex items-center justify-between p-3 bg-sidebar border border-sidebar-border rounded-xl"
+                className="flex items-center justify-between p-3 bg-sidebar border border-sidebar-border rounded-[2rem]"
               >
                 <div className="flex items-center gap-3">
                   <Avatar src={friend.image} displayName={friend.displayName} />

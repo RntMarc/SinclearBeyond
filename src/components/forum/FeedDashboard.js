@@ -1,6 +1,6 @@
 "use client";
 
-import { Hash, MessageSquare, Plus, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Hash, Loader2, MessageSquare, Plus } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -74,7 +74,7 @@ export default function FeedDashboard() {
                   <Link
                     key={forum.id}
                     href={`/forum/${forum.id}`}
-                    className="group relative bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
+                    className="group relative bg-sidebar border border-sidebar-border rounded-xl-custom overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
                   >
                     <div className="aspect-[21/9] w-full bg-muted relative">
                       {forum.image ? (
@@ -91,8 +91,8 @@ export default function FeedDashboard() {
                       {forum.hasUnread && (
                         <div className="absolute top-4 right-4">
                           <span className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500" />
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/80 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
                           </span>
                         </div>
                       )}
@@ -123,7 +123,7 @@ export default function FeedDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="p-12 text-center bg-sidebar border border-sidebar-border rounded-3xl text-muted-foreground">
+              <div className="p-12 text-center bg-sidebar border border-sidebar-border rounded-[2rem] text-muted-foreground">
                 <p>{t("noForums")}</p>
               </div>
             )}
@@ -140,9 +140,9 @@ export default function FeedDashboard() {
                 {data.notJoined.map((forum) => (
                   <div
                     key={forum.id}
-                    className="bg-sidebar border border-sidebar-border rounded-xl p-4 flex items-center gap-4 hover:border-primary/50 transition-colors"
+                    className="bg-sidebar border border-sidebar-border rounded-[2rem] p-4 flex items-center gap-4 hover:border-primary/50 transition-colors"
                   >
-                    <div className="w-12 h-12 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                    <div className="w-12 h-12 rounded-[2rem] bg-muted flex-shrink-0 overflow-hidden">
                       {forum.image ? (
                         <img
                           src={forum.image}

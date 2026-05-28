@@ -95,7 +95,7 @@ export default function PhotoGrid({ initialPhotos }) {
 
   if (totalPhotos === 0 && !loading) {
     return (
-      <div className="bg-sidebar rounded-xl border border-sidebar-border p-12 text-center">
+      <div className="bg-sidebar rounded-[2rem] border border-sidebar-border p-12 text-center">
         <p className="text-muted-foreground italic">
           Momentan sind keine Fotos verfügbar.
         </p>

@@ -4,13 +4,13 @@ import { useTranslations } from "next-intl";
 import Avatar from "@/components/Avatar";
 
 const STATUS_COLORS = {
-  submitted: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  planned: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  submitted: "bg-primary/10 text-primary border-primary/20",
+  planned: "bg-secondary/10 text-secondary border-secondary/20",
   next: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  in_progress: "bg-blue-600/10 text-blue-600 border-blue-600/20",
+  in_progress: "bg-primary/10 text-primary border-primary/20",
   done: "bg-green-500/10 text-green-500 border-green-500/20",
   cancelled: "bg-red-500/10 text-red-500 border-red-500/20",
-  rejected: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20",
+  rejected: "bg-zinc-500/10 text-muted-foreground border-zinc-500/20",
   later: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
 };
 
@@ -29,7 +29,7 @@ export default function SuggestionList({
 
   if (suggestions.length === 0) {
     return (
-      <div className="text-center py-12 bg-card border border-dashed border-border rounded-2xl">
+      <div className="text-center py-12 bg-card border border-dashed border-border rounded-xl-custom">
         <p className="text-muted-foreground">{t("noSuggestions")}</p>
       </div>
     );
@@ -48,7 +48,7 @@ export default function SuggestionList({
     return (
       <div
         key={suggestion.id}
-        className={`bg-card border border-border rounded-2xl p-6 shadow-sm flex gap-6 transition-opacity ${
+        className={`bg-card border border-border rounded-xl-custom p-6 shadow-sm flex gap-6 transition-opacity ${
           isFrozen ? "opacity-60 grayscale-[0.5]" : ""
         }`}
       >
@@ -57,7 +57,7 @@ export default function SuggestionList({
             type="button"
             onClick={() => !isVotingDisabled && onVote(suggestion.id)}
             disabled={isVotingDisabled}
-            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+            className={`w-12 h-12 rounded-[2rem] flex items-center justify-center transition-all ${
               suggestion.hasUpvoted
                 ? "bg-primary text-primary-foreground"
                 : isVotingDisabled
@@ -111,7 +111,7 @@ export default function SuggestionList({
                   onChange={(e) =>
                     onStatusChange(suggestion.id, e.target.value)
                   }
-                  className="text-xs bg-muted border-none rounded-lg p-1 px-2 focus:ring-1 focus:ring-primary"
+                  className="text-xs bg-muted border-none rounded-[2rem] p-1 px-2 focus:ring-1 focus:ring-primary"
                 >
                   {Object.keys(STATUS_COLORS).map((status) => (
                     <option key={status} value={status}>
@@ -127,7 +127,7 @@ export default function SuggestionList({
                     <button
                       type="button"
                       onClick={() => onEdit(suggestion)}
-                      className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                      className="p-2 hover:bg-muted rounded-[2rem] transition-colors text-muted-foreground hover:text-foreground"
                       title={t("editSuggestion")}
                     >
                       <Edit2 size={16} />
@@ -139,7 +139,7 @@ export default function SuggestionList({
                           onDelete(suggestion.id);
                         }
                       }}
-                      className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                      className="p-2 hover:bg-destructive/10 rounded-[2rem] transition-colors text-muted-foreground hover:text-destructive"
                       title={commonT("delete")}
                     >
                       <Trash2 size={16} />

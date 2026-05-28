@@ -33,7 +33,7 @@ export default function FeedbackForm() {
   };
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+    <div className="bg-card border border-border rounded-xl-custom p-6 shadow-sm">
       <h2 className="text-lg font-bold mb-2">{t("generalFeedback")}</h2>
       <p className="text-sm text-muted-foreground mb-6">
         {t("generalFeedbackDesc")}
@@ -44,7 +44,7 @@ export default function FeedbackForm() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={t("feedbackPlaceholder")}
-          className="w-full min-h-[120px] p-4 rounded-xl bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+          className="w-full min-h-[120px] p-4 rounded-[2rem] bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
           required
         />
         <div className="flex justify-end">

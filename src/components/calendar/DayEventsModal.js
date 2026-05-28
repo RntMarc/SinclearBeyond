@@ -14,7 +14,7 @@ export default function DayEventsModal({
       onClick={onClose}
     >
       <div
-        className="bg-background w-full max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] cursor-default"
+        className="bg-background w-full max-w-md rounded-t-2xl sm:rounded-xl-custom shadow-2xl overflow-hidden flex flex-col max-h-[80vh] cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -42,7 +42,7 @@ export default function DayEventsModal({
                   onEventClick(ev);
                   onClose();
                 }}
-                className="p-4 rounded-xl border border-border bg-accent/20 hover:bg-accent/40 transition-colors cursor-pointer group"
+                className="p-4 rounded-[2rem] border border-border bg-accent/20 hover:bg-accent/40 transition-colors cursor-pointer group"
               >
                 <div className="flex justify-between items-start mb-1">
                   <span className="font-medium group-hover:text-primary transition-colors">
@@ -81,7 +81,7 @@ export default function DayEventsModal({
               onNewEvent(date);
               onClose();
             }}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-[2rem] bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
           >
             <Plus size={18} />
             Neuer Eintrag

@@ -106,7 +106,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
           <button
             type="button"
             onClick={() => setIsEditModalOpen(true)}
-            className="flex items-center gap-2 bg-sidebar-accent border border-sidebar-border px-4 py-2 rounded-xl font-bold text-xs hover:bg-sidebar-accent/80 transition-all"
+            className="flex items-center gap-2 bg-sidebar-accent border border-sidebar-border px-4 py-2 rounded-[2rem] font-bold text-xs hover:bg-sidebar-accent/80 transition-all"
           >
             <Settings2 size={16} />
             {t("editPoll")}
@@ -114,7 +114,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
           <button
             type="button"
             onClick={handleDelete}
-            className="flex items-center gap-2 bg-destructive/10 text-destructive border border-destructive/20 px-4 py-2 rounded-xl font-bold text-xs hover:bg-destructive/20 transition-all"
+            className="flex items-center gap-2 bg-destructive/10 text-destructive border border-destructive/20 px-4 py-2 rounded-[2rem] font-bold text-xs hover:bg-destructive/20 transition-all"
           >
             <Trash2 size={16} />
             {t("deletePoll")}

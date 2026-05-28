@@ -35,7 +35,7 @@ export default function MoviesClient({ initialMovies }) {
               ))}
 
               {movies.length === 0 && (
-                <div className="col-span-full p-20 border-2 border-dashed border-border rounded-3xl text-center">
+                <div className="col-span-full p-20 border-2 border-dashed border-border rounded-[2rem] text-center">
                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                     <Clapperboard
                       className="text-muted-foreground/30"
@@ -60,7 +60,7 @@ function MovieCard({ movie, t }) {
   return (
     <Link
       href={`/kritik/filme/${movie.id}`}
-      className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
+      className="group bg-card border border-border rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
     >
       {movie.image && (
         <div className="aspect-[2/3] w-full overflow-hidden relative bg-muted">
@@ -72,7 +72,7 @@ function MovieCard({ movie, t }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
           {movie.format === "series" && (
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white text-[10px] font-black px-2 py-1 rounded-lg border border-white/10 uppercase tracking-widest">
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white text-[10px] font-black px-2 py-1 rounded-[2rem] border border-white/10 uppercase tracking-widest">
               {t("series")}
             </div>
           )}

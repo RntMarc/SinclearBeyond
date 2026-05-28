@@ -200,7 +200,7 @@ export default function ProfilForm({ user, contact, social }) {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="text-xs font-medium px-3 py-1.5 bg-sidebar-accent rounded-lg border border-sidebar-border hover:bg-sidebar-accent/80 transition-colors"
+            className="text-xs font-medium px-3 py-1.5 bg-sidebar-accent rounded-[2rem] border border-sidebar-border hover:bg-sidebar-accent/80 transition-colors"
           >
             {t("profile.uploadImage")}
           </button>
@@ -208,7 +208,7 @@ export default function ProfilForm({ user, contact, social }) {
             <button
               type="button"
               onClick={handleRemoveImage}
-              className="text-xs font-medium px-3 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg transition-colors flex items-center gap-1.5"
+              className="text-xs font-medium px-3 py-1.5 text-destructive hover:bg-destructive/10 rounded-[2rem] transition-colors flex items-center gap-1.5"
             >
               <Trash2 size={14} />
               {t("profile.deleteImage")}
@@ -240,7 +240,7 @@ export default function ProfilForm({ user, contact, social }) {
             id="displayName"
             name="displayName"
             defaultValue={user.displayName}
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+            className="w-full rounded-[2rem] border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
           />
         </div>
 
@@ -257,7 +257,7 @@ export default function ProfilForm({ user, contact, social }) {
               type="email"
               readOnly
               value={user.email}
-              className="flex-1 rounded-lg border border-border bg-sidebar-accent px-3 py-2 text-sm focus:outline-none text-muted-foreground cursor-not-allowed"
+              className="flex-1 rounded-[2rem] border border-border bg-sidebar-accent px-3 py-2 text-sm focus:outline-none text-muted-foreground cursor-not-allowed"
             />
             <VisibilityToggle
               value={visibility.emailVisibility}
@@ -286,7 +286,7 @@ export default function ProfilForm({ user, contact, social }) {
               name="birthday"
               type="date"
               defaultValue={birthdayValue}
-              className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+              className="flex-1 rounded-[2rem] border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
             />
             <VisibilityToggle
               value={visibility.birthdayVisibility}
@@ -334,7 +334,7 @@ export default function ProfilForm({ user, contact, social }) {
           onClick={() => {
             window.location.href = "/api/auth/discord?mode=link";
           }}
-          className="w-full px-4 py-2 rounded-lg border border-[#5865F2] text-[#5865F2] text-sm font-medium hover:bg-[#5865F2]/5 transition-colors flex items-center justify-center gap-2"
+          className="w-full px-4 py-2 rounded-[2rem] border border-[var(--secondary)] text-[var(--secondary)] text-sm font-medium hover:bg-[var(--secondary)]/5 transition-colors flex items-center justify-center gap-2"
         >
           <svg
             className="w-4 h-4 fill-current"

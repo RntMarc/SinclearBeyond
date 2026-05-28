@@ -29,7 +29,7 @@ export default function ContactField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
-          className={`flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground placeholder:text-muted-foreground ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+          className={`flex-1 rounded-[2rem] border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground placeholder:text-muted-foreground ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
         />
         <VisibilityToggle value={visibility} onChange={onVisibilityChange} />
         <input type="hidden" name={visKey} value={visibility} />

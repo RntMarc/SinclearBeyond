@@ -129,7 +129,7 @@ export default function PasskeyManager() {
           passkeys.map((pk) => (
             <div
               key={pk.id}
-              className="flex items-center justify-between p-4 rounded-xl bg-card border border-border group"
+              className="flex items-center justify-between p-4 rounded-[2rem] bg-card border border-border group"
             >
               <div>
                 <p className="font-medium text-foreground">{pk.name}</p>
@@ -168,7 +168,7 @@ export default function PasskeyManager() {
       {/* Name Modal */}
       {showNameModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-card border border-border w-full max-w-sm rounded-2xl shadow-2xl p-6">
+          <div className="bg-card border border-border w-full max-w-sm rounded-xl-custom shadow-2xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium">{t("passkeyModalTitle")}</h3>
               <button
@@ -186,7 +186,7 @@ export default function PasskeyManager() {
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg bg-background border border-border mb-6 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full px-4 py-2 rounded-[2rem] bg-background border border-border mb-6 focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
             <div className="flex gap-3">
               <button

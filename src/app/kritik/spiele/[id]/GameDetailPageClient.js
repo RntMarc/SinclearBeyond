@@ -148,7 +148,7 @@ export default function GameDetailPageClient({
           {/* Game Header / Cover */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
-              <div className="aspect-[3/4] rounded-3xl overflow-hidden bg-muted shadow-xl border border-border">
+              <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-muted shadow-xl border border-border">
                 {game.image ? (
                   <img
                     src={game.image}
@@ -193,7 +193,7 @@ export default function GameDetailPageClient({
                 <button
                   type="button"
                   onClick={() => setShowReviewModal(true)}
-                  className="px-6 py-3 bg-primary text-primary-foreground rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all"
+                  className="px-6 py-3 bg-primary text-primary-foreground rounded-[2rem] font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all"
                 >
                   <Plus size={20} />
                   {t("addReview")}
@@ -207,7 +207,7 @@ export default function GameDetailPageClient({
               )}
 
               {game.needsUpdate && (
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between gap-4">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-[2rem] flex items-center justify-between gap-4">
                   <div className="space-y-1">
                     <p className="text-sm font-bold">{t("outdatedData")}</p>
                     <p className="text-xs text-muted-foreground">
@@ -219,7 +219,7 @@ export default function GameDetailPageClient({
                     onClick={refreshData}
                     disabled={updating}
                     size="icon"
-                    className="rounded-lg"
+                    className="rounded-[2rem]"
                   >
                     <RefreshCcw
                       size={16}

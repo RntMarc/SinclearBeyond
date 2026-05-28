@@ -91,12 +91,12 @@ export async function POST(req, { params }) {
       subject: `[Sinclear Beyond] Nachricht von ${sender.displayName}: ${subject}`,
       text: `Hallo ${recipient.displayName},\n\ndu hast eine Nachricht von ${sender.displayName} über Sinclear Beyond erhalten.\n\nBetreff: ${subject}\n\nNachricht:\n${message}\n\n---\nDu kannst direkt auf diese E-Mail antworten, um ${sender.displayName} zu kontaktieren.`,
       html: `
-        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#333;">
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:var(--card);">
           <h2 style="font-weight:300;color:#000;">Neue Nachricht erhalten</h2>
           <p>Hallo <strong>${recipient.displayName}</strong>,</p>
           <p>du hast eine Nachricht von <strong>${sender.displayName}</strong> über Sinclear Beyond erhalten.</p>
 
-          <div style="background:#f9f9f9;border-left:4px solid #3b82f6;padding:16px;margin:24px 0;">
+          <div style="background:var(--foreground);border-left:4px solid var(--primary);padding:16px;margin:24px 0;">
             <p style="margin:0 0 8px 0;font-weight:bold;font-size:12px;text-transform:uppercase;color:#666;">Betreff</p>
             <p style="margin:0 0 16px 0;font-size:16px;">${subject}</p>
 
@@ -107,7 +107,7 @@ export async function POST(req, { params }) {
           <p style="font-size:14px;color:#666;">
             Du kannst direkt auf diese E-Mail antworten, um mit ${sender.displayName} in Kontakt zu treten.
           </p>
-          <hr style="border:0;border-top:1px solid #eee;margin:32px 0" />
+          <hr style="border:0;border-top:1px solid var(--foreground);margin:32px 0" />
           <p style="font-size:12px;color:#999;text-align:center;">
             Dies ist eine automatisch generierte Nachricht von Sinclear Beyond.
           </p>

@@ -47,7 +47,7 @@ export default function CalendarHeader({
             <button
               type="button"
               onClick={onPrev}
-              className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+              className="p-1.5 rounded-[2rem] hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
             >
               <ChevronLeft size={17} />
             </button>
@@ -62,7 +62,7 @@ export default function CalendarHeader({
               <button
                 type="button"
                 onClick={onNext}
-                className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                className="p-1.5 rounded-[2rem] hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
               >
                 <ChevronRight size={17} />
               </button>
@@ -79,13 +79,13 @@ export default function CalendarHeader({
 
         {/* View Switcher Mobile - icons only */}
         {isMobile && (
-          <div className="flex bg-muted/50 p-1 rounded-lg">
+          <div className="flex bg-muted/50 p-1 rounded-[2rem]">
             {VIEW_MODES.map((mode) => (
               <button
                 key={mode.id}
                 type="button"
                 onClick={() => setViewMode(mode.id)}
-                className={`p-1.5 rounded-md transition-colors ${
+                className={`p-1.5 rounded-2xl transition-colors ${
                   viewMode === mode.id
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
@@ -104,13 +104,13 @@ export default function CalendarHeader({
         } justify-end`}
       >
         {/* View Switcher Desktop - text/icons */}
-        <div className="hidden sm:flex bg-muted/50 p-1 rounded-lg">
+        <div className="hidden sm:flex bg-muted/50 p-1 rounded-[2rem]">
           {VIEW_MODES.map((mode) => (
             <button
               key={mode.id}
               type="button"
               onClick={() => setViewMode(mode.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-medium transition-colors ${
                 viewMode === mode.id
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"

@@ -298,7 +298,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                 )}
 
                 {place.needsUpdate && (
-                  <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between gap-4">
+                  <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl-custom flex items-center justify-between gap-4">
                     <div className="space-y-1">
                       <p className="text-sm font-bold">Veraltete Daten?</p>
                       <p className="text-xs text-muted-foreground">
@@ -310,7 +310,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                       onClick={refreshFromOSM}
                       disabled={updating}
                       size="icon"
-                      className="rounded-lg"
+                      className="rounded-[2rem]"
                     >
                       <RefreshCcw
                         size={16}
@@ -353,7 +353,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                   </h2>
                   <div className="grid grid-cols-1 gap-3">
                     {place.address && (
-                      <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                      <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-[2rem]">
                         <MapPin
                           size={18}
                           className="text-muted-foreground shrink-0 mt-0.5"
@@ -364,7 +364,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                     {place.phone && (
                       <a
                         href={`tel:${place.phone}`}
-                        className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl hover:bg-muted/50 transition-colors"
+                        className="flex items-center gap-3 p-4 bg-muted/30 rounded-[2rem] hover:bg-muted/50 transition-colors"
                       >
                         <Phone
                           size={18}
@@ -378,7 +378,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                         href={place.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl hover:bg-muted/50 transition-colors"
+                        className="flex items-center gap-3 p-4 bg-muted/30 rounded-[2rem] hover:bg-muted/50 transition-colors"
                       >
                         <Globe
                           size={18}
@@ -392,7 +392,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                     {place.email && (
                       <a
                         href={`mailto:${place.email}`}
-                        className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl hover:bg-muted/50 transition-colors"
+                        className="flex items-center gap-3 p-4 bg-muted/30 rounded-[2rem] hover:bg-muted/50 transition-colors"
                       >
                         <Mail
                           size={18}
@@ -412,7 +412,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                     </h2>
                     <div className="space-y-3">
                       {place.details?.cuisine && (
-                        <div className="p-4 bg-muted/30 rounded-xl">
+                        <div className="p-4 bg-muted/30 rounded-[2rem]">
                           <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
                             {t("cuisine")}
                           </p>
@@ -420,7 +420,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                         </div>
                       )}
                       {place.openingHours && (
-                        <div className="p-4 bg-muted/30 rounded-xl">
+                        <div className="p-4 bg-muted/30 rounded-[2rem]">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                               <p className="text-[10px] uppercase font-bold text-muted-foreground">
@@ -444,7 +444,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                               {place.formattedOpeningHours.map((day) => (
                                 <div
                                   key={day.name}
-                                  className={`flex justify-between items-center text-sm ${day.isToday ? "font-bold text-primary bg-primary/5 -mx-2 px-2 py-1 rounded-lg" : "text-muted-foreground/80"}`}
+                                  className={`flex justify-between items-center text-sm ${day.isToday ? "font-bold text-primary bg-primary/5 -mx-2 px-2 py-1 rounded-[2rem]" : "text-muted-foreground/80"}`}
                                 >
                                   <span className="w-24 shrink-0">
                                     {day.name}
@@ -487,7 +487,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                     onClick={() => setShowReviewModal(true)}
                     variant="secondary"
                     size="compact"
-                    className="bg-primary/10 text-primary hover:bg-primary/20 rounded-lg"
+                    className="bg-primary/10 text-primary hover:bg-primary/20 rounded-[2rem]"
                   >
                     <Plus size={14} />
                     {t("addReview")}
@@ -500,7 +500,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                       place.reviews.map((review) => (
                         <div
                           key={review.id}
-                          className="p-4 bg-card border border-border rounded-2xl space-y-3 shadow-sm"
+                          className="p-4 bg-card border border-border rounded-xl-custom space-y-3 shadow-sm"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -556,7 +556,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
                         </div>
                       ))
                     ) : (
-                      <div className="p-10 border-2 border-dashed border-border rounded-3xl text-center text-muted-foreground text-sm">
+                      <div className="p-10 border-2 border-dashed border-border rounded-[2rem] text-center text-muted-foreground text-sm">
                         {t("noReviews")}
                       </div>
                     )}
@@ -585,9 +585,9 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
 
       {showOSMInfo && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-card border border-border rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="bg-card border border-border rounded-[2rem] shadow-2xl max-w-sm w-full p-6 space-y-4 animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3 text-primary">
-              <div className="p-2 bg-primary/10 rounded-xl">
+              <div className="p-2 bg-primary/10 rounded-[2rem]">
                 <Info size={24} />
               </div>
               <h3 className="font-bold text-lg">{t("osmInfoTitle")}</h3>
@@ -598,7 +598,7 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
             <Button
               type="button"
               onClick={() => setShowOSMInfo(false)}
-              className="w-full py-3 rounded-xl"
+              className="w-full py-3 rounded-[2rem]"
             >
               {tc("ok")}
             </Button>
