@@ -74,7 +74,7 @@ export default function FeedDashboard() {
                   <Link
                     key={forum.id}
                     href={`/forum/${forum.id}`}
-                    className="group relative bg-sidebar border border-sidebar-border rounded-xl-custom overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
+                    className="group relative bg-sidebar border border-sidebar-border rounded-[2rem] overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
                   >
                     <div className="aspect-[21/9] w-full bg-muted relative">
                       {forum.image ? (
@@ -106,12 +106,14 @@ export default function FeedDashboard() {
                       </div>
                       <div className="pt-2 flex items-center justify-between mt-auto">
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <MessageSquare size={14} />
-                            <span>
-                              {t("newPostsCount", { count: forum.postCount })}
-                            </span>
-                          </div>
+                          {forum.postCount > 0 && (
+                            <div className="flex items-center gap-1">
+                              <MessageSquare size={14} />
+                              <span>
+                                {t("newPostsCount", { count: forum.postCount })}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <ArrowRight
                           size={18}

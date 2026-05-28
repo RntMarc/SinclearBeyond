@@ -18,7 +18,8 @@ export function ThemeProvider({ children }) {
 
   const isChristmasTime = () => {
     const now = new Date();
-    return now.getMonth() === 11; // December
+    const month = now.getMonth();
+    return month === 11 || month === 0; // December or January
   };
 
   const activeEffects = {
