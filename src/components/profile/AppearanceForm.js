@@ -59,8 +59,10 @@ export default function AppearanceForm({ initialPreferences }) {
     <div className="space-y-12">
       <section>
         <div className="mb-8">
-           <span className="sticker sticker-lime mb-3">Settings</span>
-           <h2 className="text-3xl font-display font-black uppercase tracking-tighter">{t("title")}</h2>
+          <span className="sticker sticker-lime mb-3">Settings</span>
+          <h2 className="text-3xl font-display font-black uppercase tracking-tighter">
+            {t("title")}
+          </h2>
         </div>
 
         <Card className="p-8 md:p-12">
@@ -118,10 +120,15 @@ export default function AppearanceForm({ initialPreferences }) {
             <div className="pt-8 border-t border-white/5">
               <div className="flex flex-col gap-6">
                 <div className="p-6 bg-primary/5 rounded-[2rem] border border-primary/10">
-                   <p className="text-xs text-primary font-black uppercase tracking-widest mb-1">Marken-Identität</p>
-                   <p className="text-sm text-foreground/70 leading-relaxed">
-                     Sinclear Beyond nutzt ein fest definiertes, immersives Designsystem. Manuelle Farbanpassungen und Theme-Wechsel sind deaktiviert, um eine konsistente visuelle Qualität zu gewährleisten.
-                   </p>
+                  <p className="text-xs text-primary font-black uppercase tracking-widest mb-1">
+                    Marken-Identität
+                  </p>
+                  <p className="text-sm text-foreground/70 leading-relaxed">
+                    Sinclear Beyond nutzt ein fest definiertes, immersives
+                    Designsystem. Manuelle Farbanpassungen und Theme-Wechsel
+                    sind deaktiviert, um eine konsistente visuelle Qualität zu
+                    gewährleisten.
+                  </p>
                 </div>
 
                 <div className="flex justify-start">

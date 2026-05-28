@@ -1,9 +1,8 @@
-import { Syne, Plus_Jakarta_Sans } from "next/font/google";
-import { headers } from "next/headers";
+import { Plus_Jakarta_Sans, Syne } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
-import { getSession } from "@/lib/auth/session";
+import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 import "./globals.css";
 
 const syne = Syne({
@@ -28,11 +27,8 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }) {
-  const headersList = await headers();
-  const nonce = headersList.get("x-nonce") || "";
   const locale = await getLocale();
   const messages = await getMessages();
-  const session = await getSession();
 
   return (
     <html
@@ -43,6 +39,7 @@ export default async function RootLayout({ children }) {
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
             {children}
+            <OnboardingFlow />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

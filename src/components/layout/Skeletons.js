@@ -31,7 +31,10 @@ export function PhotosSkeleton() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {Array.from({ length: 12 }).map((_, i) => (
-        <Skeleton key={i} className="aspect-square w-full rounded-[2rem] shadow-xl" />
+        <Skeleton
+          key={i}
+          className="aspect-square w-full rounded-[2rem] shadow-xl"
+        />
       ))}
     </div>
   );

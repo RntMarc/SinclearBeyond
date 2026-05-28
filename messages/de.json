@@ -914,5 +914,28 @@
       "passwordNote": "Bitte speichere dein Passwort sicher ab. Es kann nicht wiederhergestellt werden.",
       "continueToChat": "Weiter zum Chat"
     }
+  },
+  "Onboarding": {
+    "step1Title": "Onboarding",
+    "kiWarning": "Diese App ist mit KI gevibecodet und kann daher Fehler enthalten.",
+    "feedbackNote": "Probleme und Kritik bitte direkt an Marc richten. Feedback kann auch auf der Feedback-Seite eingereicht werden.",
+    "trustTitle": "Freiwillige Angaben",
+    "trustNote": "Alle folgenden Angaben in deinem Profil sind freiwillig. Gib sie nur an, wenn du dem Projekt und Marc vertraust.",
+    "continue": "Weiter",
+    "finish": "Abschließen",
+    "step2Title": "Sprache & Zeitzone",
+    "step2Desc": "Wähle deine bevorzugte Sprache und deine Zeitzone aus.",
+    "step3Title": "Geburtsdatum",
+    "step3Desc": "Dein Geburtsdatum hilft uns dabei, dir zu gratulieren! (Optional)",
+    "step4Title": "Social Media",
+    "step4Desc": "Verknüpfe deine Profile, damit andere dich finden können.",
+    "step5Title": "Kontaktmöglichkeiten",
+    "step5Desc": "Wie bist du am besten erreichbar?",
+    "step6Title": "Sicherheit & Login",
+    "passkeyNote": "Wir empfehlen die Nutzung von Passkeys für einen sicheren und einfachen Login ohne Passwort oder E-Mail-Codes.",
+    "passkeyRecommendTitle": "Passkeys empfohlen",
+    "passkeyRecommendDesc": "Sicherer als Passwörter und bequemer als Codes.",
+    "passwordManagerTitle": "Passwort-Manager",
+    "passwordManagerNote": "Nutze Tools wie Bitwarden oder AliasVault, um deine Passkeys sicher zu verwalten."
   }
 }

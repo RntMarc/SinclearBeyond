@@ -62,10 +62,13 @@ export default function HomeClient({
                   })}
                   {event.allDay
                     ? ""
-                    : ` • ${new Date(event.startAt).toLocaleTimeString("de-DE", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`}
+                    : ` • ${new Date(event.startAt).toLocaleTimeString(
+                        "de-DE",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}`}
                 </span>
               </div>
               <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
@@ -90,9 +93,9 @@ export default function HomeClient({
               </div>
               <div className="relative z-10">
                 <div className="flex items-center gap-2 text-secondary mb-4">
-                   <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center">
                     <CalendarCheck size={16} />
-                   </div>
+                  </div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                     {t("activePoll")}
                   </span>
@@ -101,7 +104,7 @@ export default function HomeClient({
                   {poll.title}
                 </span>
                 <div className="mt-6 flex items-center justify-between">
-                   <span className="text-xs text-muted-foreground font-bold">
+                  <span className="text-xs text-muted-foreground font-bold">
                     von {poll.creatorName}
                   </span>
                   <div className="px-4 py-2 bg-secondary text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_var(--secondary-glow)]">
@@ -122,9 +125,9 @@ export default function HomeClient({
               </div>
               <div className="relative z-10">
                 <div className="flex items-center gap-2 text-primary mb-4">
-                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                     <CalendarCheck size={16} />
-                   </div>
+                  </div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                     {t("finalizedPoll")}
                   </span>
@@ -135,7 +138,10 @@ export default function HomeClient({
                 {poll.options?.[0]?.dateValue && (
                   <div className="mt-6 flex items-center justify-between">
                     <span className="text-[10px] text-primary font-black uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">
-                      {new Date(poll.options[0].dateValue).toLocaleDateString("de-DE", { day: "2-digit", month: "long" })}
+                      {new Date(poll.options[0].dateValue).toLocaleDateString(
+                        "de-DE",
+                        { day: "2-digit", month: "long" },
+                      )}
                     </span>
                     <ChevronRight size={20} className="text-primary" />
                   </div>
@@ -160,7 +166,9 @@ export default function HomeClient({
               className="block p-5 bg-white/5 border border-white/5 rounded-[2rem] transition-all group flex items-center justify-between active:scale-[0.98]"
             >
               <div className="flex flex-col">
-                <span className="font-bold text-foreground text-lg tracking-tight">{trip.name}</span>
+                <span className="font-bold text-foreground text-lg tracking-tight">
+                  {trip.name}
+                </span>
                 <span className="text-xs text-muted-foreground uppercase font-black tracking-widest mt-1">
                   {new Date(trip.start).toLocaleDateString("de-DE", {
                     day: "2-digit",
@@ -215,11 +223,17 @@ export default function HomeClient({
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <span className={cn(
-                  "text-[10px] font-black uppercase px-2 py-1 rounded-sm rotate-3 shadow-lg",
-                  user.daysUntil === 0 ? "bg-primary text-primary-foreground" : "bg-white/10 text-white"
-                )}>
-                  {user.daysUntil === 0 ? "Heute! 🎉" : `${user.daysUntil} Tage`}
+                <span
+                  className={cn(
+                    "text-[10px] font-black uppercase px-2 py-1 rounded-sm rotate-3 shadow-lg",
+                    user.daysUntil === 0
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-white/10 text-white",
+                  )}
+                >
+                  {user.daysUntil === 0
+                    ? "Heute! 🎉"
+                    : `${user.daysUntil} Tage`}
                 </span>
               </div>
             </button>
@@ -282,7 +296,9 @@ export default function HomeClient({
                 </div>
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-full text-primary">
                   <Star size={10} fill="currentColor" />
-                  <span className="text-[10px] font-black">{review.rating}</span>
+                  <span className="text-[10px] font-black">
+                    {review.rating}
+                  </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -325,7 +341,9 @@ export default function HomeClient({
                 </div>
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-full text-primary">
                   <Star size={10} fill="currentColor" />
-                  <span className="text-[10px] font-black">{review.rating}</span>
+                  <span className="text-[10px] font-black">
+                    {review.rating}
+                  </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -374,10 +392,12 @@ function Section({ title, href, children, className = "" }) {
         className="group flex items-center justify-between mb-8"
       >
         <h2 className="text-xl md:text-2xl font-display font-bold tracking-tighter uppercase leading-none">
-          <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">{title}</span>
+          <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+            {title}
+          </span>
         </h2>
         <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-           <ChevronRight size={16} />
+          <ChevronRight size={16} />
         </div>
       </Link>
       <div className={className}>{children}</div>

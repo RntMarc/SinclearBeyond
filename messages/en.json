@@ -880,5 +880,28 @@
       "passwordNote": "Please save your password securely. It cannot be recovered.",
       "continueToChat": "Continue to Chat"
     }
+  },
+  "Onboarding": {
+    "step1Title": "Onboarding",
+    "kiWarning": "This app is vibecoded with AI and may contain errors.",
+    "feedbackNote": "Please direct problems and criticism to Marc. Feedback can also be submitted on the feedback page.",
+    "trustTitle": "Voluntary Information",
+    "trustNote": "All subsequent information in your profile is voluntary. Only provide it if you trust the project and Marc.",
+    "continue": "Continue",
+    "finish": "Finish",
+    "step2Title": "Language & Timezone",
+    "step2Desc": "Select your preferred language and your timezone.",
+    "step3Title": "Date of Birth",
+    "step3Desc": "Your date of birth helps us congratulate you! (Optional)",
+    "step4Title": "Social Media",
+    "step4Desc": "Link your profiles so others can find you.",
+    "step5Title": "Contact Options",
+    "step5Desc": "What is the best way to reach you?",
+    "step6Title": "Security & Login",
+    "passkeyNote": "We recommend using passkeys for a secure and easy login without passwords or email codes.",
+    "passkeyRecommendTitle": "Passkeys recommended",
+    "passkeyRecommendDesc": "More secure than passwords and more convenient than codes.",
+    "passwordManagerTitle": "Password Manager",
+    "passwordManagerNote": "Use tools like Bitwarden or AliasVault to securely manage your passkeys."
   }
 }

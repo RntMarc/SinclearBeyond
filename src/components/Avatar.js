@@ -43,8 +43,10 @@ export default function Avatar({
   const containerClasses = cn(
     widthHeight,
     "rounded-full shrink-0 relative overflow-hidden",
-    src ? "bg-muted" : "bg-primary/20 flex items-center justify-center text-primary font-bold border-2 border-primary/30 shadow-[0_0_15px_rgba(135,255,157,0.2)]",
-    className
+    src
+      ? "bg-muted"
+      : "bg-primary/20 flex items-center justify-center text-primary font-bold border-2 border-primary/30 shadow-[0_0_15px_rgba(135,255,157,0.2)]",
+    className,
   );
 
   if (src) {

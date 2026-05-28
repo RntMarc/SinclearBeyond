@@ -24,20 +24,25 @@ export default function SubPageHeader({
           <div className="min-w-0">
             {subtitle && (
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{subtitle}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                  {subtitle}
+                </span>
               </div>
             )}
             <h1 className="text-xl md:text-2xl font-display font-black uppercase tracking-tighter truncate flex items-center gap-3">
-              {Icon && <Icon className="text-primary glow-primary shrink-0" size={20} />}
+              {Icon && (
+                <Icon
+                  className="text-primary glow-primary shrink-0"
+                  size={20}
+                />
+              )}
               {title}
             </h1>
           </div>
         </div>
 
         {children && (
-          <div className="flex items-center gap-3 shrink-0">
-            {children}
-          </div>
+          <div className="flex items-center gap-3 shrink-0">{children}</div>
         )}
       </div>
     </header>

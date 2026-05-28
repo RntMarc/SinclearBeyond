@@ -15,12 +15,17 @@ export default function Button({
   ...props
 }) {
   const variants = {
-    primary: "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.3)] hover:brightness-110",
-    secondary: "bg-secondary text-secondary-foreground shadow-[0_0_20px_rgba(150,0,255,0.2)] hover:brightness-110",
-    accent: "bg-accent text-accent-foreground shadow-[0_0_20px_rgba(255,0,150,0.2)] hover:brightness-110",
-    destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+    primary:
+      "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.3)] hover:brightness-110",
+    secondary:
+      "bg-secondary text-secondary-foreground shadow-[0_0_20px_rgba(150,0,255,0.2)] hover:brightness-110",
+    accent:
+      "bg-accent text-accent-foreground shadow-[0_0_20px_rgba(255,0,150,0.2)] hover:brightness-110",
+    destructive:
+      "bg-destructive text-destructive-foreground hover:bg-destructive/90",
     ghost: "hover:bg-white/10 text-foreground",
-    outline: "border border-white/10 bg-transparent hover:bg-white/5 text-foreground",
+    outline:
+      "border border-white/10 bg-transparent hover:bg-white/5 text-foreground",
   };
 
   const sizes = {

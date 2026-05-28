@@ -125,7 +125,10 @@ export default function FeedItem({
                   <Heart size={12} className="fill-accent text-accent" />
                 )}
                 {post.visibility === 2 && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" title="Nur enge Kontakte" />
+                  <div
+                    className="w-1.5 h-1.5 rounded-full bg-primary"
+                    title="Nur enge Kontakte"
+                  />
                 )}
               </div>
               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-0.5">
@@ -185,7 +188,9 @@ export default function FeedItem({
               <div className="relative aspect-video w-full overflow-hidden rounded-[2.5rem] bg-black/20 border border-white/5 shadow-2xl">
                 <img
                   src={previewImage}
-                  alt={post.title || post.newsTitle || post.otherTitle || "Preview"}
+                  alt={
+                    post.title || post.newsTitle || post.otherTitle || "Preview"
+                  }
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />
@@ -203,7 +208,9 @@ export default function FeedItem({
                     <h3 className="font-bold text-xl tracking-tight text-white">
                       {post.title}
                     </h3>
-                    <p className="text-primary font-black uppercase text-xs tracking-widest mt-1">{post.artist}</p>
+                    <p className="text-primary font-black uppercase text-xs tracking-widest mt-1">
+                      {post.artist}
+                    </p>
                   </div>
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
                     <Music size={20} />
@@ -214,18 +221,20 @@ export default function FeedItem({
                     { label: "Spotify", url: post.spotifyUrl },
                     { label: "YouTube Music", url: post.youtubeMusicUrl },
                     { label: "YouTube", url: post.youtubeUrl },
-                    { label: "SoundCloud", url: post.soundcloudUrl }
-                  ].filter(link => link.url).map(link => (
-                    <a
-                      key={link.label}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest transition-all"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
+                    { label: "SoundCloud", url: post.soundcloudUrl },
+                  ]
+                    .filter((link) => link.url)
+                    .map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest transition-all"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
                 </div>
               </div>
             )}
@@ -233,7 +242,9 @@ export default function FeedItem({
             {post.category === "video" && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="sticker sticker-lime text-[8px]">{post.videoPlatform}</span>
+                  <span className="sticker sticker-lime text-[8px]">
+                    {post.videoPlatform}
+                  </span>
                 </div>
                 <a
                   href={post.videoUrl}
@@ -255,7 +266,9 @@ export default function FeedItem({
             {post.category === "news" && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="sticker text-[8px] bg-secondary text-white">{post.newsSite}</span>
+                  <span className="sticker text-[8px] bg-secondary text-white">
+                    {post.newsSite}
+                  </span>
                 </div>
                 <a
                   href={post.newsUrl}
@@ -312,7 +325,7 @@ export default function FeedItem({
                 "flex items-center gap-3 px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
                 hasVoted
                   ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.3)]"
-                  : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground"
+                  : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground",
               )}
             >
               <ArrowBigUp

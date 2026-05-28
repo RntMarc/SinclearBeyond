@@ -1,0 +1,204 @@
+$ next dev --port 3010
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3010
+- Network:       http://192.168.0.2:3010
+✓ Ready in 504ms
+
+○ Compiling /verify-onboarding ...
+Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'Could not resolve `Onboarding` in messages for locale `de`.'
+}
+Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'Could not resolve `Onboarding` in messages for locale `de`.'
+}
+Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'Could not resolve `Onboarding` in messages for locale `de`.'
+}
+Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'Could not resolve `Onboarding` in messages for locale `de`.'
+}
+Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'Could not resolve `Onboarding` in messages for locale `de`.'
+}
+Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'Could not resolve `Onboarding` in messages for locale `de`.'
+}
+ GET /verify-onboarding 200 in 7.9s (next.js: 4.4s, application-code: 3.6s)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:139:18)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:144:20)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:148:18)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:152:20)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:154:63)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:328:54)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:139:18)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:144:20)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:148:18)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:152:20)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:154:63)
+[browser] Error: MISSING_MESSAGE: Could not resolve `Onboarding` in messages for locale `de`.
+    at OnboardingFlow (src/components/onboarding/OnboardingFlow.js:23:28)
+    at VerifyOnboardingPage (src/app/verify-onboarding/page.js:15:7)
+  21 |
+  22 | export default function OnboardingFlow({ user, contact, social, preferences }) {
+> 23 |   const t = useTranslations("Onboarding");
+     |                            ^
+  24 |   const tCommon = useTranslations("Common");
+  25 |   const router = useRouter();
+  26 | (src/components/onboarding/OnboardingFlow.js:328:54)
+✓ Compiled in 112ms
+✓ Compiled in 74ms
+ GET /verify-onboarding 200 in 137ms (next.js: 8ms, application-code: 129ms)
+✓ Compiled in 167ms
