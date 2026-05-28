@@ -1,29 +1,7 @@
 "use client";
 
-import {
-  Banknote,
-  Calendar,
-  CalendarCheck,
-  Camera,
-  Compass,
-  FileText,
-  Gift,
-  Home,
-  Info,
-  Lock,
-  LogOut,
-  Map as MapIcon,
-  Menu,
-  MessageCircle,
-  MessageSquarePlus,
-  MoreHorizontal,
-  Newspaper,
-  Settings,
-  SquarePlay,
-  Star,
-  Users,
-  X,
-} from "lucide-react";
+import { MoreHorizontal, X } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
