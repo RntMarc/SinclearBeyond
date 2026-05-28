@@ -19,9 +19,17 @@ function getNumCols(isMobile) {
   return 1;
 }
 
+const columnIds = ["primary", "secondary", "tertiary"];
+
 function distribute(items, n) {
-  const cols = Array.from({ length: n }, () => []);
-  items.forEach((item, i) => cols[i % n].push(item));
+  const list = Array.isArray(items) ? items : [];
+  const cols = Array.from({ length: n }, (_, index) => ({
+    id: columnIds[index] || `column-${index + 1}`,
+    items: [],
+  }));
+  list.forEach((item, i) => {
+    cols[i % n].items.push(item);
+  });
   return cols;
 }
 
@@ -31,7 +39,7 @@ export default function AktuellContent({ _userId }) {
   const [activeTab, setActiveTab] = useState("new"); // "new", "archive"
   const [items, setItems] = useState([]);
   const [importantItems, setImportantItems] = useState([]);
-  const [columns, setColumns] = useState([[]]);
+  const [columns, setColumns] = useState([{ id: columnIds[0], items: [] }]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -41,7 +49,7 @@ export default function AktuellContent({ _userId }) {
     try {
       const { getImportantNews } = await import("@/lib/news/actions");
       const data = await getImportantNews();
-      setImportantItems(data);
+      setImportantItems(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching important news:", error);
     }
@@ -51,7 +59,7 @@ export default function AktuellContent({ _userId }) {
     try {
       const { getArchivedNews } = await import("@/lib/news/actions");
       const data = await getArchivedNews();
-      setItems(data);
+      setItems(Array.isArray(data) ? data : []);
       setHasMore(false);
     } catch (error) {
       console.error("Error fetching archived news:", error);
@@ -63,9 +71,10 @@ export default function AktuellContent({ _userId }) {
     try {
       const res = await fetch("/api/news?page=1");
       const data = await res.json();
-      setItems(data);
+      const articles = res.ok && Array.isArray(data) ? data : [];
+      setItems(articles);
       setPage(1);
-      setHasMore(data.length > 0);
+      setHasMore(articles.length > 0);
     } catch (error) {
       console.error("Error fetching initial news:", error);
     } finally {
@@ -94,10 +103,11 @@ export default function AktuellContent({ _userId }) {
     try {
       const res = await fetch(`/api/news?page=${nextPage}`);
       const data = await res.json();
-      if (data.length === 0) {
+      const articles = res.ok && Array.isArray(data) ? data : [];
+      if (articles.length === 0) {
         setHasMore(false);
       } else {
-        setItems((prev) => [...prev, ...data]);
+        setItems((prev) => [...prev, ...articles]);
         setPage(nextPage);
       }
     } catch (error) {
@@ -215,11 +225,13 @@ export default function AktuellContent({ _userId }) {
       )}
 
       <div className="flex gap-6 items-start">
-        {columns.map((col, ci) => (
-          <div key={ci} className="flex-1 flex flex-col gap-6">
-            {col.map((item, pi) => (
+        {columns.map((col) => (
+          <div key={col.id} className="flex-1 flex flex-col gap-6">
+            {col.items.map((item) => (
               <NewsItem
-                key={`${item.link || item.id}-${ci}-${pi}`}
+                key={`${item.sourceId || item.sourceName || "news"}-${
+                  item.link || item.id || item.title
+                }`}
                 article={item}
                 onUpvote={() => handleUpvote(item)}
               />
@@ -255,6 +267,7 @@ export default function AktuellContent({ _userId }) {
 }
 
 function NewsItem({ article, onUpvote, _isSaved }) {
+  const t = useTranslations("News");
   const date = article.pubDate
     ? new Date(article.pubDate).toLocaleDateString("de-DE", {
         day: "2-digit",
