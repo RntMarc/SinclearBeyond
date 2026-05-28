@@ -1,0 +1,1 @@
+ALTER TABLE `UserPreferences` MODIFY COLUMN `primaryColor` varchar(7) NOT NULL DEFAULT 'var(--primary)';
