@@ -63,7 +63,7 @@ export const userPreferences = mysqlTable("UserPreferences", {
   theme: mysqlEnum("theme", ["light", "dark", "neo-retro"])
     .notNull()
     .default("dark"),
-  primaryColor: varchar("primaryColor", { length: 7 })
+  primaryColor: varchar("primaryColor", { length: 20 })
     .notNull()
     .default("var(--primary)"),
   timezone: varchar("timezone", { length: 191 }),

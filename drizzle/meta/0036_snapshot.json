@@ -2940,7 +2940,7 @@
         },
         "primaryColor": {
           "name": "primaryColor",
-          "type": "varchar(7)",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
