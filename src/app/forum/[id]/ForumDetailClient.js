@@ -227,7 +227,7 @@ export default function ForumDetailClient({ forumId, userId }) {
       {data.isMember && (
         <button
           onClick={() => setShowFormModal(true)}
-          className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-40"
+          className="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-40"
         >
           <Plus size={28} />
         </button>

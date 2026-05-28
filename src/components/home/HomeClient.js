@@ -97,7 +97,7 @@ export default function HomeClient({
                     {t("activePoll")}
                   </span>
                 </div>
-                <span className="font-display font-bold text-xl md:text-2xl text-foreground block tracking-tighter uppercase leading-tight">
+                <span className="font-display font-black text-2xl text-foreground block tracking-tighter uppercase leading-tight">
                   {poll.title}
                 </span>
                 <div className="mt-6 flex items-center justify-between">
@@ -129,7 +129,7 @@ export default function HomeClient({
                     {t("finalizedPoll")}
                   </span>
                 </div>
-                <span className="font-display font-bold text-xl md:text-2xl text-foreground block tracking-tighter uppercase leading-tight">
+                <span className="font-display font-black text-2xl text-foreground block tracking-tighter uppercase leading-tight">
                   {poll.title}
                 </span>
                 {poll.options?.[0]?.dateValue && (
@@ -231,7 +231,7 @@ export default function HomeClient({
       {forumPosts.map((forum) => (
         <Section
           key={forum.id}
-          title={forum.name || t("latestPosts")}
+          title={forum.name}
           href={`/forum/${forum.id}`}
           className="space-y-6"
         >
@@ -373,7 +373,7 @@ function Section({ title, href, children, className = "" }) {
         href={href}
         className="group flex items-center justify-between mb-8"
       >
-        <h2 className="text-xl md:text-2xl font-display font-bold tracking-tighter uppercase leading-none">
+        <h2 className="text-2xl font-display font-black tracking-tighter uppercase leading-none">
           <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">{title}</span>
         </h2>
         <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">

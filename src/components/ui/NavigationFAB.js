@@ -26,7 +26,7 @@ export default function NavigationFAB({ lat, lon, name }) {
   };
 
   return (
-    <div className="fixed md:absolute bottom-24 md:bottom-4 right-4 z-[20]">
+    <div className="absolute bottom-4 right-4 z-[20]">
       <button
         type="button"
         onClick={handleNavigation}

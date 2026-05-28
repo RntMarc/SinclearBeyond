@@ -185,33 +185,6 @@
     @apply text-primary mr-2;
   }
 
-  /* Rainbow Gradient Animation */
-  @keyframes rainbow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  .animate-rainbow {
-    background: linear-gradient(
-      to right,
-      #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff
-    );
-    background-size: 200% auto;
-    animation: rainbow 5s linear infinite;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .bg-rainbow {
-    background: linear-gradient(
-      45deg,
-      #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff
-    );
-    background-size: 200% 200%;
-    animation: rainbow 10s ease infinite;
-  }
-
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;

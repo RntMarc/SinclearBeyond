@@ -35,17 +35,14 @@ A curated, high-contrast palette for maximum impact.
 - Active state: `scale-95`.
 
 ### Navigation (Mobile-First)
-- **Mobile:** Floating bottom navigation bar with 5 core categories + "More" drawer. FABs are moved to `bottom-24` on mobile to avoid overlap.
-- **Desktop:** Minimalist sidebar with grouped categories (Main, Organization, Content, System, Admin) and glassmorphism effect.
+- **Mobile:** Floating bottom navigation bar with 5 core categories + "More" drawer.
+- **Desktop:** Minimalist sidebar with grouped categories and glassmorphism effect.
 
 ## 5. Visual Accents
 - **Noise Texture:** A subtle global noise overlay (3% opacity) for a tactile, high-end feel.
 - **Glow Effects:** Soft halos behind primary elements and headlines.
 - **Stickers:** Asymmetric, rotated badge elements for subtitles and status indicators.
 - **Gradients:** Deep, colorful background blur gradients (Neon Lime & Electric Purple).
-- **Seasonal Effects:**
-  - **Winter (Dec-Jan):** Snow particle overlay and snowflake accents.
-  - **Pride Month (June):** Rainbow gradient for logo/active navigation, animated rainbow text (`animate-rainbow`), and falling pride symbols (`PrideEffect`).
 
 ## 6. Implementation Rules
 - **Layering:** Use absolute positioning and blur for depth.

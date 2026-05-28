@@ -127,7 +127,7 @@ export default function ClientLeisureList({ initialPlaces }) {
         <Button
           type="button"
           onClick={() => setShowAddModal(true)}
-          className="fixed bottom-24 right-6 w-14 h-14 z-50 shadow-lg"
+          className="fixed bottom-6 right-6 w-14 h-14 z-50 shadow-lg"
           size="icon"
           aria-label={t("addPlace")}
         >

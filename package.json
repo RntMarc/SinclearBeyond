@@ -12,7 +12,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.8",
     "@simplewebauthn/browser": "^13.3.0",
-    "@simplewebauthn/server": "^13.3.1",
+    "@simplewebauthn/server": "^13.3.0",
     "@tiptap/extension-collaboration": "^3.23.6",
     "@tiptap/react": "^3.23.6",
     "@tiptap/starter-kit": "^3.23.6",
@@ -46,7 +46,7 @@
     "rate-limiter-flexible": "^11.1.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "shadcn": "^4.8.2",
+    "shadcn": "^4.8.1",
     "sharp": "^0.34.5",
     "simple-icons": "^16.21.0",
     "tailwind-merge": "^3.6.0",

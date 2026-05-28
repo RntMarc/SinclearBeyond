@@ -31,8 +31,6 @@ import { useEffect, useState, useMemo } from "react";
 import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
 import { useTheme } from "@/components/layout/ThemeProvider";
-import PrideEffect from "@/components/layout/PrideEffect";
-import SnowEffect from "@/components/layout/SnowEffect";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
@@ -165,28 +163,16 @@ export default function AppShell({ children, user, session }) {
   ];
 
   return (
-    <div className={cn(
-      "flex h-screen overflow-hidden bg-background font-sans",
-      activeEffects.showPride && "border-t-4 border-rainbow"
-    )}>
-      {activeEffects.showPride && <PrideEffect />}
-      {activeEffects.showSnow && <SnowEffect />}
-
+    <div className="flex h-screen overflow-hidden bg-background font-sans">
       {/* Desktop Sidebar */}
       {!isMobile && (
         <aside className="w-72 flex flex-col border-r border-white/5 bg-black/20 backdrop-blur-3xl z-40 relative">
           <div className="p-8 shrink-0">
             <Link href="/home" className="flex items-center gap-3 group">
-              <div className={cn(
-                "w-10 h-10 rounded-[2rem] flex items-center justify-center transition-transform group-hover:scale-110",
-                activeEffects.showPride ? "bg-rainbow shadow-[0_0_20px_rgba(255,0,0,0.4)]" : "bg-primary shadow-[0_0_20px_rgba(135,255,157,0.4)]"
-              )}>
-                <span className={cn("font-black text-xl", activeEffects.showPride ? "text-white" : "text-primary-foreground")}>S</span>
+              <div className="w-10 h-10 bg-primary rounded-[2rem] flex items-center justify-center shadow-[0_0_20px_rgba(135,255,157,0.4)] group-hover:scale-110 transition-transform">
+                <span className="font-black text-primary-foreground text-xl">S</span>
               </div>
-              <span className={cn(
-                "font-display font-black text-xl tracking-tighter uppercase",
-                activeEffects.showPride && "animate-rainbow"
-              )}>Sinclear</span>
+              <span className="font-display font-black text-xl tracking-tighter uppercase">Sinclear</span>
             </Link>
           </div>
 
@@ -209,13 +195,6 @@ export default function AppShell({ children, user, session }) {
               <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Content</p>
               <div className="space-y-1">
                 {navGroups.content.map(item => <SidebarItem key={item.href} {...item} active={pathname.startsWith(item.href)} />)}
-              </div>
-            </div>
-
-            <div>
-              <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">System</p>
-              <div className="space-y-1">
-                {navGroups.system.map(item => <SidebarItem key={item.href} {...item} active={pathname.startsWith(item.href)} />)}
               </div>
             </div>
 
@@ -248,27 +227,21 @@ export default function AppShell({ children, user, session }) {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/10 blur-[120px] -z-10 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] -z-10 pointer-events-none" />
 
-        <div className="flex-1 overflow-y-auto scroll-smooth relative z-10 pb-32 md:pb-0">
+        <div className="flex-1 overflow-y-auto scroll-smooth relative z-10 pb-24 md:pb-0">
           {children}
         </div>
 
         {/* Mobile Bottom Navigation */}
         {isMobile && (
           <>
-            <nav className={cn(
-              "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 p-2 backdrop-blur-2xl border rounded-full shadow-2xl w-[90%] max-w-md",
-              activeEffects.showPride ? "bg-rainbow/80 border-white/20" : "bg-black/60 border-white/10"
-            )}>
+            <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 p-2 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-full shadow-2xl w-[90%] max-w-md">
               {mobileBottomNav.map((item, idx) => {
                 if (item.isMore) {
                   return (
                     <button
                       key="more"
                       onClick={() => setShowMoreMobile(true)}
-                      className={cn(
-                        "flex-1 flex flex-col items-center justify-center gap-1 p-3 rounded-full transition-all",
-                        activeEffects.showPride ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground"
-                      )}
+                      className="flex-1 flex flex-col items-center justify-center gap-1 p-3 rounded-full text-muted-foreground hover:text-foreground transition-all"
                     >
                       <item.icon size={20} />
                     </button>
@@ -281,11 +254,7 @@ export default function AppShell({ children, user, session }) {
                     href={item.href}
                     className={cn(
                       "flex-1 flex flex-col items-center justify-center gap-1 p-3 rounded-full transition-all relative",
-                      active
-                        ? activeEffects.showPride
-                          ? "bg-white text-rainbow shadow-[0_0_20px_rgba(255,255,255,0.4)] scale-110"
-                          : "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.4)] scale-110"
-                        : activeEffects.showPride ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                      active ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.4)] scale-110" : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <item.icon size={20} />
@@ -313,9 +282,7 @@ export default function AppShell({ children, user, session }) {
                       onClick={() => setShowMoreMobile(false)}
                       className={cn(
                         "flex flex-col gap-3 p-6 rounded-[2rem] border border-white/5 transition-all active:scale-95",
-                        pathname.startsWith(item.href)
-                          ? activeEffects.showPride ? "bg-rainbow text-white" : "bg-primary text-primary-foreground"
-                          : "bg-white/5 text-foreground"
+                        pathname.startsWith(item.href) ? "bg-primary text-primary-foreground" : "bg-white/5 text-foreground"
                       )}
                     >
                       <item.icon size={24} />
@@ -336,17 +303,13 @@ export default function AppShell({ children, user, session }) {
 }
 
 function SidebarItem({ href, label, icon: Icon, active, badge }) {
-  const { activeEffects } = useTheme();
-
   return (
     <Link
       href={href}
       className={cn(
         "flex items-center gap-4 px-4 py-3 rounded-[2rem] transition-all group relative",
         active
-          ? activeEffects.showPride
-            ? "bg-rainbow text-white shadow-[0_0_20px_rgba(255,0,0,0.25)] font-bold scale-[1.02]"
-            : "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.25)] font-bold scale-[1.02]"
+          ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(135,255,157,0.25)] font-bold scale-[1.02]"
           : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
       )}
     >

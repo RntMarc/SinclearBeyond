@@ -200,7 +200,7 @@ export default function LoginPage() {
             <div className="w-16 h-16 bg-primary rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(135,255,157,0.4)]">
               <ShieldCheck className="text-primary-foreground" size={32} />
             </div>
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4 uppercase tracking-tighter leading-none">
+            <h1 className="text-4xl md:text-5xl font-display font-black text-foreground mb-4 uppercase tracking-tighter leading-none">
               {t("enterCode")}
             </h1>
             <p className="text-muted-foreground font-medium">
@@ -263,7 +263,7 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-primary rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(135,255,157,0.4)]">
              <span className="text-primary-foreground font-black text-3xl">S</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4 uppercase tracking-tighter leading-none">
+          <h1 className="text-4xl md:text-5xl font-display font-black text-foreground mb-4 uppercase tracking-tighter leading-none">
             {mode === "login" ? t("welcomeBack") : t("createAccount")}
           </h1>
           <p className="text-muted-foreground font-medium text-sm">
