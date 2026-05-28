@@ -144,7 +144,7 @@ export default function AdminPage({ user, session }) {
                   <button
                     type="button"
                     onClick={() => setShowRssModal(true)}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-[2rem] text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
                   >
                     <Plus size={16} />
                     Quelle anlegen
@@ -155,17 +155,17 @@ export default function AdminPage({ user, session }) {
                   {loading ? (
                     <div className="animate-pulse space-y-3 col-span-full">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                        <div key={i} className="h-20 bg-muted rounded-[2rem]" />
                       ))}
                     </div>
                   ) : rssSources.length > 0 ? (
                     rssSources.map((source) => (
                       <div
                         key={source.id}
-                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-[2rem]"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground overflow-hidden">
+                          <div className="w-10 h-10 rounded-[2rem] bg-muted flex items-center justify-center text-muted-foreground overflow-hidden">
                             <img
                               src={`https://www.google.com/s2/favicons?domain=${new URL(source.url).hostname}&sz=64`}
                               alt={source.name}
@@ -201,7 +201,7 @@ export default function AdminPage({ user, session }) {
                       </div>
                     ))
                   ) : (
-                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-[2rem] text-muted-foreground text-sm">
                       Keine RSS-Quellen vorhanden.
                     </div>
                   )}
@@ -225,7 +225,7 @@ export default function AdminPage({ user, session }) {
                   <button
                     type="button"
                     onClick={() => setShowForumModal(true)}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-[2rem] text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
                   >
                     <Plus size={16} />
                     Forum anlegen
@@ -236,17 +236,17 @@ export default function AdminPage({ user, session }) {
                   {loading ? (
                     <div className="animate-pulse space-y-3 col-span-full">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                        <div key={i} className="h-20 bg-muted rounded-[2rem]" />
                       ))}
                     </div>
                   ) : forums.length > 0 ? (
                     forums.map((forum) => (
                       <div
                         key={forum.id}
-                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-[2rem]"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden flex-shrink-0">
+                          <div className="w-10 h-10 rounded-[2rem] bg-muted overflow-hidden flex-shrink-0">
                             {forum.image ? (
                               <img
                                 src={forum.image}
@@ -278,7 +278,7 @@ export default function AdminPage({ user, session }) {
                       </div>
                     ))
                   ) : (
-                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-[2rem] text-muted-foreground text-sm">
                       Keine Foren vorhanden.
                     </div>
                   )}
@@ -302,7 +302,7 @@ export default function AdminPage({ user, session }) {
                   <button
                     type="button"
                     onClick={() => setShowSubscriptionModal(true)}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-xl text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-[2rem] text-sm font-medium hover:bg-sidebar-accent/80 transition-all"
                   >
                     <Plus size={16} />
                     Abo anlegen
@@ -313,14 +313,14 @@ export default function AdminPage({ user, session }) {
                   {loading ? (
                     <div className="animate-pulse space-y-3 col-span-full">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-20 bg-muted rounded-xl" />
+                        <div key={i} className="h-20 bg-muted rounded-[2rem]" />
                       ))}
                     </div>
                   ) : subscriptions.length > 0 ? (
                     subscriptions.map((sub) => (
                       <div
                         key={sub.id}
-                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                        className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-[2rem]"
                       >
                         <div>
                           <h3 className="font-medium text-sm">{sub.name}</h3>
@@ -344,7 +344,7 @@ export default function AdminPage({ user, session }) {
                       </div>
                     ))
                   ) : (
-                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                    <div className="col-span-full p-8 text-center bg-sidebar border border-sidebar-border rounded-[2rem] text-muted-foreground text-sm">
                       Keine Abonnements vorhanden.
                     </div>
                   )}
@@ -370,7 +370,7 @@ export default function AdminPage({ user, session }) {
                     <button
                       type="button"
                       onClick={() => setShowTripModal(true)}
-                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-medium hover:opacity-90 transition-opacity shadow-sm"
+                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary text-primary-foreground rounded-[2rem] text-xs font-medium hover:opacity-90 transition-opacity shadow-sm"
                     >
                       <Plus size={14} />
                       Reise
@@ -381,14 +381,14 @@ export default function AdminPage({ user, session }) {
                     {loading ? (
                       <div className="animate-pulse space-y-3">
                         {[1, 2, 3].map((i) => (
-                          <div key={i} className="h-20 bg-muted rounded-xl" />
+                          <div key={i} className="h-20 bg-muted rounded-[2rem]" />
                         ))}
                       </div>
                     ) : trips.length > 0 ? (
                       trips.map((trip) => (
                         <div
                           key={trip.id}
-                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-[2rem]"
                         >
                           <div>
                             <h3 className="font-medium text-sm">{trip.name}</h3>
@@ -407,7 +407,7 @@ export default function AdminPage({ user, session }) {
                         </div>
                       ))
                     ) : (
-                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-[2rem] text-muted-foreground text-sm">
                         Keine Reisen vorhanden.
                       </div>
                     )}
@@ -428,7 +428,7 @@ export default function AdminPage({ user, session }) {
                     <button
                       type="button"
                       onClick={() => setShowEventModal(true)}
-                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-lg text-xs font-medium hover:bg-sidebar-accent/80 transition-all"
+                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-[2rem] text-xs font-medium hover:bg-sidebar-accent/80 transition-all"
                     >
                       <Plus size={14} />
                       Event
@@ -439,14 +439,14 @@ export default function AdminPage({ user, session }) {
                     {loading ? (
                       <div className="animate-pulse space-y-3">
                         {[1, 2].map((i) => (
-                          <div key={i} className="h-20 bg-muted rounded-xl" />
+                          <div key={i} className="h-20 bg-muted rounded-[2rem]" />
                         ))}
                       </div>
                     ) : standaloneEvents.length > 0 ? (
                       standaloneEvents.map((event) => (
                         <div
                           key={event.id}
-                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-[2rem]"
                         >
                           <div>
                             <h3 className="font-medium text-sm">
@@ -470,7 +470,7 @@ export default function AdminPage({ user, session }) {
                         </div>
                       ))
                     ) : (
-                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-[2rem] text-muted-foreground text-sm">
                         Keine eigenständigen Events vorhanden.
                       </div>
                     )}
@@ -493,7 +493,7 @@ export default function AdminPage({ user, session }) {
                     <button
                       type="button"
                       onClick={() => setShowAccommodationModal(true)}
-                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-lg text-xs font-medium hover:bg-sidebar-accent/80 transition-all"
+                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border rounded-[2rem] text-xs font-medium hover:bg-sidebar-accent/80 transition-all"
                     >
                       <Plus size={14} />
                       Unterkunft
@@ -504,14 +504,14 @@ export default function AdminPage({ user, session }) {
                     {loading ? (
                       <div className="animate-pulse space-y-3">
                         {[1, 2, 3].map((i) => (
-                          <div key={i} className="h-20 bg-muted rounded-xl" />
+                          <div key={i} className="h-20 bg-muted rounded-[2rem]" />
                         ))}
                       </div>
                     ) : accommodations.length > 0 ? (
                       accommodations.map((acc) => (
                         <div
                           key={acc.id}
-                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-xl"
+                          className="flex items-center justify-between p-4 bg-sidebar border border-sidebar-border rounded-[2rem]"
                         >
                           <div className="min-w-0">
                             <h3 className="font-medium text-sm truncate">
@@ -531,7 +531,7 @@ export default function AdminPage({ user, session }) {
                         </div>
                       ))
                     ) : (
-                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-xl text-muted-foreground text-sm">
+                      <div className="p-8 text-center bg-sidebar border border-sidebar-border rounded-[2rem] text-muted-foreground text-sm">
                         Keine Unterkünfte vorhanden.
                       </div>
                     )}
@@ -541,13 +541,13 @@ export default function AdminPage({ user, session }) {
             )}
 
             {activeTab === "system" && (
-              <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8">
+              <div className="bg-sidebar border border-sidebar-border rounded-[2rem] p-8">
                 <h2 className="text-xl font-light mb-6 flex items-center gap-2">
                   <Palette className="text-primary" size={20} />
                   System-Einstellungen (Temporär)
                 </h2>
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between p-4 bg-background border border-border rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-background border border-border rounded-[2rem]">
                     <div>
                       <h3 className="font-medium text-sm">
                         Saisonale Effekte erzwingen
@@ -580,7 +580,7 @@ export default function AdminPage({ user, session }) {
             )}
 
             {(activeTab === "users" || activeTab === "webhooks") && (
-              <div className="bg-sidebar border border-sidebar-border rounded-2xl p-12 text-center">
+              <div className="bg-sidebar border border-sidebar-border rounded-[2rem] p-12 text-center">
                 <h2 className="text-lg font-medium mb-2">
                   Hier entsteht etwas Neues
                 </h2>

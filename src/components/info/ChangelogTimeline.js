@@ -6,7 +6,7 @@ import { de, enUS } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
 
 const categoryColors = {
-  feature: "bg-blue-500",
+  feature: "bg-primary",
   bugfix: "bg-red-500",
   improvement: "bg-green-500",
   maintenance: "bg-slate-500",
@@ -14,7 +14,7 @@ const categoryColors = {
 };
 
 const categoryBorders = {
-  feature: "border-blue-500/20",
+  feature: "border-primary/20",
   bugfix: "border-red-500/20",
   improvement: "border-green-500/20",
   maintenance: "border-slate-500/20",
@@ -61,7 +61,7 @@ export default function ChangelogTimeline({ entries }) {
           <div className="ml-12 flex-1">
             <div
               className={clsx(
-                "bg-card border rounded-xl p-5 shadow-sm transition-all",
+                "bg-card border rounded-[2rem] p-5 shadow-sm transition-all",
                 categoryBorders[entry.category],
                 categoryShadows[entry.category],
               )}

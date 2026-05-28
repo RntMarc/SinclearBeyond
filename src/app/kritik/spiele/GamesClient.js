@@ -37,7 +37,7 @@ export default function GamesClient({ initialGames }) {
               ))}
 
               {games.length === 0 && (
-                <div className="col-span-full p-20 border-2 border-dashed border-border rounded-3xl text-center">
+                <div className="col-span-full p-20 border-2 border-dashed border-border rounded-[2rem] text-center">
                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                     <Gamepad2 className="text-muted-foreground/30" size={32} />
                   </div>
@@ -59,7 +59,7 @@ function GameCard({ game, t }) {
   return (
     <Link
       href={`/kritik/spiele/${game.id}`}
-      className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
+      className="group bg-card border border-border rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
     >
       {game.image && (
         <div className="aspect-video w-full overflow-hidden relative bg-muted">

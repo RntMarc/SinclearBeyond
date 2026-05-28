@@ -49,7 +49,7 @@ export default function HomeClient({
               key={event.id}
               type="button"
               onClick={() => setSelectedItem({ type: event.type, data: event })}
-              className="w-full text-left p-5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-3xl transition-all group flex items-center justify-between active:scale-[0.98]"
+              className="w-full text-left p-5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-[2rem] transition-all group flex items-center justify-between active:scale-[0.98]"
             >
               <div className="flex flex-col">
                 <span className="font-bold text-foreground text-lg tracking-tight">
@@ -83,14 +83,14 @@ export default function HomeClient({
             <Link
               key={poll.id}
               href={`/umfrage/${poll.id}`}
-              className="block p-6 bg-gradient-to-br from-electric-purple/20 to-electric-purple/5 border border-electric-purple/20 rounded-[2rem] transition-all group active:scale-[0.98] relative overflow-hidden"
+              className="block p-6 bg-gradient-to-br from-secondary/20 to-secondary/5 border border-secondary/20 rounded-[2rem] transition-all group active:scale-[0.98] relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
                 <CalendarCheck size={80} />
               </div>
               <div className="relative z-10">
-                <div className="flex items-center gap-2 text-electric-purple mb-4">
-                   <div className="w-8 h-8 rounded-full bg-electric-purple/20 flex items-center justify-center">
+                <div className="flex items-center gap-2 text-secondary mb-4">
+                   <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center">
                     <CalendarCheck size={16} />
                    </div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">
@@ -104,7 +104,7 @@ export default function HomeClient({
                    <span className="text-xs text-muted-foreground font-bold">
                     von {poll.creatorName}
                   </span>
-                  <div className="px-4 py-2 bg-electric-purple text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(150,0,255,0.4)]">
+                  <div className="px-4 py-2 bg-secondary text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_var(--secondary-glow)]">
                     Abstimmen
                   </div>
                 </div>
@@ -157,7 +157,7 @@ export default function HomeClient({
             <Link
               key={trip.id}
               href={`/reisen/${trip.id}`}
-              className="block p-5 bg-white/5 border border-white/5 rounded-3xl transition-all group flex items-center justify-between active:scale-[0.98]"
+              className="block p-5 bg-white/5 border border-white/5 rounded-[2rem] transition-all group flex items-center justify-between active:scale-[0.98]"
             >
               <div className="flex flex-col">
                 <span className="font-bold text-foreground text-lg tracking-tight">{trip.name}</span>
@@ -193,20 +193,20 @@ export default function HomeClient({
               key={user.id}
               type="button"
               onClick={() => setSelectedItem({ type: "birthday", data: user })}
-              className="w-full text-left p-5 bg-vibrant-magenta/5 border border-vibrant-magenta/10 rounded-3xl transition-all group flex items-center justify-between active:scale-[0.98]"
+              className="w-full text-left p-5 bg-accent/5 border border-accent/10 rounded-[2rem] transition-all group flex items-center justify-between active:scale-[0.98]"
             >
               <div className="flex items-center gap-4">
                 <Avatar
                   src={user.image}
                   displayName={user.displayName}
                   size="md"
-                  className="ring-2 ring-vibrant-magenta/20 ring-offset-4 ring-offset-background"
+                  className="ring-2 ring-accent/20 ring-offset-4 ring-offset-background"
                 />
                 <div className="flex flex-col">
                   <span className="font-bold text-foreground text-lg tracking-tight">
                     {user.displayName}
                   </span>
-                  <span className="text-xs text-vibrant-magenta font-black uppercase tracking-widest mt-0.5">
+                  <span className="text-xs text-accent font-black uppercase tracking-widest mt-0.5">
                     {user.birthdayDay}.{" "}
                     {new Date(0, user.birthdayMonth).toLocaleString("de-DE", {
                       month: "long",
@@ -267,7 +267,7 @@ export default function HomeClient({
             <Link
               key={review.id}
               href={`/kritik/${item.type === "game" ? "spiele" : item.type === "movie" ? "filme" : "musik"}/${item.id}`}
-              className="block p-5 bg-white/5 border border-white/5 rounded-3xl transition-all group active:scale-[0.98]"
+              className="block p-5 bg-white/5 border border-white/5 rounded-[2rem] transition-all group active:scale-[0.98]"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -310,7 +310,7 @@ export default function HomeClient({
             <Link
               key={review.id}
               href={`/entdecken/orte/${place.id}`}
-              className="block p-5 bg-white/5 border border-white/5 rounded-3xl transition-all group active:scale-[0.98]"
+              className="block p-5 bg-white/5 border border-white/5 rounded-[2rem] transition-all group active:scale-[0.98]"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">

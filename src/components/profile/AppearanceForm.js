@@ -80,7 +80,7 @@ export default function AppearanceForm({ initialPreferences }) {
                     name="language"
                     value={localLanguage}
                     onChange={(e) => setLocalLanguage(e.target.value)}
-                    className="w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-foreground appearance-none transition-all group-hover:bg-white/10"
+                    className="w-full rounded-[2rem] border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-foreground appearance-none transition-all group-hover:bg-white/10"
                   >
                     <option value="de">{tLang("german")}</option>
                     <option value="de-als">{tLang("swabian")}</option>
@@ -104,7 +104,7 @@ export default function AppearanceForm({ initialPreferences }) {
                   name="timezone"
                   value={localTimezone}
                   onChange={(e) => setLocalTimezone(e.target.value)}
-                  className="w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-foreground transition-all hover:bg-white/10"
+                  className="w-full rounded-[2rem] border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-foreground transition-all hover:bg-white/10"
                 >
                   {timezones.map((tz) => (
                     <option key={tz} value={tz}>

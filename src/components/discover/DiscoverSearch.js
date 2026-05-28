@@ -113,7 +113,7 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
   return (
     <div ref={containerRef} className="w-full max-w-3xl mx-auto space-y-2">
       <div
-        className={`bg-card border border-border rounded-3xl shadow-lg overflow-hidden transition-all duration-300 ${isExpanded ? "ring-2 ring-primary/20" : ""}`}
+        className={`bg-card border border-border rounded-[2rem] shadow-lg overflow-hidden transition-all duration-300 ${isExpanded ? "ring-2 ring-primary/20" : ""}`}
       >
         {/* Main Search Input */}
         <div className="flex items-center px-4 py-2 gap-2">
@@ -145,16 +145,16 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
         >
           <div className="flex flex-col md:flex-row gap-4">
             {/* Mode Toggle */}
-            <div className="flex bg-background border border-border p-1 rounded-xl shrink-0 h-fit">
+            <div className="flex bg-background border border-border p-1 rounded-[2rem] shrink-0 h-fit">
               <button
                 onClick={() => setMode("in")}
-                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${mode === "in" ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-accent text-muted-foreground"}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-[2rem] transition-all ${mode === "in" ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-accent text-muted-foreground"}`}
               >
                 {t("modeIn")}
               </button>
               <button
                 onClick={() => setMode("around")}
-                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${mode === "around" ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-accent text-muted-foreground"}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-[2rem] transition-all ${mode === "around" ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-accent text-muted-foreground"}`}
               >
                 {t("modeAround")}
               </button>
@@ -168,7 +168,7 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
                 <input
-                  className="w-full bg-background border border-border rounded-xl pl-10 pr-10 py-2 text-sm outline-none focus:ring-2 ring-primary/20"
+                  className="w-full bg-background border border-border rounded-[2rem] pl-10 pr-10 py-2 text-sm outline-none focus:ring-2 ring-primary/20"
                   placeholder={t("locationPlaceholder")}
                   value={locationQuery}
                   onChange={(e) => {
@@ -189,7 +189,7 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
               {/* Location Results Dropdown */}
               {showLocationResults &&
                 (locationResults.length > 0 || loadingLocation) && (
-                  <div className="absolute z-[120] left-0 right-0 mt-2 bg-card border border-border rounded-lg-custom shadow-xl overflow-hidden">
+                  <div className="absolute z-[120] left-0 right-0 mt-2 bg-card border border-border rounded-xl-custom shadow-xl overflow-hidden">
                     {loadingLocation ? (
                       <div className="p-4 flex items-center justify-center">
                         <Loader2
@@ -226,7 +226,7 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
 
             {/* Radius Input (only for around) */}
             {mode === "around" && (
-              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 shrink-0">
+              <div className="flex items-center gap-2 bg-background border border-border rounded-[2rem] px-3 py-2 shrink-0">
                 <span className="text-xs font-bold text-muted-foreground">
                   {t("radiusLabel")}
                 </span>
@@ -254,7 +254,7 @@ export default function DiscoverSearch({ onSearch, initialQuery = "" }) {
 
             <button
               onClick={triggerSearch}
-              className="bg-primary text-primary-foreground px-6 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2"
+              className="bg-primary text-primary-foreground px-6 py-2 rounded-[2rem] text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2"
             >
               <Search size={16} />
               {t("placeholder")}

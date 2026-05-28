@@ -128,7 +128,7 @@ export default function ExportManager() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-sidebar border border-sidebar-border rounded-lg-custom p-6 md:p-8">
+      <div className="bg-sidebar border border-sidebar-border rounded-xl-custom p-6 md:p-8">
         <h3 className="text-xl font-semibold mb-2">{t("title")}</h3>
         <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
           {t("description")}
@@ -157,7 +157,7 @@ export default function ExportManager() {
                   {data.discover.map((review) => (
                     <label
                       key={review.id}
-                      className="flex items-start gap-3 p-3 rounded-xl border border-sidebar-border hover:bg-sidebar-hover transition-colors cursor-pointer"
+                      className="flex items-start gap-3 p-3 rounded-[2rem] border border-sidebar-border hover:bg-sidebar-hover transition-colors cursor-pointer"
                     >
                       <input
                         type="checkbox"
@@ -207,7 +207,7 @@ export default function ExportManager() {
                   {data.media.map((review) => (
                     <label
                       key={review.id}
-                      className="flex items-start gap-3 p-3 rounded-xl border border-sidebar-border hover:bg-sidebar-hover transition-colors cursor-pointer"
+                      className="flex items-start gap-3 p-3 rounded-[2rem] border border-sidebar-border hover:bg-sidebar-hover transition-colors cursor-pointer"
                     >
                       <input
                         type="checkbox"
@@ -257,7 +257,7 @@ export default function ExportManager() {
                   {data.episodes.map((review) => (
                     <label
                       key={review.id}
-                      className="flex items-start gap-3 p-3 rounded-xl border border-sidebar-border hover:bg-sidebar-hover transition-colors cursor-pointer"
+                      className="flex items-start gap-3 p-3 rounded-[2rem] border border-sidebar-border hover:bg-sidebar-hover transition-colors cursor-pointer"
                     >
                       <input
                         type="checkbox"

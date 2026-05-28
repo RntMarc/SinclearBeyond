@@ -140,7 +140,7 @@ export async function POST(req) {
           <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
             <h2 style="font-weight:300">Neues Feedback erhalten</h2>
             <p><strong>Von:</strong> ${payload.email} (ID: ${userId})</p>
-            <hr style="border:0;border-top:1px solid #eee;margin:20px 0" />
+            <hr style="border:0;border-top:1px solid var(--foreground);margin:20px 0" />
             <p style="white-space:pre-wrap">${message}</p>
           </div>
         `,
@@ -179,7 +179,7 @@ export async function POST(req) {
           <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
             <h2 style="font-weight:300">Fehlender Ort gemeldet</h2>
             <p><strong>Von:</strong> ${payload.email} (ID: ${userId})</p>
-            <hr style="border:0;border-top:1px solid #eee;margin:20px 0" />
+            <hr style="border:0;border-top:1px solid var(--foreground);margin:20px 0" />
             <table style="width:100%;border-collapse:collapse">
               <tr><td style="padding:8px 0;font-weight:bold;width:120px">Name:</td><td>${name || "-"}</td></tr>
               <tr><td style="padding:8px 0;font-weight:bold">Adresse:</td><td>${address || "-"}</td></tr>

@@ -25,7 +25,7 @@ export async function GET() {
     return NextResponse.json({ error: "Database error" }, { status: 500 });
 
   return NextResponse.json(
-    prefsData?.[0] || { theme: "dark", primaryColor: "#7c3aed" },
+    prefsData?.[0] || { theme: "dark", primaryColor: "var(--primary)" },
   );
 }
 
@@ -69,7 +69,7 @@ export async function POST(req) {
         id: crypto.randomUUID(),
         userId: session.sub,
         theme: theme ?? "dark",
-        primaryColor: primaryColor ?? "#7c3aed",
+        primaryColor: primaryColor ?? "var(--primary)",
         language: language ?? "de",
         timezone: timezone ?? null,
       }),

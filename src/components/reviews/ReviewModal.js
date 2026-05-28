@@ -40,7 +40,7 @@ export default function ReviewModal({
         onClick={() => !loading && onClose()}
         aria-label={tc("close")}
       />
-      <div className="relative w-full max-w-md bg-card border border-border rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-card border border-border rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="p-6 border-b border-border">
           <h3 className="text-xl font-black">
             {isEditing ? t("editReview") : t("addReview")}
@@ -67,7 +67,7 @@ export default function ReviewModal({
                   type="button"
                   aria-label={`${val} ${t("rating")}`}
                   onClick={() => setNewReview({ ...newReview, rating: val })}
-                  className={`p-2 rounded-xl transition-all ${newReview.rating >= val ? "text-orange-500 bg-orange-500/10" : "text-muted-foreground bg-muted hover:bg-muted/80"}`}
+                  className={`p-2 rounded-[2rem] transition-all ${newReview.rating >= val ? "text-orange-500 bg-orange-500/10" : "text-muted-foreground bg-muted hover:bg-muted/80"}`}
                 >
                   <Star
                     size={24}
@@ -92,7 +92,7 @@ export default function ReviewModal({
                 onChange={(e) =>
                   setNewReview({ ...newReview, platform: e.target.value })
                 }
-                className="w-full p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium"
+                className="w-full p-3 bg-muted border border-border rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium"
               >
                 {PLATFORMS.map((p) => (
                   <option key={p} value={p}>
@@ -116,7 +116,7 @@ export default function ReviewModal({
               onChange={(e) =>
                 setNewReview({ ...newReview, comment: e.target.value })
               }
-              className="w-full p-4 bg-muted border border-border rounded-lg-custom focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[120px] text-sm resize-none"
+              className="w-full p-4 bg-muted border border-border rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[120px] text-sm resize-none"
               placeholder="..."
             />
           </div>

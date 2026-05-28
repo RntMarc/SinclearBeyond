@@ -8,8 +8,8 @@ export default function AbosClient({ initialSubscriptions }) {
 
   if (!initialSubscriptions || initialSubscriptions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center bg-card border border-border rounded-lg-custom">
-        <div className="w-16 h-16 bg-primary/10 text-primary rounded-lg-custom flex items-center justify-center mb-4">
+      <div className="flex flex-col items-center justify-center p-12 text-center bg-card border border-border rounded-xl-custom">
+        <div className="w-16 h-16 bg-primary/10 text-primary rounded-xl-custom flex items-center justify-center mb-4">
           <Banknote size={32} />
         </div>
         <p className="text-muted-foreground">{t("noSubscriptions")}</p>
@@ -25,7 +25,7 @@ export default function AbosClient({ initialSubscriptions }) {
         return (
           <div
             key={sub.id}
-            className="bg-card border border-border rounded-lg-custom shadow-sm p-6 space-y-6"
+            className="bg-card border border-border rounded-xl-custom shadow-sm p-6 space-y-6"
           >
             <div className="flex items-start justify-between">
               <div className="space-y-1">
@@ -78,7 +78,7 @@ export default function AbosClient({ initialSubscriptions }) {
                 {sub.members.map((member, idx) => (
                   <div
                     key={member.id || idx}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-xl text-sm"
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-[2rem] text-sm"
                   >
                     <span className="font-medium">
                       {member.userName || "Unbekannt"}

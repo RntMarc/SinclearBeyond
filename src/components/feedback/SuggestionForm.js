@@ -61,7 +61,7 @@ export default function SuggestionForm({
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg-custom p-6 shadow-sm">
+    <div className="bg-card border border-border rounded-xl-custom p-6 shadow-sm">
       <h2 className="text-lg font-bold mb-2">
         {editSuggestion ? t("editSuggestion") : t("newSuggestion")}
       </h2>
@@ -85,7 +85,7 @@ export default function SuggestionForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={t("suggestionTitlePlaceholder")}
-            className="w-full p-3 rounded-xl bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            className="w-full p-3 rounded-[2rem] bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             required
           />
         </div>
@@ -101,7 +101,7 @@ export default function SuggestionForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={t("suggestionDescriptionPlaceholder")}
-            className="w-full min-h-[100px] p-3 rounded-xl bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+            className="w-full min-h-[100px] p-3 rounded-[2rem] bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
           />
         </div>
         <div className="flex justify-end gap-2">
@@ -109,7 +109,7 @@ export default function SuggestionForm({
             <button
               type="button"
               onClick={onCancelEdit}
-              className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-xl transition-colors"
+              className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-[2rem] transition-colors"
             >
               {commonT("cancel")}
             </button>

@@ -52,7 +52,7 @@ export default function ContactModal({ contact, onClose }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-sidebar border border-sidebar-border w-full max-w-md rounded-lg-custom shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-sidebar border border-sidebar-border w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -69,7 +69,7 @@ export default function ContactModal({ contact, onClose }) {
               src={contact.image}
               displayName={contact.displayName}
               size="xl"
-              className="rounded-lg-custom shadow-lg border-4 border-sidebar !w-16 !h-16"
+              className="rounded-[2rem] shadow-lg border-4 border-sidebar !w-16 !h-16"
             />
             <div className="mb-1">
               <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function ContactModal({ contact, onClose }) {
 
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
-                <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                <div className="w-8 h-8 rounded-[2rem] bg-sidebar-accent flex items-center justify-center text-muted-foreground">
                   <Mail size={16} />
                 </div>
                 <div>
@@ -128,7 +128,7 @@ export default function ContactModal({ contact, onClose }) {
                       key={label}
                       className="flex items-center gap-3 text-sm"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                      <div className="w-8 h-8 rounded-[2rem] bg-sidebar-accent flex items-center justify-center text-muted-foreground">
                         <Icon size={16} />
                       </div>
                       <div>
@@ -163,7 +163,7 @@ export default function ContactModal({ contact, onClose }) {
                         key={label}
                         className="flex items-center gap-3 text-sm"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-sidebar-accent flex items-center justify-center text-muted-foreground">
+                        <div className="w-8 h-8 rounded-[2rem] bg-sidebar-accent flex items-center justify-center text-muted-foreground">
                           <BrandIcon name={iconName} size={16} />
                         </div>
                         <div>
@@ -182,7 +182,7 @@ export default function ContactModal({ contact, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="w-full py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-xl font-medium transition-colors border border-sidebar-border"
+            className="w-full py-3 bg-sidebar-accent hover:bg-sidebar-accent/80 text-foreground rounded-[2rem] font-medium transition-colors border border-sidebar-border"
           >
             {t("close")}
           </button>
