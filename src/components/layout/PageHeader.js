@@ -23,9 +23,9 @@ export default function PageHeader({
             )}
 
             <div className="flex items-center gap-4 min-w-0">
-              {Icon && <Icon className="text-primary glow-primary shrink-0" size={32} />}
-              <h1 className="text-3xl md:text-5xl font-display font-black tracking-tighter leading-tight truncate">
-                <span className="bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent uppercase">
+              {Icon && <Icon className="text-primary glow-primary shrink-0" size={28} />}
+              <h1 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold tracking-tighter leading-tight">
+                <span className="bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent uppercase break-words line-clamp-2 md:line-clamp-none">
                   {title}
                 </span>
               </h1>

@@ -36,6 +36,7 @@
     "dbError": "I konnt d'Date net lada. Probier's schbäder nomol."
   },
   "Navigation": {
+    "home": "Schtard",
     "entertainment": "Onderhaldong",
     "travel": "Reisa & Events",
     "calendar": "Kalender",
@@ -594,7 +595,7 @@
       "searching": "Suach grad..."
     },
     "Discover": {
-      "title": "Lokaler Entdegger-Guide",
+      "title": "Entdegger-Guide",
       "subtitle": "Entdegga",
       "categories": {
         "gastronomy": "Essa & Trenka",

@@ -36,6 +36,7 @@
     "dbError": "Could not load data. Please try again later."
   },
   "Navigation": {
+    "home": "Start",
     "entertainment": "Entertainment",
     "travel": "Travel & Events",
     "calendar": "Calendar",
@@ -757,7 +758,7 @@
     "openAlbum": "Open Album"
   },
   "Discover": {
-    "title": "Local Explorer Guide",
+    "title": "Explorer Guide",
     "subtitle": "Discover",
     "categories": {
       "gastronomy": "Gastronomy",
