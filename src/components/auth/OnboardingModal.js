@@ -73,13 +73,15 @@ export default function OnboardingModal({
 
   const totalSteps = 6;
 
+  if (!user) return null;
+
   const nextStep = () => setStep((s) => Math.min(s + 1, totalSteps));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   const handleComplete = () => {
     startTransition(async () => {
       const formData = new FormData();
-      formData.append("displayName", user.displayName);
+      formData.append("displayName", user?.displayName || "");
       formData.append("birthday", birthday);
       formData.append("language", localLanguage);
       formData.append("timezone", localTimezone);
@@ -203,7 +205,7 @@ export default function OnboardingModal({
               setValues={setValues}
               visibility={visibility}
               setVisibility={setVisibility}
-              discordDisabled={!!user.discordId}
+              discordDisabled={!!user?.discordId}
             />
           </div>
         );

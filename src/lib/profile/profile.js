@@ -43,10 +43,10 @@ export async function getProfileData(session) {
       .limit(1),
   );
 
-  if (userError || contactError || socialError) return null;
+  if (userError || contactError || socialError || !userData?.[0]) return null;
 
   return {
-    user: userData?.[0],
+    user: userData[0],
     contact: contactData?.[0] ?? null,
     social: socialData?.[0] ?? null,
   };
