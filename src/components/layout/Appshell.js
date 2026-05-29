@@ -1,25 +1,6 @@
 "use client";
-import {
-  Banknote,
-  Calendar,
-  CalendarCheck,
-  Camera,
-  Compass,
-  FileText,
-  Gift,
-  Info,
-  Lock,
-  Map as MapIcon,
-  Menu,
-  MessageCircle,
-  Newspaper,
-  MessageSquarePlus,
-  Settings,
-  SquarePlay,
-  Star,
-  Users,
-  X,
-} from "lucide-react";
+import { Info, Menu, X } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -30,6 +11,7 @@ import OnboardingModal from "@/components/auth/OnboardingModal";
 import SnowEffect from "@/components/layout/SnowEffect";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import navigationConfig from "@/lib/navigation.json";
 
 export default function AppShell({ children, user, session }) {
   const t = useTranslations("Navigation");
@@ -45,6 +27,15 @@ export default function AppShell({ children, user, session }) {
   const [unreadBirthdays, setUnreadBirthdays] = useState(0);
 
   const [onboardingData, setOnboardingData] = useState(null);
+
+  const unreadCounts = {
+    unreadChangelog,
+    unreadForums,
+    unreadTravel,
+    unreadCalendar,
+    unreadPolls,
+    unreadBirthdays,
+  };
 
   useEffect(() => {
     async function checkUnread() {
@@ -115,61 +106,6 @@ export default function AppShell({ children, user, session }) {
     checkOnboarding();
   }, [user, session]);
 
-  const navItems = [
-    {
-      href: "/forum",
-      label: t("entertainment"),
-      icon: SquarePlay,
-      badge: unreadForums > 0 && !pathname.startsWith("/forum"),
-    },
-    { href: "/entdecken", label: t("discover"), icon: Compass },
-    { href: "/kritik", label: t("reviews"), icon: Star },
-    {
-      href: "/reisen",
-      label: t("travel"),
-      icon: MapIcon,
-      badge: unreadTravel > 0 && !pathname.startsWith("/reisen"),
-    },
-    {
-      href: "/kalender",
-      label: t("calendar"),
-      icon: Calendar,
-      badge: unreadCalendar > 0 && !pathname.startsWith("/kalender"),
-    },
-    {
-      href: "/umfrage",
-      label: t("polls"),
-      icon: CalendarCheck,
-      badge: unreadPolls > 0 && !pathname.startsWith("/umfrage"),
-    },
-    {
-      href: "/geburtstage",
-      label: t("birthdays"),
-      icon: Gift,
-      badge: unreadBirthdays > 0 && pathname !== "/geburtstage",
-    },
-    { href: "/kontakte", label: t("contacts"), icon: Users },
-    { href: "/aktuell", label: t("news"), icon: Newspaper },
-    { href: "/fotos", label: t("photos"), icon: Camera },
-    {
-      href: "/abos",
-      label: t("subscriptions"),
-      icon: Banknote,
-    },
-    { href: "/feedback", label: t("feedback"), icon: MessageSquarePlus },
-    { href: "/chat", label: t("chat"), icon: MessageCircle },
-    {
-      href: "/info",
-      label: t("info"),
-      icon: Info,
-      badge: unreadChangelog > 0 && pathname !== "/info",
-    },
-    { href: "/einstellungen", label: t("settings"), icon: Settings },
-  ];
-
-  const officeNavItem = { href: "/office", label: t("office"), icon: FileText };
-  const adminNavItem = { href: "/admin", label: t("admin"), icon: Lock };
-
   // On mobile, the sidebar is hidden by default and uses the mobile-specific overlay and top-bar.
   // We use isMobile to supplement Tailwind's md: breakpoints for landscape smartphones.
   const showMobileElements = isMobile;
@@ -209,36 +145,58 @@ export default function AppShell({ children, user, session }) {
           </button>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {[
-            ...navItems,
-            ...(user?.isAdmin || session?.isAdmin
-              ? [officeNavItem, adminNavItem]
-              : []),
-          ].map((item) => {
-            const { href, label, icon: Icon } = item;
-            const active = pathname.startsWith(href);
+        <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
+          {navigationConfig.categories.map((category) => {
+            const visibleItems = category.items.filter((item) => {
+              if (item.isAdmin) {
+                return user?.isAdmin || session?.isAdmin;
+              }
+              return true;
+            });
+
+            if (visibleItems.length === 0) return null;
+
             return (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                  ${
-                    active
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  }`}
-              >
-                <Icon size={16} />
-                <span className="flex-1">{label}</span>
-                {item.badge && (
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
-                  </span>
-                )}
-              </Link>
+              <div key={category.id} className="space-y-1">
+                <h4 className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-2">
+                  {t(`categories.${category.id}`)}
+                </h4>
+                <div className="space-y-1">
+                  {visibleItems.map((item) => {
+                    const Icon = LucideIcons[item.icon] || Info;
+                    const active =
+                      pathname === item.href ||
+                      (item.href !== "/home" && pathname.startsWith(item.href));
+                    const hasBadge =
+                      item.badgeKey &&
+                      unreadCounts[item.badgeKey] > 0 &&
+                      !pathname.startsWith(item.href);
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${
+                            active
+                              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                              : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                          }`}
+                      >
+                        <Icon size={16} />
+                        <span className="flex-1">{t(item.labelKey)}</span>
+                        {hasBadge && (
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
         </nav>
