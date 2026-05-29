@@ -3,7 +3,8 @@ import { Trash2, Upload } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
-import ContactField from "@/components/profile/ContactField";
+import ContactMethodsFields from "@/components/profile/ContactMethodsFields";
+import SocialMediaFields from "@/components/profile/SocialMediaFields";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
 import SaveButton from "@/components/SaveButton";
 import { formatBirthday } from "@/lib/dateUtils";
@@ -11,86 +12,7 @@ import { saveProfile } from "@/lib/profile/profile";
 
 export default function ProfilForm({ user, contact, social }) {
   const t = useTranslations("Settings");
-  const tFields = useTranslations("Settings.profile.fields");
   const [state, action, isPending] = useActionState(saveProfile, null);
-
-  const FIELDS = [
-    {
-      name: "discordHandle",
-      visKey: "discordVisibility",
-      label: tFields("discord"),
-      placeholder: tFields("discordPlaceholder"),
-    },
-    {
-      name: "fluxerHandle",
-      visKey: "fluxerVisibility",
-      label: tFields("fluxer"),
-      placeholder: tFields("fluxerPlaceholder"),
-    },
-    {
-      name: "matrixHandle",
-      visKey: "matrixVisibility",
-      label: tFields("matrix"),
-      placeholder: tFields("matrixPlaceholder"),
-    },
-    {
-      name: "signalNumber",
-      visKey: "signalVisibility",
-      label: tFields("signal"),
-      placeholder: tFields("phonePlaceholder"),
-    },
-    {
-      name: "whatsappNumber",
-      visKey: "whatsappVisibility",
-      label: tFields("whatsapp"),
-      placeholder: tFields("phonePlaceholder"),
-    },
-  ];
-
-  const SOCIAL_FIELDS = [
-    {
-      name: "unsplashHandle",
-      visKey: "unsplashVisibility",
-      label: tFields("unsplash"),
-      placeholder: tFields("socialPlaceholder"),
-    },
-    {
-      name: "instagramHandle",
-      visKey: "instagramVisibility",
-      label: tFields("instagram"),
-      placeholder: tFields("socialPlaceholder"),
-    },
-    {
-      name: "mastodonHandle",
-      visKey: "mastodonVisibility",
-      label: tFields("mastodon"),
-      placeholder: tFields("mastodonPlaceholder"),
-    },
-    {
-      name: "pixelfedHandle",
-      visKey: "pixelfedVisibility",
-      label: tFields("pixelfed"),
-      placeholder: tFields("mastodonPlaceholder"),
-    },
-    {
-      name: "blueskyHandle",
-      visKey: "blueskyVisibility",
-      label: tFields("bluesky"),
-      placeholder: tFields("blueskyPlaceholder"),
-    },
-    {
-      name: "youtubeHandle",
-      visKey: "youtubeVisibility",
-      label: tFields("youtube"),
-      placeholder: tFields("socialPlaceholder"),
-    },
-    {
-      name: "twitchHandle",
-      visKey: "twitchVisibility",
-      label: tFields("twitch"),
-      placeholder: tFields("socialPlaceholder"),
-    },
-  ];
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(user.image);
   const [removeImage, setRemoveImage] = useState(false);
@@ -308,25 +230,13 @@ export default function ProfilForm({ user, contact, social }) {
         {t("profile.contactTitle")}
       </p>
 
-      {FIELDS.map(({ name, visKey, label, placeholder }) => (
-        <ContactField
-          key={name}
-          name={name}
-          visKey={visKey}
-          label={label}
-          placeholder={placeholder}
-          value={values[name]}
-          onChange={(v) => setValues((prev) => ({ ...prev, [name]: v }))}
-          visibility={visibility[visKey]}
-          onVisibilityChange={(v) =>
-            setVisibility((prev) => ({ ...prev, [visKey]: v }))
-          }
-          disabled={
-            (name === "discordHandle" && !!user.discordId) ||
-            name === "matrixHandle"
-          }
-        />
-      ))}
+      <ContactMethodsFields
+        values={values}
+        setValues={setValues}
+        visibility={visibility}
+        setVisibility={setVisibility}
+        discordDisabled={!!user.discordId}
+      />
 
       {!user.discordId && (
         <button
@@ -355,21 +265,12 @@ export default function ProfilForm({ user, contact, social }) {
         {t("profile.socialTitle")}
       </p>
 
-      {SOCIAL_FIELDS.map(({ name, visKey, label, placeholder }) => (
-        <ContactField
-          key={name}
-          name={name}
-          visKey={visKey}
-          label={label}
-          placeholder={placeholder}
-          value={values[name]}
-          onChange={(v) => setValues((prev) => ({ ...prev, [name]: v }))}
-          visibility={visibility[visKey]}
-          onVisibilityChange={(v) =>
-            setVisibility((prev) => ({ ...prev, [visKey]: v }))
-          }
-        />
-      ))}
+      <SocialMediaFields
+        values={values}
+        setValues={setValues}
+        visibility={visibility}
+        setVisibility={setVisibility}
+      />
 
       <SaveButton pending={isPending} state={state} />
     </form>

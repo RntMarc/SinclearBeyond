@@ -26,6 +26,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
+import OnboardingModal from "@/components/auth/OnboardingModal";
 import SnowEffect from "@/components/layout/SnowEffect";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -42,6 +43,8 @@ export default function AppShell({ children, user, session }) {
   const [unreadCalendar, setUnreadCalendar] = useState(0);
   const [unreadPolls, setUnreadPolls] = useState(0);
   const [unreadBirthdays, setUnreadBirthdays] = useState(0);
+
+  const [onboardingData, setOnboardingData] = useState(null);
 
   useEffect(() => {
     async function checkUnread() {
@@ -86,6 +89,30 @@ export default function AppShell({ children, user, session }) {
     if (user || session) {
       checkUnread();
     }
+  }, [user, session]);
+
+  useEffect(() => {
+    async function checkOnboarding() {
+      const isOnboardingCompleted =
+        user?.onboardingCompleted || session?.onboardingCompleted;
+
+      if ((user || session) && !isOnboardingCompleted) {
+        try {
+          const { getProfileData } = await import("@/lib/profile/profile");
+          const { data: prefData } = await fetch("/api/user/preferences").then(
+            (res) => res.json(),
+          );
+          const profile = await getProfileData(session);
+          setOnboardingData({
+            ...profile,
+            preferences: prefData,
+          });
+        } catch (error) {
+          console.error("Failed to fetch onboarding data", error);
+        }
+      }
+    }
+    checkOnboarding();
   }, [user, session]);
 
   const navItems = [
@@ -260,6 +287,14 @@ export default function AppShell({ children, user, session }) {
           className={`flex-1 flex flex-col min-h-0 overflow-auto relative ${activeEffects.showPride ? "effect-pride-banner" : ""} ${activeEffects.showSnow ? "effect-snow-container" : ""}`}
         >
           {activeEffects.showSnow && <SnowEffect />}
+          {onboardingData && (
+            <OnboardingModal
+              user={onboardingData.user}
+              contact={onboardingData.contact}
+              social={onboardingData.social}
+              preferences={onboardingData.preferences}
+            />
+          )}
           {children}
         </main>
       </div>

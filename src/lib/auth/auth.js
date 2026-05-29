@@ -51,6 +51,7 @@ export async function createSessionToken(user) {
     sub: user.id,
     email: user.email,
     isAdmin: user.isAdmin,
+    onboardingCompleted: user.onboardingCompleted,
     language: prefs?.language || "de",
     theme: prefs?.theme || "dark",
     primaryColor: prefs?.primaryColor || "#7c3aed",
