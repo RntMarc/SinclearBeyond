@@ -1,6 +1,8 @@
 "use server";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { createSessionToken } from "@/lib/auth/auth";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
@@ -60,6 +62,23 @@ export async function completeOnboarding(formData) {
     );
 
     if (error) throw error;
+
+    // Refresh the session cookie with the updated onboarding status
+    const { data: updatedUserData } = await safeQuery(
+      db.select().from(users).where(eq(users.id, session.sub)).limit(1),
+    );
+
+    if (updatedUserData?.[0]) {
+      const newToken = await createSessionToken(updatedUserData[0]);
+      const cookieStore = await cookies();
+      cookieStore.set("session", newToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        path: "/",
+      });
+    }
 
     revalidatePath("/");
     return { ok: true };

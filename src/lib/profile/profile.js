@@ -20,6 +20,7 @@ export async function getProfileData(session) {
         emailVisibility: users.emailVisibility,
         discordId: users.discordId,
         image: users.image,
+        onboardingCompleted: users.onboardingCompleted,
         createdAt: users.createdAt,
       })
       .from(users)
