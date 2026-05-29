@@ -94,10 +94,12 @@ export default function AppShell({ children, user, session }) {
             (res) => res.json(),
           );
           const profile = await getProfileData(session);
-          setOnboardingData({
-            ...profile,
-            preferences: prefData,
-          });
+          if (profile) {
+            setOnboardingData({
+              ...profile,
+              preferences: prefData,
+            });
+          }
         } catch (error) {
           console.error("Failed to fetch onboarding data", error);
         }
