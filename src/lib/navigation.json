@@ -55,7 +55,13 @@
           "icon": "CalendarCheck",
           "badgeKey": "unreadPolls"
         },
-        { "href": "/abos", "labelKey": "subscriptions", "icon": "Banknote" }
+        { "href": "/abos", "labelKey": "subscriptions", "icon": "Banknote" },
+        {
+          "href": "/office",
+          "labelKey": "office",
+          "icon": "FileText",
+          "isAdmin": true
+        }
       ]
     },
     {
@@ -76,12 +82,6 @@
           "href": "/einstellungen",
           "labelKey": "settings",
           "icon": "Settings"
-        },
-        {
-          "href": "/office",
-          "labelKey": "office",
-          "icon": "FileText",
-          "isAdmin": true
         },
         {
           "href": "/admin",
