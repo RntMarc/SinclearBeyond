@@ -1,18 +1,16 @@
 "use client";
 
-import { AlertTriangle, Check, Languages } from "lucide-react";
+import { AlertTriangle, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import LanguageTimezoneFields from "@/components/profile/LanguageTimezoneFields";
 import { isContrastAcceptable, mixColors } from "@/lib/utils";
-
-const timezones = Intl.supportedValuesOf("timeZone");
 
 export default function AppearanceForm({ initialPreferences }) {
   const router = useRouter();
   const t = useTranslations("Settings.appearance");
-  const tLang = useTranslations("Settings.language");
   const tCommon = useTranslations("Common");
   const { theme, setTheme, primaryColor, setPrimaryColor } = useTheme();
   const [localTheme, setLocalTheme] = useState(theme);
@@ -88,54 +86,12 @@ export default function AppearanceForm({ initialPreferences }) {
 
         <div className="space-y-8 bg-sidebar border border-sidebar-border rounded-2xl p-8">
           {/* Language selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label
-                htmlFor="language"
-                className="block text-sm font-medium mb-4"
-              >
-                {tLang("label")}
-              </label>
-              <div className="relative">
-                <select
-                  id="language"
-                  name="language"
-                  value={localLanguage}
-                  onChange={(e) => setLocalLanguage(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none"
-                >
-                  <option value="de">{tLang("german")}</option>
-                  <option value="de-als">{tLang("swabian")}</option>
-                  <option value="en">{tLang("english")}</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <Languages size={16} className="text-muted-foreground" />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="timezone"
-                className="block text-sm font-medium mb-4"
-              >
-                {t("timezoneLabel")}
-              </label>
-              <select
-                id="timezone"
-                name="timezone"
-                value={localTimezone}
-                onChange={(e) => setLocalTimezone(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-              >
-                {timezones.map((tz) => (
-                  <option key={tz} value={tz}>
-                    {tz}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <LanguageTimezoneFields
+            language={localLanguage}
+            setLanguage={setLocalLanguage}
+            timezone={localTimezone}
+            setTimezone={setLocalTimezone}
+          />
 
           <hr className="border-border" />
 
