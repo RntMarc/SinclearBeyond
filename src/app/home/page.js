@@ -24,6 +24,7 @@ export default async function HomePage() {
         displayName: users.displayName,
         email: users.email,
         image: users.image,
+        onboardingCompleted: users.onboardingCompleted,
         createdAt: users.createdAt,
       })
       .from(users)
