@@ -253,6 +253,13 @@
       "when": 1780011535899,
       "tag": "0035_careful_darkhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1780061263727,
+      "tag": "0036_hot_lyja",
+      "breakpoints": true
     }
   ]
 }

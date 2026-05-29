@@ -1,0 +1,1 @@
+ALTER TABLE `User` ADD `onboardingCompleted` tinyint DEFAULT 0 NOT NULL;
