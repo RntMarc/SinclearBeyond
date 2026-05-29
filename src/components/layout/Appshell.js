@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
-import OnboardingModal from "@/components/auth/OnboardingModal";
 import SnowEffect from "@/components/layout/SnowEffect";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -26,7 +25,7 @@ export default function AppShell({ children, user, session }) {
   const [unreadPolls, setUnreadPolls] = useState(0);
   const [unreadBirthdays, setUnreadBirthdays] = useState(0);
 
-  const [onboardingData, setOnboardingData] = useState(null);
+  const [localUser, setLocalUser] = useState(user);
 
   const unreadCounts = {
     unreadChangelog,
@@ -83,29 +82,20 @@ export default function AppShell({ children, user, session }) {
   }, [user, session]);
 
   useEffect(() => {
-    async function checkOnboarding() {
-      const isOnboardingCompleted =
-        user?.onboardingCompleted || session?.onboardingCompleted;
-
-      if ((user || session) && !isOnboardingCompleted) {
+    async function fetchUser() {
+      if (!user && session?.sub) {
         try {
           const { getProfileData } = await import("@/lib/profile/profile");
-          const { data: prefData } = await fetch("/api/user/preferences").then(
-            (res) => res.json(),
-          );
           const profile = await getProfileData(session);
           if (profile) {
-            setOnboardingData({
-              ...profile,
-              preferences: prefData,
-            });
+            setLocalUser(profile.user);
           }
         } catch (error) {
-          console.error("Failed to fetch onboarding data", error);
+          console.error("Failed to fetch user data in AppShell", error);
         }
       }
     }
-    checkOnboarding();
+    fetchUser();
   }, [user, session]);
 
   // On mobile, the sidebar is hidden by default and uses the mobile-specific overlay and top-bar.
@@ -206,12 +196,12 @@ export default function AppShell({ children, user, session }) {
         <div className="px-4 py-4 border-t border-sidebar-border flex items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <Avatar
-              src={user?.image}
-              displayName={user?.displayName || session?.email}
+              src={localUser?.image}
+              displayName={localUser?.displayName || session?.email}
               size="sm"
             />
             <span className="text-xs text-muted-foreground truncate">
-              {user?.displayName ?? session?.email}
+              {localUser?.displayName ?? session?.email}
             </span>
           </div>
           <LogoutButton />
@@ -247,14 +237,6 @@ export default function AppShell({ children, user, session }) {
           className={`flex-1 flex flex-col min-h-0 overflow-auto relative ${activeEffects.showPride ? "effect-pride-banner" : ""} ${activeEffects.showSnow ? "effect-snow-container" : ""}`}
         >
           {activeEffects.showSnow && <SnowEffect />}
-          {onboardingData && (
-            <OnboardingModal
-              user={onboardingData.user}
-              contact={onboardingData.contact}
-              social={onboardingData.social}
-              preferences={onboardingData.preferences}
-            />
-          )}
           {children}
         </main>
       </div>

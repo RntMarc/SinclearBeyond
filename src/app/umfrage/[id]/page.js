@@ -1,8 +1,11 @@
+import { eq } from "drizzle-orm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
+import { db, safeQuery } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 import { getSession } from "@/lib/auth/session";
 import { getPoll } from "@/lib/polls/utils";
 import PollDetailClient from "./PollDetailClient";
@@ -22,8 +25,21 @@ export default async function PollDetailPage({ params }) {
     notFound();
   }
 
+  const { data: userData } = await safeQuery(
+    db
+      .select({
+        displayName: users.displayName,
+        image: users.image,
+        onboardingCompleted: users.onboardingCompleted,
+      })
+      .from(users)
+      .where(eq(users.id, session.sub))
+      .limit(1),
+  );
+  const user = userData?.[0];
+
   return (
-    <AppShell session={session}>
+    <AppShell user={user} session={session}>
       <div className="flex flex-col h-full overflow-hidden">
         <header className="bg-card border-b border-border px-6 py-6 shrink-0">
           <div className="max-w-5xl mx-auto flex items-center gap-4">

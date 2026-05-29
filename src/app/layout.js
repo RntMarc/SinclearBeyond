@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import OnboardingTrigger from "@/components/auth/OnboardingTrigger";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { getSession } from "@/lib/auth/session";
 import "./globals.css";
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }) {
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider initialPreferences={initialPreferences}>
+            <OnboardingTrigger session={session} />
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>
