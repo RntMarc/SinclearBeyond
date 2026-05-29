@@ -36,6 +36,7 @@
     "dbError": "Daten konnten nicht geladen werden. Bitte versuche es später erneut."
   },
   "Navigation": {
+    "home": "Start",
     "entertainment": "Forum",
     "travel": "Reisen & Events",
     "calendar": "Kalender",
@@ -55,7 +56,14 @@
     "office": "Office",
     "polls": "Umfragen & Termine",
     "chat": "Chat",
-    "news": "Aktuell"
+    "news": "Aktuell",
+    "categories": {
+      "start": "Start",
+      "community": "Gemeinschaft",
+      "onTheWay": "Unterwegs",
+      "organization": "Organisation",
+      "system": "System"
+    }
   },
   "Office": {
     "title": "Office",
@@ -871,6 +879,21 @@
     "tracks": "Titel",
     "albums": "Alben",
     "openAlbum": "Album öffnen"
+  },
+  "Onboarding": {
+    "welcomeTitle": "Willkommen bei Sinclear Beyond",
+    "aiWarning": "Diese App wurde mit KI 'gevibecodet'. Das bedeutet, dass vieles automatisiert erstellt wurde. Daher können Fehler, Bugs oder seltsames Verhalten auftreten.",
+    "feedbackInfo": "Probleme, Kritik oder Lob können direkt an Marc gerichtet werden oder über die Feedback-Seite im Projekt eingereicht werden.",
+    "privacyHint": "Alle folgenden Angaben in deinem Profil sind absolut freiwillig. Gib diese Informationen nur an, wenn du dem Projekt und Marc vertraust.",
+    "langTzTitle": "Sprache & Zeitzone",
+    "birthdayTitle": "Dein Geburtsdatum",
+    "birthdayDescription": "Wenn du dein Geburtsdatum angibst, können andere Nutzer sehen, wann du Geburtstag hast (je nach Sichtbarkeitseinstellungen). Dies ist optional und kann übersprungen werden.",
+    "socialTitle": "Social Media Profile",
+    "contactTitle": "Kontaktmöglichkeiten",
+    "passkeyTitle": "Sicherheit: Passkeys",
+    "passkeyInfo": "Wir empfehlen dringend die Verwendung von Passkeys als Login-Methode. Sie sind sicherer als Passwörter und bequemer zu nutzen. Du kannst sie später in den Einstellungen konfigurieren.",
+    "recommendationTitle": "Empfehlung",
+    "managerInfo": "Verwende am besten einen Passwortmanager wie Bitwarden oder AliasVault, die Passkeys unterstützen."
   },
   "Chat": {
     "subtitle": "Kommunikation",

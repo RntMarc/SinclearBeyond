@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "f92b0a42-9edf-43f5-bc83-50432100ec01",
-  "prevId": "245e0e74-2c1d-489c-b6cb-cf5edcb16c6d",
+  "id": "47bc6527-c038-4bff-9605-bb444b05b01c",
+  "prevId": "e19e6b8b-8b03-4d78-a2e5-a4f5e348ef5c",
   "tables": {
     "AlbumTrack": {
       "name": "AlbumTrack",
@@ -2846,7 +2846,7 @@
         },
         "theme": {
           "name": "theme",
-          "type": "enum('light','dark','neo-retro')",
+          "type": "enum('light','dark')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -2854,11 +2854,11 @@
         },
         "primaryColor": {
           "name": "primaryColor",
-          "type": "varchar(20)",
+          "type": "varchar(7)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'var(--primary)'"
+          "default": "'#7c3aed'"
         },
         "timezone": {
           "name": "timezone",
@@ -2954,6 +2954,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "onboardingCompleted": {
+          "name": "onboardingCompleted",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "createdAt": {
           "name": "createdAt",
