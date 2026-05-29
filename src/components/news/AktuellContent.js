@@ -9,37 +9,12 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useIsMobile } from "@/hooks/useIsMobile";
-
-function getNumCols(isMobile) {
-  if (typeof window === "undefined") return 1;
-  if (isMobile) return 1;
-  if (window.innerWidth >= 1280) return 3;
-  if (window.innerWidth >= 1024) return 2;
-  return 1;
-}
-
-const columnIds = ["primary", "secondary", "tertiary"];
-
-function distribute(items, n) {
-  const list = Array.isArray(items) ? items : [];
-  const cols = Array.from({ length: n }, (_, index) => ({
-    id: columnIds[index] || `column-${index + 1}`,
-    items: [],
-  }));
-  list.forEach((item, i) => {
-    cols[i % n].items.push(item);
-  });
-  return cols;
-}
 
 export default function AktuellContent({ _userId }) {
-  const isMobile = useIsMobile();
   const t = useTranslations("News");
   const [activeTab, setActiveTab] = useState("new"); // "new", "archive"
   const [items, setItems] = useState([]);
   const [importantItems, setImportantItems] = useState([]);
-  const [columns, setColumns] = useState([{ id: columnIds[0], items: [] }]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -90,11 +65,6 @@ export default function AktuellContent({ _userId }) {
       fetchArchived();
     }
   }, [activeTab, fetchImportant, fetchInitial, fetchArchived]);
-
-  useEffect(() => {
-    const n = getNumCols(isMobile);
-    setColumns(distribute(items, n));
-  }, [items, isMobile]);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore || activeTab === "archive") return;
@@ -224,19 +194,15 @@ export default function AktuellContent({ _userId }) {
         </section>
       )}
 
-      <div className="flex gap-6 items-start">
-        {columns.map((col) => (
-          <div key={col.id} className="flex-1 flex flex-col gap-6">
-            {col.items.map((item) => (
-              <NewsItem
-                key={`${item.sourceId || item.sourceName || "news"}-${
-                  item.link || item.id || item.title
-                }`}
-                article={item}
-                onUpvote={() => handleUpvote(item)}
-              />
-            ))}
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {items.map((item) => (
+          <NewsItem
+            key={`${item.sourceId || item.sourceName || "news"}-${
+              item.link || item.id || item.title
+            }`}
+            article={item}
+            onUpvote={() => handleUpvote(item)}
+          />
         ))}
       </div>
 
@@ -313,12 +279,12 @@ function NewsItem({ article, onUpvote, _isSaved }) {
           )}
         </div>
 
-        <h3 className="font-semibold text-lg leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-3">
+        <h3 className="font-semibold text-lg leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-3 break-words min-w-0">
           {article.title}
         </h3>
 
         {article.content && (
-          <p className="text-sm text-muted-foreground line-clamp-3 mb-4 leading-relaxed">
+          <p className="text-sm text-muted-foreground line-clamp-3 mb-4 leading-relaxed break-words min-w-0">
             {article.content.replace(/<[^>]*>?/gm, "")}
           </p>
         )}

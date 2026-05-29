@@ -4,9 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
+import AktuellContent from "@/components/news/AktuellContent";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
-import AktuellContent from "@/components/news/AktuellContent";
 
 export default async function AktuellPage() {
   const t = await getTranslations("News");
@@ -30,8 +30,8 @@ export default async function AktuellPage() {
           icon={Newspaper}
         />
 
-        <div className="flex-1 overflow-y-auto p-6 md:p-10">
-          <div className="max-w-7xl mx-auto">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-10">
+          <div className="max-w-5xl mx-auto">
             <Suspense
               fallback={
                 <div className="animate-pulse space-y-8">
