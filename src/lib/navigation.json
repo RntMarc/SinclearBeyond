@@ -1,0 +1,95 @@
+{
+  "categories": [
+    {
+      "id": "start",
+      "items": [
+        { "href": "/home", "labelKey": "home", "icon": "Home" },
+        { "href": "/aktuell", "labelKey": "news", "icon": "Newspaper" },
+        { "href": "/chat", "labelKey": "chat", "icon": "MessageCircle" },
+        { "href": "/fotos", "labelKey": "photos", "icon": "Camera" }
+      ]
+    },
+    {
+      "id": "community",
+      "items": [
+        {
+          "href": "/forum",
+          "labelKey": "entertainment",
+          "icon": "SquarePlay",
+          "badgeKey": "unreadForums"
+        },
+        { "href": "/kritik", "labelKey": "reviews", "icon": "Star" },
+        { "href": "/kontakte", "labelKey": "contacts", "icon": "Users" },
+        {
+          "href": "/geburtstage",
+          "labelKey": "birthdays",
+          "icon": "Gift",
+          "badgeKey": "unreadBirthdays"
+        }
+      ]
+    },
+    {
+      "id": "onTheWay",
+      "items": [
+        { "href": "/entdecken", "labelKey": "discover", "icon": "Compass" },
+        {
+          "href": "/reisen",
+          "labelKey": "travel",
+          "icon": "Map",
+          "badgeKey": "unreadTravel"
+        }
+      ]
+    },
+    {
+      "id": "organization",
+      "items": [
+        {
+          "href": "/kalender",
+          "labelKey": "calendar",
+          "icon": "Calendar",
+          "badgeKey": "unreadCalendar"
+        },
+        {
+          "href": "/umfrage",
+          "labelKey": "polls",
+          "icon": "CalendarCheck",
+          "badgeKey": "unreadPolls"
+        },
+        { "href": "/abos", "labelKey": "subscriptions", "icon": "Banknote" }
+      ]
+    },
+    {
+      "id": "system",
+      "items": [
+        {
+          "href": "/feedback",
+          "labelKey": "feedback",
+          "icon": "MessageSquarePlus"
+        },
+        {
+          "href": "/info",
+          "labelKey": "info",
+          "icon": "Info",
+          "badgeKey": "unreadChangelog"
+        },
+        {
+          "href": "/einstellungen",
+          "labelKey": "settings",
+          "icon": "Settings"
+        },
+        {
+          "href": "/office",
+          "labelKey": "office",
+          "icon": "FileText",
+          "isAdmin": true
+        },
+        {
+          "href": "/admin",
+          "labelKey": "admin",
+          "icon": "Lock",
+          "isAdmin": true
+        }
+      ]
+    }
+  ]
+}

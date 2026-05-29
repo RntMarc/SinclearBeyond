@@ -36,6 +36,7 @@
     "dbError": "Could not load data. Please try again later."
   },
   "Navigation": {
+    "home": "Home",
     "entertainment": "Entertainment",
     "travel": "Travel & Events",
     "calendar": "Calendar",
@@ -55,7 +56,14 @@
     "office": "Office",
     "polls": "Surveys & Polls",
     "chat": "Chat",
-    "news": "News"
+    "news": "News",
+    "categories": {
+      "start": "Start",
+      "community": "Community",
+      "onTheWay": "On the Way",
+      "organization": "Organization",
+      "system": "System"
+    }
   },
   "Office": {
     "title": "Office",

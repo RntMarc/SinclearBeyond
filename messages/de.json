@@ -36,6 +36,7 @@
     "dbError": "Daten konnten nicht geladen werden. Bitte versuche es später erneut."
   },
   "Navigation": {
+    "home": "Start",
     "entertainment": "Forum",
     "travel": "Reisen & Events",
     "calendar": "Kalender",
@@ -55,7 +56,14 @@
     "office": "Office",
     "polls": "Umfragen & Termine",
     "chat": "Chat",
-    "news": "Aktuell"
+    "news": "Aktuell",
+    "categories": {
+      "start": "Start",
+      "community": "Gemeinschaft",
+      "onTheWay": "Unterwegs",
+      "organization": "Organisation",
+      "system": "System"
+    }
   },
   "Office": {
     "title": "Office",

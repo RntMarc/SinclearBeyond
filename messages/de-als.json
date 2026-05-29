@@ -36,6 +36,7 @@
     "dbError": "I konnt d'Date net lada. Probier's schbäder nomol."
   },
   "Navigation": {
+    "home": "Dahoim",
     "entertainment": "Onderhaldong",
     "travel": "Reisa & Events",
     "calendar": "Kalender",
@@ -55,7 +56,14 @@
     "office": "Office",
     "polls": "Umfraga & Termie",
     "chat": "Chat",
-    "news": "Aktuell"
+    "news": "Aktuell",
+    "categories": {
+      "start": "Oafang",
+      "community": "Gmoinschaft",
+      "onTheWay": "Onderwegs",
+      "organization": "Organisation",
+      "system": "System"
+    }
   },
   "Office": {
     "title": "Office",
