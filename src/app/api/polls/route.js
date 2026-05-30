@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
+  notifications,
   pollInvites,
   pollOptions,
   pollQuestions,
@@ -91,6 +92,21 @@ export async function POST(request) {
               createdAt: now,
             })),
           );
+
+          // Create notifications for invited users
+          const notificationValues = invites
+            .filter((invite) => invite.userId !== session.sub)
+            .map((invite) => ({
+              id: crypto.randomUUID(),
+              userId: invite.userId,
+              type: "poll",
+              entityId: pollId,
+              createdAt: now,
+            }));
+
+          if (notificationValues.length > 0) {
+            await tx.insert(notifications).values(notificationValues);
+          }
         }
       }),
     );
