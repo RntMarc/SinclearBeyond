@@ -852,7 +852,7 @@
   },
   "Notifications": {
     "title": "Notifications",
-    "empty": "No new notifications",
+    "empty": "You have no notifications right now",
     "clearAll": "Clear all",
     "markAsRead": "Mark as read",
     "viewAll": "View all",

@@ -886,7 +886,7 @@
   },
   "Notifications": {
     "title": "Benachrichtigungen",
-    "empty": "Keine neuen Benachrichtigungen",
+    "empty": "Du hast gerade keine Benachrichtigungen",
     "clearAll": "Alle löschen",
     "markAsRead": "Als gelesen markieren",
     "viewAll": "Alle anzeigen",

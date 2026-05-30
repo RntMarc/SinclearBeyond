@@ -864,5 +864,21 @@
     "methodPassword": "Passwort",
     "switchOAuth": "Odr via OAuth2 aamelda",
     "switchPassword": "Odr via Passwort aamelda"
+  },
+  "Notifications": {
+    "title": "Benachrichtigonga",
+    "empty": "Du hosch grad koine Benachrichtigonga",
+    "clearAll": "Alle lescha",
+    "markAsRead": "Als glesa markiera",
+    "viewAll": "Alle ozeige",
+    "types": {
+      "forum": "Nuier Forenbeitrag",
+      "poll": "Nuie Umfrag",
+      "event": "Nuies Event",
+      "trip": "Nuie Reis",
+      "changelog": "Nuier Changelog-Eitrag",
+      "birthday": "Geburtsdag heit",
+      "birthday_soon": "Geburtsdag bald"
+    }
   }
 }

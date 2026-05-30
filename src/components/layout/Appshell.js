@@ -128,14 +128,17 @@ export default function AppShell({ children, user, session }) {
           >
             Sinclear Beyond
           </Link>
-          <button
-            type="button"
-            className={`${showMobileElements ? "flex" : "hidden md:hidden"} text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent transition-colors`}
-            onClick={() => setOpen(false)}
-            aria-label={t("closeMenu")}
-          >
-            <X size={18} />
-          </button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <button
+              type="button"
+              className={`${showMobileElements ? "flex" : "hidden md:hidden"} text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent transition-colors`}
+              onClick={() => setOpen(false)}
+              aria-label={t("closeMenu")}
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
@@ -195,7 +198,6 @@ export default function AppShell({ children, user, session }) {
         </nav>
 
         <div className="px-4 py-4 border-t border-sidebar-border flex items-center justify-between gap-2 shrink-0">
-          <NotificationBell />
           <div className="flex items-center gap-3 min-w-0">
             <Avatar
               src={localUser?.image}
