@@ -1,8 +1,13 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { feedPosts, forumMembers, forums, readStatuses } from "@/lib/db/schema";
+import {
+  feedPosts,
+  forumMembers,
+  forums,
+  notifications,
+} from "@/lib/db/schema";
 
 export async function GET() {
   const session = await getSession();
@@ -22,11 +27,11 @@ export async function GET() {
           image: forums.image,
           postCount: sql`CAST((SELECT count(*) FROM ${feedPosts} WHERE ${feedPosts.forumId} = ${forums.id}) AS SIGNED)`,
           hasUnread: sql`EXISTS (
-            SELECT 1 FROM ${feedPosts}
-            LEFT JOIN ${readStatuses} ON ${readStatuses.entityId} = ${feedPosts.id}
-              AND ${readStatuses.entityType} = 'feedPost'
-              AND ${readStatuses.userId} = ${userId}
-            WHERE ${feedPosts.forumId} = ${forums.id} AND ${readStatuses.id} IS NULL
+            SELECT 1 FROM ${notifications}
+            INNER JOIN ${feedPosts} ON ${feedPosts.id} = ${notifications.entityId}
+            WHERE ${notifications.userId} = ${userId}
+              AND ${notifications.type} = 'forum'
+              AND ${feedPosts.forumId} = ${forums.id}
           )`,
         })
         .from(forums)

@@ -5,6 +5,7 @@ import SubPageHeader from "@/components/layout/SubPageHeader";
 import TripDashboard from "@/components/travel/TripDashboard";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
+import { markTravelItemAsRead } from "@/lib/travel/actions";
 import { getTripById } from "@/lib/travel/trips";
 
 export default async function TripDetailPage({ params }) {
@@ -17,6 +18,10 @@ export default async function TripDetailPage({ params }) {
   if (!profileData) redirect("/login");
 
   const trip = await getTripById(id);
+
+  if (trip && trip.id && trip.error !== "Unauthorized") {
+    await markTravelItemAsRead(trip.id, "trip");
+  }
 
   if (!trip) {
     notFound();

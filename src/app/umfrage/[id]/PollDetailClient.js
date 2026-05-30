@@ -2,10 +2,11 @@
 import { Settings2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Notification from "@/components/Notification";
 import PollDetail from "@/components/polls/PollDetail";
 import PollFormModal from "@/components/polls/PollFormModal";
+import { markPollAsRead } from "@/lib/polls/actions";
 
 export default function PollDetailClient({ initialPoll, userId }) {
   const t = useTranslations("Polls");
@@ -14,6 +15,10 @@ export default function PollDetailClient({ initialPoll, userId }) {
   const [saving, setSaving] = useState(false);
   const [notification, setNotification] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    markPollAsRead(poll.id);
+  }, [poll.id]);
 
   const handleVote = async (answers) => {
     try {

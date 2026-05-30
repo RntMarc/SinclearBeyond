@@ -1,23 +1,23 @@
 "use client";
 
 import {
+  ArrowLeft,
   Hash,
+  Info,
   Loader2,
+  MessageSquare,
   Plus,
   Users,
-  ArrowLeft,
-  Info,
-  MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useEffect, useState, useCallback } from "react";
-import SubPageHeader from "@/components/layout/SubPageHeader";
-import FeedList from "@/components/forum/FeedList";
-import FeedFormModal from "@/components/forum/FeedFormModal";
-import LeaveConfirmModal from "@/components/forum/LeaveConfirmModal";
-import { joinForum, leaveForum, markForumAsRead } from "@/lib/forums/actions";
+import { useCallback, useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
+import FeedFormModal from "@/components/forum/FeedFormModal";
+import FeedList from "@/components/forum/FeedList";
+import LeaveConfirmModal from "@/components/forum/LeaveConfirmModal";
+import SubPageHeader from "@/components/layout/SubPageHeader";
+import { joinForum, leaveForum, markForumAsRead } from "@/lib/forums/actions";
 
 export default function ForumDetailClient({ forumId, userId }) {
   const t = useTranslations("Feed");

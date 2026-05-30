@@ -2,8 +2,8 @@
 
 import { Download, Key, Palette, Settings, User, Users } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import AppearanceForm from "@/components/profile/AppearanceForm";
 import CloseFriendsManager from "@/components/profile/CloseFriendsManager";

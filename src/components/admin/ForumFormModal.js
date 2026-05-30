@@ -1,8 +1,8 @@
 "use client";
 
 import { ImageIcon, Loader2, Trash2, X } from "lucide-react";
-import { useState, useRef } from "react";
-import { createForum, updateForum, deleteForum } from "@/lib/forums/actions";
+import { useRef, useState } from "react";
+import { createForum, deleteForum, updateForum } from "@/lib/forums/actions";
 
 export default function ForumFormModal({ forum, onClose, onUpdated }) {
   const [loading, setLoading] = useState(false);
