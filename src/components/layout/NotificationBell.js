@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export default function NotificationBell() {
+export default function NotificationBell({ side = "right" }) {
   const t = useTranslations("Notifications");
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +84,9 @@ export default function NotificationBell() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 max-h-[32rem] overflow-hidden rounded-2xl border bg-card shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div
+          className={`absolute ${side === "left" ? "left-0" : "right-0"} mt-2 w-80 max-h-[32rem] overflow-hidden rounded-2xl border bg-card shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200`}
+        >
           <div className="p-4 border-b flex items-center justify-between bg-muted/30">
             <h3 className="font-bold">{t("title")}</h3>
             {unreadCount > 0 && (
