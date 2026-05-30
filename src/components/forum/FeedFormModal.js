@@ -1,6 +1,6 @@
 "use client";
 
-import { Music, Newspaper, Play, SquarePlay, X } from "lucide-react";
+import { Feather, Music, Newspaper, Play, SquarePlay, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
@@ -8,22 +8,25 @@ import SaveButton from "@/components/SaveButton";
 
 export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
   const t = useTranslations("Feed.form");
-  const tFeed = useTranslations("Feed");
+  const tFeedCategories = useTranslations("Feed.categories");
   const tCommon = useTranslations("Common");
 
   const CATEGORIES = [
-    { id: "music", label: tFeed("categories.music"), icon: Music },
-    { id: "video", label: tFeed("categories.video"), icon: Play },
-    { id: "news", label: tFeed("categories.news"), icon: Newspaper },
-    { id: "other", label: tFeed("categories.other"), icon: SquarePlay },
+    { id: "text", label: tFeedCategories("text"), icon: Feather },
+    { id: "music", label: tFeedCategories("music"), icon: Music },
+    { id: "video", label: tFeedCategories("video"), icon: Play },
+    { id: "news", label: tFeedCategories("news"), icon: Newspaper },
+    { id: "other", label: tFeedCategories("other"), icon: SquarePlay },
   ];
   const [isClosing, setIsClosing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [category, setCategory] = useState(post?.category || "music");
+  const [category, setCategory] = useState(post?.category || "text");
   const [form, setForm] = useState({
     content: post?.content || "",
     visibility: post?.visibility || 1,
+    // Text
+    otherTitle: post?.otherTitle || "",
     // Music
     artist: post?.artist || "",
     title: post?.title || "",
@@ -135,16 +138,40 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
 
     setSaving(true);
     try {
+      const payload = {
+        ...form,
+        category,
+        forumId: forumId || post?.forumId,
+      };
+
+      // If category is text, we use otherTitle as the optional title
+      // But we should probably keep it clean if other categories were selected before
+      if (category === "text") {
+        payload.artist = null;
+        payload.title = null;
+        payload.spotifyUrl = null;
+        payload.youtubeMusicUrl = null;
+        payload.youtubeUrl = null;
+        payload.soundcloudUrl = null;
+        payload.videoUrl = null;
+        payload.videoPlatform = null;
+        payload.newsTitle = null;
+        payload.newsSite = null;
+        payload.newsUrl = null;
+        payload.otherUrl = null;
+        if (!payload.content?.trim()) {
+          setError(t("errors.text"));
+          setSaving(false);
+          return;
+        }
+      }
+
       const url = post ? `/api/posts/${post.id}` : "/api/posts";
       const method = post ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          category,
-          forumId: forumId || post?.forumId,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
@@ -158,6 +185,11 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+    setError("");
   };
 
   return (
@@ -208,7 +240,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
                 <button
                   key={cat.id}
                   type="button"
-                  onClick={() => setCategory(cat.id)}
+                  onClick={() => handleCategoryChange(cat.id)}
                   className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${
                     category === cat.id
                       ? "bg-primary/5 border-primary text-primary shadow-sm"
@@ -224,6 +256,16 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
 
           {/* Form Fields Based on Category */}
           <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            {category === "text" && (
+              <FormField
+                label={t("fields.textTitle")}
+                name="otherTitle"
+                value={form.otherTitle}
+                onChange={handleChange}
+                placeholder={t("placeholders.textTitle")}
+              />
+            )}
+
             {category === "music" && (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -32,7 +32,16 @@ export async function PATCH(req, { params }) {
 
     // Server-side validation
     const currentCategory = category || existing.category;
-    if (currentCategory === "music") {
+    if (currentCategory === "text") {
+      const tFeed = await getTranslations("Feed.form");
+      const currentContent = content !== undefined ? content : existing.content;
+      if (!currentContent?.trim()) {
+        return NextResponse.json(
+          { error: tFeed("errors.text") },
+          { status: 400 },
+        );
+      }
+    } else if (currentCategory === "music") {
       const tFeed = await getTranslations("Feed.form");
       const artist =
         details.artist !== undefined ? details.artist?.trim() : existing.artist;
