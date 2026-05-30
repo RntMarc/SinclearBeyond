@@ -4,9 +4,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
+import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
-import { getSession } from "@/lib/auth/session";
 import { getPoll } from "@/lib/polls/utils";
 import PollDetailClient from "./PollDetailClient";
 

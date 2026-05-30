@@ -2,8 +2,8 @@
 import { ChevronRight, Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { markTodayBirthdaysAsRead } from "@/lib/profile/birthdayActions";
 import Avatar from "@/components/Avatar";
+import { markAllBirthdaysAsRead } from "@/lib/profile/birthdayActions";
 import BirthdayModal from "./BirthdayModal";
 
 export default function BirthdayList({ initialBirthdays }) {
@@ -12,7 +12,7 @@ export default function BirthdayList({ initialBirthdays }) {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    markTodayBirthdaysAsRead();
+    markAllBirthdaysAsRead();
   }, []);
 
   if (!initialBirthdays || initialBirthdays.length === 0) {

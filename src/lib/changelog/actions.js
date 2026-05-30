@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { changelogEntries, readStatuses } from "@/lib/db/schema";
+import { changelogEntries, notifications, users } from "@/lib/db/schema";
 
 export async function createChangelogEntry(data) {
   const session = await getSession();
@@ -13,17 +13,37 @@ export async function createChangelogEntry(data) {
   }
 
   const id = crypto.randomUUID();
+  const now = new Date();
   const { error } = await safeQuery(
     db.insert(changelogEntries).values({
       id,
       title: data.title,
       content: data.content,
       category: data.category,
-      createdAt: new Date(),
+      createdAt: now,
     }),
   );
 
   if (error) throw error;
+
+  // Notify all users about new changelog entry
+  const { data: allUsers } = await safeQuery(
+    db.select({ id: users.id }).from(users),
+  );
+  if (allUsers && allUsers.length > 0) {
+    const notificationValues = allUsers
+      .filter((u) => u.id !== session.sub)
+      .map((u) => ({
+        id: crypto.randomUUID(),
+        userId: u.id,
+        type: "changelog",
+        entityId: id,
+        createdAt: now,
+      }));
+    if (notificationValues.length > 0) {
+      await safeQuery(db.insert(notifications).values(notificationValues));
+    }
+  }
 
   revalidatePath("/info");
   return { ok: true };
@@ -37,25 +57,25 @@ export async function getChangelogEntries() {
     db.select().from(changelogEntries).orderBy(changelogEntries.createdAt),
   );
 
-  const { data: readEntries, error: readError } = await safeQuery(
+  const { data: notificationEntries, error: readError } = await safeQuery(
     db
-      .select()
-      .from(readStatuses)
+      .select({ entityId: notifications.entityId })
+      .from(notifications)
       .where(
         and(
-          eq(readStatuses.userId, session.sub),
-          eq(readStatuses.entityType, "changelog"),
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, "changelog"),
         ),
       ),
   );
 
   if (entriesError || readError) return [];
 
-  const readIds = new Set((readEntries || []).map((r) => r.entityId));
+  const unreadIds = new Set((notificationEntries || []).map((n) => n.entityId));
 
   return (entries || []).reverse().map((entry) => ({
     ...entry,
-    read: readIds.has(entry.id),
+    read: !unreadIds.has(entry.id),
   }));
 }
 
@@ -63,48 +83,40 @@ export async function markAllChangelogAsRead() {
   const session = await getSession();
   if (!session) return { ok: false };
 
-  const { data: entries, error: entriesErr } = await safeQuery(
-    db.select({ id: changelogEntries.id }).from(changelogEntries),
-  );
-  if (entriesErr) throw entriesErr;
-
-  const entryIds = (entries || []).map((e) => e.id);
-
-  if (entryIds.length === 0) return { ok: true };
-
-  const { data: alreadyRead, error: readErr } = await safeQuery(
+  await safeQuery(
     db
-      .select({ entityId: readStatuses.entityId })
-      .from(readStatuses)
+      .delete(notifications)
       .where(
         and(
-          eq(readStatuses.userId, session.sub),
-          eq(readStatuses.entityType, "changelog"),
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, "changelog"),
         ),
       ),
   );
-  if (readErr) throw readErr;
-
-  const alreadyReadIds = (alreadyRead || []).map((r) => r.entityId);
-  const unreadIds = entryIds.filter((id) => !alreadyReadIds.includes(id));
-
-  if (unreadIds.length > 0) {
-    const values = unreadIds.map((id) => ({
-      id: crypto.randomUUID(),
-      userId: session.sub,
-      entityType: "changelog",
-      entityId: id,
-      createdAt: new Date(),
-    }));
-
-    const { error: insertErr } = await safeQuery(
-      db.insert(readStatuses).values(values),
-    );
-    if (insertErr) throw insertErr;
-  }
 
   revalidatePath("/info");
   revalidatePath("/", "layout"); // Revalidate layout for the nav badge
+  return { ok: true };
+}
+
+export async function markChangelogAsRead(id) {
+  const session = await getSession();
+  if (!session) return { ok: false };
+
+  await safeQuery(
+    db
+      .delete(notifications)
+      .where(
+        and(
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, "changelog"),
+          eq(notifications.entityId, id),
+        ),
+      ),
+  );
+
+  revalidatePath("/info");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 
@@ -112,30 +124,18 @@ export async function getUnreadChangelogCount() {
   const session = await getSession();
   if (!session) return 0;
 
-  const { data: entries, error: entriesErr } = await safeQuery(
-    db.select({ id: changelogEntries.id }).from(changelogEntries),
-  );
-  if (entriesErr) throw entriesErr;
-
-  const entryIds = (entries || []).map((e) => e.id);
-
-  if (entryIds.length === 0) return 0;
-
-  const { data: alreadyRead, error: readErr } = await safeQuery(
+  const { data, error } = await safeQuery(
     db
-      .select({ entityId: readStatuses.entityId })
-      .from(readStatuses)
+      .select({ id: notifications.id })
+      .from(notifications)
       .where(
         and(
-          eq(readStatuses.userId, session.sub),
-          eq(readStatuses.entityType, "changelog"),
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, "changelog"),
         ),
       ),
   );
-  if (readErr) throw readErr;
 
-  const alreadyReadIds = new Set((alreadyRead || []).map((r) => r.entityId));
-  const unreadCount = entryIds.filter((id) => !alreadyReadIds.has(id)).length;
-
-  return unreadCount;
+  if (error) return 0;
+  return data?.length || 0;
 }

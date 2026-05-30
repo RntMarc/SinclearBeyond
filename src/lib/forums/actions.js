@@ -10,7 +10,7 @@ import {
   feedPostVotes,
   forumMembers,
   forums,
-  readStatuses,
+  notifications,
 } from "@/lib/db/schema";
 
 export async function createForum(formData) {
@@ -94,13 +94,6 @@ export async function deleteForum(id) {
   const session = await getSession();
   if (!session?.isAdmin) throw new Error("Unauthorized");
 
-  // Deletions should be handled carefully
-  // 1. Delete votes of posts in this forum
-  // 2. Delete posts in this forum
-  // 3. Delete forum members
-  // 4. Delete read statuses
-  // 5. Delete forum
-
   await safeQuery(
     db
       .delete(feedPostVotes)
@@ -112,12 +105,9 @@ export async function deleteForum(id) {
   await safeQuery(db.delete(forumMembers).where(eq(forumMembers.forumId, id)));
   await safeQuery(
     db
-      .delete(readStatuses)
+      .delete(notifications)
       .where(
-        and(
-          eq(readStatuses.entityType, "forum"),
-          eq(readStatuses.entityId, id),
-        ),
+        and(eq(notifications.type, "forum"), eq(notifications.entityId, id)),
       ),
   );
   const { error } = await safeQuery(db.delete(forums).where(eq(forums.id, id)));
@@ -266,40 +256,38 @@ export async function markForumAsRead(forumId) {
   const postIds = (posts || []).map((p) => p.id);
   if (postIds.length === 0) return { ok: true };
 
-  // Use readStatuses for tracking unread?
-  // User said "Ein Besuch genügt, um den Post als gelesen zu markieren. Also genau wie im Changelog."
-  // In changelog, every entry is marked as read in readStatuses.
-
-  // Actually, for forums, it might be easier to just store "last visited at" for each forum member?
-  // But user specifically said "Nutze dafür das gleiche System wie für die Ungelesen-Markierung von /info."
-  // /info uses readStatuses per changelog entry.
-
-  const { data: alreadyRead, error: readErr } = await safeQuery(
+  await safeQuery(
     db
-      .select({ entityId: readStatuses.entityId })
-      .from(readStatuses)
+      .delete(notifications)
       .where(
         and(
-          eq(readStatuses.userId, session.sub),
-          eq(readStatuses.entityType, "feedPost"),
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, "forum"),
+          inArray(notifications.entityId, postIds),
         ),
       ),
   );
-  if (readErr) throw readErr;
 
-  const alreadyReadIds = new Set((alreadyRead || []).map((r) => r.entityId));
-  const unreadIds = postIds.filter((id) => !alreadyReadIds.has(id));
+  revalidatePath("/forum");
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
 
-  if (unreadIds.length > 0) {
-    const values = unreadIds.map((id) => ({
-      id: crypto.randomUUID(),
-      userId: session.sub,
-      entityType: "feedPost",
-      entityId: id,
-      createdAt: new Date(),
-    }));
-    await safeQuery(db.insert(readStatuses).values(values));
-  }
+export async function markPostAsRead(postId) {
+  const session = await getSession();
+  if (!session) return { ok: false };
+
+  await safeQuery(
+    db
+      .delete(notifications)
+      .where(
+        and(
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, "forum"),
+          eq(notifications.entityId, postId),
+        ),
+      ),
+  );
 
   revalidatePath("/forum");
   revalidatePath("/", "layout");
@@ -310,45 +298,18 @@ export async function getUnreadForumsCount() {
   const session = await getSession();
   if (!session) return 0;
 
-  // 1. Get all joined forums
-  const { data: joinedForums, error: joinedErr } = await safeQuery(
+  const { data, error } = await safeQuery(
     db
-      .select({ forumId: forumMembers.forumId })
-      .from(forumMembers)
-      .where(eq(forumMembers.userId, session.sub)),
-  );
-  if (joinedErr || !joinedForums?.length) return 0;
-
-  const forumIds = joinedForums.map((f) => f.forumId);
-
-  // 2. Get all posts in these forums
-  const { data: posts, error: postsErr } = await safeQuery(
-    db
-      .select({ id: feedPosts.id })
-      .from(feedPosts)
-      .where(inArray(feedPosts.forumId, forumIds)),
-  );
-  if (postsErr || !posts?.length) return 0;
-
-  const postIds = posts.map((p) => p.id);
-
-  // 3. Get read statuses for these posts
-  const { data: readPosts, error: readErr } = await safeQuery(
-    db
-      .select({ entityId: readStatuses.entityId })
-      .from(readStatuses)
+      .select({ count: sql`count(*)` })
+      .from(notifications)
       .where(
         and(
-          eq(readStatuses.userId, session.sub),
-          eq(readStatuses.entityType, "feedPost"),
-          inArray(readStatuses.entityId, postIds),
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, "forum"),
         ),
       ),
   );
-  if (readErr) return 0;
 
-  const readIds = new Set((readPosts || []).map((r) => r.entityId));
-  const unreadCount = postIds.filter((id) => !readIds.has(id)).length;
-
-  return unreadCount;
+  if (error) return 0;
+  return Number(data?.[0]?.count || 0);
 }

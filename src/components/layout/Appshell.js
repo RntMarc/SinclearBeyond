@@ -1,6 +1,6 @@
 "use client";
-import { Info, Menu, X } from "lucide-react";
 import * as LucideIcons from "lucide-react";
+import { Info, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
