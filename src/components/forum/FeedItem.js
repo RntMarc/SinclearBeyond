@@ -4,6 +4,7 @@ import {
   ArrowBigUp,
   Edit2,
   ExternalLink,
+  Feather,
   Heart,
   MoreVertical,
   Music,
@@ -56,6 +57,7 @@ export default function FeedItem({
   }, [showOptions]);
 
   const categoryIcons = {
+    text: Feather,
     music: Music,
     video: Play,
     news: Newspaper,
@@ -198,122 +200,134 @@ export default function FeedItem({
           )}
 
           {/* Main Info */}
-          <div className="bg-sidebar-accent/30 rounded-xl p-4 border border-sidebar-border">
-            {post.category === "music" && (
-              <div className="space-y-3">
-                <div>
-                  <h3 className="font-medium text-lg leading-tight">
-                    {post.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">{post.artist}</p>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {post.spotifyUrl && (
-                    <a
-                      href={post.spotifyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
-                    >
-                      Spotify
-                    </a>
-                  )}
-                  {post.youtubeMusicUrl && (
-                    <a
-                      href={post.youtubeMusicUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
-                    >
-                      YouTube Music
-                    </a>
-                  )}
-                  {post.youtubeUrl && (
-                    <a
-                      href={post.youtubeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
-                    >
-                      YouTube
-                    </a>
-                  )}
-                  {post.soundcloudUrl && (
-                    <a
-                      href={post.soundcloudUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
-                    >
-                      SoundCloud
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {post.category === "video" && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary font-bold">
-                  <span>{post.videoPlatform}</span>
-                </div>
-                <a
-                  href={post.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center justify-between gap-4"
-                >
-                  <span className="font-medium hover:underline break-all">
-                    {post.videoUrl}
-                  </span>
-                  <ExternalLink
-                    size={16}
-                    className="shrink-0 text-muted-foreground group-hover:text-primary transition-colors"
-                  />
-                </a>
-              </div>
-            )}
-
-            {post.category === "news" && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary font-bold">
-                  <span>{post.newsSite}</span>
-                </div>
-                <a
-                  href={post.newsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block"
-                >
-                  <h3 className="font-medium text-lg group-hover:underline leading-snug">
-                    {post.newsTitle}
-                  </h3>
-                  <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                    <ExternalLink size={12} /> {t("newsOpenLink")}
+          {post.category !== "text" && (
+            <div className="bg-sidebar-accent/30 rounded-xl p-4 border border-sidebar-border">
+              {post.category === "music" && (
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="font-medium text-lg leading-tight">
+                      {post.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {post.artist}
+                    </p>
                   </div>
-                </a>
-              </div>
-            )}
-
-            {post.category === "other" && (
-              <div className="space-y-2">
-                <a
-                  href={post.otherUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block"
-                >
-                  <h3 className="font-medium text-lg group-hover:underline leading-snug">
-                    {post.otherTitle}
-                  </h3>
-                  <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground break-all">
-                    <ExternalLink size={12} className="shrink-0" />{" "}
-                    {post.otherUrl}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {post.spotifyUrl && (
+                      <a
+                        href={post.spotifyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
+                      >
+                        Spotify
+                      </a>
+                    )}
+                    {post.youtubeMusicUrl && (
+                      <a
+                        href={post.youtubeMusicUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
+                      >
+                        YouTube Music
+                      </a>
+                    )}
+                    {post.youtubeUrl && (
+                      <a
+                        href={post.youtubeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
+                      >
+                        YouTube
+                      </a>
+                    )}
+                    {post.soundcloudUrl && (
+                      <a
+                        href={post.soundcloudUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full text-[11px] font-medium transition-colors"
+                      >
+                        SoundCloud
+                      </a>
+                    )}
                   </div>
-                </a>
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+
+              {post.category === "video" && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary font-bold">
+                    <span>{post.videoPlatform}</span>
+                  </div>
+                  <a
+                    href={post.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-4"
+                  >
+                    <span className="font-medium hover:underline break-all">
+                      {post.videoUrl}
+                    </span>
+                    <ExternalLink
+                      size={16}
+                      className="shrink-0 text-muted-foreground group-hover:text-primary transition-colors"
+                    />
+                  </a>
+                </div>
+              )}
+
+              {post.category === "news" && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary font-bold">
+                    <span>{post.newsSite}</span>
+                  </div>
+                  <a
+                    href={post.newsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block"
+                  >
+                    <h3 className="font-medium text-lg group-hover:underline leading-snug">
+                      {post.newsTitle}
+                    </h3>
+                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                      <ExternalLink size={12} /> {t("newsOpenLink")}
+                    </div>
+                  </a>
+                </div>
+              )}
+
+              {post.category === "other" && (
+                <div className="space-y-2">
+                  <a
+                    href={post.otherUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block"
+                  >
+                    <h3 className="font-medium text-lg group-hover:underline leading-snug">
+                      {post.otherTitle}
+                    </h3>
+                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground break-all">
+                      <ExternalLink size={12} className="shrink-0" />{" "}
+                      {post.otherUrl}
+                    </div>
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          {post.category === "text" && post.otherTitle && (
+            <div className="px-1">
+              <h3 className="font-semibold text-lg leading-tight">
+                {post.otherTitle}
+              </h3>
+            </div>
+          )}
 
           {/* Comment */}
           {post.content && (

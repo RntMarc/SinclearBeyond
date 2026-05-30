@@ -12,10 +12,10 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
-import Button from "@/components/ui/Button";
+import ContactMethodsFields from "@/components/profile/ContactMethodsFields";
 import LanguageTimezoneFields from "@/components/profile/LanguageTimezoneFields";
 import SocialMediaFields from "@/components/profile/SocialMediaFields";
-import ContactMethodsFields from "@/components/profile/ContactMethodsFields";
+import Button from "@/components/ui/Button";
 import { completeOnboarding } from "@/lib/auth/onboardingActions";
 
 export default function OnboardingModal({

@@ -34,10 +34,10 @@ export const changelogEntries = mysqlTable("ChangelogEntry", {
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
-export const readStatuses = mysqlTable("ReadStatus", {
+export const notifications = mysqlTable("Notification", {
   id: varchar("id", { length: 191 }).primaryKey(),
   userId: varchar("userId", { length: 191 }).notNull(),
-  entityType: varchar("entityType", { length: 191 }).notNull(),
+  type: varchar("type", { length: 191 }).notNull(),
   entityId: varchar("entityId", { length: 191 }).notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
@@ -62,9 +62,9 @@ export const userPreferences = mysqlTable("UserPreferences", {
   userId: varchar("userId", { length: 191 }).notNull(),
   language: varchar("language", { length: 10 }).notNull().default("de"),
   theme: mysqlEnum("theme", ["light", "dark"]).notNull().default("dark"),
-  primaryColor: varchar("primaryColor", { length: 7 })
+  primaryColor: varchar("primaryColor", { length: 20 })
     .notNull()
-    .default("#7c3aed"),
+    .default("var(--primary)"),
   timezone: varchar("timezone", { length: 191 }),
 });
 
@@ -235,6 +235,7 @@ export const feedPosts = mysqlTable("FeedPosts", {
   userId: varchar("userId", { length: 191 }).notNull(),
   forumId: varchar("forumId", { length: 191 }).notNull(),
   category: mysqlEnum("category", [
+    "text",
     "music",
     "video",
     "news",

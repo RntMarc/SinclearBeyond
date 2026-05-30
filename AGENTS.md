@@ -48,3 +48,18 @@ DO NOT use `utf8mb4_general_ci` or any other collation, as this will lead to run
 ### Editing Database Schema
 It is allowed to edit the schema of the database, if instructed to do so by the user. However, it is not allowed to do the migration after changing the schema. The user is responsible to migrate the database to the new schema after editing.
 Do not build any kind of fallback to support multiple schemas, always only build for the newest version of the schema - in case of editing it, the version you create. Just imagine the database to already be migrated to the newest schema change.
+
+# Notifications
+
+The application uses an opt-in/push-based notification system.
+
+### Core Logic
+1. **Unread-Only:** The `notifications` table stores only unread notifications.
+2. **Explicit Creation:** Notifications are created via server logic when new content is posted (e.g., in API routes for Forums, Polls, Events, Trips).
+3. **Implicit Deletion:** Notifications are removed from the database when the user visits the associated content or manually dismisses them.
+4. **Trigger Points:**
+   - Forums: All members except the author.
+   - Polls: All invitees except the creator.
+   - Events/Trips: All relevant participants or all users for public items.
+   - Birthdays: Processed on-demand when a user visits the dashboard.
+5. **Enrichment:** The `/api/notifications` endpoint dynamically enriches raw notification records with translated titles and correct deep-links.

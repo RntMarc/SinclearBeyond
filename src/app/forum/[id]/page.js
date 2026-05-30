@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import ForumDetailClient from "./ForumDetailClient";
 import AppShell from "@/components/layout/Appshell";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getProfileData } from "@/lib/profile/profile";
+import ForumDetailClient from "./ForumDetailClient";
 
 export default async function ForumDetailPage({ params }) {
   const { id } = await params;

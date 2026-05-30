@@ -1,0 +1,1 @@
+ALTER TABLE `FeedPosts` MODIFY COLUMN `category` enum('text','music','video','news','other') NOT NULL;

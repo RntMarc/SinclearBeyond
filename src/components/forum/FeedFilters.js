@@ -13,6 +13,7 @@ export default function FeedFilters({
 
   const CATEGORIES = [
     { id: "all", label: t("categories.all") },
+    { id: "text", label: t("categories.text") },
     { id: "music", label: t("categories.music") },
     { id: "video", label: t("categories.video") },
     { id: "news", label: t("categories.news") },

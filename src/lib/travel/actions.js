@@ -1,194 +1,68 @@
 "use server";
 
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import {
-  eventRelations,
-  readStatuses,
-  travelEvents,
-  travelRelations,
-  travelTrips,
-} from "@/lib/db/schema";
+import { notifications } from "@/lib/db/schema";
 
 export async function getUnreadTravelCount() {
   const session = await getSession();
   if (!session) return 0;
+  const userId = session.sub;
 
-  // 1. Get all trips user is participant of (or all if admin)
-  let tripIds = [];
-  if (session.isAdmin) {
-    const { data } = await safeQuery(
-      db.select({ id: travelTrips.id }).from(travelTrips),
-    );
-    tripIds = (data || []).map((t) => t.id);
-  } else {
-    const { data } = await safeQuery(
-      db
-        .select({ tripId: travelRelations.tripId })
-        .from(travelRelations)
-        .where(eq(travelRelations.userId, session.sub)),
-    );
-    tripIds = (data || []).map((r) => r.tripId);
-  }
-
-  // 2. Get all standalone events user is participant of (or all if admin)
-  let eventIds = [];
-  if (session.isAdmin) {
-    const { data } = await safeQuery(
-      db
-        .select({ id: travelEvents.id })
-        .from(travelEvents)
-        .where(isNull(travelEvents.tripId)),
-    );
-    eventIds = (data || []).map((e) => e.id);
-  } else {
-    const { data } = await safeQuery(
-      db
-        .select({ id: travelEvents.id })
-        .from(travelEvents)
-        .innerJoin(eventRelations, eq(travelEvents.id, eventRelations.eventId))
-        .where(
-          and(
-            isNull(travelEvents.tripId),
-            eq(eventRelations.userId, session.sub),
-          ),
-        ),
-    );
-    eventIds = (data || []).map((e) => e.id);
-  }
-
-  if (tripIds.length === 0 && eventIds.length === 0) return 0;
-
-  // 3. Check read statuses
-  const { data: readEntries } = await safeQuery(
+  const { data, error } = await safeQuery(
     db
-      .select({
-        entityId: readStatuses.entityId,
-        entityType: readStatuses.entityType,
-      })
-      .from(readStatuses)
+      .select({ id: notifications.id })
+      .from(notifications)
       .where(
         and(
-          eq(readStatuses.userId, session.sub),
-          inArray(readStatuses.entityType, ["travelTrip", "travelEvent"]),
+          eq(notifications.userId, userId),
+          or(eq(notifications.type, "trip"), eq(notifications.type, "event")),
         ),
       ),
   );
 
-  const readTripIds = new Set(
-    (readEntries || [])
-      .filter((r) => r.entityType === "travelTrip")
-      .map((r) => r.entityId),
-  );
-  const readEventIds = new Set(
-    (readEntries || [])
-      .filter((r) => r.entityType === "travelEvent")
-      .map((r) => r.entityId),
-  );
-
-  const unreadTrips = tripIds.filter((id) => !readTripIds.has(id)).length;
-  const unreadEvents = eventIds.filter((id) => !readEventIds.has(id)).length;
-
-  return unreadTrips + unreadEvents;
+  if (error) return 0;
+  return data?.length || 0;
 }
 
 export async function markAllTravelAsRead() {
   const session = await getSession();
   if (!session) return { ok: false };
+  const userId = session.sub;
 
-  // Logic to mark all relevant trips and events as read
-  // For simplicity, we get all trip/event IDs the user can see and mark them.
-
-  // Reuse some logic or just get IDs
-  let tripIds = [];
-  let eventIds = [];
-
-  if (session.isAdmin) {
-    const { data: tData } = await safeQuery(
-      db.select({ id: travelTrips.id }).from(travelTrips),
-    );
-    tripIds = (tData || []).map((t) => t.id);
-    const { data: eData } = await safeQuery(
-      db
-        .select({ id: travelEvents.id })
-        .from(travelEvents)
-        .where(isNull(travelEvents.tripId)),
-    );
-    eventIds = (eData || []).map((e) => e.id);
-  } else {
-    const { data: tData } = await safeQuery(
-      db
-        .select({ tripId: travelRelations.tripId })
-        .from(travelRelations)
-        .where(eq(travelRelations.userId, session.sub)),
-    );
-    tripIds = (tData || []).map((r) => r.tripId);
-    const { data: eData } = await safeQuery(
-      db
-        .select({ id: travelEvents.id })
-        .from(travelEvents)
-        .innerJoin(eventRelations, eq(travelEvents.id, eventRelations.eventId))
-        .where(
-          and(
-            isNull(travelEvents.tripId),
-            eq(eventRelations.userId, session.sub),
-          ),
-        ),
-    );
-    eventIds = (eData || []).map((e) => e.id);
-  }
-
-  const { data: alreadyRead } = await safeQuery(
+  await safeQuery(
     db
-      .select({
-        entityId: readStatuses.entityId,
-        entityType: readStatuses.entityType,
-      })
-      .from(readStatuses)
+      .delete(notifications)
       .where(
         and(
-          eq(readStatuses.userId, session.sub),
-          inArray(readStatuses.entityType, ["travelTrip", "travelEvent"]),
+          eq(notifications.userId, userId),
+          or(eq(notifications.type, "trip"), eq(notifications.type, "event")),
         ),
       ),
   );
 
-  const alreadyReadTripIds = new Set(
-    (alreadyRead || [])
-      .filter((r) => r.entityType === "travelTrip")
-      .map((r) => r.entityId),
+  revalidatePath("/reisen");
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function markTravelItemAsRead(itemId, type) {
+  const session = await getSession();
+  if (!session) return { ok: false };
+
+  await safeQuery(
+    db
+      .delete(notifications)
+      .where(
+        and(
+          eq(notifications.userId, session.sub),
+          eq(notifications.type, type),
+          eq(notifications.entityId, itemId),
+        ),
+      ),
   );
-  const alreadyReadEventIds = new Set(
-    (alreadyRead || [])
-      .filter((r) => r.entityType === "travelEvent")
-      .map((r) => r.entityId),
-  );
-
-  const unreadTripIds = tripIds.filter((id) => !alreadyReadTripIds.has(id));
-  const unreadEventIds = eventIds.filter((id) => !alreadyReadEventIds.has(id));
-
-  const newReadStatuses = [
-    ...unreadTripIds.map((id) => ({
-      id: crypto.randomUUID(),
-      userId: session.sub,
-      entityType: "travelTrip",
-      entityId: id,
-      createdAt: new Date(),
-    })),
-    ...unreadEventIds.map((id) => ({
-      id: crypto.randomUUID(),
-      userId: session.sub,
-      entityType: "travelEvent",
-      entityId: id,
-      createdAt: new Date(),
-    })),
-  ];
-
-  if (newReadStatuses.length > 0) {
-    await safeQuery(db.insert(readStatuses).values(newReadStatuses));
-  }
 
   revalidatePath("/reisen");
   revalidatePath("/", "layout");

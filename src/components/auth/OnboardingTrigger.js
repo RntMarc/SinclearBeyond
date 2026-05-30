@@ -10,16 +10,18 @@ export default function OnboardingTrigger({ session }) {
     async function checkOnboarding() {
       if (!session) return;
 
-      const isOnboardingCompleted = session.onboardingCompleted;
+      const isOnboardingCompleted = Boolean(session.onboardingCompleted);
 
       if (!isOnboardingCompleted) {
         try {
           const { getProfileData } = await import("@/lib/profile/profile");
-          const { data: prefData } = await fetch("/api/user/preferences").then(
-            (res) => res.json(),
-          );
           const profile = await getProfileData(session);
-          if (profile) {
+
+          // Second check against the database to prevent stale session showing the modal
+          if (profile && !profile.user?.onboardingCompleted) {
+            const { data: prefData } = await fetch(
+              "/api/user/preferences",
+            ).then((res) => res.json());
             setOnboardingData({
               ...profile,
               preferences: prefData,

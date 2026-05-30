@@ -124,7 +124,14 @@ export async function POST(req) {
 
     // Server-side validation
     const tFeed = await getTranslations("Feed.form");
-    if (category === "music") {
+    if (category === "text") {
+      if (!content?.trim()) {
+        return NextResponse.json(
+          { error: tFeed("errors.text") },
+          { status: 400 },
+        );
+      }
+    } else if (category === "music") {
       if (!details.artist || !details.title) {
         return NextResponse.json(
           { error: tFeed("errors.music") },
