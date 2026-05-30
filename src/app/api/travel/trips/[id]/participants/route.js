@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { travelRelations, users } from "@/lib/db/schema";
+import { notifications, travelRelations, users } from "@/lib/db/schema";
 
 export async function GET(_req, { params }) {
   const t = await getTranslations("Common");
@@ -82,6 +82,26 @@ export async function POST(req, { params }) {
     );
 
     if (insertError) throw insertError;
+
+    // Create notification for the new participant
+    if (userId !== session.sub) {
+      try {
+        await safeQuery(
+          db.insert(notifications).values({
+            id: crypto.randomUUID(),
+            userId: userId,
+            type: "trip",
+            entityId: id,
+            createdAt: new Date(),
+          }),
+        );
+      } catch (notifyError) {
+        console.error(
+          "[API/Travel/Trips/Participants] Notification Error:",
+          notifyError,
+        );
+      }
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

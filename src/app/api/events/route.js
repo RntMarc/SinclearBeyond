@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { eventPermissions, events } from "@/lib/db/schema";
+import { eventPermissions, events, notifications } from "@/lib/db/schema";
 
 export async function GET() {
   const t = await getTranslations("Common");
@@ -122,6 +122,25 @@ export async function POST(req) {
     );
     if (permError) {
       return NextResponse.json({ error: t("dbError") }, { status: 500 });
+    }
+
+    // Create notifications for users with view permission
+    try {
+      const notificationValues = permissions
+        .filter((p) => p.canView && p.userId !== session.sub)
+        .map((p) => ({
+          id: crypto.randomUUID(),
+          userId: p.userId,
+          type: "event",
+          entityId: id,
+          createdAt: now,
+        }));
+
+      if (notificationValues.length > 0) {
+        await safeQuery(db.insert(notifications).values(notificationValues));
+      }
+    } catch (notifyError) {
+      console.error("[API/Events] Notification Error:", notifyError);
     }
   }
 
