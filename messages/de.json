@@ -884,6 +884,22 @@
     "albums": "Alben",
     "openAlbum": "Album öffnen"
   },
+  "Notifications": {
+    "title": "Benachrichtigungen",
+    "empty": "Keine neuen Benachrichtigungen",
+    "clearAll": "Alle löschen",
+    "markAsRead": "Als gelesen markieren",
+    "viewAll": "Alle anzeigen",
+    "types": {
+      "forum": "Neuer Forenbeitrag",
+      "poll": "Neue Umfrage",
+      "event": "Neues Event",
+      "trip": "Neue Reise",
+      "changelog": "Neuer Changelog-Eintrag",
+      "birthday": "Geburtstag heute",
+      "birthday_soon": "Geburtstag bald"
+    }
+  },
   "Onboarding": {
     "welcomeTitle": "Willkommen bei Sinclear Beyond",
     "aiWarning": "Diese App wurde mit KI 'gevibecodet'. Das bedeutet, dass vieles automatisiert erstellt wurde. Daher können Fehler, Bugs oder seltsames Verhalten auftreten.",

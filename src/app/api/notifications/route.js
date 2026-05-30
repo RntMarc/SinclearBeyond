@@ -142,7 +142,10 @@ export async function GET(req) {
   if (typeMap.trip) {
     fetchPromises.push(
       safeQuery(
-        db.select().from(travelTrips).where(inArray(travelTrips.id, typeMap.trip)),
+        db
+          .select()
+          .from(travelTrips)
+          .where(inArray(travelTrips.id, typeMap.trip)),
       ).then(({ data }) => {
         dataContext.trip = (data || []).reduce((acc, row) => {
           acc[row.id] = row;
@@ -169,7 +172,10 @@ export async function GET(req) {
   }
 
   if (typeMap.birthday || typeMap.birthday_soon) {
-    const bdayEntityIds = [...(typeMap.birthday || []), ...(typeMap.birthday_soon || [])];
+    const bdayEntityIds = [
+      ...(typeMap.birthday || []),
+      ...(typeMap.birthday_soon || []),
+    ];
     const userIds = bdayEntityIds.map((eid) => eid.split("-")[1]);
     if (userIds.length > 0) {
       fetchPromises.push(
@@ -211,7 +217,10 @@ export async function GET(req) {
       } else if (n.type === "trip" && dataContext.trip?.[n.entityId]) {
         title = `${t("types.trip")}: ${dataContext.trip[n.entityId].name}`;
         link = "/reisen";
-      } else if (n.type === "changelog" && dataContext.changelog?.[n.entityId]) {
+      } else if (
+        n.type === "changelog" &&
+        dataContext.changelog?.[n.entityId]
+      ) {
         title = `${t("types.changelog")}: ${dataContext.changelog[n.entityId].title}`;
         link = "/info";
       } else if (n.type === "birthday" || n.type === "birthday_soon") {

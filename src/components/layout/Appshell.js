@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
+import NotificationBell from "@/components/layout/NotificationBell";
 import SnowEffect from "@/components/layout/SnowEffect";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -194,6 +195,7 @@ export default function AppShell({ children, user, session }) {
         </nav>
 
         <div className="px-4 py-4 border-t border-sidebar-border flex items-center justify-between gap-2 shrink-0">
+          <NotificationBell />
           <div className="flex items-center gap-3 min-w-0">
             <Avatar
               src={localUser?.image}
@@ -230,6 +232,9 @@ export default function AppShell({ children, user, session }) {
           >
             Sinclear Beyond
           </Link>
+          <div className="ml-auto">
+            <NotificationBell />
+          </div>
         </div>
 
         {/* flex-1 + overflow-auto: scrollable for normal pages, fillable for fullscreen ones */}

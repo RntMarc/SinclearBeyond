@@ -4,7 +4,13 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { closeFriends, feedPosts, users } from "@/lib/db/schema";
+import {
+  closeFriends,
+  feedPosts,
+  forumMembers,
+  notifications,
+  users,
+} from "@/lib/db/schema";
 
 export async function GET(req) {
   const t = await getTranslations("Common");
@@ -231,6 +237,35 @@ export async function POST(req) {
     );
 
     if (rowErr) throw rowErr;
+
+    // Create notifications for forum members
+    try {
+      const { data: members } = await safeQuery(
+        db
+          .select({ userId: forumMembers.userId })
+          .from(forumMembers)
+          .where(eq(forumMembers.forumId, forumId)),
+      );
+
+      if (members && members.length > 0) {
+        const notificationValues = members
+          .filter((m) => m.userId !== session.sub)
+          .map((m) => ({
+            id: crypto.randomUUID(),
+            userId: m.userId,
+            type: "forum",
+            entityId: id,
+            createdAt: now,
+          }));
+
+        if (notificationValues.length > 0) {
+          await safeQuery(db.insert(notifications).values(notificationValues));
+        }
+      }
+    } catch (notifyError) {
+      console.error("[API/Feed] Notification Error:", notifyError);
+      // We don't want to fail the post creation if notifications fail
+    }
 
     return NextResponse.json(rows?.[0], { status: 201 });
   } catch (error) {

@@ -850,6 +850,22 @@
       "list": "List"
     }
   },
+  "Notifications": {
+    "title": "Notifications",
+    "empty": "No new notifications",
+    "clearAll": "Clear all",
+    "markAsRead": "Mark as read",
+    "viewAll": "View all",
+    "types": {
+      "forum": "New forum post",
+      "poll": "New poll",
+      "event": "New event",
+      "trip": "New trip",
+      "changelog": "New changelog entry",
+      "birthday": "Birthday today",
+      "birthday_soon": "Birthday soon"
+    }
+  },
   "Chat": {
     "subtitle": "Communication",
     "title": "Chat",
