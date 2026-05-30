@@ -437,6 +437,7 @@
     "newPost": "New post",
     "categories": {
       "all": "All",
+      "text": "Text post",
       "music": "Music",
       "video": "Videos",
       "news": "News",
@@ -466,6 +467,7 @@
       "successUpdate": "Post updated",
       "successShare": "Post shared",
       "placeholders": {
+        "textTitle": "e.g. Thoughts of the day",
         "artist": "e.g. Pink Floyd",
         "songTitle": "e.g. Wish You Were Here",
         "spotify": "https://open.spotify.com/...",
@@ -479,6 +481,7 @@
         "otherTitle": "e.g. Cool Open Source Project"
       },
       "fields": {
+        "textTitle": "Title (optional)",
         "artist": "Artist",
         "title": "Title",
         "spotifyLink": "Spotify Link",
@@ -494,6 +497,7 @@
         "otherLink": "Link"
       },
       "errors": {
+        "text": "Content is required.",
         "music": "Artist and title are required.",
         "musicLink": "At least one link to a platform is required.",
         "video": "Video link and platform are required.",

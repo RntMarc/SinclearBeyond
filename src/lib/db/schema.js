@@ -235,6 +235,7 @@ export const feedPosts = mysqlTable("FeedPosts", {
   userId: varchar("userId", { length: 191 }).notNull(),
   forumId: varchar("forumId", { length: 191 }).notNull(),
   category: mysqlEnum("category", [
+    "text",
     "music",
     "video",
     "news",

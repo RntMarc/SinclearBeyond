@@ -430,6 +430,7 @@
     "newPost": "Nuier Beidrag",
     "categories": {
       "all": "Älles",
+      "text": "Oigener Beidrag",
       "music": "Mugg",
       "video": "Videos",
       "news": "Neichkeita",
@@ -459,6 +460,7 @@
       "successUpdate": "Beidrag agtualisiert",
       "successShare": "Beidrag doilt",
       "placeholders": {
+        "textTitle": "z.B. Gedanken zom Tag",
         "artist": "z.B. Pink Floyd",
         "songTitle": "z.B. Wish You Were Here",
         "spotify": "https://open.spotify.com/...",
@@ -472,6 +474,7 @@
         "otherTitle": "z.B. Cooles Open Source Projekt"
       },
       "fields": {
+        "textTitle": "Titel (wenn de magsch)",
         "artist": "Künschtler",
         "title": "Titel",
         "spotifyLink": "Spotify Link",
@@ -487,6 +490,7 @@
         "otherLink": "Link"
       },
       "errors": {
+        "text": "Du muasch scho was neischreiba.",
         "music": "Künschtler und Titel musch ageba.",
         "musicLink": "Brauchsch mindeschtens oin Link zu ra Pladdform.",
         "video": "Video-Link und Pladdform musch ageba.",
