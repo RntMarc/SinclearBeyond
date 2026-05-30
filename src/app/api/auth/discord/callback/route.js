@@ -165,15 +165,18 @@ export async function GET(req) {
       );
 
       return await createSessionAndRedirect(
-        userId,
-        discordUser.email,
-        0,
+        {
+          id: userId,
+          email: discordUser.email,
+          isAdmin: 0,
+          onboardingCompleted: 0,
+        },
         origin,
       );
     }
 
     // Default: Login
-    const user = existingByDiscordId[0] || existingByEmail[0];
+    let user = existingByDiscordId[0] || existingByEmail[0];
 
     if (!user) {
       return NextResponse.redirect(
@@ -220,15 +223,17 @@ export async function GET(req) {
           }),
         );
       }
+
+      // Re-fetch user to get updated data (though discordId doesn't affect session, it's cleaner)
+      const { data: updatedUser } = await safeQuery(
+        db.select().from(users).where(eq(users.id, user.id)).limit(1),
+      );
+      if (updatedUser?.[0]) {
+        user = updatedUser[0];
+      }
     }
 
-    return await createSessionAndRedirect(
-      user.id,
-      user.email,
-      user.isAdmin,
-      origin,
-      callbackUrl,
-    );
+    return await createSessionAndRedirect(user, origin, callbackUrl);
   } catch (error) {
     const duration = Date.now() - startTime;
     console.error(`Discord callback error after ${duration}ms:`, error);
@@ -247,18 +252,8 @@ export async function GET(req) {
   }
 }
 
-async function createSessionAndRedirect(
-  userId,
-  email,
-  isAdmin,
-  origin,
-  callbackUrl,
-) {
-  const token = await createSessionToken({
-    id: userId,
-    email: email,
-    isAdmin: isAdmin,
-  });
+async function createSessionAndRedirect(user, origin, callbackUrl) {
+  const token = await createSessionToken(user);
 
   const cookieStore = await cookies();
   cookieStore.set("session", token, {
