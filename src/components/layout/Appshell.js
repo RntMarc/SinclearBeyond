@@ -129,7 +129,7 @@ export default function AppShell({ children, user, session }) {
             Sinclear Beyond
           </Link>
           <div className="flex items-center gap-1">
-            <NotificationBell />
+            {!showMobileElements && <NotificationBell side="left" />}
             <button
               type="button"
               className={`${showMobileElements ? "flex" : "hidden md:hidden"} text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent transition-colors`}
