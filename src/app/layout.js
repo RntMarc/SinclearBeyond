@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import OnboardingTrigger from "@/components/auth/OnboardingTrigger";
+import PwaRegister from "@/components/layout/PwaRegister";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { getSession } from "@/lib/auth/session";
 import "./globals.css";
@@ -18,6 +19,13 @@ export async function generateMetadata() {
   return {
     title: t("title"),
     description: t("description"),
+    manifest: "/manifest.json",
+    other: {
+      "mobile-web-app-capable": "yes",
+      "apple-mobile-web-app-capable": "yes",
+      "apple-mobile-web-app-status-bar-style": "black-translucent",
+      "apple-mobile-web-app-title": "Sinclear",
+    },
   };
 }
 
@@ -39,8 +47,10 @@ export default async function RootLayout({ children }) {
       className={`${inter.variable} ${initialPreferences.theme} h-full`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
+        <link rel="apple-touch-icon" href="/apple-icon-180x180.png" />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider initialPreferences={initialPreferences}>
+            <PwaRegister />
             <OnboardingTrigger session={session} />
             {children}
           </ThemeProvider>

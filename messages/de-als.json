@@ -880,5 +880,19 @@
       "birthday": "Geburtsdag heit",
       "birthday_soon": "Geburtsdag bald"
     }
+  },
+  "Pwa": {
+    "installTitle": "App inschtalliera",
+    "installDescription": "Inshtallier Sinclear Beyond uff deinr Gricht fir a beseres Erlebnis.",
+    "installAction": "Inshtalliera",
+    "dismiss": "Schbäder",
+    "updateAvailable": "Update verfügbar",
+    "updateDescription": "A neue Version vo Sinclear Beyond isch verfügbar.",
+    "updateAction": "Aktualisiera",
+    "notificationPermission": "Benochrichtigonga erlauba",
+    "notificationDescription": "Erlaub Push-Benochrichtigonga, damit du koine Beiträg verschbassch.",
+    "notificationAction": "Benochrichtigonga aktiviera",
+    "offlineTitle": "Du bisch offline",
+    "offlineDescription": "Sinclear Beyond bruacht a Internetverbindong. Bitte überpruef dei Verbindong ond probier's nomol."
   }
 }

@@ -42,6 +42,15 @@ export const notifications = mysqlTable("Notification", {
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
 });
 
+export const pushSubscriptions = mysqlTable("PushSubscription", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
 export const users = mysqlTable("User", {
   id: varchar("id", { length: 191 }).primaryKey(),
   email: varchar("email", { length: 191 }).notNull(),

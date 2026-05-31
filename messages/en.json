@@ -906,5 +906,19 @@
       "passwordNote": "Please save your password securely. It cannot be recovered.",
       "continueToChat": "Continue to Chat"
     }
+  },
+  "Pwa": {
+    "installTitle": "Install App",
+    "installDescription": "Install Sinclear Beyond on your device for a better experience.",
+    "installAction": "Install",
+    "dismiss": "Later",
+    "updateAvailable": "Update Available",
+    "updateDescription": "A new version of Sinclear Beyond is available.",
+    "updateAction": "Update",
+    "notificationPermission": "Enable Notifications",
+    "notificationDescription": "Allow push notifications to stay up to date.",
+    "notificationAction": "Enable Notifications",
+    "offlineTitle": "You're offline",
+    "offlineDescription": "Sinclear Beyond requires an internet connection. Please check your connection and try again."
   }
 }

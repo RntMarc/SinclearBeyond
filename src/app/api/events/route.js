@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import { eventPermissions, events, notifications } from "@/lib/db/schema";
+import { sendPushToUsers } from "@/lib/notifications/push";
 
 export async function GET() {
   const t = await getTranslations("Common");
@@ -138,6 +139,16 @@ export async function POST(req) {
 
       if (notificationValues.length > 0) {
         await safeQuery(db.insert(notifications).values(notificationValues));
+
+        sendPushToUsers(
+          notificationValues.map((n) => n.userId),
+          {
+            title: "Neues Event",
+            body: title?.trim() || "Ein neues Event wurde erstellt",
+            url: `/kalender`,
+            tag: `event-${id}`,
+          },
+        ).catch((err) => console.error("[Push] Error:", err));
       }
     } catch (notifyError) {
       console.error("[API/Events] Notification Error:", notifyError);
