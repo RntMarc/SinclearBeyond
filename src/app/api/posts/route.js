@@ -11,6 +11,7 @@ import {
   notifications,
   users,
 } from "@/lib/db/schema";
+import { sendPushToUsers } from "@/lib/notifications/push";
 
 export async function GET(req) {
   const t = await getTranslations("Common");
@@ -260,6 +261,16 @@ export async function POST(req) {
 
         if (notificationValues.length > 0) {
           await safeQuery(db.insert(notifications).values(notificationValues));
+
+          sendPushToUsers(
+            notificationValues.map((n) => n.userId),
+            {
+              title: "Neuer Forumsbeitrag",
+              body: `Ein neuer Beitrag wurde im Forum erstellt`,
+              url: `/forum/${forumId}`,
+              tag: `forum-${id}`,
+            },
+          ).catch((err) => console.error("[Push] Error:", err));
         }
       }
     } catch (notifyError) {

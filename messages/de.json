@@ -955,5 +955,19 @@
       "passwordNote": "Bitte speichere dein Passwort sicher ab. Es kann nicht wiederhergestellt werden.",
       "continueToChat": "Weiter zum Chat"
     }
+  },
+  "Pwa": {
+    "installTitle": "App installieren",
+    "installDescription": "Installiere Sinclear Beyond auf deinem Gerät für ein besseres Erlebnis.",
+    "installAction": "Installieren",
+    "dismiss": "Später",
+    "updateAvailable": "Update verfügbar",
+    "updateDescription": "Eine neue Version von Sinclear Beyond ist verfügbar.",
+    "updateAction": "Aktualisieren",
+    "notificationPermission": "Benachrichtigungen erlauben",
+    "notificationDescription": "Erlaube Push-Benachrichtigungen, um keine Beiträge zu verpassen.",
+    "notificationAction": "Benachrichtigungen aktivieren",
+    "offlineTitle": "Du bist offline",
+    "offlineDescription": "Sinclear Beyond benötigt eine Internetverbindung. Bitte überprüf deine Verbindung und versuche es erneut."
   }
 }
