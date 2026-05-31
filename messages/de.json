@@ -897,7 +897,18 @@
       "trip": "Neue Reise",
       "changelog": "Neuer Changelog-Eintrag",
       "birthday": "Geburtstag heute",
-      "birthday_soon": "Geburtstag bald"
+      "birthday_soon": "Geburtstag bald",
+      "test": "Test-Benachrichtigung"
+    }
+  },
+  "Admin": {
+    "Notifications": {
+      "title": "Benachrichtigungen",
+      "description": "Versende eine Test-Benachrichtigung an ausgewählte User. Die Benachrichtigung wird sowohl im internen System als auch als PWA-Push-Benachrichtigung zugestellt.",
+      "sendTestButton": "Test-Benachrichtigung senden",
+      "selectAllUsers": "Alle User auswählen",
+      "searchUsers": "User suchen…",
+      "nSelected": "{count} User ausgewählt"
     }
   },
   "Onboarding": {

@@ -2,6 +2,7 @@
 
 import {
   Banknote,
+  BellRing,
   CalendarDays,
   Hash,
   Hotel,
@@ -21,6 +22,7 @@ import SubscriptionFormModal from "@/components/admin/SubscriptionFormModal";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import NotificationTestModal from "@/components/admin/NotificationTestModal";
 import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";
 import AccommodationFormModal from "@/components/travel/AccommodationFormModal";
 import TravelEventFormModal from "@/components/travel/TravelEventFormModal";
@@ -52,6 +54,7 @@ export default function AdminPage({ user, session }) {
   const [editingSubscription, setEditingSubscription] = useState(null);
   const [editingForum, setEditingForum] = useState(null);
   const [editingRssSource, setEditingRssSource] = useState(null);
+  const [showTestNotificationModal, setShowTestNotificationModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
@@ -96,6 +99,7 @@ export default function AdminPage({ user, session }) {
     { id: "subscriptions", label: "Abos", icon: Banknote },
     { id: "forums", label: "Foren", icon: Hash },
     { id: "news", label: "Aktuell", icon: Newspaper },
+    { id: "notifications", label: "Benachrichtigungen", icon: BellRing },
     { id: "users", label: "Nutzer", icon: Users },
     { id: "webhooks", label: "Webhooks", icon: Webhook },
     { id: "system", label: "System", icon: Palette },
@@ -579,6 +583,28 @@ export default function AdminPage({ user, session }) {
               </div>
             )}
 
+            {activeTab === "notifications" && (
+              <div className="bg-sidebar border border-sidebar-border rounded-2xl p-8">
+                <h2 className="text-xl font-light mb-6 flex items-center gap-2">
+                  <BellRing className="text-primary" size={20} />
+                  Test-Benachrichtigungen
+                </h2>
+                <p className="text-sm text-muted-foreground mb-6 max-w-lg">
+                  Versende eine Test-Benachrichtigung an ausgewählte User.
+                  Die Benachrichtigung wird sowohl im internen System als auch
+                  als PWA-Push-Benachrichtigung zugestellt.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowTestNotificationModal(true)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  <BellRing size={16} />
+                  Test-Benachrichtigung senden
+                </button>
+              </div>
+            )}
+
             {(activeTab === "users" || activeTab === "webhooks") && (
               <div className="bg-sidebar border border-sidebar-border rounded-2xl p-12 text-center">
                 <h2 className="text-lg font-medium mb-2">
@@ -683,6 +709,12 @@ export default function AdminPage({ user, session }) {
             source={editingRssSource}
             onClose={() => setEditingRssSource(null)}
             onUpdated={fetchData}
+          />
+        )}
+
+        {showTestNotificationModal && (
+          <NotificationTestModal
+            onClose={() => setShowTestNotificationModal(false)}
           />
         )}
       </div>

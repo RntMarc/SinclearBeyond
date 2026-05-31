@@ -878,7 +878,18 @@
       "trip": "Nuie Reis",
       "changelog": "Nuier Changelog-Eitrag",
       "birthday": "Geburtsdag heit",
-      "birthday_soon": "Geburtsdag bald"
+      "birthday_soon": "Geburtsdag bald",
+      "test": "Test-Benochrichtigong"
+    }
+  },
+  "Admin": {
+    "Notifications": {
+      "title": "Benochrichtigonga",
+      "description": "Schick a Test-Benochrichtigong an usgsuechte User. D'Nochricht kommt sowohl im interne Syschdem als au als PWA-Push-Benochrichtigong ã.",
+      "sendTestButton": "Test-Benochrichtigong senda",
+      "selectAllUsers": "Alli User usswähla",
+      "searchUsers": "User suacha…",
+      "nSelected": "{count} User usgwählt"
     }
   },
   "Pwa": {

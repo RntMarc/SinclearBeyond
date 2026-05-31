@@ -863,7 +863,18 @@
       "trip": "New trip",
       "changelog": "New changelog entry",
       "birthday": "Birthday today",
-      "birthday_soon": "Birthday soon"
+      "birthday_soon": "Birthday soon",
+      "test": "Test notification"
+    }
+  },
+  "Admin": {
+    "Notifications": {
+      "title": "Notifications",
+      "description": "Send a test notification to selected users. The notification will be delivered through both the internal system and PWA push.",
+      "sendTestButton": "Send test notification",
+      "selectAllUsers": "Select all users",
+      "searchUsers": "Search users…",
+      "nSelected": "{count} users selected"
     }
   },
   "Chat": {
