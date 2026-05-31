@@ -979,6 +979,10 @@
     "notificationDescription": "Erlaube Push-Benachrichtigungen, um keine Beiträge zu verpassen.",
     "notificationAction": "Benachrichtigungen aktivieren",
     "offlineTitle": "Du bist offline",
-    "offlineDescription": "Sinclear Beyond benötigt eine Internetverbindung. Bitte überprüf deine Verbindung und versuche es erneut."
+    "offlineDescription": "Sinclear Beyond benötigt eine Internetverbindung. Bitte überprüf deine Verbindung und versuche es erneut.",
+    "iosInstallTitle": "Sinclear Beyond installieren",
+    "iosInstallStep1": "1. Tippe auf das Teilen-Symbol {icon} in der Menüleiste.",
+    "iosInstallStep2": "2. Wähle 'Zum Home-Bildschirm' aus.",
+    "iosInstallStep3": "3. Tippe oben rechts auf 'Hinzufügen'."
   }
 }

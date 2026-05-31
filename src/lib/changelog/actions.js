@@ -48,7 +48,8 @@ export async function createChangelogEntry(data) {
         notificationValues.map((n) => n.userId),
         {
           title: "Neuer Changelog-Eintrag",
-          body: data.title || "Ein neuer Changelog-Eintrag wurde veröffentlicht",
+          body:
+            data.title || "Ein neuer Changelog-Eintrag wurde veröffentlicht",
           url: `/info`,
           tag: `changelog-${id}`,
         },

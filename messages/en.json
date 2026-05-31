@@ -930,6 +930,10 @@
     "notificationDescription": "Allow push notifications to stay up to date.",
     "notificationAction": "Enable Notifications",
     "offlineTitle": "You're offline",
-    "offlineDescription": "Sinclear Beyond requires an internet connection. Please check your connection and try again."
+    "offlineDescription": "Sinclear Beyond requires an internet connection. Please check your connection and try again.",
+    "iosInstallTitle": "Install Sinclear Beyond",
+    "iosInstallStep1": "1. Tap the Share icon {icon} in the menu bar.",
+    "iosInstallStep2": "2. Select 'Add to Home Screen'.",
+    "iosInstallStep3": "3. Tap 'Add' in the top right corner."
   }
 }

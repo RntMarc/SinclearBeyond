@@ -17,12 +17,12 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ForumFormModal from "@/components/admin/ForumFormModal";
+import NotificationTestModal from "@/components/admin/NotificationTestModal";
 import RssSourceFormModal from "@/components/admin/RssSourceFormModal";
 import SubscriptionFormModal from "@/components/admin/SubscriptionFormModal";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { useTheme } from "@/components/layout/ThemeProvider";
-import NotificationTestModal from "@/components/admin/NotificationTestModal";
 import AccommodationAdminModal from "@/components/travel/AccommodationAdminModal";
 import AccommodationFormModal from "@/components/travel/AccommodationFormModal";
 import TravelEventFormModal from "@/components/travel/TravelEventFormModal";
@@ -54,7 +54,8 @@ export default function AdminPage({ user, session }) {
   const [editingSubscription, setEditingSubscription] = useState(null);
   const [editingForum, setEditingForum] = useState(null);
   const [editingRssSource, setEditingRssSource] = useState(null);
-  const [showTestNotificationModal, setShowTestNotificationModal] = useState(false);
+  const [showTestNotificationModal, setShowTestNotificationModal] =
+    useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
@@ -590,9 +591,9 @@ export default function AdminPage({ user, session }) {
                   Test-Benachrichtigungen
                 </h2>
                 <p className="text-sm text-muted-foreground mb-6 max-w-lg">
-                  Versende eine Test-Benachrichtigung an ausgewählte User.
-                  Die Benachrichtigung wird sowohl im internen System als auch
-                  als PWA-Push-Benachrichtigung zugestellt.
+                  Versende eine Test-Benachrichtigung an ausgewählte User. Die
+                  Benachrichtigung wird sowohl im internen System als auch als
+                  PWA-Push-Benachrichtigung zugestellt.
                 </p>
                 <button
                   type="button"

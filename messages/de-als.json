@@ -904,6 +904,10 @@
     "notificationDescription": "Erlaub Push-Benochrichtigonga, damit du koine Beiträg verschbassch.",
     "notificationAction": "Benochrichtigonga aktiviera",
     "offlineTitle": "Du bisch offline",
-    "offlineDescription": "Sinclear Beyond bruacht a Internetverbindong. Bitte überpruef dei Verbindong ond probier's nomol."
+    "offlineDescription": "Sinclear Beyond bruacht a Internetverbindong. Bitte überpruef dei Verbindong ond probier's nomol.",
+    "iosInstallTitle": "Sinclear Beyond neidõa",
+    "iosInstallStep1": "1. Drigg uff des Doila-Deng {icon} onda in dr Leischte.",
+    "iosInstallStep2": "2. Suach 'Zum Home-Bildschirm' raus.",
+    "iosInstallStep3": "3. Drigg oba rechts uff 'Hinzufügen'."
   }
 }
