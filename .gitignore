@@ -44,3 +44,7 @@ next-env.d.ts
 # jules
 dev_server.log
 dev_output.log
+
+# claude code
+.claude/settings.json
+.claude/settings.local.json
