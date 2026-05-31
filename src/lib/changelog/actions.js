@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import { changelogEntries, notifications, users } from "@/lib/db/schema";
+import { sendPushToUsers } from "@/lib/notifications/push";
 
 export async function createChangelogEntry(data) {
   const session = await getSession();
@@ -42,6 +43,17 @@ export async function createChangelogEntry(data) {
       }));
     if (notificationValues.length > 0) {
       await safeQuery(db.insert(notifications).values(notificationValues));
+
+      sendPushToUsers(
+        notificationValues.map((n) => n.userId),
+        {
+          title: "Neuer Changelog-Eintrag",
+          body:
+            data.title || "Ein neuer Changelog-Eintrag wurde veröffentlicht",
+          url: `/info`,
+          tag: `changelog-${id}`,
+        },
+      ).catch((err) => console.error("[Push] Error:", err));
     }
   }
 

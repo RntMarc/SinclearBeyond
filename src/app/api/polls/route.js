@@ -9,6 +9,7 @@ import {
   pollQuestions,
   polls,
 } from "@/lib/db/schema";
+import { sendPushToUsers } from "@/lib/notifications/push";
 import { getPolls } from "@/lib/polls/utils";
 
 export async function GET() {
@@ -92,26 +93,37 @@ export async function POST(request) {
               createdAt: now,
             })),
           );
-
-          // Create notifications for invited users
-          const notificationValues = invites
-            .filter((invite) => invite.userId !== session.sub)
-            .map((invite) => ({
-              id: crypto.randomUUID(),
-              userId: invite.userId,
-              type: "poll",
-              entityId: pollId,
-              createdAt: now,
-            }));
-
-          if (notificationValues.length > 0) {
-            await tx.insert(notifications).values(notificationValues);
-          }
         }
       }),
     );
 
     if (txError) throw new Error("Transaction failed");
+
+    if (invites && invites.length > 0) {
+      const notificationValues = invites
+        .filter((invite) => invite.userId !== session.sub)
+        .map((invite) => ({
+          id: crypto.randomUUID(),
+          userId: invite.userId,
+          type: "poll",
+          entityId: pollId,
+          createdAt: now,
+        }));
+
+      if (notificationValues.length > 0) {
+        await safeQuery(db.insert(notifications).values(notificationValues));
+
+        sendPushToUsers(
+          notificationValues.map((n) => n.userId),
+          {
+            title: "Neue Umfrage",
+            body: title || "Eine neue Umfrage wurde erstellt",
+            url: `/umfrage/${pollId}`,
+            tag: `poll-${pollId}`,
+          },
+        ).catch((err) => console.error("[Push] Error:", err));
+      }
+    }
 
     return NextResponse.json({ id: pollId });
   } catch (error) {

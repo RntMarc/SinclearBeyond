@@ -897,7 +897,18 @@
       "trip": "Neue Reise",
       "changelog": "Neuer Changelog-Eintrag",
       "birthday": "Geburtstag heute",
-      "birthday_soon": "Geburtstag bald"
+      "birthday_soon": "Geburtstag bald",
+      "test": "Test-Benachrichtigung"
+    }
+  },
+  "Admin": {
+    "Notifications": {
+      "title": "Benachrichtigungen",
+      "description": "Versende eine Test-Benachrichtigung an ausgewählte User. Die Benachrichtigung wird sowohl im internen System als auch als PWA-Push-Benachrichtigung zugestellt.",
+      "sendTestButton": "Test-Benachrichtigung senden",
+      "selectAllUsers": "Alle User auswählen",
+      "searchUsers": "User suchen…",
+      "nSelected": "{count} User ausgewählt"
     }
   },
   "Onboarding": {
@@ -955,5 +966,23 @@
       "passwordNote": "Bitte speichere dein Passwort sicher ab. Es kann nicht wiederhergestellt werden.",
       "continueToChat": "Weiter zum Chat"
     }
+  },
+  "Pwa": {
+    "installTitle": "App installieren",
+    "installDescription": "Installiere Sinclear Beyond auf deinem Gerät für ein besseres Erlebnis.",
+    "installAction": "Installieren",
+    "dismiss": "Später",
+    "updateAvailable": "Update verfügbar",
+    "updateDescription": "Eine neue Version von Sinclear Beyond ist verfügbar.",
+    "updateAction": "Aktualisieren",
+    "notificationPermission": "Benachrichtigungen erlauben",
+    "notificationDescription": "Erlaube Push-Benachrichtigungen, um keine Beiträge zu verpassen.",
+    "notificationAction": "Benachrichtigungen aktivieren",
+    "offlineTitle": "Du bist offline",
+    "offlineDescription": "Sinclear Beyond benötigt eine Internetverbindung. Bitte überprüf deine Verbindung und versuche es erneut.",
+    "iosInstallTitle": "Sinclear Beyond installieren",
+    "iosInstallStep1": "1. Tippe auf das Teilen-Symbol {icon} in der Menüleiste.",
+    "iosInstallStep2": "2. Wähle 'Zum Home-Bildschirm' aus.",
+    "iosInstallStep3": "3. Tippe oben rechts auf 'Hinzufügen'."
   }
 }

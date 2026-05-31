@@ -863,7 +863,18 @@
       "trip": "New trip",
       "changelog": "New changelog entry",
       "birthday": "Birthday today",
-      "birthday_soon": "Birthday soon"
+      "birthday_soon": "Birthday soon",
+      "test": "Test notification"
+    }
+  },
+  "Admin": {
+    "Notifications": {
+      "title": "Notifications",
+      "description": "Send a test notification to selected users. The notification will be delivered through both the internal system and PWA push.",
+      "sendTestButton": "Send test notification",
+      "selectAllUsers": "Select all users",
+      "searchUsers": "Search users…",
+      "nSelected": "{count} users selected"
     }
   },
   "Chat": {
@@ -906,5 +917,23 @@
       "passwordNote": "Please save your password securely. It cannot be recovered.",
       "continueToChat": "Continue to Chat"
     }
+  },
+  "Pwa": {
+    "installTitle": "Install App",
+    "installDescription": "Install Sinclear Beyond on your device for a better experience.",
+    "installAction": "Install",
+    "dismiss": "Later",
+    "updateAvailable": "Update Available",
+    "updateDescription": "A new version of Sinclear Beyond is available.",
+    "updateAction": "Update",
+    "notificationPermission": "Enable Notifications",
+    "notificationDescription": "Allow push notifications to stay up to date.",
+    "notificationAction": "Enable Notifications",
+    "offlineTitle": "You're offline",
+    "offlineDescription": "Sinclear Beyond requires an internet connection. Please check your connection and try again.",
+    "iosInstallTitle": "Install Sinclear Beyond",
+    "iosInstallStep1": "1. Tap the Share icon {icon} in the menu bar.",
+    "iosInstallStep2": "2. Select 'Add to Home Screen'.",
+    "iosInstallStep3": "3. Tap 'Add' in the top right corner."
   }
 }
