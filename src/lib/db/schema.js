@@ -526,6 +526,70 @@ export const officeCollaborators = mysqlTable("OfficeCollaborator", {
   lastActiveAt: datetime("lastActiveAt", { fsp: 3 }).notNull(),
 });
 
+// ── Rezepte ───────────────────────────────────────────────────────────────────
+
+export const recipes = mysqlTable("Recipe", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", [
+    "vorspeisen",
+    "hauptgerichte",
+    "desserts",
+    "salate",
+    "suppen",
+    "backen",
+    "fruehstueck",
+    "getraenke",
+    "sonstiges",
+  ]).notNull(),
+  dietaryTags: varchar("dietaryTags", { length: 500 }),
+  image: longtext("image"),
+  creatorId: varchar("creatorId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+  updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
+});
+
+export const recipeIngredients = mysqlTable("RecipeIngredient", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  recipeId: varchar("recipeId", { length: 191 }).notNull(),
+  amount: double("amount").notNull(),
+  unit: varchar("unit", { length: 50 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  order: tinyint("order").notNull().default(0),
+});
+
+export const recipeSteps = mysqlTable("RecipeStep", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  recipeId: varchar("recipeId", { length: 191 }).notNull(),
+  category: mysqlEnum("category", [
+    "vorbereitung",
+    "hauptgang",
+    "beilage",
+    "garnierung",
+    "sonstiges",
+  ]).notNull(),
+  title: varchar("title", { length: 255 }),
+  description: text("description").notNull(),
+  order: tinyint("order").notNull().default(0),
+});
+
+export const recipeReviews = mysqlTable("RecipeReview", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  recipeId: varchar("recipeId", { length: 191 }).notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  rating: tinyint("rating").notNull(),
+  comment: text("comment"),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
+export const recipeBookmarks = mysqlTable("RecipeBookmark", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  recipeId: varchar("recipeId", { length: 191 }).notNull(),
+  createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
+});
+
 // ── News / Aktuell ────────────────────────────────────────────────────────────
 
 export const rssSources = mysqlTable("RssSource", {
