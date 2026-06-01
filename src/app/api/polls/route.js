@@ -3,13 +3,12 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
-  notifications,
   pollInvites,
   pollOptions,
   pollQuestions,
   polls,
 } from "@/lib/db/schema";
-import { sendPushToUsers } from "@/lib/notifications/push";
+import { sendNotification } from "@/lib/notifications/service";
 import { getPolls } from "@/lib/polls/utils";
 
 export async function GET() {
@@ -100,28 +99,20 @@ export async function POST(request) {
     if (txError) throw new Error("Transaction failed");
 
     if (invites && invites.length > 0) {
-      const notificationValues = invites
+      const targetUserIds = invites
         .filter((invite) => invite.userId !== session.sub)
-        .map((invite) => ({
-          id: crypto.randomUUID(),
-          userId: invite.userId,
+        .map((invite) => invite.userId);
+
+      if (targetUserIds.length > 0) {
+        await sendNotification({
+          userIds: targetUserIds,
           type: "poll",
           entityId: pollId,
-          createdAt: now,
-        }));
-
-      if (notificationValues.length > 0) {
-        await safeQuery(db.insert(notifications).values(notificationValues));
-
-        sendPushToUsers(
-          notificationValues.map((n) => n.userId),
-          {
-            title: "Neue Umfrage",
-            body: title || "Eine neue Umfrage wurde erstellt",
-            url: `/umfrage/${pollId}`,
-            tag: `poll-${pollId}`,
-          },
-        ).catch((err) => console.error("[Push] Error:", err));
+          title: "Neue Umfrage",
+          body: title || "Eine neue Umfrage wurde erstellt",
+          link: `/umfrage/${pollId}`,
+          tag: `poll-${pollId}`,
+        });
       }
     }
 

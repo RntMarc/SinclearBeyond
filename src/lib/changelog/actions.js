@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import { changelogEntries, notifications, users } from "@/lib/db/schema";
-import { sendPushToUsers } from "@/lib/notifications/push";
+import { sendNotification } from "@/lib/notifications/service";
 
 export async function createChangelogEntry(data) {
   const session = await getSession();
@@ -32,28 +32,20 @@ export async function createChangelogEntry(data) {
     db.select({ id: users.id }).from(users),
   );
   if (allUsers && allUsers.length > 0) {
-    const notificationValues = allUsers
+    const targetUserIds = allUsers
       .filter((u) => u.id !== session.sub)
-      .map((u) => ({
-        id: crypto.randomUUID(),
-        userId: u.id,
+      .map((u) => u.id);
+
+    if (targetUserIds.length > 0) {
+      await sendNotification({
+        userIds: targetUserIds,
         type: "changelog",
         entityId: id,
-        createdAt: now,
-      }));
-    if (notificationValues.length > 0) {
-      await safeQuery(db.insert(notifications).values(notificationValues));
-
-      sendPushToUsers(
-        notificationValues.map((n) => n.userId),
-        {
-          title: "Neuer Changelog-Eintrag",
-          body:
-            data.title || "Ein neuer Changelog-Eintrag wurde veröffentlicht",
-          url: `/info`,
-          tag: `changelog-${id}`,
-        },
-      ).catch((err) => console.error("[Push] Error:", err));
+        title: "Neuer Changelog-Eintrag",
+        body: data.title || "Ein neuer Changelog-Eintrag wurde veröffentlicht",
+        link: "/info",
+        tag: `changelog-${id}`,
+      });
     }
   }
 

@@ -3,6 +3,7 @@
 import { Share, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getCookie, setCookie } from "@/lib/utils/cookies";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -26,6 +27,17 @@ export default function PwaRegister() {
   const swRegistration = useRef(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const updateWorkerRef = useRef(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsStandalone(
+        window.matchMedia("(display-mode: standalone)").matches ||
+          window.navigator.standalone ||
+          document.referrer.includes("android-app://"),
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
@@ -64,16 +76,10 @@ export default function PwaRegister() {
   }, []);
 
   useEffect(() => {
-    // Check if already in standalone mode
-    const isStandalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone ||
-      document.referrer.includes("android-app://");
-
     if (isStandalone) return;
 
-    // Check if dismissed in this session
-    if (sessionStorage.getItem("pwa-banner-dismissed")) return;
+    // Check if dismissed or installed recently (7 days cookie)
+    if (getCookie("pwa-banner-dismissed")) return;
 
     const isIos =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -101,7 +107,7 @@ export default function PwaRegister() {
 
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+  }, [isStandalone]);
 
   const handleInstall = useCallback(async () => {
     const isIos =
@@ -118,14 +124,14 @@ export default function PwaRegister() {
     const result = await installPrompt.userChoice;
     if (result.outcome === "accepted") {
       setShowInstall(false);
-      sessionStorage.setItem("pwa-banner-dismissed", "true");
+      setCookie("pwa-banner-dismissed", "true", 7);
     }
     setInstallPrompt(null);
   }, [installPrompt]);
 
   const handleDismissInstall = useCallback(() => {
     setShowInstall(false);
-    sessionStorage.setItem("pwa-banner-dismissed", "true");
+    setCookie("pwa-banner-dismissed", "true", 7);
   }, []);
 
   const subscribeToPush = useCallback(async () => {
@@ -163,8 +169,12 @@ export default function PwaRegister() {
 
   useEffect(() => {
     // Try to subscribe when component mounts and SW is ready
+    // Note: On iOS, permission must be requested via user gesture first.
+    // This auto-subscribe will only work if permission was already granted.
     if ("serviceWorker" in navigator && "Notification" in window) {
-      subscribeToPush();
+      if (Notification.permission === "granted") {
+        subscribeToPush();
+      }
     }
   }, [subscribeToPush]);
 
@@ -174,6 +184,11 @@ export default function PwaRegister() {
       window.location.reload();
     }
   }, []);
+
+  const isIosDevice =
+    typeof navigator !== "undefined" &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+    !window.MSStream;
 
   return (
     <>
@@ -214,6 +229,35 @@ export default function PwaRegister() {
           </div>
         </div>
       )}
+
+      {/* iOS Standalone Notification Permission Trigger */}
+      {isStandalone &&
+        isIosDevice &&
+        typeof window !== "undefined" &&
+        "Notification" in window &&
+        Notification.permission === "default" && (
+          <div className="fixed bottom-24 left-4 right-4 md:bottom-4 md:left-auto md:right-4 md:w-80 z-[60] p-4 bg-card/95 backdrop-blur-md border border-border/50 rounded-[2rem] shadow-2xl animate-in slide-in-from-bottom-8 duration-500 ease-out glow">
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <p className="text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+                  {t("notificationPermission")}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  {t("notificationDescription")}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                type="button"
+                onClick={subscribeToPush}
+                className="flex-1 px-4 py-2 text-xs font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all active:scale-95 shadow-lg shadow-primary/20"
+              >
+                {t("notificationAction")}
+              </button>
+            </div>
+          </div>
+        )}
 
       {showIosModal && (
         <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
@@ -274,7 +318,7 @@ export default function PwaRegister() {
                 type="button"
                 onClick={() => {
                   setShowIosModal(false);
-                  sessionStorage.setItem("pwa-banner-dismissed", "true");
+                  setCookie("pwa-banner-dismissed", "true", 7);
                 }}
                 className="w-full mt-8 py-3 rounded-full bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all active:scale-95 shadow-lg shadow-primary/20"
               >
