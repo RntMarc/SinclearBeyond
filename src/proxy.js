@@ -86,5 +86,6 @@ export const config = {
     "/abos/:path*",
     "/office/:path*",
     "/aktuell/:path*",
+    "/rezepte/:path*",
   ],
 };
