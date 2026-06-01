@@ -281,6 +281,13 @@
       "when": 1780262368371,
       "tag": "0039_absurd_madame_web",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "5",
+      "when": 1780352752176,
+      "tag": "0040_wealthy_ares",
+      "breakpoints": true
     }
   ]
 }
