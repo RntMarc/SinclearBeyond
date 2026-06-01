@@ -3,9 +3,9 @@
 import { Bookmark, Plus, Search, UtensilsCrossed, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
+import PageHeader from "@/components/layout/PageHeader";
 import RecipeCard from "@/components/rezepte/RecipeCard";
 import RecipeFormModal from "@/components/rezepte/RecipeFormModal";
-import SubPageHeader from "@/components/layout/SubPageHeader";
 import Button from "@/components/ui/Button";
 
 const CATEGORIES = [
@@ -31,7 +31,7 @@ const TAGS = [
   "zuckerfrei",
 ];
 
-export default function RezepteClient({ initialRecipes, userId }) {
+export default function RezepteClient({ initialRecipes }) {
   const t = useTranslations("Recipes");
 
   const [recipes, setRecipes] = useState(initialRecipes);
@@ -46,7 +46,8 @@ export default function RezepteClient({ initialRecipes, userId }) {
     return recipes.filter((r) => {
       if (showBookmarkedOnly && !r.isBookmarked) return false;
 
-      if (activeCategory !== "all" && r.category !== activeCategory) return false;
+      if (activeCategory !== "all" && r.category !== activeCategory)
+        return false;
 
       if (activeTags.length > 0) {
         const recipeTags = r.dietaryTags ? r.dietaryTags.split(",") : [];
@@ -90,7 +91,7 @@ export default function RezepteClient({ initialRecipes, userId }) {
         return;
       }
 
-      const result = await res.json();
+      await res.json();
       setShowForm(false);
 
       const recipesRes = await fetch("/api/rezepte");
@@ -104,20 +105,22 @@ export default function RezepteClient({ initialRecipes, userId }) {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <SubPageHeader
+      <PageHeader
         title={t("title")}
         subtitle={t("subtitle")}
-        backHref="/home"
+        icon={UtensilsCrossed}
       >
-        <Button
-          type="button"
-          onClick={() => setShowForm(true)}
-          size="compact"
-        >
-          <Plus size={16} />
-          {t("newRecipe")}
-        </Button>
-      </SubPageHeader>
+        <div className="hidden md:block">
+          <Button
+            type="button"
+            onClick={() => setShowForm(true)}
+            size="compact"
+          >
+            <Plus size={16} />
+            {t("newRecipe")}
+          </Button>
+        </div>
+      </PageHeader>
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-5xl mx-auto space-y-8">
@@ -140,6 +143,7 @@ export default function RezepteClient({ initialRecipes, userId }) {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setActiveCategory(cat)}
                 className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
                   activeCategory === cat
@@ -155,6 +159,7 @@ export default function RezepteClient({ initialRecipes, userId }) {
           {/* Bookmark Filter */}
           <div className="flex flex-wrap gap-2">
             <button
+              type="button"
               onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
               className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
                 showBookmarkedOnly
@@ -162,14 +167,19 @@ export default function RezepteClient({ initialRecipes, userId }) {
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
             >
-              <Bookmark size={14} fill={showBookmarkedOnly ? "currentColor" : "none"} />
+              <Bookmark
+                size={14}
+                fill={showBookmarkedOnly ? "currentColor" : "none"}
+              />
               {t("bookmark")}
               {bookmarkedCount > 0 && (
-                <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  showBookmarkedOnly
-                    ? "bg-primary-foreground/20 text-primary-foreground"
-                    : "bg-primary/10 text-primary"
-                }`}>
+                <span
+                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    showBookmarkedOnly
+                      ? "bg-primary-foreground/20 text-primary-foreground"
+                      : "bg-primary/10 text-primary"
+                  }`}
+                >
                   {bookmarkedCount}
                 </span>
               )}
@@ -181,6 +191,7 @@ export default function RezepteClient({ initialRecipes, userId }) {
             {TAGS.map((tag) => (
               <button
                 key={tag}
+                type="button"
                 onClick={() => toggleTag(tag)}
                 className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all ${
                   activeTags.includes(tag)
@@ -193,6 +204,7 @@ export default function RezepteClient({ initialRecipes, userId }) {
             ))}
             {activeTags.length > 0 && (
               <button
+                type="button"
                 onClick={() => setActiveTags([])}
                 className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1"
               >
@@ -219,9 +231,7 @@ export default function RezepteClient({ initialRecipes, userId }) {
                   />
                 </div>
                 <p className="text-muted-foreground">
-                  {recipes.length === 0
-                    ? t("noRecipes")
-                    : t("emptyFilter")}
+                  {recipes.length === 0 ? t("noRecipes") : t("emptyFilter")}
                 </p>
                 {recipes.length === 0 && (
                   <Button
@@ -245,6 +255,15 @@ export default function RezepteClient({ initialRecipes, userId }) {
         onSubmit={handleCreateRecipe}
         loading={formLoading}
       />
+
+      {/* FAB for Mobile */}
+      <button
+        type="button"
+        onClick={() => setShowForm(true)}
+        className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-40"
+      >
+        <Plus size={28} />
+      </button>
     </div>
   );
 }
