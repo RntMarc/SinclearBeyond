@@ -19,6 +19,7 @@
           "badgeKey": "unreadForums"
         },
         { "href": "/kritik", "labelKey": "reviews", "icon": "Star" },
+        { "href": "/rezepte", "labelKey": "recipes", "icon": "UtensilsCrossed" },
         { "href": "/kontakte", "labelKey": "contacts", "icon": "Users" },
         {
           "href": "/geburtstage",
