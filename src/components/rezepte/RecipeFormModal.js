@@ -63,6 +63,7 @@ export default function RecipeFormModal({
   onSubmit,
   loading,
   initialData,
+  isEditing = false,
 }) {
   const t = useTranslations("Recipes");
   const tc = useTranslations("Common");
@@ -72,6 +73,7 @@ export default function RecipeFormModal({
       title: "",
       description: "",
       category: "hauptgerichte",
+      servings: 4,
       dietaryTags: [],
       image: null,
       ingredients: [emptyIngredient()],
@@ -159,7 +161,9 @@ export default function RecipeFormModal({
       />
       <div className="relative w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-200">
         <div className="p-6 border-b border-border sticky top-0 bg-card z-10">
-          <h3 className="text-xl font-black">{t("createRecipe")}</h3>
+          <h3 className="text-xl font-black">
+            {isEditing ? t("editRecipe") : t("createRecipe")}
+          </h3>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-8">
@@ -209,6 +213,23 @@ export default function RecipeFormModal({
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Servings */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+              {t("servings")}
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="99"
+              value={form.servings}
+              onChange={(e) =>
+                setForm({ ...form, servings: parseInt(e.target.value, 10) || 4 })
+              }
+              className="w-24 p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium text-center"
+            />
           </div>
 
           {/* Dietary Tags */}

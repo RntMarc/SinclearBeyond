@@ -25,6 +25,7 @@ export async function GET(_req, { params }) {
         title: recipes.title,
         description: recipes.description,
         category: recipes.category,
+        servings: recipes.servings,
         dietaryTags: recipes.dietaryTags,
         image: recipes.image,
         creatorId: recipes.creatorId,
@@ -94,7 +95,7 @@ export async function PATCH(req, { params }) {
 
   try {
     const body = await req.json();
-    const { title, description, category, dietaryTags, image, ingredients, steps } = body;
+    const { title, description, category, servings, dietaryTags, image, ingredients, steps } = body;
 
     const { data: existing } = await safeQuery(
       db
@@ -116,6 +117,7 @@ export async function PATCH(req, { params }) {
     if (title !== undefined) updateData.title = title.trim();
     if (description !== undefined) updateData.description = description?.trim() || null;
     if (category !== undefined) updateData.category = category;
+    if (servings !== undefined) updateData.servings = parseInt(servings, 10) || 4;
     if (dietaryTags !== undefined) updateData.dietaryTags = dietaryTags?.join(",") || null;
     if (image !== undefined) updateData.image = image || null;
 

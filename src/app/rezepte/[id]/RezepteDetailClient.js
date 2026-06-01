@@ -3,12 +3,16 @@
 import {
   Bookmark,
   Calendar,
+  Edit3,
+  Minus,
+  Plus,
   Share2,
   Star,
   UtensilsCrossed,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import RecipeFormModal from "@/components/rezepte/RecipeFormModal";
 import RecipeReviewSection from "@/components/rezepte/RecipeReviewSection";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 
@@ -33,8 +37,20 @@ export default function RezepteDetailClient({
 
   const [recipe, setRecipe] = useState(initialRecipe);
   const [reviews, setReviews] = useState(initialReviews);
+  const [servingFactor, setServingFactor] = useState(
+    recipe.servings ? recipe.servings : 1,
+  );
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
 
+  const baseServings = recipe.servings || 4;
   const tags = recipe.dietaryTags ? recipe.dietaryTags.split(",") : [];
+
+  function adjustServings(newServings) {
+    if (newServings < 1) return;
+    if (newServings > 99) return;
+    setServingFactor(newServings);
+  }
 
   const groupedSteps = recipe.steps.reduce((acc, step) => {
     if (!acc[step.category]) acc[step.category] = [];
@@ -60,6 +76,34 @@ export default function RezepteDetailClient({
 
   function handleReviewsChange(newReviews) {
     setReviews(newReviews);
+  }
+
+  async function handleEditRecipe(formData) {
+    setEditLoading(true);
+    try {
+      const res = await fetch(`/api/rezepte/${recipe.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Failed to update recipe", err);
+        return;
+      }
+
+      setShowEditModal(false);
+
+      const recipeRes = await fetch(`/api/rezepte/${recipe.id}`);
+      const updatedRecipe = await recipeRes.json();
+      setRecipe(updatedRecipe);
+      setServingFactor(updatedRecipe.servings || 4);
+    } catch (err) {
+      console.error("Failed to update recipe", err);
+    } finally {
+      setEditLoading(false);
+    }
   }
 
   const share = () => {
@@ -201,19 +245,61 @@ export default function RezepteDetailClient({
           {/* Ingredients */}
           {recipe.ingredients.length > 0 && (
             <section className="space-y-6">
-              <h2 className="text-2xl font-black">{t("ingredients")}</h2>
-              <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
-                {recipe.ingredients.map((ing) => (
-                  <div
-                    key={ing.id}
-                    className="px-6 py-3 flex items-center gap-4 text-sm"
-                  >
-                    <span className="font-bold text-primary min-w-[60px]">
-                      {ing.amount} {t(`units.${ing.unit}`)}
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-black">{t("ingredients")}</h2>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {t("servings")}
+                  </span>
+                  <div className="flex items-center gap-1 bg-muted rounded-xl p-1">
+                    <button
+                      type="button"
+                      onClick={() => adjustServings(servingFactor - 1)}
+                      className="p-1.5 rounded-lg hover:bg-muted/80 transition-colors text-muted-foreground hover:text-foreground"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span className="w-8 text-center text-sm font-bold">
+                      {servingFactor}
                     </span>
-                    <span className="font-medium">{ing.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => adjustServings(servingFactor + 1)}
+                      className="p-1.5 rounded-lg hover:bg-muted/80 transition-colors text-muted-foreground hover:text-foreground"
+                    >
+                      <Plus size={14} />
+                    </button>
                   </div>
-                ))}
+                  {userId === recipe.creatorId && (
+                    <button
+                      type="button"
+                      onClick={() => setShowEditModal(true)}
+                      className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-primary ml-2"
+                      aria-label={t("editRecipe")}
+                    >
+                      <Edit3 size={16} />
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
+                {recipe.ingredients.map((ing) => {
+                  const scaledAmount =
+                    baseServings !== servingFactor
+                      ? ((parseFloat(ing.amount) / baseServings) * servingFactor).toFixed(1)
+                      : ing.amount;
+                  return (
+                    <div
+                      key={ing.id}
+                      className="px-6 py-3 flex items-center gap-4 text-sm"
+                    >
+                      <span className="font-bold text-primary min-w-[60px]">
+                        {scaledAmount} {t(`units.${ing.unit}`)}
+                      </span>
+                      <span className="font-medium">{ing.name}</span>
+                    </div>
+                  );
+                })}
               </div>
             </section>
           )}
@@ -263,6 +349,32 @@ export default function RezepteDetailClient({
           </section>
         </div>
       </div>
+
+      <RecipeFormModal
+        isOpen={showEditModal}
+        isEditing
+        onClose={() => setShowEditModal(false)}
+        onSubmit={handleEditRecipe}
+        loading={editLoading}
+        initialData={{
+          title: recipe.title,
+          description: recipe.description || "",
+          category: recipe.category,
+          servings: recipe.servings || 4,
+          dietaryTags: tags,
+          image: recipe.image,
+          ingredients: recipe.ingredients.map((ing) => ({
+            amount: ing.amount,
+            unit: ing.unit,
+            name: ing.name,
+          })),
+          steps: recipe.steps.map((step) => ({
+            category: step.category,
+            title: step.title || "",
+            description: step.description,
+          })),
+        }}
+      />
     </div>
   );
 }

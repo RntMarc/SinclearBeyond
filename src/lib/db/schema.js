@@ -543,6 +543,7 @@ export const recipes = mysqlTable("Recipe", {
     "getraenke",
     "sonstiges",
   ]).notNull(),
+  servings: tinyint("servings").notNull().default(4),
   dietaryTags: varchar("dietaryTags", { length: 500 }),
   image: longtext("image"),
   creatorId: varchar("creatorId", { length: 191 }).notNull(),
