@@ -56,7 +56,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(cacheFirst(request));
+  // Für alle anderen Requests (RSC Payloads, Bilder, Fonts etc.) kein
+  // SW-Response – Browser holt direkt vom Netzwerk, kein Caching
+  return;
 });
 
 async function cacheFirst(request) {
