@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SaveButton from "@/components/SaveButton";
 
@@ -18,6 +18,10 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
   const locale = useLocale();
   const [answers, setAnswers] = useState({});
   const [saving, setSaving] = useState(false);
+  const answersRef = useRef(answers);
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
 
   // Initialize answers from poll votes
   useEffect(() => {
@@ -106,8 +110,9 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
 
     const handleVoteClick = async (optionId, availability) => {
       const qId = dateQuestion.id;
+      const currentAnswers = answersRef.current[qId] || {};
       const newQuestionAnswers = {
-        ...(answers[qId] || {}),
+        ...currentAnswers,
         [optionId]: availability,
       };
 
