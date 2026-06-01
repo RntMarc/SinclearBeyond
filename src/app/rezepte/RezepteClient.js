@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Search, UtensilsCrossed, X } from "lucide-react";
+import { Bookmark, Plus, Search, UtensilsCrossed, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import RecipeCard from "@/components/rezepte/RecipeCard";
@@ -40,9 +40,12 @@ export default function RezepteClient({ initialRecipes, userId }) {
   const [activeTags, setActiveTags] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
 
   const filteredRecipes = useMemo(() => {
     return recipes.filter((r) => {
+      if (showBookmarkedOnly && !r.isBookmarked) return false;
+
       if (activeCategory !== "all" && r.category !== activeCategory) return false;
 
       if (activeTags.length > 0) {
@@ -62,7 +65,9 @@ export default function RezepteClient({ initialRecipes, userId }) {
 
       return true;
     });
-  }, [recipes, activeCategory, activeTags, search]);
+  }, [recipes, activeCategory, activeTags, search, showBookmarkedOnly]);
+
+  const bookmarkedCount = recipes.filter((r) => r.isBookmarked).length;
 
   function toggleTag(tag) {
     setActiveTags((prev) =>
@@ -145,6 +150,30 @@ export default function RezepteClient({ initialRecipes, userId }) {
                 {cat === "all" ? t("allCategories") : t(`category.${cat}`)}
               </button>
             ))}
+          </div>
+
+          {/* Bookmark Filter */}
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
+              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+                showBookmarkedOnly
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              <Bookmark size={14} fill={showBookmarkedOnly ? "currentColor" : "none"} />
+              {t("bookmark")}
+              {bookmarkedCount > 0 && (
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                  showBookmarkedOnly
+                    ? "bg-primary-foreground/20 text-primary-foreground"
+                    : "bg-primary/10 text-primary"
+                }`}>
+                  {bookmarkedCount}
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Tag Filter */}

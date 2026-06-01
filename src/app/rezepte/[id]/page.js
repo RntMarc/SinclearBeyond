@@ -34,6 +34,7 @@ export default async function RezepteDetailPage({ params }) {
         title: recipes.title,
         description: recipes.description,
         category: recipes.category,
+        servings: recipes.servings,
         dietaryTags: recipes.dietaryTags,
         image: recipes.image,
         creatorId: recipes.creatorId,
