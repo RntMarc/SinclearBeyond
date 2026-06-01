@@ -4,7 +4,8 @@ import { Info, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
 import NotificationBell from "@/components/layout/NotificationBell";
@@ -12,6 +13,36 @@ import SnowEffect from "@/components/layout/SnowEffect";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import navigationConfig from "@/lib/navigation.json";
+
+function NotificationAutoReader() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const notificationId = searchParams.get("readNotification");
+    if (notificationId) {
+      const markAsRead = async () => {
+        try {
+          const res = await fetch(`/api/notifications?id=${notificationId}`, {
+            method: "DELETE",
+          });
+          if (res.ok) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete("readNotification");
+            const newQuery = params.toString() ? `?${params.toString()}` : "";
+            router.replace(`${pathname}${newQuery}`, { scroll: false });
+          }
+        } catch (error) {
+          console.error("Failed to mark notification as read from URL", error);
+        }
+      };
+      markAsRead();
+    }
+  }, [searchParams, pathname, router]);
+
+  return null;
+}
 
 export default function AppShell({ children, user, session }) {
   const t = useTranslations("Navigation");
@@ -105,6 +136,9 @@ export default function AppShell({ children, user, session }) {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      <Suspense fallback={null}>
+        <NotificationAutoReader />
+      </Suspense>
       {/* Mobile overlay */}
       {open && showMobileElements && (
         <button

@@ -4,14 +4,8 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import {
-  closeFriends,
-  feedPosts,
-  forumMembers,
-  notifications,
-  users,
-} from "@/lib/db/schema";
-import { sendPushToUsers } from "@/lib/notifications/push";
+import { closeFriends, feedPosts, forumMembers, users } from "@/lib/db/schema";
+import { sendNotification } from "@/lib/notifications/service";
 
 export async function GET(req) {
   const t = await getTranslations("Common");
@@ -249,28 +243,20 @@ export async function POST(req) {
       );
 
       if (members && members.length > 0) {
-        const notificationValues = members
+        const targetUserIds = members
           .filter((m) => m.userId !== session.sub)
-          .map((m) => ({
-            id: crypto.randomUUID(),
-            userId: m.userId,
+          .map((m) => m.userId);
+
+        if (targetUserIds.length > 0) {
+          await sendNotification({
+            userIds: targetUserIds,
             type: "forum",
             entityId: id,
-            createdAt: now,
-          }));
-
-        if (notificationValues.length > 0) {
-          await safeQuery(db.insert(notifications).values(notificationValues));
-
-          sendPushToUsers(
-            notificationValues.map((n) => n.userId),
-            {
-              title: "Neuer Forumsbeitrag",
-              body: `Ein neuer Beitrag wurde im Forum erstellt`,
-              url: `/forum/${forumId}`,
-              tag: `forum-${id}`,
-            },
-          ).catch((err) => console.error("[Push] Error:", err));
+            title: "Neuer Forumsbeitrag",
+            body: "Ein neuer Beitrag wurde im Forum erstellt",
+            link: `/forum/${forumId}`,
+            tag: `forum-${id}`,
+          });
         }
       }
     } catch (notifyError) {

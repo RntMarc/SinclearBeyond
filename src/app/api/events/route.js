@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { eventPermissions, events, notifications } from "@/lib/db/schema";
-import { sendPushToUsers } from "@/lib/notifications/push";
+import { eventPermissions, events } from "@/lib/db/schema";
+import { sendNotification } from "@/lib/notifications/service";
 
 export async function GET() {
   const t = await getTranslations("Common");
@@ -127,28 +127,20 @@ export async function POST(req) {
 
     // Create notifications for users with view permission
     try {
-      const notificationValues = permissions
+      const targetUserIds = permissions
         .filter((p) => p.canView && p.userId !== session.sub)
-        .map((p) => ({
-          id: crypto.randomUUID(),
-          userId: p.userId,
+        .map((p) => p.userId);
+
+      if (targetUserIds.length > 0) {
+        await sendNotification({
+          userIds: targetUserIds,
           type: "event",
           entityId: id,
-          createdAt: now,
-        }));
-
-      if (notificationValues.length > 0) {
-        await safeQuery(db.insert(notifications).values(notificationValues));
-
-        sendPushToUsers(
-          notificationValues.map((n) => n.userId),
-          {
-            title: "Neues Event",
-            body: title?.trim() || "Ein neues Event wurde erstellt",
-            url: `/kalender`,
-            tag: `event-${id}`,
-          },
-        ).catch((err) => console.error("[Push] Error:", err));
+          title: "Neues Event",
+          body: title?.trim() || "Ein neues Event wurde erstellt",
+          link: "/kalender",
+          tag: `event-${id}`,
+        });
       }
     } catch (notifyError) {
       console.error("[API/Events] Notification Error:", notifyError);
