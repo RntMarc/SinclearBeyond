@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { notifications, travelRelations, users } from "@/lib/db/schema";
-import { sendPushToUser } from "@/lib/notifications/push";
+import { travelRelations, users } from "@/lib/db/schema";
+import { sendNotification } from "@/lib/notifications/service";
 
 export async function GET(_req, { params }) {
   const t = await getTranslations("Common");
@@ -87,22 +87,15 @@ export async function POST(req, { params }) {
     // Create notification for the new participant
     if (userId !== session.sub) {
       try {
-        await safeQuery(
-          db.insert(notifications).values({
-            id: crypto.randomUUID(),
-            userId: userId,
-            type: "trip",
-            entityId: id,
-            createdAt: new Date(),
-          }),
-        );
-
-        sendPushToUser(userId, {
+        await sendNotification({
+          userIds: [userId],
+          type: "trip",
+          entityId: id,
           title: "Neue Reise",
           body: "Du wurdest zu einer Reise hinzugefügt",
-          url: `/reisen/${id}`,
+          link: `/reisen/${id}`,
           tag: `trip-${id}`,
-        }).catch((err) => console.error("[Push] Error:", err));
+        });
       } catch (notifyError) {
         console.error(
           "[API/Travel/Trips/Participants] Notification Error:",
