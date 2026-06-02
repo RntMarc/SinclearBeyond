@@ -3,6 +3,7 @@ import {
   Check,
   CheckCircle2,
   HelpCircle,
+  Plus,
   Send,
   Star,
   Target,

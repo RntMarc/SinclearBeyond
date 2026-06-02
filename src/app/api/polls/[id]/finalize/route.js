@@ -75,9 +75,9 @@ export async function POST(request, { params }) {
           await tx.insert(events).values({
             id: eventId,
             title: poll.title,
-            startAt: option.pollOptions.dateValue,
+            startAt: option.dateValue,
             endAt: new Date(
-              new Date(option.pollOptions.dateValue).getTime() + 60 * 60 * 1000,
+              new Date(option.dateValue).getTime() + 60 * 60 * 1000,
             ), // Default 1h
             allDay: 0,
             isPublic: 0,

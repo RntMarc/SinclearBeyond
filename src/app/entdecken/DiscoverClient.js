@@ -11,7 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DiscoverSearch from "@/components/discover/DiscoverSearch";
 import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 
