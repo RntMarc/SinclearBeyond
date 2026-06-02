@@ -3,8 +3,9 @@
 import { Star, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import SaveButton from "@/components/SaveButton";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function ReviewModal({
   placeId,
@@ -17,7 +18,6 @@ export default function ReviewModal({
 
   const [rating, setRating] = useState(initialData?.rating || 5);
   const [comment, setComment] = useState(initialData?.comment || "");
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [isClosing, setIsClosing] = useState(false);
 
@@ -35,33 +35,30 @@ export default function ReviewModal({
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setSaving(true);
     setError("");
 
-    try {
-      const url = initialData
-        ? `/api/discover/reviews/${initialData.id}`
-        : "/api/discover/reviews";
-      const method = initialData ? "PATCH" : "POST";
+    const url = initialData
+      ? `/api/discover/reviews/${initialData.id}`
+      : "/api/discover/reviews";
+    const method = initialData ? "PATCH" : "POST";
 
-      const res = await fetch(url, {
+    const result = await fetchAction(
+      url,
+      {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ placeId, rating, comment }),
-      });
+      },
+      { fallbackError: t("errorUpdate") },
+    );
 
-      if (res.ok) {
-        onAdded();
-        handleClose();
-      } else {
-        const data = await res.json();
-        setError(data.error || t("errorUpdate"));
-      }
-    } catch (_err) {
-      setError(t("errorUpdate"));
-    } finally {
-      setSaving(false);
+    if (result.ok) {
+      onAdded();
+      handleClose();
+      return { ok: true };
     }
+    setError(result.error || t("errorUpdate"));
+    return { ok: false, error: result.error };
   }
 
   return (
@@ -148,9 +145,13 @@ export default function ReviewModal({
             >
               {tCommon("cancel")}
             </Button>
-            <SaveButton loading={saving} onClick={handleSubmit}>
-              {tCommon("save")}
-            </SaveButton>
+            <SubmitButton
+              onClick={handleSubmit}
+              label={tCommon("save")}
+              successToast={t("successAdded")}
+              errorToast={t("errorUpdate")}
+              successDuration={0}
+            />
           </div>
         </form>
       </div>

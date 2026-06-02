@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function AktuellContent({ _userId }) {
   const t = useTranslations("News");
@@ -102,38 +104,42 @@ export default function AktuellContent({ _userId }) {
     };
   }, [loading, hasMore, loadMore]);
 
+  const [upvoting, setUpvoting] = useState(null);
+
   const handleUpvote = async (article) => {
-    try {
-      const res = await fetch("/api/news/upvote", {
+    setUpvoting(article.link);
+    const result = await fetchAction(
+      "/api/news/upvote",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ article }),
-      });
-      if (res.ok) {
-        // Optimistic update
-        setItems((prev) =>
-          prev.map((item) =>
-            item.link === article.link
-              ? { ...item, isUpvoted: true, upvotes: (item.upvotes || 0) + 1 }
-              : item,
-          ),
+      },
+      { fallbackError: t("error") },
+    );
+    setUpvoting(null);
+    if (!result.ok) return { ok: false, error: result.error };
+
+    setItems((prev) =>
+      prev.map((item) =>
+        item.link === article.link
+          ? { ...item, isUpvoted: true, upvotes: (item.upvotes || 0) + 1 }
+          : item,
+      ),
+    );
+    setImportantItems((prev) => {
+      const existing = prev.find((p) => p.url === article.link);
+      if (existing) {
+        return prev.map((p) =>
+          p.url === article.link
+            ? { ...p, upvoteCount: (p.upvoteCount || 0) + 1 }
+            : p,
         );
-        setImportantItems((prev) => {
-          const existing = prev.find((p) => p.url === article.link);
-          if (existing) {
-            return prev.map((p) =>
-              p.url === article.link
-                ? { ...p, upvoteCount: (p.upvoteCount || 0) + 1 }
-                : p,
-            );
-          }
-          return prev; // Important list might need full refresh or just wait for revalidate
-        });
-        fetchImportant();
       }
-    } catch (error) {
-      console.error("Error upvoting:", error);
-    }
+      return prev;
+    });
+    fetchImportant();
+    return { ok: true };
   };
 
   return (
@@ -290,13 +296,16 @@ function NewsItem({ article, onUpvote, _isSaved }) {
         )}
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-4 border-t border-sidebar-border">
-          <button
+          <SubmitButton
             type="button"
             onClick={(e) => {
               e.preventDefault();
               onUpvote();
             }}
+            loading={upvoting === article.link}
             disabled={article.isUpvoted}
+            showInlineError={false}
+            successDuration={0}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
               article.isUpvoted
                 ? "bg-primary/10 text-primary"
@@ -308,7 +317,7 @@ function NewsItem({ article, onUpvote, _isSaved }) {
               size={20}
             />
             <span className="text-sm font-bold">{article.upvotes || 0}</span>
-          </button>
+          </SubmitButton>
 
           <a
             href={article.link}

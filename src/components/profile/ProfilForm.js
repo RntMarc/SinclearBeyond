@@ -6,7 +6,7 @@ import Avatar from "@/components/Avatar";
 import ContactMethodsFields from "@/components/profile/ContactMethodsFields";
 import SocialMediaFields from "@/components/profile/SocialMediaFields";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { formatBirthday } from "@/lib/dateUtils";
 import { saveProfile } from "@/lib/profile/profile";
 
@@ -272,7 +272,15 @@ export default function ProfilForm({ user, contact, social }) {
         setVisibility={setVisibility}
       />
 
-      <SaveButton pending={isPending} state={state} />
+      <SubmitButton
+        type="submit"
+        loading={isPending}
+        state={state}
+        label={t("profile.save")}
+        successToast={t("profile.saveSuccess")}
+        errorToast={t("profile.saveError")}
+        showInlineError
+      />
     </form>
   );
 }

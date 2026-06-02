@@ -2,7 +2,8 @@
 
 import { Trash2, X } from "lucide-react";
 import { useState } from "react";
-import Notification from "@/components/Notification";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 import AccommodationForm from "./AccommodationForm";
 
 export default function AccommodationAdminModal({
@@ -14,70 +15,47 @@ export default function AccommodationAdminModal({
     ...accommodation,
     isHotel: accommodation.isHotel === 1,
   });
-  const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const [notification, setNotification] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setFormError("");
-    setSaving(true);
 
-    try {
-      const res = await fetch(
-        `/api/travel/accommodations/${accommodation.id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        },
-      );
+    const result = await fetchAction(
+      `/api/travel/accommodations/${accommodation.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      },
+      { fallbackError: "Fehler beim Speichern." },
+    );
 
-      setSaving(false);
-      if (!res.ok) {
-        const data = await res.json();
-        setFormError(data.error || "Fehler beim Speichern.");
-        return;
-      }
-
+    if (result.ok) {
       onUpdated();
       onClose();
-    } catch (_error) {
-      setSaving(false);
-      setFormError("Ein unerwarteter Fehler ist aufgetreten.");
+      return { ok: true };
     }
+    setFormError(result.error || "Fehler beim Speichern.");
+    return { ok: false, error: result.error };
   }
 
   async function handleDelete() {
-    if (!confirm("Möchtest du diese Unterkunft wirklich löschen?")) return;
+    if (!confirm("Möchtest du diese Unterkunft wirklich löschen?"))
+      return { ok: false, error: "Abgebrochen." };
 
-    setSaving(true);
-    try {
-      const res = await fetch(
-        `/api/travel/accommodations/${accommodation.id}`,
-        {
-          method: "DELETE",
-        },
-      );
+    const result = await fetchAction(
+      `/api/travel/accommodations/${accommodation.id}`,
+      { method: "DELETE" },
+      { fallbackError: "Fehler beim Löschen." },
+    );
 
-      setSaving(false);
-      if (res.ok) {
-        onUpdated();
-        onClose();
-      } else {
-        const data = await res.json();
-        setNotification({
-          type: "error",
-          message: data.error || "Fehler beim Löschen.",
-        });
-      }
-    } catch (_error) {
-      setSaving(false);
-      setNotification({
-        type: "error",
-        message: "Ein unerwarteter Fehler ist aufgetreten.",
-      });
+    if (result.ok) {
+      onUpdated();
+      onClose();
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   }
 
   return (
@@ -88,14 +66,17 @@ export default function AccommodationAdminModal({
             <h3 className="text-sm font-medium text-foreground">
               Unterkunft bearbeiten
             </h3>
-            <button
+            <SubmitButton
               type="button"
+              size="icon"
+              variant="ghost"
               onClick={handleDelete}
-              className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
+              icon={<Trash2 size={16} />}
+              errorToast="Fehler beim Löschen."
+              showInlineError={false}
+              className="p-1.5 text-muted-foreground hover:text-destructive"
               title="Unterkunft löschen"
-            >
-              <Trash2 size={16} />
-            </button>
+            />
           </div>
           <button
             type="button"
@@ -108,19 +89,11 @@ export default function AccommodationAdminModal({
         <AccommodationForm
           form={form}
           setForm={setForm}
-          saving={saving}
           formError={formError}
           onSubmit={handleSubmit}
           onCancel={onClose}
         />
       </div>
-      {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification(null)}
-        />
-      )}
     </div>
   );
 }

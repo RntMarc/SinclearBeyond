@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 export default function TripForm({
   form,
@@ -98,9 +98,14 @@ export default function TripForm({
         >
           {tc("cancel")}
         </button>
-        <SaveButton loading={saving} type="submit">
-          {t("saveTrip")}
-        </SaveButton>
+        <SubmitButton
+          type="submit"
+          loading={saving}
+          label={t("saveTrip")}
+          successToast={tc("saved")}
+          errorToast={tc("saveError")}
+          successDuration={0}
+        />
       </div>
     </form>
   );

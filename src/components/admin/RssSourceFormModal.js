@@ -2,51 +2,45 @@
 
 import { X } from "lucide-react";
 import { useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function RssSourceFormModal({ source, onClose, onUpdated }) {
   const [name, setName] = useState(source?.name || "");
   const [url, setUrl] = useState(source?.url || "");
   const [itemsPerPage, setItemsPerPage] = useState(source?.itemsPerPage || 10);
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/admin/news/sources", {
+    const result = await fetchAction(
+      "/api/admin/news/sources",
+      {
         method: source ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: source?.id, name, url, itemsPerPage }),
-      });
-
-      if (res.ok) {
-        onUpdated();
-        onClose();
-      }
-    } catch (error) {
-      console.error("Error saving RSS source:", error);
-    } finally {
-      setLoading(false);
+      },
+      { fallbackError: "Fehler beim Speichern" },
+    );
+    if (result.ok) {
+      onUpdated();
+      onClose();
     }
+    return result;
   };
 
   const handleDelete = async () => {
-    if (!confirm("Quelle wirklich löschen?")) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/admin/news/sources?id=${source.id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        onUpdated();
-        onClose();
-      }
-    } catch (error) {
-      console.error("Error deleting RSS source:", error);
-    } finally {
-      setLoading(false);
+    if (!confirm("Quelle wirklich löschen?"))
+      return { ok: false, error: "Abgebrochen" };
+    const result = await fetchAction(
+      `/api/admin/news/sources?id=${source.id}`,
+      { method: "DELETE" },
+      { fallbackError: "Fehler beim Löschen" },
+    );
+    if (result.ok) {
+      onUpdated();
+      onClose();
     }
+    return result;
   };
 
   return (
@@ -114,22 +108,24 @@ export default function RssSourceFormModal({ source, onClose, onUpdated }) {
 
           <div className="flex gap-3 pt-2">
             {source && (
-              <button
+              <SubmitButton
                 type="button"
                 onClick={handleDelete}
-                disabled={loading}
-                className="flex-1 px-4 py-2 bg-destructive/10 text-destructive border border-destructive/20 rounded-xl text-sm font-medium hover:bg-destructive/20 transition-all disabled:opacity-50"
-              >
-                Löschen
-              </button>
+                label="Löschen"
+                successDuration={0}
+                showInlineError={false}
+                className="flex-1 px-4 py-2 bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20"
+              />
             )}
-            <button
+            <SubmitButton
               type="submit"
-              disabled={loading}
-              className="flex-[2] px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
-            >
-              {loading ? "Wird gespeichert..." : "Speichern"}
-            </button>
+              onClick={handleSubmit}
+              label="Speichern"
+              savingLabel="Wird gespeichert..."
+              successDuration={0}
+              showInlineError={false}
+              className="flex-[2] px-4 py-2"
+            />
           </div>
         </form>
       </div>

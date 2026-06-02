@@ -1,18 +1,17 @@
 "use client";
 
-import { ImageIcon, Loader2, Trash2, X } from "lucide-react";
+import { ImageIcon, Trash2, X } from "lucide-react";
 import { useRef, useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { createForum, deleteForum, updateForum } from "@/lib/forums/actions";
 
 export default function ForumFormModal({ forum, onClose, onUpdated }) {
-  const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(forum?.image || null);
   const [removeImage, setRemoveImage] = useState(false);
   const fileInputRef = useRef(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
 
     const formData = new FormData(e.target);
     if (removeImage) {
@@ -27,11 +26,10 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
       }
       onUpdated();
       onClose();
+      return { ok: true };
     } catch (error) {
       console.error("Failed to save forum:", error);
-      alert("Fehler beim Speichern des Forums.");
-    } finally {
-      setLoading(false);
+      return { ok: false, error: "Fehler beim Speichern des Forums." };
     }
   }
 
@@ -41,18 +39,16 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
         "Bist du sicher, dass du dieses Forum löschen willst? Alle Posts darin werden ebenfalls gelöscht!",
       )
     )
-      return;
+      return { ok: false, error: "Abgebrochen" };
 
-    setLoading(true);
     try {
       await deleteForum(forum.id);
       onUpdated();
       onClose();
+      return { ok: true };
     } catch (error) {
       console.error("Failed to delete forum:", error);
-      alert("Fehler beim Löschen des Forums.");
-    } finally {
-      setLoading(false);
+      return { ok: false, error: "Fehler beim Löschen des Forums." };
     }
   }
 
@@ -170,14 +166,16 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
 
           <div className="flex items-center gap-3 pt-2">
             {forum && (
-              <button
+              <SubmitButton
                 type="button"
+                size="icon"
+                variant="ghost"
                 onClick={handleDelete}
-                disabled={loading}
-                className="p-2.5 text-destructive hover:bg-destructive/10 rounded-xl transition-colors border border-transparent hover:border-destructive/20"
-              >
-                <Trash2 size={20} />
-              </button>
+                icon={<Trash2 size={20} />}
+                showInlineError={false}
+                successDuration={0}
+                className="p-2.5 text-destructive hover:bg-destructive/10 rounded-xl border border-transparent hover:border-destructive/20"
+              />
             )}
             <div className="flex-1" />
             <button
@@ -187,17 +185,15 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             >
               Abbrechen
             </button>
-            <button
+            <SubmitButton
               type="submit"
-              disabled={loading}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 min-w-[120px]"
-            >
-              {loading ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                "Speichern"
-              )}
-            </button>
+              onClick={handleSubmit}
+              label="Speichern"
+              savingLabel="Wird gespeichert…"
+              successDuration={0}
+              showInlineError={false}
+              className="px-6 py-2.5 min-w-[120px]"
+            />
           </div>
         </form>
       </div>

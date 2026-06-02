@@ -11,7 +11,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
   const t = useTranslations("Polls");
@@ -547,9 +547,12 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
         >
           {tc("cancel")}
         </button>
-        <SaveButton loading={saving} type="submit">
-          {t("form.save")}
-        </SaveButton>
+        <SubmitButton
+          type="submit"
+          loading={saving}
+          label={t("form.save")}
+          showInlineError
+        />
       </div>
     </form>
   );

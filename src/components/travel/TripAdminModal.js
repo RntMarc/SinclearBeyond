@@ -1,7 +1,8 @@
 "use client";
 import { Calendar, MapPin, Plus, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import Notification from "@/components/Notification";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 import TravelEventFormModal from "./TravelEventFormModal";
 
@@ -17,8 +18,6 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
   const [allUsers, setAllUsers] = useState([]);
   const [accommodations, setAccommodations] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [activeSubTab, setActiveSubTab] = useState("details");
   const [editingEvent, setEditingEvent] = useState(null);
   const [showAddEvent, setShowAddEvent] = useState(false);
@@ -50,7 +49,6 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
 
   async function handleUpdateTrip(e) {
     e.preventDefault();
-    setLoading(true);
 
     const payload = {
       ...form,
@@ -58,77 +56,79 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
       end: toUTCISOString(form.end, timezone),
     };
 
-    const res = await fetch(`/api/travel/trips/${trip.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    setLoading(false);
-    if (res.ok) {
-      setNotification({
-        type: "success",
-        message: "Reise erfolgreich aktualisiert.",
-      });
+    const result = await fetchAction(
+      `/api/travel/trips/${trip.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      },
+      { fallbackError: "Fehler beim Aktualisieren." },
+    );
+
+    if (result.ok) {
       onUpdated();
-    } else {
-      setNotification({ type: "error", message: "Fehler beim Aktualisieren." });
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   }
 
   async function addParticipant() {
-    if (!selectedUser) return;
-    setLoading(true);
-    const res = await fetch(`/api/travel/trips/${trip.id}/participants`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: selectedUser }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      setNotification({ type: "success", message: "Nutzer hinzugefügt." });
+    if (!selectedUser) return { ok: false, error: "Kein Nutzer ausgewählt." };
+
+    const result = await fetchAction(
+      `/api/travel/trips/${trip.id}/participants`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: selectedUser }),
+      },
+      { fallbackError: "Fehler beim Hinzufügen." },
+    );
+
+    if (result.ok) {
       fetchData();
       setSelectedUser("");
       onUpdated();
-    } else {
-      setNotification({ type: "error", message: "Fehler beim Hinzufügen." });
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   }
 
   async function removeParticipant(userId) {
-    if (!confirm("Teilnehmer wirklich entfernen?")) return;
-    setLoading(true);
-    const res = await fetch(
+    if (!confirm("Teilnehmer wirklich entfernen?"))
+      return { ok: false, error: "Abgebrochen." };
+
+    const result = await fetchAction(
       `/api/travel/trips/${trip.id}/participants/${userId}`,
-      {
-        method: "DELETE",
-      },
+      { method: "DELETE" },
+      { fallbackError: "Fehler beim Entfernen." },
     );
-    setLoading(false);
-    if (res.ok) {
-      setNotification({ type: "success", message: "Nutzer entfernt." });
+
+    if (result.ok) {
       fetchData();
       onUpdated();
-    } else {
-      setNotification({ type: "error", message: "Fehler beim Entfernen." });
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   }
 
   async function updateParticipantAccommodation(userId, accommodationId) {
-    setLoading(true);
-    const res = await fetch(
+    const result = await fetchAction(
       `/api/travel/trips/${trip.id}/participants/${userId}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ accommodationId }),
       },
+      { fallbackError: "Fehler beim Zuweisen." },
     );
-    setLoading(false);
-    if (res.ok) {
+
+    if (result.ok) {
       fetchData();
-    } else {
-      setNotification({ type: "error", message: "Fehler beim Zuweisen." });
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   }
 
   const availableUsers = allUsers.filter(
@@ -231,13 +231,15 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                   />
                 </div>
               </div>
-              <button
+              <SubmitButton
                 type="submit"
-                disabled={loading}
-                className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
-              >
-                Änderungen speichern
-              </button>
+                onClick={handleUpdateTrip}
+                label="Änderungen speichern"
+                successToast="Reise erfolgreich aktualisiert."
+                errorToast="Fehler beim Aktualisieren."
+                className="w-full py-2.5"
+                successDuration={0}
+              />
             </form>
           )}
 
@@ -256,14 +258,16 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                     </option>
                   ))}
                 </select>
-                <button
+                <SubmitButton
                   onClick={addParticipant}
-                  disabled={!selectedUser || loading}
-                  className="bg-primary/10 text-primary px-4 py-2 rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50 flex items-center gap-2 text-sm font-medium"
-                >
-                  <Plus size={18} />
-                  Hinzufügen
-                </button>
+                  size="compact"
+                  icon={<Plus size={18} />}
+                  label="Hinzufügen"
+                  successToast="Nutzer hinzugefügt."
+                  errorToast="Fehler beim Hinzufügen."
+                  disabled={!selectedUser}
+                  successDuration={0}
+                />
               </div>
 
               <div className="space-y-3">
@@ -285,13 +289,16 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
                             {p.email}
                           </span>
                         </div>
-                        <button
+                        <SubmitButton
                           type="button"
+                          size="icon"
+                          variant="ghost"
                           onClick={() => removeParticipant(p.id)}
-                          className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                          icon={<Trash2 size={16} />}
+                          errorToast="Fehler beim Entfernen."
+                          showInlineError={false}
+                          className="p-1.5 text-muted-foreground hover:text-destructive"
+                        />
                       </div>
 
                       <div className="flex items-center gap-2 pt-2 border-t border-sidebar-border/50">
@@ -382,14 +389,6 @@ export default function TripAdminModal({ trip, onClose, onUpdated, timezone }) {
             onUpdated();
           }}
           timezone={timezone}
-        />
-      )}
-
-      {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification(null)}
         />
       )}
     </div>

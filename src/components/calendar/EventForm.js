@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import PermissionEditor from "@/components/calendar/PermissionEditor";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 export default function EventForm({
   form,
@@ -129,13 +130,16 @@ export default function EventForm({
         >
           {tc("cancel")}
         </button>
-        <button
+        <SubmitButton
           type="submit"
-          disabled={saving || !form.title.trim()}
-          className="flex-1 px-4 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
-        >
-          {saving ? tc("saving") : tc("save")}
-        </button>
+          loading={saving}
+          label={tc("save")}
+          savingLabel={tc("saving")}
+          disabled={!form.title.trim()}
+          successDuration={0}
+          showInlineError={false}
+          className="flex-1 rounded-full"
+        />
       </div>
     </form>
   );

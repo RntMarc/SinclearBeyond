@@ -3,9 +3,10 @@ import { Settings2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import Notification from "@/components/Notification";
 import PollDetail from "@/components/polls/PollDetail";
 import PollFormModal from "@/components/polls/PollFormModal";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 import { markPollAsRead } from "@/lib/polls/actions";
 
 export default function PollDetailClient({ initialPoll, userId }) {
@@ -13,7 +14,6 @@ export default function PollDetailClient({ initialPoll, userId }) {
   const [poll, setPoll] = useState(initialPoll);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [notification, setNotification] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,141 +21,132 @@ export default function PollDetailClient({ initialPoll, userId }) {
   }, [poll.id]);
 
   const handleCounterProposal = async (dateValue) => {
-    try {
-      const res = await fetch(`/api/polls/${poll.id}/counter-proposal`, {
+    const result = await fetchAction(
+      `/api/polls/${poll.id}/counter-proposal`,
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dateValue }),
-      });
+      },
+      { fallbackError: t("form.errorCounterProposal") },
+    );
 
-      if (res.ok) {
-        setNotification({
-          message: t("form.successCounterProposal"),
-          type: "success",
-        });
-        const updatedRes = await fetch(`/api/polls/${poll.id}`);
-        if (updatedRes.ok) {
-          setPoll(await updatedRes.json());
-        }
-      } else {
-        setNotification({
-          message: t("form.errorCounterProposal"),
-          type: "error",
-        });
+    if (result.ok) {
+      const updatedRes = await fetch(`/api/polls/${poll.id}`);
+      if (updatedRes.ok) {
+        setPoll(await updatedRes.json());
       }
-    } catch (_error) {
-      setNotification({
-        message: t("form.errorCounterProposal"),
-        type: "error",
-      });
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   };
 
   const handleVote = async (answers) => {
-    try {
-      const res = await fetch(`/api/polls/${poll.id}/vote`, {
+    const result = await fetchAction(
+      `/api/polls/${poll.id}/vote`,
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers }),
-      });
+      },
+      { fallbackError: t("form.errorVote") },
+    );
 
-      if (res.ok) {
-        const updatedRes = await fetch(`/api/polls/${poll.id}`);
-        if (updatedRes.ok) {
-          setPoll(await updatedRes.json());
-        }
+    if (result.ok) {
+      const updatedRes = await fetch(`/api/polls/${poll.id}`);
+      if (updatedRes.ok) {
+        setPoll(await updatedRes.json());
       }
-    } catch (_error) {
-      setNotification({ message: t("form.errorVote"), type: "error" });
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   };
 
   const handleFinalize = async (optionId) => {
     const message = optionId ? t("finalize") : t("closePoll");
-    if (!confirm(`${message}?`)) return;
+    if (!confirm(`${message}?`)) return { ok: false };
 
-    try {
-      const res = await fetch(`/api/polls/${poll.id}/finalize`, {
+    const result = await fetchAction(
+      `/api/polls/${poll.id}/finalize`,
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ optionId, closeOnly: !optionId }),
-      });
+      },
+      { fallbackError: t("form.errorFinalize") },
+    );
 
-      if (res.ok) {
-        setNotification({
-          message: t("form.successFinalize"),
-          type: "success",
-        });
-        const updatedRes = await fetch(`/api/polls/${poll.id}`);
-        if (updatedRes.ok) {
-          setPoll(await updatedRes.json());
-        }
+    if (result.ok) {
+      const updatedRes = await fetch(`/api/polls/${poll.id}`);
+      if (updatedRes.ok) {
+        setPoll(await updatedRes.json());
       }
-    } catch (_error) {
-      setNotification({ message: t("form.errorFinalize"), type: "error" });
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   };
 
   const handleUpdatePoll = async (form) => {
     setSaving(true);
-    try {
-      const res = await fetch(`/api/polls/${poll.id}`, {
+    const result = await fetchAction(
+      `/api/polls/${poll.id}`,
+      {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-      });
+      },
+      { fallbackError: t("form.errorUpdate") },
+    );
+    setSaving(false);
 
-      if (res.ok) {
-        setNotification({ message: t("form.successUpdate"), type: "success" });
-        setIsEditModalOpen(false);
-        const updatedRes = await fetch(`/api/polls/${poll.id}`);
-        if (updatedRes.ok) {
-          setPoll(await updatedRes.json());
-        }
+    if (result.ok) {
+      setIsEditModalOpen(false);
+      const updatedRes = await fetch(`/api/polls/${poll.id}`);
+      if (updatedRes.ok) {
+        setPoll(await updatedRes.json());
       }
-    } catch (_error) {
-      setNotification({ message: t("form.errorUpdate"), type: "error" });
-    } finally {
-      setSaving(false);
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   };
 
   const handleDelete = async () => {
-    if (!confirm(t("form.deleteConfirm"))) return;
+    if (!confirm(t("form.deleteConfirm"))) return { ok: false };
 
-    try {
-      const res = await fetch(`/api/polls/${poll.id}`, {
-        method: "DELETE",
-      });
+    const result = await fetchAction(
+      `/api/polls/${poll.id}`,
+      { method: "DELETE" },
+      { fallbackError: t("form.errorDelete") },
+    );
 
-      if (res.ok) {
-        router.push("/umfrage");
-      }
-    } catch (_error) {
-      setNotification({ message: t("form.errorDelete"), type: "error" });
+    if (result.ok) {
+      router.push("/umfrage");
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   };
 
   return (
     <div className="space-y-8">
       {poll.isCreator && (
         <div className="flex justify-end gap-3">
-          <button
-            type="button"
+          <SubmitButton
+            size="compact"
+            variant="secondary"
+            icon={<Settings2 size={16} />}
             onClick={() => setIsEditModalOpen(true)}
-            className="flex items-center gap-2 bg-sidebar-accent border border-sidebar-border px-4 py-2 rounded-xl font-bold text-xs hover:bg-sidebar-accent/80 transition-all"
-          >
-            <Settings2 size={16} />
-            {t("editPoll")}
-          </button>
-          <button
-            type="button"
+            label={t("editPoll")}
+            successDuration={0}
+          />
+          <SubmitButton
+            size="compact"
+            variant="destructive"
+            icon={<Trash2 size={16} />}
             onClick={handleDelete}
-            className="flex items-center gap-2 bg-destructive/10 text-destructive border border-destructive/20 px-4 py-2 rounded-xl font-bold text-xs hover:bg-destructive/20 transition-all"
-          >
-            <Trash2 size={16} />
-            {t("deletePoll")}
-          </button>
+            label={t("deletePoll")}
+            errorToast={t("form.errorDelete")}
+            successDuration={0}
+          />
         </div>
       )}
 
@@ -184,14 +175,6 @@ export default function PollDetailClient({ initialPoll, userId }) {
         onSubmit={handleUpdatePoll}
         saving={saving}
       />
-
-      {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification(null)}
-        />
-      )}
     </div>
   );
 }
