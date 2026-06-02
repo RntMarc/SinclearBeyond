@@ -10,7 +10,7 @@ export async function PATCH(req, { params }) {
   const session = await getSession();
   const { id, userId } = await params;
 
-  if (!session || !session.isAdmin) {
+  if (!session?.isAdmin) {
     return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
@@ -43,7 +43,7 @@ export async function DELETE(_req, { params }) {
   const session = await getSession();
   const { id, userId } = await params;
 
-  if (!session || !session.isAdmin) {
+  if (!session?.isAdmin) {
     return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 

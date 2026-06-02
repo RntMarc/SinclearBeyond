@@ -7,12 +7,7 @@ allowBuilds:
   sharp: true
 
 minimumReleaseAgeExclude:
-  - xmldom@0.5.0
-  - xmldom@0.6.1
-  - merge@1.2.1
-  - merge@2.1.1
-  - fstream@1.0.12
-  - esbuild@0.24.3
+  - esbuild@0.25.0
   - postcss@8.5.10
   - uuid@11.1.1
 
@@ -24,11 +19,6 @@ onlyBuiltDependencies:
   - sharp
 
 overrides:
-  esbuild@<=0.24.2: ^0.24.3
-  fstream@<1.0.12: ^1.0.12
-  merge@<1.2.1: ^1.2.1
-  merge@<2.1.1: ^2.1.1
+  esbuild@<=0.24.2: ^0.25.0
   postcss@<8.5.10: ^8.5.10
   uuid@<11.1.1: ^11.1.1
-  xmldom@<0.5.0: ^0.5.0
-  xmldom@<=0.6.0: ^0.6.1

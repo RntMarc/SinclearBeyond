@@ -19,7 +19,7 @@ import LeaveConfirmModal from "@/components/forum/LeaveConfirmModal";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 import { joinForum, leaveForum, markForumAsRead } from "@/lib/forums/actions";
 
-export default function ForumDetailClient({ forumId, userId }) {
+export default function ForumDetailClient({ forumId, userId: _userId }) {
   const t = useTranslations("Feed");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -97,6 +97,7 @@ export default function ForumDetailClient({ forumId, userId }) {
     <div className="bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden">
       <div className="aspect-video w-full bg-muted">
         {data.forum.image ? (
+          // biome-ignore lint/performance/noImgElement: dynamic forum images, unknown dimensions
           <img
             src={data.forum.image}
             alt={data.forum.name}
@@ -142,6 +143,7 @@ export default function ForumDetailClient({ forumId, userId }) {
 
         <div className="pt-4 border-t border-sidebar-border">
           <button
+            type="button"
             onClick={handleToggleJoin}
             className={`w-full px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               data.isMember
@@ -162,6 +164,7 @@ export default function ForumDetailClient({ forumId, userId }) {
         <div className="hidden md:flex items-center gap-3">
           {data.isMember && (
             <button
+              type="button"
               onClick={() => setShowFormModal(true)}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-all shadow-lg shadow-primary/20"
             >
@@ -175,6 +178,7 @@ export default function ForumDetailClient({ forumId, userId }) {
       {/* Mobile Tabs */}
       <div className="md:hidden flex border-b border-border bg-card sticky top-0 z-10">
         <button
+          type="button"
           onClick={() => setActiveTab("posts")}
           className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
             activeTab === "posts"
@@ -186,6 +190,7 @@ export default function ForumDetailClient({ forumId, userId }) {
           {t("tabs.posts")}
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab("info")}
           className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
             activeTab === "info"
@@ -226,6 +231,7 @@ export default function ForumDetailClient({ forumId, userId }) {
       {/* FAB for Mobile */}
       {data.isMember && (
         <button
+          type="button"
           onClick={() => setShowFormModal(true)}
           className="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-40"
         >

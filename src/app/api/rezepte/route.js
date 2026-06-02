@@ -7,8 +7,8 @@ import {
   recipeBookmarks,
   recipeIngredients,
   recipeReviews,
-  recipes,
   recipeSteps,
+  recipes,
   users,
 } from "@/lib/db/schema";
 

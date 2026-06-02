@@ -1,4 +1,4 @@
-import { and, like, ne, or } from "drizzle-orm";
+import { like, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";

@@ -139,7 +139,7 @@ export default function MovieDetailPageClient({
       });
       setUserEpisodeReviews(episodeRatings);
     }
-  }, [movie.id]);
+  }, [movie.episodes.forEach, movie.episodes]);
 
   const share = () => {
     const text = t("shareText", { title: movie.title });
@@ -326,6 +326,7 @@ export default function MovieDetailPageClient({
                           <div className="flex items-center gap-1">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <button
+                                type="button"
                                 key={star}
                                 onClick={() =>
                                   handleEpisodeRate(

@@ -171,6 +171,7 @@ export default function AdminPage({ user, session }) {
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground overflow-hidden">
+                            {/* biome-ignore lint/performance/noImgElement: external favicon URLs, can't use next/Image */}
                             <img
                               src={`https://www.google.com/s2/favicons?domain=${new URL(source.url).hostname}&sz=64`}
                               alt={source.name}
@@ -253,6 +254,7 @@ export default function AdminPage({ user, session }) {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden flex-shrink-0">
                             {forum.image ? (
+                              // biome-ignore lint/performance/noImgElement: dynamic forum images, unknown dimensions
                               <img
                                 src={forum.image}
                                 alt={forum.name}

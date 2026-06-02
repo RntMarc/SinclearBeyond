@@ -12,7 +12,7 @@ export async function GET(request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get("page") || "1");
+  const page = parseInt(searchParams.get("page") || "1", 10);
 
   const [articles, upvotedUrls, upvoteCounts] = await Promise.all([
     getNewsArticles(page),

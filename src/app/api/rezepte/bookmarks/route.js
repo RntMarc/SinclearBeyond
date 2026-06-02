@@ -30,9 +30,7 @@ export async function POST(req) {
 
     if (existing) {
       const { error: deleteError } = await safeQuery(
-        db
-          .delete(recipeBookmarks)
-          .where(eq(recipeBookmarks.id, existing.id)),
+        db.delete(recipeBookmarks).where(eq(recipeBookmarks.id, existing.id)),
       );
       if (deleteError) throw deleteError;
       return NextResponse.json({ ok: true, bookmarked: false });

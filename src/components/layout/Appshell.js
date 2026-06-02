@@ -2,9 +2,8 @@
 import * as LucideIcons from "lucide-react";
 import { Info, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
 import LogoutButton from "@/components/auth/LogoutButton";
