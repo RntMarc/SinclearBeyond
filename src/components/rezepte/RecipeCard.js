@@ -5,15 +5,15 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 const CATEGORY_COLORS = {
-  vorspeisen: "bg-orange-500/10 text-orange-500",
-  hauptgerichte: "bg-red-500/10 text-red-500",
-  desserts: "bg-pink-500/10 text-pink-500",
-  salate: "bg-green-500/10 text-green-500",
-  suppen: "bg-amber-500/10 text-amber-500",
-  backen: "bg-yellow-500/10 text-yellow-500",
-  fruehstueck: "bg-sky-500/10 text-sky-500",
-  getraenke: "bg-blue-500/10 text-blue-500",
-  sonstiges: "bg-gray-500/10 text-gray-500",
+  vorspeisen: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+  hauptgerichte: "bg-red-500/20 text-red-400 border-red-500/30",
+  desserts: "bg-pink-500/20 text-pink-400 border-pink-500/30",
+  salate: "bg-green-500/20 text-green-400 border-green-500/30",
+  suppen: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  backen: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  fruehstueck: "bg-sky-500/20 text-sky-400 border-sky-500/30",
+  getraenke: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  sonstiges: "bg-gray-500/20 text-gray-400 border-gray-500/30",
 };
 
 export default function RecipeCard({ recipe }) {
@@ -24,21 +24,21 @@ export default function RecipeCard({ recipe }) {
   return (
     <Link
       href={`/rezepte/${recipe.id}`}
-      className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
+      className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
     >
       {recipe.image ? (
-        <div className="aspect-[4/3] w-full overflow-hidden relative bg-muted">
+        <div className="aspect-[16/10] w-full overflow-hidden relative bg-muted">
           <img
             src={recipe.image}
             alt={recipe.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-3 left-3 right-3">
+          <div className="absolute top-3 left-3">
             <span
-              className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm ${
+              className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border ${
                 CATEGORY_COLORS[recipe.category] ||
-                "bg-gray-500/10 text-gray-500"
+                "bg-gray-500/20 text-gray-400 border-gray-500/30"
               }`}
             >
               {t(`category.${recipe.category}`)}
@@ -46,16 +46,20 @@ export default function RecipeCard({ recipe }) {
           </div>
         </div>
       ) : (
-        <div className="aspect-[4/3] w-full bg-muted flex items-center justify-center relative">
+        <div className="aspect-[16/10] w-full bg-muted flex items-center justify-center relative overflow-hidden">
           <UtensilsCrossed
-            className="text-muted-foreground/20"
+            className="text-muted-foreground/10 absolute -right-4 -bottom-4 rotate-12"
+            size={120}
+          />
+          <UtensilsCrossed
+            className="text-muted-foreground/20 relative z-10"
             size={48}
           />
-          <div className="absolute bottom-3 left-3">
+          <div className="absolute top-3 left-3">
             <span
-              className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+              className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
                 CATEGORY_COLORS[recipe.category] ||
-                "bg-gray-500/10 text-gray-500"
+                "bg-gray-500/20 text-gray-400 border-gray-500/30"
               }`}
             >
               {t(`category.${recipe.category}`)}
@@ -90,16 +94,19 @@ export default function RecipeCard({ recipe }) {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2 border-t border-border/50">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
+        <div className="flex items-center justify-between pt-3 border-t border-border/50 mt-auto">
+          <div className="flex items-center gap-1.5">
             <Star
               size={14}
+              className={
+                recipe.avgRating
+                  ? "text-orange-500"
+                  : "text-muted-foreground/40"
+              }
               fill={recipe.avgRating ? "currentColor" : "none"}
             />
-            <span className="text-xs font-bold text-orange-500">
-              {recipe.avgRating
-                ? Number(recipe.avgRating).toFixed(1)
-                : "-"}
+            <span className="text-sm font-black">
+              {recipe.avgRating ? Number(recipe.avgRating).toFixed(1) : "-"}
             </span>
             <span className="text-[10px] text-muted-foreground/60">
               ({recipe.reviewCount})

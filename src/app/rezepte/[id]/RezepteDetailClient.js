@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import SubPageHeader from "@/components/layout/SubPageHeader";
 import RecipeFormModal from "@/components/rezepte/RecipeFormModal";
 import RecipeReviewSection from "@/components/rezepte/RecipeReviewSection";
-import SubPageHeader from "@/components/layout/SubPageHeader";
 
 const CATEGORY_COLORS = {
   vorspeisen: "bg-orange-500/10 text-orange-500 border-orange-500/20",
@@ -45,6 +45,8 @@ export default function RezepteDetailClient({
 
   const baseServings = recipe.servings || 4;
   const tags = recipe.dietaryTags ? recipe.dietaryTags.split(",") : [];
+
+  const Icon = UtensilsCrossed;
 
   function adjustServings(newServings) {
     if (newServings < 1) return;
@@ -126,6 +128,7 @@ export default function RezepteDetailClient({
         title={recipe.title}
         subtitle={t("title")}
         backHref="/rezepte"
+        icon={Icon}
       >
         <button
           type="button"
@@ -161,12 +164,12 @@ export default function RezepteDetailClient({
             </div>
 
             <div className="md:col-span-2 flex flex-col justify-center space-y-6">
-              <div className="space-y-3">
-                <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+              <div className="space-y-4">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
                   {recipe.title}
                 </h1>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <span
                     className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
                       CATEGORY_COLORS[recipe.category] ||
@@ -179,7 +182,7 @@ export default function RezepteDetailClient({
                   {tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2.5 py-1 rounded-md bg-primary/5 text-primary text-[10px] font-bold uppercase tracking-wider"
+                      className="px-2.5 py-1 rounded-md bg-sidebar-accent text-muted-foreground text-[10px] font-bold uppercase tracking-wider border border-sidebar-border"
                     >
                       {t(`tags.${tag}`)}
                     </span>
@@ -187,41 +190,41 @@ export default function RezepteDetailClient({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2 text-orange-500">
+                  <Star size={32} fill="currentColor" />
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-2 text-orange-500">
-                      <Star size={32} fill="currentColor" />
-                      <span className="text-3xl font-black">
-                        {recipe.avgRating
-                          ? Number(recipe.avgRating).toFixed(1)
-                          : "-"}
-                      </span>
-                    </div>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">
+                    <span className="text-3xl font-black leading-none">
+                      {recipe.avgRating
+                        ? Number(recipe.avgRating).toFixed(1)
+                        : "-"}
+                    </span>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                       {recipe.reviewCount}{" "}
                       {recipe.reviewCount === 1 ? t("rating") : t("rating")}
                     </p>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={toggleBookmark}
-                  className={`p-3 rounded-2xl transition-all ${
-                    recipe.isBookmarked
-                      ? "bg-primary/10 text-primary border border-primary/20"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
-                  }`}
-                  aria-label={
-                    recipe.isBookmarked ? t("bookmarked") : t("bookmark")
-                  }
-                >
-                  <Bookmark
-                    size={20}
-                    fill={recipe.isBookmarked ? "currentColor" : "none"}
-                  />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={toggleBookmark}
+                    className={`p-3 rounded-2xl transition-all ${
+                      recipe.isBookmarked
+                        ? "bg-primary/10 text-primary border border-primary/20 shadow-sm"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
+                    }`}
+                    aria-label={
+                      recipe.isBookmarked ? t("bookmarked") : t("bookmark")
+                    }
+                  >
+                    <Bookmark
+                      size={20}
+                      fill={recipe.isBookmarked ? "currentColor" : "none"}
+                    />
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium">
@@ -245,13 +248,13 @@ export default function RezepteDetailClient({
           {/* Ingredients */}
           {recipe.ingredients.length > 0 && (
             <section className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <h2 className="text-2xl font-black">{t("ingredients")}</h2>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     {t("servings")}
                   </span>
-                  <div className="flex items-center gap-1 bg-muted rounded-xl p-1">
+                  <div className="flex items-center gap-1 bg-sidebar-accent/50 p-1 rounded-xl border border-sidebar-border shadow-sm">
                     <button
                       type="button"
                       onClick={() => adjustServings(servingFactor - 1)}
@@ -282,21 +285,26 @@ export default function RezepteDetailClient({
                   )}
                 </div>
               </div>
-              <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
+              <div className="bg-sidebar-accent/20 rounded-3xl overflow-hidden border border-border divide-y divide-border shadow-sm">
                 {recipe.ingredients.map((ing) => {
                   const scaledAmount =
                     baseServings !== servingFactor
-                      ? ((parseFloat(ing.amount) / baseServings) * servingFactor).toFixed(1)
+                      ? (
+                          (parseFloat(ing.amount) / baseServings) *
+                          servingFactor
+                        ).toFixed(1)
                       : ing.amount;
                   return (
                     <div
                       key={ing.id}
-                      className="px-6 py-3 flex items-center gap-4 text-sm"
+                      className="px-6 py-4 flex items-center gap-4 text-sm hover:bg-sidebar-accent/30 transition-colors"
                     >
-                      <span className="font-bold text-primary min-w-[60px]">
+                      <span className="font-bold text-primary min-w-[70px]">
                         {scaledAmount} {t(`units.${ing.unit}`)}
                       </span>
-                      <span className="font-medium">{ing.name}</span>
+                      <span className="font-medium text-foreground/90">
+                        {ing.name}
+                      </span>
                     </div>
                   );
                 })}
@@ -317,7 +325,7 @@ export default function RezepteDetailClient({
                     {steps.map((step, idx) => (
                       <div
                         key={step.id}
-                        className="p-5 bg-card border border-border rounded-2xl space-y-2"
+                        className="p-6 bg-card border border-border rounded-2xl space-y-3 shadow-sm hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-center gap-3">
                           <span className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-black shrink-0">

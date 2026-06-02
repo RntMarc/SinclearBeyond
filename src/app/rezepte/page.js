@@ -1,3 +1,4 @@
+import { eq, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
 import { InlineError } from "@/components/ui/InlineError";
@@ -10,7 +11,6 @@ import {
   users,
 } from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
-import { eq, sql } from "drizzle-orm";
 import RezepteClient from "./RezepteClient";
 
 export default async function RezeptePage() {

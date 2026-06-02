@@ -8,8 +8,8 @@ import {
   recipeBookmarks,
   recipeIngredients,
   recipeReviews,
-  recipes,
   recipeSteps,
+  recipes,
   users,
 } from "@/lib/db/schema";
 import { getProfileData } from "@/lib/profile/profile";
@@ -119,7 +119,7 @@ export default async function RezepteDetailPage({ params }) {
 
   return (
     <AppShell user={user} session={session}>
-      {(reviewsError) && (
+      {reviewsError && (
         <div className="px-6 pt-6">
           <InlineError />
         </div>
@@ -129,7 +129,8 @@ export default async function RezepteDetailPage({ params }) {
           ...recipe,
           ingredients: ingredientsRes.data || [],
           steps: stepsRes.data || [],
-          isBookmarked: (bookmarksRes.data && bookmarksRes.data.length > 0) ? 1 : 0,
+          isBookmarked:
+            bookmarksRes.data && bookmarksRes.data.length > 0 ? 1 : 0,
         }}
         reviews={reviewsRes.data || []}
         userId={session.sub}
