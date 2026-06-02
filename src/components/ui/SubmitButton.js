@@ -1,7 +1,7 @@
 "use client";
 import { Check, Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { Children, useEffect, useRef, useState } from "react";
 import Notification from "@/components/Notification";
 import Button from "@/components/ui/Button";
 import { executeAction } from "@/lib/asyncAction";
@@ -27,6 +27,7 @@ export default function SubmitButton({
   successDuration = 1500,
   toastDuration = 3000,
   showInlineError = false,
+  children,
   ...props
 }) {
   const t = useTranslations("Common");
@@ -152,6 +153,7 @@ export default function SubmitButton({
   const finalVariant = visualStatus === "error" ? "destructive" : variant;
 
   const renderContent = () => {
+    const hasChildren = Children.count(children) > 0;
     if (loading) {
       return (
         <>
@@ -175,6 +177,9 @@ export default function SubmitButton({
           <span>{errorLabel || t("error")}</span>
         </>
       );
+    }
+    if (hasChildren) {
+      return children;
     }
     return (
       <>
