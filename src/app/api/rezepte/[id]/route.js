@@ -11,6 +11,7 @@ import {
   recipes,
   users,
 } from "@/lib/db/schema";
+import { processBase64Image } from "@/lib/images/imageProcessing";
 
 export async function GET(_req, { params }) {
   const { id } = await params;
@@ -132,7 +133,21 @@ export async function PATCH(req, { params }) {
       updateData.servings = parseInt(servings, 10) || 4;
     if (dietaryTags !== undefined)
       updateData.dietaryTags = dietaryTags?.join(",") || null;
-    if (image !== undefined) updateData.image = image || null;
+    if (image !== undefined) {
+      if (image) {
+        try {
+          updateData.image = await processBase64Image(image);
+        } catch (err) {
+          console.error(
+            "[API/Rezepte] PATCH image processing failed, storing original:",
+            err,
+          );
+          updateData.image = image;
+        }
+      } else {
+        updateData.image = null;
+      }
+    }
 
     const { error: updateError } = await safeQuery(
       db.update(recipes).set(updateData).where(eq(recipes.id, id)),

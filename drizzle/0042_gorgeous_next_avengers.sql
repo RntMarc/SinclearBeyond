@@ -1,0 +1,1 @@
+ALTER TABLE `Poll` ADD `allowCounterProposals` tinyint DEFAULT 0 NOT NULL;

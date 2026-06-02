@@ -112,7 +112,10 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
 
           <div className="space-y-3">
             <div className="space-y-2">
-              <label htmlFor="matrix-homeserver" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="matrix-homeserver"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 {t("login.matrixHomeserverPlaceholder")}
               </label>
               <input
@@ -124,7 +127,10 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="matrix-user" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="matrix-user"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 {t("login.matrixUserPlaceholder")}
               </label>
               <input
@@ -136,7 +142,10 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="matrix-password" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="matrix-password"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 {t("login.matrixPasswordPlaceholder")}
               </label>
               <input

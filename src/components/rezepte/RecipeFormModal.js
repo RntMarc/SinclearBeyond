@@ -5,6 +5,54 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 
+const CLIENT_MAX_WIDTH = 1920;
+const CLIENT_MAX_HEIGHT = 1920;
+const CLIENT_QUALITY = 0.8;
+
+async function clientProcessImage(file) {
+  const img = await new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Failed to load image"));
+    image.src = URL.createObjectURL(file);
+  });
+
+  let { width, height } = img;
+  if (width > CLIENT_MAX_WIDTH || height > CLIENT_MAX_HEIGHT) {
+    const ratio = Math.min(
+      CLIENT_MAX_WIDTH / width,
+      CLIENT_MAX_HEIGHT / height,
+      1,
+    );
+    width = Math.round(width * ratio);
+    height = Math.round(height * ratio);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, 0, 0, width, height);
+
+  URL.revokeObjectURL(img.src);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return reject(new Error("Canvas toBlob failed"));
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("FileReader failed"));
+        reader.readAsDataURL(blob);
+      },
+      "image/jpeg",
+      CLIENT_QUALITY,
+    );
+  });
+}
+
 const CATEGORIES = [
   "vorspeisen",
   "hauptgerichte",
@@ -105,20 +153,31 @@ export default function RecipeFormModal({
   });
 
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
+  const [processingImage, setProcessingImage] = useState(false);
 
   if (!isOpen) return null;
 
-  function handleImageUpload(e) {
+  async function handleImageUpload(e) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result;
-      setImagePreview(base64);
-      setForm({ ...form, image: base64 });
-    };
-    reader.readAsDataURL(file);
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+
+    setProcessingImage(true);
+    try {
+      const processedBase64 = await clientProcessImage(file);
+      setForm({ ...form, image: processedBase64 });
+    } catch (err) {
+      console.error("Client-side image processing failed, falling back:", err);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm({ ...form, image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setProcessingImage(false);
+    }
   }
 
   function removeImage() {
@@ -313,7 +372,17 @@ export default function RecipeFormModal({
             >
               {t("image")}
             </label>
-            {imagePreview ? (
+            {processingImage ? (
+              <div className="flex items-center gap-3 px-4 py-8 bg-sidebar-accent/50 border border-sidebar-border rounded-2xl justify-center">
+                <Loader2
+                  size={20}
+                  className="animate-spin text-muted-foreground"
+                />
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t("processingImage")}
+                </span>
+              </div>
+            ) : imagePreview ? (
               <div className="relative w-40 h-40 rounded-2xl overflow-hidden bg-sidebar-accent border border-sidebar-border shadow-inner">
                 <img
                   src={imagePreview}

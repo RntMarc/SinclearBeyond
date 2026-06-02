@@ -11,7 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DiscoverSearch from "@/components/discover/DiscoverSearch";
 import OpeningStatusBadge from "@/components/discover/OpeningStatusBadge";
 
@@ -39,29 +39,32 @@ export default function DiscoverClient({
   const [showGlobalMap, setShowGlobalMap] = useState(false);
   const _searchRef = useRef(null);
 
-  const handleSearch = useCallback(async (searchParams) => {
-    setLoading(true);
-    setIsSearching(true);
-    try {
-      let url = `/api/discover/places?q=${encodeURIComponent(searchParams.query || "")}`;
-      if (searchParams.mode) url += `&mode=${searchParams.mode}`;
-      if (searchParams.location) {
-        url += `&lat=${searchParams.location.lat}&lon=${searchParams.location.lon}`;
-        if (searchParams.location.display_name) {
-          url += `&locationName=${encodeURIComponent(searchParams.location.display_name)}`;
+  const handleSearch = useCallback(
+    async (searchParams) => {
+      setLoading(true);
+      setIsSearching(true);
+      try {
+        let url = `/api/discover/places?q=${encodeURIComponent(searchParams.query || "")}`;
+        if (searchParams.mode) url += `&mode=${searchParams.mode}`;
+        if (searchParams.location) {
+          url += `&lat=${searchParams.location.lat}&lon=${searchParams.location.lon}`;
+          if (searchParams.location.display_name) {
+            url += `&locationName=${encodeURIComponent(searchParams.location.display_name)}`;
+          }
         }
-      }
-      if (searchParams.radius) url += `&radius=${searchParams.radius}`;
+        if (searchParams.radius) url += `&radius=${searchParams.radius}`;
 
-      const res = await fetch(url);
-      const data = await res.json();
-      setPlaces(data);
-    } catch (err) {
-      console.error("Search failed", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [setLoading, setIsSearching, setPlaces]);
+        const res = await fetch(url);
+        const data = await res.json();
+        setPlaces(data);
+      } catch (err) {
+        console.error("Search failed", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading, setIsSearching, setPlaces],
+  );
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
