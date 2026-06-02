@@ -13,11 +13,19 @@ import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SaveButton from "@/components/SaveButton";
 
-export default function PollDetail({ poll, userId, onVote, onFinalize }) {
+export default function PollDetail({
+  poll,
+  userId,
+  onVote,
+  onFinalize,
+  onCounterProposal,
+}) {
   const t = useTranslations("Polls");
   const locale = useLocale();
   const [answers, setAnswers] = useState({});
   const [saving, setSaving] = useState(false);
+  const [showCounterProposal, setShowCounterProposal] = useState(false);
+  const [counterProposalDate, setCounterProposalDate] = useState("");
   const answersRef = useRef(answers);
   useEffect(() => {
     answersRef.current = answers;
@@ -405,6 +413,61 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
           </div>
         </div>
 
+        {!isFinalized && poll.allowCounterProposals && (
+          <div className="bg-sidebar-accent/20 border border-dashed border-sidebar-border rounded-2xl p-6 flex flex-col items-center gap-4">
+            {!showCounterProposal ? (
+              <>
+                <p className="text-sm text-muted-foreground text-center">
+                  {t("counterProposalHint")}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowCounterProposal(true)}
+                  className="flex items-center gap-2 px-6 py-2 bg-sidebar-accent border border-sidebar-border rounded-xl font-bold text-xs hover:bg-sidebar-accent/80 transition-all"
+                >
+                  <Plus size={16} />
+                  {t("addCounterProposal")}
+                </button>
+              </>
+            ) : (
+              <div className="w-full max-w-sm space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold ml-1">
+                    {t("newTerm")}
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={counterProposalDate}
+                    onChange={(e) => setCounterProposalDate(e.target.value)}
+                    className="w-full bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowCounterProposal(false)}
+                    className="flex-1 px-4 py-2 bg-muted text-muted-foreground rounded-xl font-bold text-xs hover:bg-muted/80 transition-all"
+                  >
+                    {t("cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!counterProposalDate}
+                    onClick={async () => {
+                      await onCounterProposal(counterProposalDate);
+                      setShowCounterProposal(false);
+                      setCounterProposalDate("");
+                    }}
+                    className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-xl font-bold text-xs hover:bg-primary/90 transition-all disabled:opacity-50"
+                  >
+                    {t("send")}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {isFinalized && (
           <div className="flex items-center gap-4 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
@@ -413,12 +476,14 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
             <div>
               <h3 className="font-bold text-emerald-400">{t("finalized")}</h3>
               <p className="text-sm text-emerald-400/80">
-                {t("finalizedOn", {
-                  date: formatDate(
-                    options.find((o) => o.id === poll.finalizedOptionId)
-                      ?.dateValue,
-                  ),
-                })}
+                {poll.finalizedOptionId === "closed"
+                  ? t("closedNoOption")
+                  : t("finalizedOn", {
+                      date: formatDate(
+                        options.find((o) => o.id === poll.finalizedOptionId)
+                          ?.dateValue,
+                      ),
+                    })}
               </p>
             </div>
           </div>
@@ -459,6 +524,31 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
+      {isCreator && !isFinalized && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => onFinalize()}
+            className="px-4 py-2 bg-sidebar-accent border border-sidebar-border rounded-xl font-bold text-xs hover:bg-sidebar-accent/80 transition-all flex items-center gap-2"
+          >
+            <X size={16} />
+            {t("closePoll")}
+          </button>
+        </div>
+      )}
+
+      {isFinalized && (
+        <div className="flex items-center gap-4 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
+            <CheckCircle2 size={24} />
+          </div>
+          <div>
+            <h3 className="font-bold text-emerald-400">{t("finalized")}</h3>
+            <p className="text-sm text-emerald-400/80">{t("closedHint")}</p>
+          </div>
+        </div>
+      )}
+
       <div className="bg-sidebar-accent/30 border border-sidebar-border rounded-3xl p-8 space-y-2">
         <h2 className="text-2xl font-black">{poll.title}</h2>
         {poll.description && (
@@ -478,7 +568,10 @@ export default function PollDetail({ poll, userId, onVote, onFinalize }) {
         </div>
       </div>
 
-      <form onSubmit={handleSurveySubmit} className="space-y-6">
+      <form
+        onSubmit={handleSurveySubmit}
+        className={`space-y-6 ${isFinalized ? "opacity-60 pointer-events-none" : ""}`}
+      >
         {poll.questions.map((q) => {
           const qOptions = poll.options.filter((o) => o.questionId === q.id);
           const currentAnswer =

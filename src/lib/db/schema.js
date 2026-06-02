@@ -448,6 +448,7 @@ export const polls = mysqlTable("Poll", {
   description: text("description"),
   creatorId: varchar("creatorId", { length: 191 }).notNull(),
   finalizedOptionId: varchar("finalizedOptionId", { length: 191 }),
+  allowCounterProposals: tinyint("allowCounterProposals").notNull().default(0),
   createdAt: datetime("createdAt", { fsp: 3 }).notNull(),
   updatedAt: datetime("updatedAt", { fsp: 3 }).notNull(),
 });
