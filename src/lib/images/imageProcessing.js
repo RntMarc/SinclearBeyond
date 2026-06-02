@@ -10,13 +10,13 @@
 import sharp from "sharp";
 
 /** Maximum image width in pixels. @type {number} */
-export const MAX_WIDTH = 1920;
+export const MAX_WIDTH = 500;
 
 /** Maximum image height in pixels. @type {number} */
-export const MAX_HEIGHT = 1920;
+export const MAX_HEIGHT = 500;
 
 /** Maximum file size in kilobytes. @type {number} */
-export const MAX_FILE_SIZE_KB = 500;
+export const MAX_FILE_SIZE_KB = 400;
 
 /** Starting AVIF quality (0–100). @type {number} */
 const INITIAL_QUALITY = 80;
