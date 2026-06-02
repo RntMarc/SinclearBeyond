@@ -50,11 +50,21 @@ const STEP_CATEGORIES = [
 ];
 
 function emptyIngredient() {
-  return { amount: "", unit: "g", name: "" };
+  return {
+    id: Math.random().toString(36).substr(2, 9),
+    amount: "",
+    unit: "g",
+    name: "",
+  };
 }
 
 function emptyStep() {
-  return { category: "vorbereitung", title: "", description: "" };
+  return {
+    id: Math.random().toString(36).substr(2, 9),
+    category: "vorbereitung",
+    title: "",
+    description: "",
+  };
 }
 
 export default function RecipeFormModal({
@@ -68,8 +78,21 @@ export default function RecipeFormModal({
   const t = useTranslations("Recipes");
   const tc = useTranslations("Common");
 
-  const [form, setForm] = useState(
-    initialData || {
+  const [form, setForm] = useState(() => {
+    if (initialData) {
+      return {
+        ...initialData,
+        ingredients: initialData.ingredients.map((ing) => ({
+          ...ing,
+          id: ing.id || Math.random().toString(36).substr(2, 9),
+        })),
+        steps: initialData.steps.map((step) => ({
+          ...step,
+          id: step.id || Math.random().toString(36).substr(2, 9),
+        })),
+      };
+    }
+    return {
       title: "",
       description: "",
       category: "hauptgerichte",
@@ -78,12 +101,10 @@ export default function RecipeFormModal({
       image: null,
       ingredients: [emptyIngredient()],
       steps: [emptyStep()],
-    },
-  );
+    };
+  });
 
-  const [imagePreview, setImagePreview] = useState(
-    initialData?.image || null,
-  );
+  const [imagePreview, setImagePreview] = useState(initialData?.image || null);
 
   if (!isOpen) return null;
 
@@ -152,60 +173,82 @@ export default function RecipeFormModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <button
         type="button"
         className="absolute inset-0"
         onClick={() => !loading && onClose()}
         aria-label={tc("close")}
       />
-      <div className="relative w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-200">
-        <div className="p-6 border-b border-border sticky top-0 bg-card z-10">
+      <div className="relative w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+        <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
           <h3 className="text-xl font-black">
             {isEditing ? t("editRecipe") : t("createRecipe")}
           </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground"
+          >
+            <X size={20} />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-8">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-6 space-y-8"
+        >
           {/* Title */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="recipe-title"
+              className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1"
+            >
               {tc("title")}
+              <span className="text-primary ml-1">*</span>
             </label>
             <input
+              id="recipe-title"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="w-full p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               placeholder={t("title")}
               required
             />
           </div>
 
           {/* Description */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
-              {t("title")}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="recipe-description"
+              className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1"
+            >
+              {t("stepDescription")}
             </label>
             <textarea
+              id="recipe-description"
               value={form.description}
               onChange={(e) =>
                 setForm({ ...form, description: e.target.value })
               }
-              className="w-full p-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[80px] text-sm resize-none"
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all min-h-[100px] resize-none"
+              placeholder="..."
             />
           </div>
 
           {/* Category */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="recipe-category"
+              className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1"
+            >
               {t("categoriesLabel")}
             </label>
             <select
+              id="recipe-category"
               value={form.category}
-              onChange={(e) =>
-                setForm({ ...form, category: e.target.value })
-              }
-              className="w-full p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium"
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -216,27 +259,34 @@ export default function RecipeFormModal({
           </div>
 
           {/* Servings */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="recipe-servings"
+              className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1"
+            >
               {t("servings")}
             </label>
             <input
+              id="recipe-servings"
               type="number"
               min="1"
               max="99"
               value={form.servings}
               onChange={(e) =>
-                setForm({ ...form, servings: parseInt(e.target.value, 10) || 4 })
+                setForm({
+                  ...form,
+                  servings: parseInt(e.target.value, 10) || 4,
+                })
               }
-              className="w-24 p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium text-center"
+              className="w-32 bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
             />
           </div>
 
           {/* Dietary Tags */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-1.5">
+            <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1">
               {t("tagsLabel")}
-            </label>
+            </p>
             <div className="flex flex-wrap gap-2">
               {TAGS.map((tag) => (
                 <button
@@ -256,12 +306,15 @@ export default function RecipeFormModal({
           </div>
 
           {/* Image */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="recipe-image"
+              className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1"
+            >
               {t("image")}
             </label>
             {imagePreview ? (
-              <div className="relative w-40 h-40 rounded-2xl overflow-hidden bg-muted border border-border">
+              <div className="relative w-40 h-40 rounded-2xl overflow-hidden bg-sidebar-accent border border-sidebar-border shadow-inner">
                 <img
                   src={imagePreview}
                   alt="Preview"
@@ -276,12 +329,16 @@ export default function RecipeFormModal({
                 </button>
               </div>
             ) : (
-              <label className="flex items-center gap-3 px-4 py-3 bg-muted border border-border rounded-xl cursor-pointer hover:bg-muted/80 transition-colors">
+              <label
+                htmlFor="recipe-image"
+                className="flex items-center gap-3 px-4 py-3 bg-sidebar-accent/50 border border-sidebar-border rounded-2xl cursor-pointer hover:bg-sidebar-accent transition-colors"
+              >
                 <Upload size={18} className="text-muted-foreground" />
                 <span className="text-sm font-medium text-muted-foreground">
                   {t("uploadImage")}
                 </span>
                 <input
+                  id="recipe-image"
                   type="file"
                   accept="image/*"
                   className="hidden"
@@ -292,11 +349,11 @@ export default function RecipeFormModal({
           </div>
 
           {/* Ingredients */}
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1">
                 {t("ingredients")}
-              </label>
+              </p>
               <Button
                 type="button"
                 onClick={addIngredient}
@@ -309,10 +366,7 @@ export default function RecipeFormModal({
             </div>
             <div className="space-y-2">
               {form.ingredients.map((ing, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2"
-                >
+                <div key={ing.id} className="flex items-center gap-2">
                   <input
                     type="number"
                     step="0.1"
@@ -321,7 +375,7 @@ export default function RecipeFormModal({
                     onChange={(e) =>
                       updateIngredient(idx, "amount", e.target.value)
                     }
-                    className="w-20 p-2 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm text-center"
+                    className="w-20 bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-center"
                     placeholder="0"
                   />
                   <select
@@ -329,7 +383,7 @@ export default function RecipeFormModal({
                     onChange={(e) =>
                       updateIngredient(idx, "unit", e.target.value)
                     }
-                    className="w-24 p-2 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                    className="w-24 bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
                   >
                     {UNITS.map((u) => (
                       <option key={u} value={u}>
@@ -342,7 +396,7 @@ export default function RecipeFormModal({
                     onChange={(e) =>
                       updateIngredient(idx, "name", e.target.value)
                     }
-                    className="flex-1 p-2 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                    className="flex-1 bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                     placeholder={t("ingredient")}
                   />
                   {form.ingredients.length > 1 && (
@@ -360,11 +414,11 @@ export default function RecipeFormModal({
           </div>
 
           {/* Steps */}
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold ml-1">
                 {t("steps")}
-              </label>
+              </p>
               <Button
                 type="button"
                 onClick={addStep}
@@ -378,8 +432,8 @@ export default function RecipeFormModal({
             <div className="space-y-4">
               {form.steps.map((step, idx) => (
                 <div
-                  key={idx}
-                  className="p-4 bg-muted/30 border border-border rounded-2xl space-y-3"
+                  key={step.id}
+                  className="p-5 bg-sidebar-accent/20 border border-sidebar-border rounded-2xl space-y-3 shadow-inner"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
@@ -402,7 +456,7 @@ export default function RecipeFormModal({
                         onChange={(e) =>
                           updateStep(idx, "category", e.target.value)
                         }
-                        className="w-full p-2 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
                       >
                         {STEP_CATEGORIES.map((cat) => (
                           <option key={cat} value={cat}>
@@ -417,7 +471,7 @@ export default function RecipeFormModal({
                         onChange={(e) =>
                           updateStep(idx, "title", e.target.value)
                         }
-                        className="w-full p-2 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                        className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                         placeholder={t("stepTitle")}
                       />
                     </div>
@@ -427,7 +481,7 @@ export default function RecipeFormModal({
                     onChange={(e) =>
                       updateStep(idx, "description", e.target.value)
                     }
-                    className="w-full p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm min-h-[60px] resize-none"
+                    className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all min-h-[80px] resize-none"
                     placeholder={t("stepDescription")}
                     required
                   />
@@ -435,28 +489,28 @@ export default function RecipeFormModal({
               ))}
             </div>
           </div>
-
-          {/* Submit */}
-          <div className="flex gap-3 pt-2">
-            <Button
-              type="button"
-              disabled={loading}
-              onClick={onClose}
-              variant="secondary"
-              className="flex-1"
-            >
-              {tc("cancel")}
-            </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="flex-1 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {loading && <Loader2 size={18} className="animate-spin" />}
-              {t("saveRecipe")}
-            </Button>
-          </div>
         </form>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-border flex items-center justify-end gap-3 shrink-0">
+          <button
+            type="button"
+            disabled={loading}
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {tc("cancel")}
+          </button>
+          <Button
+            type="submit"
+            disabled={loading}
+            onClick={handleSubmit}
+            className="shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            {loading && <Loader2 size={18} className="animate-spin" />}
+            {isEditing ? tc("save") : t("createRecipe")}
+          </Button>
+        </div>
       </div>
     </div>
   );

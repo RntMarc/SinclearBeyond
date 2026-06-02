@@ -109,48 +109,67 @@ export default function RecipeReviewSection({
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="p-6 bg-muted/30 border border-border rounded-3xl space-y-4"
+          className="p-6 bg-sidebar-accent/20 border border-sidebar-border rounded-3xl space-y-6 shadow-inner animate-in fade-in slide-in-from-top-2 duration-300"
         >
-          <div className="flex items-center gap-2">
-            {[1, 2, 3, 4, 5].map((val) => (
-              <button
-                key={val}
-                type="button"
-                onClick={() => setRating(val)}
-                className={`p-1.5 rounded-lg transition-all ${rating >= val ? "text-orange-500 bg-orange-500/10" : "text-muted-foreground bg-muted hover:bg-muted/80"}`}
-              >
-                <Star
-                  size={22}
-                  fill={rating >= val ? "currentColor" : "none"}
-                />
-              </button>
-            ))}
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
+              {t("rating")}
+            </p>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setRating(val)}
+                  className={`p-2 rounded-xl transition-all ${
+                    rating >= val
+                      ? "text-orange-500 bg-orange-500/10 border border-orange-500/20 shadow-sm"
+                      : "text-muted-foreground bg-muted hover:bg-muted/80 border border-transparent"
+                  }`}
+                >
+                  <Star
+                    size={24}
+                    fill={rating >= val ? "currentColor" : "none"}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="w-full p-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm min-h-[80px] resize-none"
-            placeholder="..."
-          />
-          <div className="flex gap-3">
-            <Button
+
+          <div className="space-y-1.5">
+            <label
+              htmlFor="review-comment"
+              className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1"
+            >
+              {t("stepDescription")}
+            </label>
+            <textarea
+              id="review-comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all min-h-[100px] resize-none"
+              placeholder="..."
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
               type="button"
               disabled={loading}
               onClick={() => {
                 setShowForm(false);
                 setEditingId(null);
               }}
-              variant="secondary"
-              size="compact"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               {tc("cancel")}
-            </Button>
+            </button>
             <Button
               type="submit"
               disabled={loading}
-              size="compact"
+              className="shadow-lg shadow-primary/20"
             >
-              {loading && <Loader2 size={14} className="animate-spin" />}
+              {loading && <Loader2 size={16} className="animate-spin" />}
               {t("saveRecipe")}
             </Button>
           </div>
