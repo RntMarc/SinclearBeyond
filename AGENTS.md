@@ -63,3 +63,62 @@ The application uses an opt-in/push-based notification system.
    - Events/Trips: All relevant participants or all users for public items.
    - Birthdays: Processed on-demand when a user visits the dashboard.
 5. **Enrichment:** The `/api/notifications` endpoint dynamically enriches raw notification records with translated titles and correct deep-links.
+
+# Image Processing
+
+All image uploads that are stored as base64 in a database column **MUST** use the shared utilities in `@/lib/images/imageProcessing` to ensure consistency, performance, and predictable storage size.
+
+### Server-Side Processing (sharp / AVIF)
+
+**File:** `src/lib/images/imageProcessing.js`
+
+The `processImage(input, options)` and `processBase64Image(dataUrl, options)` functions handle:
+1. **AVIF conversion** — modern standard with better compression than JPEG.
+2. **Dimension limiting** — resizes if width/height exceed `MAX_WIDTH` (1920) / `MAX_HEIGHT` (1920).
+3. **Iterative compression** — reduces quality stepwise until the file is under `MAX_FILE_SIZE_KB` (500 KB).
+4. **Base64 encoding** — returns a ready-to-store `data:image/avif;base64,…` string.
+
+**Usage in API routes:**
+```js
+import { processBase64Image } from "@/lib/images/imageProcessing";
+
+// In POST/PATCH handler:
+const processed = await processBase64Image(body.image);
+db.insert(table).values({ image: processed });
+```
+
+Wrap the call in try/catch — the API should fall back to storing the original image if processing fails.
+
+### Client-Side Preprocessing (Canvas)
+
+Before a file is sent to the API, client components MUST preprocess images with the Canvas API to:
+- Resize to max 1920×1920 (avoid sending huge originals over the network).
+- Compress as JPEG at 80 % quality.
+- Show a loading indicator during processing (use a `processingImage` state + `Loader2` spinner).
+
+**Pattern (RecipeFormModal.js as reference):**
+```js
+const [processingImage, setProcessingImage] = useState(false);
+
+async function handleImageUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  setImagePreview(URL.createObjectURL(file));
+  setProcessingImage(true);
+  try {
+    const processed = await clientProcessImage(file);
+    setForm({ ...form, image: processed });
+  } catch {
+    // fallback to FileReader
+  } finally {
+    setProcessingImage(false);
+  }
+}
+```
+
+### Rules for AI Agents
+1. **Always use the lib:** Never store raw user-uploaded base64 directly. Always pass it through `processBase64Image()` in API routes.
+2. **Client-side preprocessing:** Always use Canvas-based resize + compress before sending to reduce payload.
+3. **Loading state:** Always show a spinner/indicator while the client-side processing is running (key: `processingImage` in the locale files).
+4. **Fail gracefully:** If server-side processing fails, log the error and store the original image to avoid blocking the user.

@@ -134,7 +134,10 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="forum-name" className="text-sm font-medium text-muted-foreground ml-1">
+              <label
+                htmlFor="forum-name"
+                className="text-sm font-medium text-muted-foreground ml-1"
+              >
                 Name
               </label>
               <input
@@ -148,7 +151,10 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="forum-description" className="text-sm font-medium text-muted-foreground ml-1">
+              <label
+                htmlFor="forum-description"
+                className="text-sm font-medium text-muted-foreground ml-1"
+              >
                 Beschreibung
               </label>
               <textarea

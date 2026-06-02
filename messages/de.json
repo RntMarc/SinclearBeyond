@@ -898,6 +898,7 @@
     },
     "image": "Bild",
     "uploadImage": "Bild hochladen",
+    "processingImage": "Bild wird verarbeitet…",
     "noImage": "Kein Bild",
     "search": "Rezepte durchsuchen...",
     "noRecipes": "Noch keine Rezepte vorhanden.",

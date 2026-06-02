@@ -11,6 +11,7 @@ import {
   recipes,
   users,
 } from "@/lib/db/schema";
+import { processBase64Image } from "@/lib/images/imageProcessing";
 
 export async function GET(req) {
   const session = await getSession();
@@ -120,6 +121,18 @@ export async function POST(req) {
     const id = crypto.randomUUID();
     const now = new Date();
 
+    let processedImage = image || null;
+    if (processedImage) {
+      try {
+        processedImage = await processBase64Image(image);
+      } catch (err) {
+        console.error(
+          "[API/Rezepte] Image processing failed, storing original:",
+          err,
+        );
+      }
+    }
+
     const { error: insertError } = await safeQuery(
       db.insert(recipes).values({
         id,
@@ -128,7 +141,7 @@ export async function POST(req) {
         category,
         servings: parseInt(servings, 10) || 4,
         dietaryTags: dietaryTags?.join(",") || null,
-        image: image || null,
+        image: processedImage,
         creatorId: session.sub,
         createdAt: now,
         updatedAt: now,
