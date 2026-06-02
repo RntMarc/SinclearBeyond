@@ -123,7 +123,7 @@ export default function RezepteClient({ initialRecipes }) {
       </PageHeader>
 
       <div className="flex-1 overflow-y-auto p-6 md:p-10">
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-5xl mx-auto space-y-12">
           {/* Search */}
           <div className="relative">
             <Search
@@ -134,84 +134,89 @@ export default function RezepteClient({ initialRecipes }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("search")}
-              className="w-full pl-11 pr-4 py-3 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium"
+              className="w-full pl-11 pr-4 py-4 bg-card border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-sm font-medium"
             />
           </div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
-                  activeCategory === cat
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {cat === "all" ? t("allCategories") : t(`category.${cat}`)}
-              </button>
-            ))}
-          </div>
-
-          {/* Bookmark Filter */}
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
-              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
-                showBookmarkedOnly
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              <Bookmark
-                size={14}
-                fill={showBookmarkedOnly ? "currentColor" : "none"}
-              />
-              {t("bookmark")}
-              {bookmarkedCount > 0 && (
-                <span
-                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                    showBookmarkedOnly
-                      ? "bg-primary-foreground/20 text-primary-foreground"
-                      : "bg-primary/10 text-primary"
+          {/* Filters Container */}
+          <div className="space-y-4">
+            {/* Category Filter */}
+            <div className="flex items-center gap-1 bg-sidebar-accent/50 p-1 rounded-xl border border-sidebar-border max-w-full overflow-x-auto no-scrollbar">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    activeCategory === cat
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {bookmarkedCount}
-                </span>
-              )}
-            </button>
-          </div>
+                  {cat === "all" ? t("allCategories") : t(`category.${cat}`)}
+                </button>
+              ))}
+            </div>
 
-          {/* Tag Filter */}
-          <div className="flex flex-wrap gap-2">
-            {TAGS.map((tag) => (
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Bookmark Filter */}
               <button
-                key={tag}
                 type="button"
-                onClick={() => toggleTag(tag)}
-                className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all ${
-                  activeTags.includes(tag)
-                    ? "bg-primary/20 text-primary border border-primary/30"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-transparent"
+                onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all text-sm font-medium ${
+                  showBookmarkedOnly
+                    ? "bg-primary/10 border-primary/50 text-primary"
+                    : "bg-sidebar-accent/50 border-sidebar-border text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t(`tags.${tag}`)}
+                <Bookmark
+                  size={16}
+                  fill={showBookmarkedOnly ? "currentColor" : "none"}
+                />
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {t("bookmark")}
+                </span>
+                {bookmarkedCount > 0 && (
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      showBookmarkedOnly
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-primary/10 text-primary"
+                    }`}
+                  >
+                    {bookmarkedCount}
+                  </span>
+                )}
               </button>
-            ))}
-            {activeTags.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setActiveTags([])}
-                className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1"
-              >
-                <X size={12} />
-                Clear
-              </button>
-            )}
+
+              {/* Tag Filter */}
+              <div className="flex flex-wrap gap-2">
+                {TAGS.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => toggleTag(tag)}
+                    className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${
+                      activeTags.includes(tag)
+                        ? "bg-primary/5 border-primary/30 text-primary"
+                        : "bg-sidebar-accent/30 border-transparent text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {t(`tags.${tag}`)}
+                  </button>
+                ))}
+                {activeTags.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTags([])}
+                    className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1"
+                  >
+                    <X size={12} />
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Recipe Grid */}
@@ -260,7 +265,7 @@ export default function RezepteClient({ initialRecipes }) {
       <button
         type="button"
         onClick={() => setShowForm(true)}
-        className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-40"
+        className="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-40"
       >
         <Plus size={28} />
       </button>

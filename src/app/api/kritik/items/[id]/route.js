@@ -59,7 +59,7 @@ export async function GET(_req, { params }) {
 
     try {
       item.links = item.links ? JSON.parse(item.links) : [];
-    } catch (e) {
+    } catch (_e) {
       item.links = [];
     }
 
@@ -174,7 +174,7 @@ export async function GET(_req, { params }) {
   }
 }
 
-export async function PATCH(req, { params }) {
+export async function PATCH(_req, { params }) {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

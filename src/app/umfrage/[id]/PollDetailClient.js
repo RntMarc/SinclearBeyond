@@ -20,6 +20,37 @@ export default function PollDetailClient({ initialPoll, userId }) {
     markPollAsRead(poll.id);
   }, [poll.id]);
 
+  const handleCounterProposal = async (dateValue) => {
+    try {
+      const res = await fetch(`/api/polls/${poll.id}/counter-proposal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dateValue }),
+      });
+
+      if (res.ok) {
+        setNotification({
+          message: t("form.successCounterProposal"),
+          type: "success",
+        });
+        const updatedRes = await fetch(`/api/polls/${poll.id}`);
+        if (updatedRes.ok) {
+          setPoll(await updatedRes.json());
+        }
+      } else {
+        setNotification({
+          message: t("form.errorCounterProposal"),
+          type: "error",
+        });
+      }
+    } catch (_error) {
+      setNotification({
+        message: t("form.errorCounterProposal"),
+        type: "error",
+      });
+    }
+  };
+
   const handleVote = async (answers) => {
     try {
       const res = await fetch(`/api/polls/${poll.id}/vote`, {
@@ -40,13 +71,14 @@ export default function PollDetailClient({ initialPoll, userId }) {
   };
 
   const handleFinalize = async (optionId) => {
-    if (!confirm(`${t("finalize")}?`)) return;
+    const message = optionId ? t("finalize") : t("closePoll");
+    if (!confirm(`${message}?`)) return;
 
     try {
       const res = await fetch(`/api/polls/${poll.id}/finalize`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ optionId }),
+        body: JSON.stringify({ optionId, closeOnly: !optionId }),
       });
 
       if (res.ok) {
@@ -132,6 +164,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
         userId={userId}
         onVote={handleVote}
         onFinalize={handleFinalize}
+        onCounterProposal={handleCounterProposal}
       />
 
       <PollFormModal
@@ -141,6 +174,7 @@ export default function PollDetailClient({ initialPoll, userId }) {
           type: poll.type,
           title: poll.title,
           description: poll.description,
+          allowCounterProposals: !!poll.allowCounterProposals,
           questions: poll.questions.map((q) => ({
             ...q,
             options: poll.options.filter((o) => o.questionId === q.id),

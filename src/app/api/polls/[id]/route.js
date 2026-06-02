@@ -40,7 +40,8 @@ export async function PATCH(request, { params }) {
   }
 
   try {
-    const { title, description, questions, invites } = await request.json();
+    const { title, description, allowCounterProposals, questions, invites } =
+      await request.json();
     const now = new Date();
 
     const { error: dbError } = await safeQuery(
@@ -51,6 +52,12 @@ export async function PATCH(request, { params }) {
           .set({
             title: title ?? poll.title,
             description: description ?? poll.description,
+            allowCounterProposals:
+              allowCounterProposals !== undefined
+                ? allowCounterProposals
+                  ? 1
+                  : 0
+                : poll.allowCounterProposals,
             updatedAt: now,
           })
           .where(eq(polls.id, id));

@@ -6,9 +6,19 @@ allowBuilds:
   msw: true
   sharp: true
 
+minimumReleaseAgeExclude:
+  - esbuild@0.25.0
+  - postcss@8.5.10
+  - uuid@11.1.1
+
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - "@swc/core"
   - esbuild
   - msw
   - sharp
+
+overrides:
+  esbuild@<=0.24.2: ^0.25.0
+  postcss@<8.5.10: ^8.5.10
+  uuid@<11.1.1: ^11.1.1

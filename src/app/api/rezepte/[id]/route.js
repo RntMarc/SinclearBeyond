@@ -7,8 +7,8 @@ import {
   recipeBookmarks,
   recipeIngredients,
   recipeReviews,
-  recipes,
   recipeSteps,
+  recipes,
   users,
 } from "@/lib/db/schema";
 
@@ -82,7 +82,8 @@ export async function GET(_req, { params }) {
 
   recipe.ingredients = ingredientsRes.data || [];
   recipe.steps = stepsRes.data || [];
-  recipe.isBookmarked = (bookmarksRes.data && bookmarksRes.data.length > 0) ? 1 : 0;
+  recipe.isBookmarked =
+    bookmarksRes.data && bookmarksRes.data.length > 0 ? 1 : 0;
 
   return NextResponse.json(recipe);
 }
@@ -95,7 +96,16 @@ export async function PATCH(req, { params }) {
 
   try {
     const body = await req.json();
-    const { title, description, category, servings, dietaryTags, image, ingredients, steps } = body;
+    const {
+      title,
+      description,
+      category,
+      servings,
+      dietaryTags,
+      image,
+      ingredients,
+      steps,
+    } = body;
 
     const { data: existing } = await safeQuery(
       db
@@ -115,10 +125,13 @@ export async function PATCH(req, { params }) {
 
     const updateData = { updatedAt: new Date() };
     if (title !== undefined) updateData.title = title.trim();
-    if (description !== undefined) updateData.description = description?.trim() || null;
+    if (description !== undefined)
+      updateData.description = description?.trim() || null;
     if (category !== undefined) updateData.category = category;
-    if (servings !== undefined) updateData.servings = parseInt(servings, 10) || 4;
-    if (dietaryTags !== undefined) updateData.dietaryTags = dietaryTags?.join(",") || null;
+    if (servings !== undefined)
+      updateData.servings = parseInt(servings, 10) || 4;
+    if (dietaryTags !== undefined)
+      updateData.dietaryTags = dietaryTags?.join(",") || null;
     if (image !== undefined) updateData.image = image || null;
 
     const { error: updateError } = await safeQuery(
@@ -130,7 +143,9 @@ export async function PATCH(req, { params }) {
     }
 
     if (ingredients !== undefined) {
-      await safeQuery(db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, id)));
+      await safeQuery(
+        db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, id)),
+      );
       if (ingredients.length > 0) {
         const ingredientValues = ingredients.map((ing, idx) => ({
           id: crypto.randomUUID(),
@@ -145,7 +160,9 @@ export async function PATCH(req, { params }) {
     }
 
     if (steps !== undefined) {
-      await safeQuery(db.delete(recipeSteps).where(eq(recipeSteps.recipeId, id)));
+      await safeQuery(
+        db.delete(recipeSteps).where(eq(recipeSteps.recipeId, id)),
+      );
       if (steps.length > 0) {
         const stepValues = steps.map((step, idx) => ({
           id: crypto.randomUUID(),
@@ -162,7 +179,10 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[API/Rezepte] PATCH Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -189,10 +209,14 @@ export async function DELETE(_req, { params }) {
   }
 
   await Promise.all([
-    safeQuery(db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, id))),
+    safeQuery(
+      db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, id)),
+    ),
     safeQuery(db.delete(recipeSteps).where(eq(recipeSteps.recipeId, id))),
     safeQuery(db.delete(recipeReviews).where(eq(recipeReviews.recipeId, id))),
-    safeQuery(db.delete(recipeBookmarks).where(eq(recipeBookmarks.recipeId, id))),
+    safeQuery(
+      db.delete(recipeBookmarks).where(eq(recipeBookmarks.recipeId, id)),
+    ),
   ]);
 
   const { error } = await safeQuery(

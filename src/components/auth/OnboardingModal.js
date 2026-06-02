@@ -2,7 +2,6 @@
 
 import {
   AlertTriangle,
-  Check,
   Info,
   Key,
   Languages,

@@ -9,7 +9,7 @@ export async function GET(_req) {
   const t = await getTranslations("Common");
   const session = await getSession();
 
-  if (!session || !session.isAdmin) {
+  if (!session?.isAdmin) {
     return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 
@@ -31,7 +31,7 @@ export async function POST(req) {
   const t = await getTranslations("Common");
   const session = await getSession();
 
-  if (!session || !session.isAdmin) {
+  if (!session?.isAdmin) {
     return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 

@@ -25,8 +25,6 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
   const [form, setForm] = useState({
     content: post?.content || "",
     visibility: post?.visibility || 1,
-    // Text
-    otherTitle: post?.otherTitle || "",
     // Music
     artist: post?.artist || "",
     title: post?.title || "",
@@ -41,6 +39,8 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
     newsTitle: post?.newsTitle || "",
     newsSite: post?.newsSite || "",
     newsUrl: post?.newsUrl || "",
+    // Text
+
     // Other
     otherTitle: post?.otherTitle || "",
     otherUrl: post?.otherUrl || "",

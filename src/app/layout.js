@@ -31,7 +31,7 @@ export async function generateMetadata() {
 
 export default async function RootLayout({ children }) {
   const headersList = await headers();
-  const nonce = headersList.get("x-nonce") || "";
+  const _nonce = headersList.get("x-nonce") || "";
   const locale = await getLocale();
   const messages = await getMessages();
   const session = await getSession();

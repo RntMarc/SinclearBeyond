@@ -112,10 +112,11 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
 
           <div className="space-y-3">
             <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
+              <label htmlFor="matrix-homeserver" className="text-xs font-medium text-muted-foreground">
                 {t("login.matrixHomeserverPlaceholder")}
               </label>
               <input
+                id="matrix-homeserver"
                 value={homeserver}
                 onChange={(e) => setHomeserver(e.target.value)}
                 placeholder={t("login.matrixHomeserverPlaceholder")}
@@ -123,10 +124,11 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
+              <label htmlFor="matrix-user" className="text-xs font-medium text-muted-foreground">
                 {t("login.matrixUserPlaceholder")}
               </label>
               <input
+                id="matrix-user"
                 value={matrixUser}
                 onChange={(e) => setMatrixUser(e.target.value)}
                 placeholder={t("login.matrixUserPlaceholder")}
@@ -134,10 +136,11 @@ function MatrixLinkCard({ t, isLinked, matrixHandle }) {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
+              <label htmlFor="matrix-password" className="text-xs font-medium text-muted-foreground">
                 {t("login.matrixPasswordPlaceholder")}
               </label>
               <input
+                id="matrix-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

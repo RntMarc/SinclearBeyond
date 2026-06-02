@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarCheck, ChevronRight, Hash, Star } from "lucide-react";
+import { CalendarCheck, ChevronRight, Star } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
