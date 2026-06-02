@@ -1,10 +1,12 @@
 "use client";
 
-import { Edit2, Loader2, Star, Trash2 } from "lucide-react";
+import { Edit2, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Avatar from "@/components/Avatar";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function RecipeReviewSection({
   recipeId,
@@ -25,54 +27,51 @@ export default function RecipeReviewSection({
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    try {
-      const url = editingId
-        ? `/api/rezepte/reviews/${editingId}`
-        : "/api/rezepte/reviews";
-      const method = editingId ? "PATCH" : "POST";
+    const url = editingId
+      ? `/api/rezepte/reviews/${editingId}`
+      : "/api/rezepte/reviews";
+    const method = editingId ? "PATCH" : "POST";
 
-      const res = await fetch(url, {
+    const result = await fetchAction(
+      url,
+      {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipeId, rating, comment }),
-      });
+      },
+      { fallbackError: tc("saveError") },
+    );
 
-      if (res.ok) {
-        setShowForm(false);
-        setEditingId(null);
-        setRating(5);
-        setComment("");
-        const reviewsRes = await fetch(
-          `/api/rezepte/reviews?recipeId=${recipeId}`,
-        );
-        const newReviews = await reviewsRes.json();
-        setReviews(newReviews);
-        if (onReviewsChange) onReviewsChange(newReviews);
-      }
-    } catch (err) {
-      console.error("Failed to submit review", err);
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
+    if (!result.ok) return { ok: false, error: result.error };
+
+    setShowForm(false);
+    setEditingId(null);
+    setRating(5);
+    setComment("");
+    const reviewsRes = await fetch(`/api/rezepte/reviews?recipeId=${recipeId}`);
+    const newReviews = await reviewsRes.json();
+    setReviews(newReviews);
+    if (onReviewsChange) onReviewsChange(newReviews);
+    return { ok: true };
   }
 
   async function handleDelete(reviewId) {
-    if (!confirm(t("deleteReviewConfirm"))) return;
-    try {
-      const res = await fetch(`/api/rezepte/reviews/${reviewId}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        const reviewsRes = await fetch(
-          `/api/rezepte/reviews?recipeId=${recipeId}`,
-        );
-        const newReviews = await reviewsRes.json();
-        setReviews(newReviews);
-        if (onReviewsChange) onReviewsChange(newReviews);
-      }
-    } catch (err) {
-      console.error("Failed to delete review", err);
-    }
+    if (!confirm(t("deleteReviewConfirm")))
+      return { ok: false, error: "Abgebrochen" };
+
+    const result = await fetchAction(
+      `/api/rezepte/reviews/${reviewId}`,
+      { method: "DELETE" },
+      { fallbackError: tc("error") },
+    );
+    if (!result.ok) return { ok: false, error: result.error };
+
+    const reviewsRes = await fetch(`/api/rezepte/reviews?recipeId=${recipeId}`);
+    const newReviews = await reviewsRes.json();
+    setReviews(newReviews);
+    if (onReviewsChange) onReviewsChange(newReviews);
+    return { ok: true };
   }
 
   function startEdit(review) {
@@ -164,14 +163,16 @@ export default function RecipeReviewSection({
             >
               {tc("cancel")}
             </button>
-            <Button
+            <SubmitButton
               type="submit"
-              disabled={loading}
+              loading={loading}
+              label={t("saveRecipe")}
+              successDuration={0}
+              successToast={tc("saved")}
+              errorToast={tc("saveError")}
+              showInlineError={false}
               className="shadow-lg shadow-primary/20"
-            >
-              {loading && <Loader2 size={16} className="animate-spin" />}
-              {t("saveRecipe")}
-            </Button>
+            />
           </div>
         </form>
       )}
@@ -224,13 +225,16 @@ export default function RecipeReviewSection({
                   >
                     <Edit2 size={16} />
                   </button>
-                  <button
+                  <SubmitButton
                     type="button"
+                    size="icon"
+                    variant="ghost"
                     onClick={() => handleDelete(review.id)}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                    icon={<Trash2 size={16} />}
+                    showInlineError={false}
+                    successDuration={0}
+                    className="p-2 text-muted-foreground hover:text-destructive"
+                  />
                 </div>
               )}
             </div>

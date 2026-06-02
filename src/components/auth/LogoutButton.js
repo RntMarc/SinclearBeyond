@@ -1,24 +1,27 @@
 "use client";
 import { useRouter } from "next/navigation";
-import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function LogoutButton() {
   const router = useRouter();
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetchAction("/api/auth/logout", { method: "POST" });
     router.push("/");
     router.refresh();
+    return { ok: true };
   }
 
   return (
-    <Button
+    <SubmitButton
       type="button"
       onClick={handleLogout}
       variant="outline"
       size="compact"
-    >
-      Logout
-    </Button>
+      label="Logout"
+      successDuration={0}
+      showInlineError={false}
+    />
   );
 }

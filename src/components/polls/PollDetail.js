@@ -12,7 +12,8 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { useAsyncAction } from "@/hooks/useAsyncAction";
 
 export default function PollDetail({
   poll,
@@ -22,12 +23,15 @@ export default function PollDetail({
   onCounterProposal,
 }) {
   const t = useTranslations("Polls");
+  const tc = useTranslations("Common");
   const locale = useLocale();
   const [answers, setAnswers] = useState({});
   const [saving, setSaving] = useState(false);
   const [showCounterProposal, setShowCounterProposal] = useState(false);
   const [counterProposalDate, setCounterProposalDate] = useState("");
   const answersRef = useRef(answers);
+  const { loading: votingLoading, run: runVote } = useAsyncAction();
+  const { loading: counterLoading, run: runCounterProposal } = useAsyncAction();
   useEffect(() => {
     answersRef.current = answers;
   }, [answers]);
@@ -117,7 +121,7 @@ export default function PollDetail({
       .filter((s) => s.score === maxScore && s.canHappen && maxScore > 0)
       .map((s) => s.id);
 
-    const handleVoteClick = async (optionId, availability) => {
+    const handleVoteClick = (optionId, availability) => {
       const qId = dateQuestion.id;
       const currentAnswers = answersRef.current[qId] || {};
       const newQuestionAnswers = {
@@ -125,13 +129,11 @@ export default function PollDetail({
         [optionId]: availability,
       };
 
-      // Update local state immediately for snappy UI
       setAnswers((prev) => ({
         ...prev,
         [qId]: newQuestionAnswers,
       }));
 
-      // Send all votes for this question
       const votesToSend = Object.entries(newQuestionAnswers).map(
         ([optId, avail]) => ({
           questionId: qId,
@@ -140,7 +142,7 @@ export default function PollDetail({
         }),
       );
 
-      await onVote(votesToSend);
+      runVote(() => onVote(votesToSend));
     };
 
     return (
@@ -325,24 +327,27 @@ export default function PollDetail({
                           <div className="flex items-center justify-center gap-1 bg-sidebar-accent/50 rounded-lg p-1">
                             <button
                               type="button"
+                              disabled={votingLoading}
                               onClick={() => handleVoteClick(option.id, "yes")}
-                              className={`p-1.5 rounded-md transition-all ${myAvailability === "yes" ? "bg-emerald-500 text-white shadow-sm" : "hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-500"}`}
+                              className={`p-1.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${myAvailability === "yes" ? "bg-emerald-500 text-white shadow-sm" : "hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-500"}`}
                             >
                               <Check size={16} />
                             </button>
                             <button
                               type="button"
+                              disabled={votingLoading}
                               onClick={() =>
                                 handleVoteClick(option.id, "maybe")
                               }
-                              className={`p-1.5 rounded-md transition-all ${myAvailability === "maybe" ? "bg-yellow-500 text-white shadow-sm" : "hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500"}`}
+                              className={`p-1.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${myAvailability === "maybe" ? "bg-yellow-500 text-white shadow-sm" : "hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500"}`}
                             >
                               <HelpCircle size={16} />
                             </button>
                             <button
                               type="button"
+                              disabled={votingLoading}
                               onClick={() => handleVoteClick(option.id, "no")}
-                              className={`p-1.5 rounded-md transition-all ${myAvailability === "no" ? "bg-destructive text-white shadow-sm" : "hover:bg-destructive/10 text-muted-foreground hover:text-destructive"}`}
+                              className={`p-1.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${myAvailability === "no" ? "bg-destructive text-white shadow-sm" : "hover:bg-destructive/10 text-muted-foreground hover:text-destructive"}`}
                             >
                               <X size={16} />
                             </button>
@@ -398,13 +403,14 @@ export default function PollDetail({
                         key={option.id}
                         className={`p-4 text-center ${bestOptions.includes(option.id) ? "bg-primary/5" : ""}`}
                       >
-                        <button
-                          type="button"
+                        <SubmitButton
+                          size="compact"
+                          label={t("finalize")}
+                          successToast={t("form.successFinalize")}
+                          errorToast={t("form.errorFinalize")}
+                          successDuration={2000}
                           onClick={() => onFinalize(option.id)}
-                          className="px-3 py-1.5 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary/90 transition-all shadow-sm"
-                        >
-                          {t("finalize")}
-                        </button>
+                        />
                       </td>
                     ))}
                   </tr>
@@ -451,18 +457,28 @@ export default function PollDetail({
                   >
                     {t("cancel")}
                   </button>
-                  <button
-                    type="button"
-                    disabled={!counterProposalDate}
-                    onClick={async () => {
-                      await onCounterProposal(counterProposalDate);
-                      setShowCounterProposal(false);
-                      setCounterProposalDate("");
-                    }}
-                    className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-xl font-bold text-xs hover:bg-primary/90 transition-all disabled:opacity-50"
-                  >
-                    {t("send")}
-                  </button>
+                  <div className="flex-1">
+                    <SubmitButton
+                      size="compact"
+                      className="w-full"
+                      loadingLabel={tc("saving")}
+                      label={t("send")}
+                      successToast={t("form.successCounterProposal")}
+                      errorToast={t("form.errorCounterProposal")}
+                      disabled={!counterProposalDate}
+                      successDuration={2000}
+                      onClick={async () => {
+                        const result = await runCounterProposal(() =>
+                          onCounterProposal(counterProposalDate),
+                        );
+                        if (result !== undefined) {
+                          setShowCounterProposal(false);
+                          setCounterProposalDate("");
+                        }
+                        return result;
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -527,14 +543,16 @@ export default function PollDetail({
     <div className="max-w-3xl mx-auto space-y-8">
       {isCreator && !isFinalized && (
         <div className="flex justify-end">
-          <button
-            type="button"
+          <SubmitButton
+            size="compact"
+            variant="secondary"
+            icon={<X size={16} />}
+            label={t("closePoll")}
+            successToast={t("form.successFinalize")}
+            errorToast={t("form.errorFinalize")}
+            successDuration={2000}
             onClick={() => onFinalize()}
-            className="px-4 py-2 bg-sidebar-accent border border-sidebar-border rounded-xl font-bold text-xs hover:bg-sidebar-accent/80 transition-all flex items-center gap-2"
-          >
-            <X size={16} />
-            {t("closePoll")}
-          </button>
+          />
         </div>
       )}
 
@@ -722,14 +740,13 @@ export default function PollDetail({
         })}
 
         <div className="flex justify-end">
-          <SaveButton
-            loading={saving}
+          <SubmitButton
             type="submit"
+            loading={saving}
             className="px-8 py-3 rounded-2xl shadow-xl shadow-primary/20"
-          >
-            <Send size={18} className="mr-2" />
-            {t("form.save")}
-          </SaveButton>
+            label={t("form.save")}
+            showInlineError
+          />
         </div>
       </form>
 

@@ -4,6 +4,7 @@ import { Search, UserPlus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { addCloseFriend, removeCloseFriend } from "@/lib/profile/closeFriends";
 
 export default function CloseFriendsManager({ initialFriends }) {
@@ -27,7 +28,6 @@ export default function CloseFriendsManager({ initialFriends }) {
         );
         if (res.ok) {
           const allUsers = await res.json();
-          // Filter out current user and existing friends
           const filtered = allUsers.filter(
             (u) => !friends.some((f) => f.id === u.id),
           );
@@ -48,14 +48,18 @@ export default function CloseFriendsManager({ initialFriends }) {
     if (res.ok) {
       setFriends([...friends, user]);
       setSearch("");
+      return { ok: true };
     }
+    return { ok: false, error: res.error };
   };
 
   const handleRemove = async (friendId) => {
     const res = await removeCloseFriend(friendId);
     if (res.ok) {
       setFriends(friends.filter((f) => f.id !== friendId));
+      return { ok: true };
     }
+    return { ok: false, error: res.error };
   };
 
   return (
@@ -95,13 +99,16 @@ export default function CloseFriendsManager({ initialFriends }) {
                     {user.displayName}
                   </span>
                 </div>
-                <button
+                <SubmitButton
                   type="button"
+                  size="icon"
+                  variant="ghost"
                   onClick={() => handleAdd(user)}
-                  className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                >
-                  <UserPlus size={18} />
-                </button>
+                  icon={<UserPlus size={18} />}
+                  showInlineError={false}
+                  successDuration={0}
+                  className="p-1.5 text-primary hover:bg-primary/10"
+                />
               </div>
             ))}
           </div>
@@ -130,13 +137,16 @@ export default function CloseFriendsManager({ initialFriends }) {
                     {friend.displayName}
                   </span>
                 </div>
-                <button
+                <SubmitButton
                   type="button"
+                  size="icon"
+                  variant="ghost"
                   onClick={() => handleRemove(friend.id)}
-                  className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                >
-                  <X size={18} />
-                </button>
+                  icon={<X size={18} />}
+                  showInlineError={false}
+                  successDuration={0}
+                  className="p-2 text-muted-foreground hover:text-destructive"
+                />
               </div>
             ))}
           </div>

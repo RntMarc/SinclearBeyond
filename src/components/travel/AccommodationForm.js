@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 const TravelMap = dynamic(() => import("./TravelMap"), {
   ssr: false,
@@ -210,9 +210,13 @@ export default function AccommodationForm({
         >
           {tc("cancel")}
         </button>
-        <SaveButton loading={saving} type="submit">
-          {t("saveAccommodation")}
-        </SaveButton>
+        <SubmitButton
+          type="submit"
+          label={t("saveAccommodation")}
+          successToast={tc("saved")}
+          errorToast={tc("saveError")}
+          successDuration={0}
+        />
       </div>
     </form>
   );
