@@ -782,6 +782,7 @@
     },
     "image": "Photo",
     "uploadImage": "Upload Photo",
+    "processingImage": "Processing image…",
     "noImage": "No Photo",
     "search": "Search recipes...",
     "noRecipes": "No recipes yet.",
