@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { useState } from "react";
+import { fetchAction } from "@/lib/asyncAction";
 import AccommodationForm from "./AccommodationForm";
 
 const EMPTY_FORM = {
@@ -18,35 +19,29 @@ const EMPTY_FORM = {
 
 export default function AccommodationFormModal({ onClose, onCreated }) {
   const [form, setForm] = useState(EMPTY_FORM);
-  const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
     setFormError("");
-    setSaving(true);
 
-    try {
-      const res = await fetch("/api/travel/accommodations", {
+    const result = await fetchAction(
+      "/api/travel/accommodations",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-      });
+      },
+      { fallbackError: "Fehler beim Speichern." },
+    );
 
-      setSaving(false);
-      if (!res.ok) {
-        const data = await res.json();
-        setFormError(data.error || "Fehler beim Speichern.");
-        return;
-      }
-
-      const result = await res.json();
-      onCreated(result);
+    if (result.ok) {
+      onCreated(result.data);
       onClose();
-    } catch (_error) {
-      setSaving(false);
-      setFormError("Ein unerwarteter Fehler ist aufgetreten.");
+      return { ok: true };
     }
+    setFormError(result.error || "Fehler beim Speichern.");
+    return { ok: false, error: result.error };
   }
 
   return (
@@ -67,7 +62,6 @@ export default function AccommodationFormModal({ onClose, onCreated }) {
         <AccommodationForm
           form={form}
           setForm={setForm}
-          saving={saving}
           formError={formError}
           onSubmit={handleSubmit}
           onCancel={onClose}

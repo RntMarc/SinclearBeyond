@@ -15,6 +15,7 @@ import ContactMethodsFields from "@/components/profile/ContactMethodsFields";
 import LanguageTimezoneFields from "@/components/profile/LanguageTimezoneFields";
 import SocialMediaFields from "@/components/profile/SocialMediaFields";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { completeOnboarding } from "@/lib/auth/onboardingActions";
 
 export default function OnboardingModal({
@@ -276,13 +277,14 @@ export default function OnboardingModal({
               Weiter
             </Button>
           ) : (
-            <Button
+            <SubmitButton
               onClick={handleComplete}
-              disabled={isPending}
+              loading={isPending}
+              label="Abschließen"
+              successDuration={0}
+              showInlineError={false}
               className="flex-1"
-            >
-              {isPending ? "..." : "Abschließen"}
-            </Button>
+            />
           )}
         </div>
       </div>

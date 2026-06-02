@@ -49,6 +49,70 @@ DO NOT use `utf8mb4_general_ci` or any other collation, as this will lead to run
 It is allowed to edit the schema of the database, if instructed to do so by the user. However, it is not allowed to do the migration after changing the schema. The user is responsible to migrate the database to the new schema after editing.
 Do not build any kind of fallback to support multiple schemas, always only build for the newest version of the schema - in case of editing it, the version you create. Just imagine the database to already be migrated to the newest schema change.
 
+# Async Action Buttons (SubmitButton)
+
+To prevent race conditions, double-submits, and inconsistent loading UX, **every client-side button that triggers a database write** (POST/PATCH/DELETE/Server Action) MUST use the unified `SubmitButton` component (`src/components/ui/SubmitButton.js`) instead of a raw `<button>` or the legacy `SaveButton` (removed).
+
+The component manages loading state, success/error visualization, optional toasts, and a synchronous `inFlightRef` guard that blocks double-clicks **before** React re-renders.
+
+### Companion Utilities
+
+- **`src/lib/asyncAction.js`** — Pure utilities (`executeAction`, `fetchAction`, `readFetchResponse`) that normalize async operations into a `{ ok, data, error }` envelope. Use `fetchAction(url, init, { fallbackError })` to replace `try/catch` + `fetch` boilerplate.
+- **`src/hooks/useAsyncAction.js`** — `useAsyncAction()` hook returning `{ loading, run }` for icon-only or otherwise customized buttons that don't fit the `SubmitButton` visual contract.
+
+### When to Use Which Mode
+
+`SubmitButton` runs in one of two modes, chosen automatically:
+
+1. **Smart Mode** — triggered when an `onClick` handler is provided. The button:
+   - Awaits the handler, sets internal loading state, shows a spinner.
+   - Shows a check icon on success (`successDuration` ms, defaults to 1500; set `0` to skip).
+   - Shows an X icon on error and optionally a toast + inline error.
+   - Returns early (preventDefault + stopPropagation) if already in-flight.
+   - **Use this** for most cases: forms, modal save buttons, action buttons.
+
+   ```jsx
+   <SubmitButton
+     type="submit"
+     onClick={async () => {
+       const result = await fetchAction("/api/foo", { method: "POST", body: JSON.stringify(data) }, { fallbackError: t("error") });
+       return result; // { ok, data, error }
+     }}
+     label={t("save")}
+     successToast={t("saved")}
+     errorToast={t("error")}
+   />
+   ```
+
+2. **Manual Mode** — triggered when only `loading` (boolean) and/or `state` (`{ ok, error }`) are provided (no `onClick`). The button is purely presentational.
+   - **Use this** for `useActionState` consumers, `useTransition`-driven flows, or any time external state is already tracked.
+
+   ```jsx
+   // useActionState consumer:
+   const [state, formAction, isPending] = useActionState(serverAction, { ok: null });
+   <SubmitButton
+     type="submit"
+     loading={isPending}
+     state={state.ok === false ? state : null}
+     label={t("save")}
+     errorToast={t("error")}
+     showInlineError
+   />
+   ```
+
+### Rules for AI Agents
+
+1. **Always prefer `SubmitButton` for DB-interaction buttons.** Never reintroduce raw `<button onClick={async () => fetch(...)}>`, the deleted `SaveButton`, or hand-rolled `useState(loading)` + `disabled` patterns for these actions.
+2. **Smart mode is the default.** Only use Manual mode when external state machinery is already in place (`useActionState`, `useTransition`).
+3. **All `onClick` handlers in Smart mode MUST return a value** (`{ ok, data?, error? }` is recommended via `fetchAction` / `executeAction`). `SubmitButton` derives success/error state from that return.
+4. **Provide `successToast` and `errorToast` for every DB action** so users get feedback. Use `tCommon("saved")` / `tCommon("saveError")` as defaults.
+5. **Set `successDuration={0}`** when the parent closes the modal/dialog on success (so the success state isn't visible for a split second before unmount).
+6. **Use `fetchAction` for HTTP calls** — never re-implement `try { const res = await fetch(...); if (!res.ok) ... } catch { ... }`. The utility normalizes errors and never throws.
+7. **Race-condition guard is built-in.** Do not add your own `setLoading`/`disabled` tracking on top — it competes with `SubmitButton`'s internal state.
+8. **Never block legitimate feedback.** If the parent component also shows a custom notification via `setNotification`, do not pair it with `successToast` / `errorToast` on the same `SubmitButton` (toast collision at `fixed bottom-6`).
+9. **Icon-only / highly customized actions** that can't adopt the `SubmitButton` visual contract (e.g. inline upvote, like, delete-row icons) MUST use the `useAsyncAction` hook + their own visual element so the in-flight guard is preserved.
+10. **All Common action labels live in `messages/*.json` under `Common`**: `sending`, `sent`, `saving`, `saved`, `saving`, `saved`, `creating`, `created`, `updating`, `updated`, `deleting`, `deleted`, `adding`, `added`, `removing`, `removed`, `processing`. Add new variants there — never hardcode in JSX.
+
 # Notifications
 
 The application uses an opt-in/push-based notification system.

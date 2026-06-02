@@ -1,15 +1,14 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { createChangelogEntry } from "@/lib/changelog/actions";
 
 export default function AddChangelogModal({ isOpen, onClose }) {
   const t = useTranslations("Changelog");
   const tc = useTranslations("Common");
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -20,16 +19,14 @@ export default function AddChangelogModal({ isOpen, onClose }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
     try {
       await createChangelogEntry(formData);
       onClose();
       setFormData({ title: "", content: "", category: "feature" });
+      return { ok: true };
     } catch (error) {
       console.error(error);
-      alert(tc("saveError"));
-    } finally {
-      setLoading(false);
+      return { ok: false, error: tc("saveError") };
     }
   }
 
@@ -46,7 +43,7 @@ export default function AddChangelogModal({ isOpen, onClose }) {
       <button
         type="button"
         className="absolute inset-0"
-        onClick={() => !loading && onClose()}
+        onClick={onClose}
         aria-label={tc("close")}
       />
       <div className="relative w-full max-w-lg bg-card border border-border rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
@@ -116,21 +113,21 @@ export default function AddChangelogModal({ isOpen, onClose }) {
           <div className="flex gap-3 pt-2">
             <Button
               type="button"
-              disabled={loading}
               onClick={onClose}
               variant="secondary"
               className="flex-1"
             >
               {tc("cancel")}
             </Button>
-            <Button
+            <SubmitButton
               type="submit"
-              disabled={loading}
+              onClick={handleSubmit}
+              label={t("form.save")}
+              savingLabel={tc("saving")}
+              successDuration={0}
+              showInlineError={false}
               className="flex-1 shadow-lg shadow-primary/20"
-            >
-              {loading && <Loader2 size={18} className="animate-spin" />}
-              {t("form.save")}
-            </Button>
+            />
           </div>
         </form>
       </div>

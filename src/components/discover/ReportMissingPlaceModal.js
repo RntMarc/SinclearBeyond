@@ -4,7 +4,8 @@ import { MapPin, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 const LocationPickerMap = dynamic(() => import("./LocationPickerMap"), {
   ssr: false,
@@ -22,7 +23,6 @@ export default function ReportMissingPlaceModal({ onClose }) {
   const tCommon = useTranslations("Common");
 
   const [isClosing, setIsClosing] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
@@ -62,34 +62,31 @@ export default function ReportMissingPlaceModal({ onClose }) {
     e.preventDefault();
     if (!validate()) {
       setError(t("error"));
-      return;
+      return { ok: false, error: t("error") };
     }
 
-    setSaving(true);
     setError("");
 
-    try {
-      const res = await fetch("/api/feedback", {
+    const result = await fetchAction(
+      "/api/feedback",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: "missing_place",
           ...form,
         }),
-      });
+      },
+      { fallbackError: tCommon("saveError") },
+    );
 
-      if (res.ok) {
-        setSuccess(true);
-        setTimeout(handleClose, 2000);
-      } else {
-        const data = await res.json();
-        setError(data.error || tCommon("saveError"));
-      }
-    } catch (_err) {
-      setError(tCommon("genericError"));
-    } finally {
-      setSaving(false);
+    if (result.ok) {
+      setSuccess(true);
+      setTimeout(handleClose, 2000);
+      return { ok: true };
     }
+    setError(result.error || tCommon("saveError"));
+    return { ok: false, error: result.error };
   }
 
   return (
@@ -245,9 +242,13 @@ export default function ReportMissingPlaceModal({ onClose }) {
             >
               {tCommon("cancel")}
             </button>
-            <SaveButton loading={saving} onClick={handleSubmit}>
-              {t("submit")}
-            </SaveButton>
+            <SubmitButton
+              onClick={handleSubmit}
+              label={t("submit")}
+              successToast={t("success")}
+              errorToast={tCommon("saveError")}
+              successDuration={0}
+            />
           </div>
         )}
       </div>

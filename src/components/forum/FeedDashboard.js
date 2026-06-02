@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { joinForum } from "@/lib/forums/actions";
 
 export default function FeedDashboard() {
@@ -29,12 +30,19 @@ export default function FeedDashboard() {
     fetchOverview();
   }, [fetchOverview]);
 
+  const [joining, setJoining] = useState(null);
+
   async function handleJoin(forumId) {
+    setJoining(forumId);
     try {
       await joinForum(forumId);
       fetchOverview();
+      return { ok: true };
     } catch (error) {
       console.error("Failed to join forum:", error);
+      return { ok: false, error: error.message };
+    } finally {
+      setJoining(null);
     }
   }
 
@@ -159,12 +167,15 @@ export default function FeedDashboard() {
                       <h4 className="font-medium text-sm truncate">
                         {forum.name}
                       </h4>
-                      <button
+                      <SubmitButton
+                        type="button"
                         onClick={() => handleJoin(forum.id)}
-                        className="text-xs text-primary hover:underline"
-                      >
-                        {t("join")}
-                      </button>
+                        loading={joining === forum.id}
+                        label={t("join")}
+                        successDuration={0}
+                        showInlineError={false}
+                        className="text-xs text-primary hover:underline p-0 h-auto"
+                      />
                     </div>
                     <Link
                       href={`/forum/${forum.id}`}

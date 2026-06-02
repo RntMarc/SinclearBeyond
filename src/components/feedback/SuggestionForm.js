@@ -1,7 +1,8 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function SuggestionForm({
   onSuggestionAdded,
@@ -26,38 +27,39 @@ export default function SuggestionForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim()) return { ok: false };
 
     setStatus("saving");
-    try {
-      const url = editSuggestion
-        ? `/api/feedback/suggestions/${editSuggestion.id}`
-        : "/api/feedback";
+    const url = editSuggestion
+      ? `/api/feedback/suggestions/${editSuggestion.id}`
+      : "/api/feedback";
 
-      const method = editSuggestion ? "PATCH" : "POST";
-      const body = editSuggestion
-        ? { title, description }
-        : { type: "suggestion", title, description };
+    const method = editSuggestion ? "PATCH" : "POST";
+    const body = editSuggestion
+      ? { title, description }
+      : { type: "suggestion", title, description };
 
-      const res = await fetch(url, {
+    const result = await fetchAction(
+      url,
+      {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-      });
+      },
+      { fallbackError: commonT("saveError") },
+    );
 
-      if (res.ok) {
-        setStatus("saved");
-        setTitle("");
-        setDescription("");
-        onSuggestionAdded();
-        if (onCancelEdit) onCancelEdit();
-        setTimeout(() => setStatus("idle"), 2000);
-      } else {
-        setStatus("error");
-      }
-    } catch (_err) {
-      setStatus("error");
+    if (result.ok) {
+      setStatus("saved");
+      setTitle("");
+      setDescription("");
+      onSuggestionAdded();
+      if (onCancelEdit) onCancelEdit();
+      setTimeout(() => setStatus("idle"), 2000);
+      return { ok: true };
     }
+    setStatus("error");
+    return { ok: false, error: result.error };
   };
 
   return (
@@ -114,15 +116,15 @@ export default function SuggestionForm({
               {commonT("cancel")}
             </button>
           )}
-          <SaveButton
+          <SubmitButton
             type="submit"
-            pending={status === "saving"}
-            state={{
-              ok: status === "saved" ? true : status === "error" ? false : null,
-            }}
+            onClick={handleSubmit}
             label={
               editSuggestion ? t("updateSuggestion") : t("submitSuggestion")
             }
+            successToast={t("suggestionSuccess")}
+            errorToast={commonT("saveError")}
+            successDuration={2500}
           />
         </div>
         {status === "saved" && (

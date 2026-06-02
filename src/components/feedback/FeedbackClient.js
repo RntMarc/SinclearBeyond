@@ -6,6 +6,7 @@ import FeedbackForm from "@/components/feedback/FeedbackForm";
 import SuggestionForm from "@/components/feedback/SuggestionForm";
 import SuggestionList from "@/components/feedback/SuggestionList";
 import PageHeader from "@/components/layout/PageHeader";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function FeedbackClient({ user }) {
   const t = useTranslations("Feedback");
@@ -33,44 +34,37 @@ export default function FeedbackClient({ user }) {
   }, [fetchSuggestions]);
 
   const handleVote = async (id) => {
-    try {
-      const res = await fetch(`/api/feedback/suggestions/${id}/vote`, {
-        method: "POST",
-      });
-      if (res.ok) {
-        fetchSuggestions();
-      }
-    } catch (err) {
-      console.error("Error voting:", err);
-    }
+    const result = await fetchAction(
+      `/api/feedback/suggestions/${id}/vote`,
+      { method: "POST" },
+      { fallbackError: commonT("error") },
+    );
+    if (result.ok) fetchSuggestions();
+    return result;
   };
 
   const handleStatusChange = async (id, status) => {
-    try {
-      const res = await fetch(`/api/feedback/suggestions/${id}`, {
+    const result = await fetchAction(
+      `/api/feedback/suggestions/${id}`,
+      {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
-      });
-      if (res.ok) {
-        fetchSuggestions();
-      }
-    } catch (err) {
-      console.error("Error updating status:", err);
-    }
+      },
+      { fallbackError: commonT("error") },
+    );
+    if (result.ok) fetchSuggestions();
+    return result;
   };
 
   const handleDelete = async (id) => {
-    try {
-      const res = await fetch(`/api/feedback/suggestions/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        fetchSuggestions();
-      }
-    } catch (err) {
-      console.error("Error deleting:", err);
-    }
+    const result = await fetchAction(
+      `/api/feedback/suggestions/${id}`,
+      { method: "DELETE" },
+      { fallbackError: commonT("error") },
+    );
+    if (result.ok) fetchSuggestions();
+    return result;
   };
 
   return (

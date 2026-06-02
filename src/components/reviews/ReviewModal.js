@@ -1,8 +1,9 @@
 "use client";
 
-import { Loader2, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 const PLATFORMS = [
   "pc_linux",
@@ -124,21 +125,21 @@ export default function ReviewModal({
           <div className="flex gap-3 pt-2">
             <Button
               type="button"
-              disabled={loading}
               onClick={onClose}
               variant="secondary"
               className="flex-1"
             >
               {tc("cancel")}
             </Button>
-            <Button
+            <SubmitButton
               type="submit"
-              disabled={loading}
+              loading={loading}
+              label={t("saveReview")}
+              savingLabel={tc("saving")}
+              successDuration={0}
+              showInlineError={false}
               className="flex-1 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {loading && <Loader2 size={18} className="animate-spin" />}
-              {t("saveReview")}
-            </Button>
+            />
           </div>
         </form>
       </div>
