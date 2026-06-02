@@ -32,6 +32,7 @@ export async function POST(request) {
       type = "appointment",
       title,
       description,
+      allowCounterProposals,
       questions,
       invites,
     } = await request.json();
@@ -50,6 +51,7 @@ export async function POST(request) {
           type,
           title,
           description,
+          allowCounterProposals: allowCounterProposals ? 1 : 0,
           creatorId: session.sub,
           createdAt: now,
           updatedAt: now,

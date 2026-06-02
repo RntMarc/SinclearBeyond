@@ -22,6 +22,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
       type: "appointment",
       title: "",
       description: "",
+      allowCounterProposals: false,
       questions: [
         {
           title: "",
@@ -256,6 +257,32 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
               className="w-full bg-sidebar-accent/50 border border-sidebar-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
             />
           </div>
+          {form.type === "appointment" && (
+            <div className="flex items-center gap-3 bg-sidebar-accent/30 border border-sidebar-border rounded-xl p-4">
+              <div className="flex-1">
+                <p className="text-sm font-bold">
+                  {t("allowCounterProposals")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t("allowCounterProposalsDesc")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    allowCounterProposals: !prev.allowCounterProposals,
+                  }))
+                }
+                className={`w-12 h-6 rounded-full transition-all relative ${form.allowCounterProposals ? "bg-primary" : "bg-muted"}`}
+              >
+                <div
+                  className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-all ${form.allowCounterProposals ? "translate-x-6" : ""}`}
+                />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Questions */}
