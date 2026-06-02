@@ -41,6 +41,7 @@ export default function Notification({
       <Icon size={18} className="shrink-0" />
       <span className="text-sm font-medium">{message}</span>
       <button
+        type="button"
         onClick={() => {
           setIsVisible(false);
           if (onClose) onClose();

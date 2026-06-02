@@ -5,6 +5,7 @@ export function setCookie(name, value, days) {
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     expires = `; expires=${date.toUTCString()}`;
   }
+  // biome-ignore lint/suspicious/noDocumentCookie: Cookie Store API is experimental/unavailable; SameSite=Lax mitigates CSRF
   document.cookie = `${name}=${value || ""}${expires}; path=/; SameSite=Lax`;
 }
 

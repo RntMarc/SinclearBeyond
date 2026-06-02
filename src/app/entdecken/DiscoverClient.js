@@ -39,25 +39,7 @@ export default function DiscoverClient({
   const [showGlobalMap, setShowGlobalMap] = useState(false);
   const _searchRef = useRef(null);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get("q");
-    const mode = params.get("mode");
-    const lat = params.get("lat");
-    const lon = params.get("lon");
-    const radius = params.get("radius");
-
-    if (q || (mode && lat && lon)) {
-      handleSearch({
-        query: q || "",
-        mode: mode || "in",
-        location: lat && lon ? { lat, lon } : null,
-        radius: radius ? parseInt(radius, 10) : 10,
-      });
-    }
-  }, [handleSearch]);
-
-  async function handleSearch(searchParams) {
+  const handleSearch = useCallback(async (searchParams) => {
     setLoading(true);
     setIsSearching(true);
     try {
@@ -79,7 +61,25 @@ export default function DiscoverClient({
     } finally {
       setLoading(false);
     }
-  }
+  }, [setLoading, setIsSearching, setPlaces]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    const mode = params.get("mode");
+    const lat = params.get("lat");
+    const lon = params.get("lon");
+    const radius = params.get("radius");
+
+    if (q || (mode && lat && lon)) {
+      handleSearch({
+        query: q || "",
+        mode: mode || "in",
+        location: lat && lon ? { lat, lon } : null,
+        radius: radius ? parseInt(radius, 10) : 10,
+      });
+    }
+  }, [handleSearch]);
 
   const focusSearch = () => {
     const input = document.querySelector(
@@ -100,6 +100,7 @@ export default function DiscoverClient({
         </div>
         {!isSearching && (
           <button
+            type="button"
             onClick={() => setShowGlobalMap(!showGlobalMap)}
             className={`px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shrink-0 w-full md:w-auto justify-center ${
               showGlobalMap
@@ -169,6 +170,7 @@ export default function DiscoverClient({
                 <PlaceCard key={place.id} place={place} t={t} />
               ))}
               <button
+                type="button"
                 onClick={focusSearch}
                 className="p-6 border-2 border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center group hover:border-primary/50 transition-all bg-card/50"
               >
@@ -219,6 +221,7 @@ export default function DiscoverClient({
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-black">Suchergebnisse</h2>
             <button
+              type="button"
               onClick={() => setIsSearching(false)}
               className="text-sm font-bold text-muted-foreground hover:text-foreground"
             >
@@ -229,12 +232,14 @@ export default function DiscoverClient({
           {/* Mobile Tabs */}
           <div className="flex md:hidden bg-muted p-1 rounded-xl">
             <button
+              type="button"
               onClick={() => setActiveTab("list")}
               className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === "list" ? "bg-card shadow-sm" : "text-muted-foreground"}`}
             >
               {ts("list")}
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("map")}
               className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === "map" ? "bg-card shadow-sm" : "text-muted-foreground"}`}
             >
@@ -369,7 +374,10 @@ function Loader2({ className, size }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={`animate-spin ${className}`}
+      role="img"
+      aria-label="Loading"
     >
+      <title>Loading</title>
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   );

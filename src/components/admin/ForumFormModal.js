@@ -76,6 +76,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             {forum ? "Forum bearbeiten" : "Neues Forum anlegen"}
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 text-muted-foreground hover:bg-sidebar-accent rounded-full transition-colors"
           >
@@ -90,6 +91,7 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
               <div className="relative group">
                 <div className="w-32 h-32 rounded-2xl bg-muted overflow-hidden border-2 border-dashed border-sidebar-border flex items-center justify-center">
                   {imagePreview && !removeImage ? (
+                    // biome-ignore lint/performance/noImgElement: Data URL preview, can't use next/Image
                     <img
                       src={imagePreview}
                       alt="Preview"
@@ -132,10 +134,11 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground ml-1">
+              <label htmlFor="forum-name" className="text-sm font-medium text-muted-foreground ml-1">
                 Name
               </label>
               <input
+                id="forum-name"
                 required
                 name="name"
                 defaultValue={forum?.name}
@@ -145,10 +148,11 @@ export default function ForumFormModal({ forum, onClose, onUpdated }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground ml-1">
+              <label htmlFor="forum-description" className="text-sm font-medium text-muted-foreground ml-1">
                 Beschreibung
               </label>
               <textarea
+                id="forum-description"
                 name="description"
                 defaultValue={forum?.description}
                 placeholder="Worum geht es in diesem Forum?"

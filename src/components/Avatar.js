@@ -38,6 +38,7 @@ export default function Avatar({
 
   if (src) {
     return (
+      // biome-ignore lint/performance/noImgElement: Dynamic avatar src, can't use next/Image
       <img
         src={src}
         alt={displayName || ""}

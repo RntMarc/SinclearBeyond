@@ -1,10 +1,12 @@
-import * as icons from "simple-icons";
+import * as _icons from "simple-icons";
+
+const iconIndex = _icons;
 
 export default function BrandIcon({ name, size = 16, className = "" }) {
   // Simple Icons are keyed by 'si' + PascalCaseName
   // We can try to find it by name
   const iconKey = `si${name.charAt(0).toUpperCase()}${name.slice(1).toLowerCase()}`;
-  const icon = icons[iconKey];
+  const icon = iconIndex[iconKey];
 
   if (!icon) {
     return <div className={className} style={{ width: size, height: size }} />;
@@ -20,6 +22,7 @@ export default function BrandIcon({ name, size = 16, className = "" }) {
       className={className}
       xmlns="http://www.w3.org/2000/svg"
     >
+      <title>{name}</title>
       <path d={icon.path} />
     </svg>
   );

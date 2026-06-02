@@ -5,13 +5,12 @@ import { db, safeQuery } from "@/lib/db/db";
 import {
   closeFriends,
   feedPosts,
-  feedPostVotes,
   forumMembers,
   forums,
   users,
 } from "@/lib/db/schema";
 
-export async function GET(req, { params }) {
+export async function GET(_req, { params }) {
   const { id: forumId } = await params;
   const session = await getSession();
   if (!session)

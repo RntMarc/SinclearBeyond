@@ -43,7 +43,7 @@ export async function POST(req, { params }) {
   const session = await getSession();
   const { id } = await params;
 
-  if (!session || !session.isAdmin) {
+  if (!session?.isAdmin) {
     return NextResponse.json({ error: t("unauthorized") }, { status: 401 });
   }
 

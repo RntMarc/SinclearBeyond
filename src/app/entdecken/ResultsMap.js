@@ -33,7 +33,7 @@ export default function ResultsMap({ places, showNumbers = true }) {
       const map = mapInstanceRef.current;
 
       // Clear old markers
-      markersRef.current.forEach((m) => m.remove());
+      for (const m of markersRef.current) m.remove();
       markersRef.current = [];
 
       const bounds = [];

@@ -35,14 +35,6 @@ export async function POST(request, { params }) {
     }
     const poll = pollData[0];
 
-    const { data: optionData, error: optionError } = await safeQuery(
-      db
-        .select()
-        .from(pollOptions)
-        .leftJoin(pollQuestions, eq(pollOptions.questionId, pollQuestions.id))
-        .where(and(eq(pollOptions.id, optionId), eq(pollQuestions.pollId, id))),
-    );
-
     let option = null;
     if (optionId) {
       const { data: optionData, error: optionError } = await safeQuery(

@@ -107,7 +107,7 @@ export default function RssSourceFormModal({ source, onClose, onUpdated }) {
               max="50"
               required
               value={itemsPerPage}
-              onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+              onChange={(e) => setItemsPerPage(parseInt(e.target.value, 10))}
               className="w-full px-4 py-2 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
             />
           </div>

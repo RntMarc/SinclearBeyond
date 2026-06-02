@@ -27,7 +27,7 @@ export default function FeedDashboard() {
 
   useEffect(() => {
     fetchOverview();
-  }, []);
+  }, [fetchOverview]);
 
   async function handleJoin(forumId) {
     try {
