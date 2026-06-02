@@ -208,6 +208,7 @@ export default function AktuellContent({ _userId }) {
             }`}
             article={item}
             onUpvote={() => handleUpvote(item)}
+            isUpvoting={upvoting === item.link}
           />
         ))}
       </div>
@@ -238,7 +239,7 @@ export default function AktuellContent({ _userId }) {
   );
 }
 
-function NewsItem({ article, onUpvote, _isSaved }) {
+function NewsItem({ article, onUpvote, isUpvoting = false, _isSaved }) {
   const t = useTranslations("News");
   const date = article.pubDate
     ? new Date(article.pubDate).toLocaleDateString("de-DE", {
@@ -302,7 +303,7 @@ function NewsItem({ article, onUpvote, _isSaved }) {
               e.preventDefault();
               onUpvote();
             }}
-            loading={upvoting === article.link}
+            loading={isUpvoting}
             disabled={article.isUpvoted}
             showInlineError={false}
             successDuration={0}
