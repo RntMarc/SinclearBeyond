@@ -822,7 +822,6 @@
     "emptyFilter": "No recipes match your filters.",
     "servings": "Servings"
   },
-
   "Reviews": {
     "title": "Reviews",
     "subtitle": "Critics & Ratings",
@@ -1033,6 +1032,25 @@
       "copyPassword": "Copy password",
       "passwordNote": "Please save your password securely. It cannot be recovered.",
       "continueToChat": "Continue to Chat"
+    },
+    "description": "Direct messages and group rooms powered by the SinclearChat backend.",
+    "rooms": "Rooms",
+    "directMessages": "Direct",
+    "emptyRooms": "No chat rooms available.",
+    "emptyContacts": "No contacts available for direct messages.",
+    "retryRooms": "Reload rooms",
+    "ttl": "Messages are deleted after {days} days",
+    "groupSubtitle": "Group chat",
+    "directSubtitle": "Direct message",
+    "selectConversation": "Choose a chat on the left.",
+    "emptyMessages": "No messages yet. Write the first message.",
+    "loadOlder": "Load older messages",
+    "messageSent": "Message sent.",
+    "errors": {
+      "rooms": "Chat rooms could not be loaded.",
+      "messages": "Messages could not be loaded.",
+      "send": "Message could not be sent.",
+      "emptyMessage": "Please enter a message."
     }
   },
   "Pwa": {

@@ -892,7 +892,6 @@
     "emptyFilter": "Koi Rezeptla zo deina Filtr.",
     "servings": "Bordioa"
   },
-
   "Reviews": {
     "title": "Reviews",
     "subtitle": "Kritik & Bewertonga",
@@ -976,7 +975,26 @@
     "methodOAuth2": "OAuth2",
     "methodPassword": "Passwort",
     "switchOAuth": "Odr via OAuth2 aamelda",
-    "switchPassword": "Odr via Passwort aamelda"
+    "switchPassword": "Odr via Passwort aamelda",
+    "description": "Direkte Nåchrichte ond Grupparäum übers SinclearChat-Backend.",
+    "rooms": "Räum",
+    "directMessages": "Direkt",
+    "emptyRooms": "Koi Schwätzräum do.",
+    "emptyContacts": "Koi Kondagde für direkte Nåchrichte do.",
+    "retryRooms": "Räum nomol lada",
+    "ttl": "Nåchrichte werdet noch {days} Däg glöscht",
+    "groupSubtitle": "Gruppaschwätz",
+    "directSubtitle": "Direkte Nåchricht",
+    "selectConversation": "Wähl links en Schwätz aus.",
+    "emptyMessages": "No koi Nåchrichte. Schreib du die erschde.",
+    "loadOlder": "Ältere Nåchrichte lada",
+    "messageSent": "Nåchricht isch raus.",
+    "errors": {
+      "rooms": "Schwätzräum hent net glada werda kenna.",
+      "messages": "Nåchrichte hent net glada werda kenna.",
+      "send": "Nåchricht hot net gschickt werda kenna.",
+      "emptyMessage": "Bitte gib e Nåchricht ei."
+    }
   },
   "Notifications": {
     "title": "Benachrichtigonga",

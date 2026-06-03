@@ -938,7 +938,6 @@
     "emptyFilter": "Keine Rezepte gefunden, die deinen Filtern entsprechen.",
     "servings": "Portionen"
   },
-
   "Reviews": {
     "title": "Reviews",
     "subtitle": "Kritik & Bewertungen",
@@ -1082,6 +1081,25 @@
       "copyPassword": "Passwort kopieren",
       "passwordNote": "Bitte speichere dein Passwort sicher ab. Es kann nicht wiederhergestellt werden.",
       "continueToChat": "Weiter zum Chat"
+    },
+    "description": "Direkte Nachrichten und Gruppenräume über das SinclearChat-Backend.",
+    "rooms": "Räume",
+    "directMessages": "Direkt",
+    "emptyRooms": "Keine Chaträume verfügbar.",
+    "emptyContacts": "Keine Kontakte für Direktnachrichten verfügbar.",
+    "retryRooms": "Räume erneut laden",
+    "ttl": "Nachrichten werden nach {days} Tagen gelöscht",
+    "groupSubtitle": "Gruppenchat",
+    "directSubtitle": "Direktnachricht",
+    "selectConversation": "Wähle links einen Chat aus.",
+    "emptyMessages": "Noch keine Nachrichten. Schreib die erste Nachricht.",
+    "loadOlder": "Ältere Nachrichten laden",
+    "messageSent": "Nachricht gesendet.",
+    "errors": {
+      "rooms": "Chaträume konnten nicht geladen werden.",
+      "messages": "Nachrichten konnten nicht geladen werden.",
+      "send": "Nachricht konnte nicht gesendet werden.",
+      "emptyMessage": "Bitte gib eine Nachricht ein."
     }
   },
   "Pwa": {
