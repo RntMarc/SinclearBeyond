@@ -1,10 +1,12 @@
 "use client";
 import {
+  Archive,
   CheckCircle2,
   CheckSquare,
   ChevronRight,
   Clock,
   Target,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
@@ -16,10 +18,19 @@ function PollCard({ poll }) {
   const isFinalized = !!poll.finalizedOptionId;
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleString(locale === "en" ? "en-GB" : "de-DE", {
+    const d = new Date(date);
+    const now = new Date();
+    const pollDates = poll.options
+      .filter((o) => o.dateValue)
+      .map((o) => new Date(o.dateValue));
+    const years = [...new Set(pollDates.map((pd) => pd.getFullYear()))];
+
+    const showYear = d.getFullYear() !== now.getFullYear() || years.length > 1;
+
+    return d.toLocaleString(locale === "en" ? "en-GB" : "de-DE", {
       day: "2-digit",
       month: "2-digit",
-      year: "numeric",
+      year: showYear ? "numeric" : undefined,
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -72,14 +83,31 @@ function PollCard({ poll }) {
   );
 }
 
-export default function PollList({ polls }) {
+export default function PollList({
+  polls,
+  isArchiveOpen,
+  onCloseArchive,
+  archivedPolls,
+  loadingArchive,
+}) {
   const t = useTranslations("Polls");
+  const tc = useTranslations("Common");
 
   if (!polls || polls.length === 0) {
     return (
-      <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center">
+      <div className="bg-sidebar rounded-xl border border-sidebar-border p-8 text-center relative">
         <Clock className="mx-auto mb-3 text-muted-foreground" size={28} />
         <p className="text-muted-foreground">{t("noPolls")}</p>
+
+        {isArchiveOpen && (
+          <ArchiveModal
+            onClose={onCloseArchive}
+            polls={archivedPolls}
+            loading={loadingArchive}
+            t={t}
+            tc={tc}
+          />
+        )}
       </div>
     );
   }
@@ -114,6 +142,78 @@ export default function PollList({ polls }) {
           </div>
         </div>
       )}
+
+      {isArchiveOpen && (
+        <ArchiveModal
+          onClose={onCloseArchive}
+          polls={archivedPolls}
+          loading={loadingArchive}
+          t={t}
+          tc={tc}
+        />
+      )}
+    </div>
+  );
+}
+
+function ArchiveModal({ onClose, polls, loading, t, tc }) {
+  return (
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-sidebar border border-sidebar-border rounded-3xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-sidebar-border shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+              <Archive size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-black">{t("archive")}</h2>
+              <p className="text-xs text-muted-foreground">
+                {t("archiveSubtitle")}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 hover:bg-sidebar-accent rounded-full transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6">
+          {loading ? (
+            <div className="py-12 text-center space-y-3">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-muted-foreground">{tc("loading")}</p>
+            </div>
+          ) : polls.length === 0 ? (
+            <div className="py-12 text-center space-y-3">
+              <Clock
+                className="mx-auto text-muted-foreground opacity-20"
+                size={48}
+              />
+              <p className="text-muted-foreground font-medium">{t("noPolls")}</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {polls.map((p) => (
+                <PollCard key={p.id} poll={p} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 border-t border-sidebar-border flex justify-end shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-2 bg-sidebar-accent hover:bg-sidebar-accent/80 rounded-xl text-sm font-bold transition-all"
+          >
+            {tc("close")}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

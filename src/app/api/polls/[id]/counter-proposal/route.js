@@ -19,6 +19,11 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: "Missing dateValue" }, { status: 400 });
     }
 
+    const now = new Date();
+    if (new Date(dateValue) < now) {
+      return NextResponse.json({ error: "Past date" }, { status: 400 });
+    }
+
     const { data: pollData, error: pollError } = await safeQuery(
       db.select().from(polls).where(eq(polls.id, id)),
     );
@@ -57,8 +62,25 @@ export async function POST(request, { params }) {
     }
     const questionId = questionData[0].id;
 
+    // Check for duplicate date
+    const { data: existingOptions } = await safeQuery(
+      db
+        .select()
+        .from(pollOptions)
+        .where(eq(pollOptions.questionId, questionId)),
+    );
+
+    const isDuplicate = existingOptions?.some(
+      (opt) =>
+        opt.dateValue &&
+        new Date(opt.dateValue).getTime() === new Date(dateValue).getTime(),
+    );
+
+    if (isDuplicate) {
+      return NextResponse.json({ error: "Duplicate date" }, { status: 400 });
+    }
+
     const optionId = crypto.randomUUID();
-    const now = new Date();
 
     const { error: txError } = await safeQuery(
       db.transaction(async (tx) => {

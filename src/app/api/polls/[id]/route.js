@@ -10,7 +10,7 @@ import {
   polls,
   pollVotes,
 } from "@/lib/db/schema";
-import { getPoll } from "@/lib/polls/utils";
+import { getPoll, validatePollData } from "@/lib/polls/utils";
 
 export async function GET(_request, { params }) {
   const { id } = await params;
@@ -43,6 +43,14 @@ export async function PATCH(request, { params }) {
     const { title, description, allowCounterProposals, questions, invites } =
       await request.json();
     const now = new Date();
+
+    // Validation
+    if (questions) {
+      const validation = validatePollData(questions);
+      if (!validation.valid) {
+        return NextResponse.json({ error: validation.error }, { status: 400 });
+      }
+    }
 
     const { error: dbError } = await safeQuery(
       db.transaction(async (tx) => {
