@@ -3,7 +3,7 @@
 import { ArrowRight, Hash, Loader2, MessageSquare, Plus } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { joinForum } from "@/lib/forums/actions";
@@ -13,7 +13,7 @@ export default function FeedDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  async function fetchOverview() {
+  const fetchOverview = useCallback(async () => {
     try {
       const res = await fetch("/api/forums/overview");
       if (res.ok) {
@@ -24,7 +24,7 @@ export default function FeedDashboard() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     fetchOverview();
@@ -169,12 +169,13 @@ export default function FeedDashboard() {
                       </h4>
                       <SubmitButton
                         type="button"
+                        variant="link"
                         onClick={() => handleJoin(forum.id)}
                         loading={joining === forum.id}
                         label={t("join")}
                         successDuration={0}
                         showInlineError={false}
-                        className="text-xs text-primary hover:underline p-0 h-auto"
+                        className="text-xs"
                       />
                     </div>
                     <Link

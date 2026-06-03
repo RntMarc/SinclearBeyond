@@ -25,6 +25,7 @@ export default function Button({
     ghost: "hover:bg-accent hover:text-accent-foreground",
     outline:
       "border border-border bg-background hover:bg-accent hover:text-accent-foreground",
+    link: "text-primary hover:underline bg-transparent p-0 h-auto font-semibold",
   };
 
   const sizes = {
