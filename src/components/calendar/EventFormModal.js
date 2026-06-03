@@ -2,6 +2,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import EventForm from "@/components/calendar/EventForm";
+import { fetchAction } from "@/lib/asyncAction";
 import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 
 const EMPTY_FORM = {
@@ -86,20 +87,23 @@ export default function EventFormModal({
     const url = mode === "edit" ? `/api/events/${event.id}` : "/api/events";
     const method = mode === "edit" ? "PUT" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildBody()),
-    });
+    const result = await fetchAction(
+      url,
+      {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildBody()),
+      },
+      { fallbackError: "Fehler beim Speichern." },
+    );
 
     setSaving(false);
-    if (!res.ok) {
-      setFormError("Fehler beim Speichern.");
+    if (!result.ok) {
+      setFormError(result.error);
       return;
     }
 
-    const result = await res.json();
-    mode === "edit" ? onUpdated(result) : onCreated(result);
+    mode === "edit" ? onUpdated(result.data) : onCreated(result.data);
     onClose();
   }
 

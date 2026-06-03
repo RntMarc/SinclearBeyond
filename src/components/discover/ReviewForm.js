@@ -2,39 +2,36 @@
 
 import { Star } from "lucide-react";
 import { useState } from "react";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function ReviewForm({ placeId, onAdded }) {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setSaving(true);
     setError("");
 
-    try {
-      const res = await fetch("/api/discover/reviews", {
+    const result = await fetchAction(
+      "/api/discover/reviews",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ placeId, rating, comment }),
-      });
+      },
+      { fallbackError: "Fehler beim Speichern." },
+    );
 
-      if (res.ok) {
-        setComment("");
-        setRating(5);
-        onAdded();
-      } else {
-        const data = await res.json();
-        setError(data.error || "Fehler beim Speichern.");
-      }
-    } catch (_err) {
-      setError("Ein Fehler ist aufgetreten.");
-    } finally {
-      setSaving(false);
+    if (result.ok) {
+      setComment("");
+      setRating(5);
+      onAdded();
+      return { ok: true };
     }
+    setError(result.error || "Fehler beim Speichern.");
+    return { ok: false, error: result.error };
   }
 
   return (
@@ -72,9 +69,14 @@ export default function ReviewForm({ placeId, onAdded }) {
       </div>
 
       <div className="flex justify-end">
-        <SaveButton loading={saving} type="submit">
-          Bewertung senden
-        </SaveButton>
+        <SubmitButton
+          type="submit"
+          onClick={handleSubmit}
+          label="Bewertung senden"
+          successToast="Bewertung erfolgreich hinzugefügt."
+          errorToast="Fehler beim Speichern."
+          successDuration={0}
+        />
       </div>
     </form>
   );

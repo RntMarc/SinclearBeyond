@@ -2,7 +2,8 @@
 
 import { Trash2, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 import { toLocalDatetimeValue, toUTCISOString } from "@/lib/dateUtils";
 
 export default function TravelEventFormModal({
@@ -80,60 +81,56 @@ export default function TravelEventFormModal({
 
     fetchData();
   }, [event, tripId]);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setSaving(true);
     setError("");
 
     const url = event ? `/api/travel/events/${event.id}` : "/api/travel/events";
     const method = event ? "PATCH" : "POST";
 
-    try {
-      const payload = {
-        ...form,
-        start: toUTCISOString(form.start, timezone),
-        end: toUTCISOString(form.end, timezone),
-      };
+    const payload = {
+      ...form,
+      start: toUTCISOString(form.start, timezone),
+      end: toUTCISOString(form.end, timezone),
+    };
 
-      const res = await fetch(url, {
+    const result = await fetchAction(
+      url,
+      {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });
+      },
+      { fallbackError: "Fehler beim Speichern." },
+    );
 
-      if (res.ok) {
-        onUpdated();
-        onClose();
-      } else {
-        const data = await res.json();
-        setError(data.error || "Fehler beim Speichern.");
-      }
-    } catch (_err) {
-      setError("Ein unerwarteter Fehler ist aufgetreten.");
-    } finally {
-      setSaving(false);
+    if (result.ok) {
+      onUpdated();
+      onClose();
+      return { ok: true };
     }
+    setError(result.error || "Fehler beim Speichern.");
+    return { ok: false, error: result.error };
   }
 
   async function handleDelete() {
-    if (!confirm("Möchtest du dieses Event wirklich löschen?")) return;
-    setSaving(true);
-    try {
-      const res = await fetch(`/api/travel/events/${event.id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        onUpdated();
-        onClose();
-      }
-    } catch (_err) {
-      setError("Fehler beim Löschen.");
-    } finally {
-      setSaving(false);
+    if (!confirm("Möchtest du dieses Event wirklich löschen?"))
+      return { ok: false, error: "Abgebrochen." };
+
+    const result = await fetchAction(
+      `/api/travel/events/${event.id}`,
+      { method: "DELETE" },
+      { fallbackError: "Fehler beim Löschen." },
+    );
+
+    if (result.ok) {
+      onUpdated();
+      onClose();
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   }
 
   return (
@@ -145,13 +142,16 @@ export default function TravelEventFormModal({
               {event ? "Event bearbeiten" : "Neues Event"}
             </h3>
             {event && (
-              <button
+              <SubmitButton
                 type="button"
+                size="icon"
+                variant="ghost"
                 onClick={handleDelete}
+                icon={<Trash2 size={14} />}
+                errorToast="Fehler beim Löschen."
+                showInlineError={false}
                 className="p-1 text-muted-foreground hover:text-destructive"
-              >
-                <Trash2 size={14} />
-              </button>
+              />
             )}
           </div>
           <button
@@ -321,9 +321,14 @@ export default function TravelEventFormModal({
             >
               Abbrechen
             </button>
-            <SaveButton loading={saving} type="submit">
-              Speichern
-            </SaveButton>
+            <SubmitButton
+              type="submit"
+              onClick={handleSubmit}
+              label="Speichern"
+              successToast="Event gespeichert."
+              errorToast="Fehler beim Speichern."
+              successDuration={0}
+            />
           </div>
         </form>
       </div>

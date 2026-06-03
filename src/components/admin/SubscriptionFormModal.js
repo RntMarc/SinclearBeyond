@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 import { formatBirthday } from "@/lib/dateUtils";
 
 export default function SubscriptionFormModal({
@@ -22,7 +24,6 @@ export default function SubscriptionFormModal({
 }) {
   const t = useTranslations("Subscriptions.admin");
   const tc = useTranslations("Common");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [name, setName] = useState(subscription?.name || "");
@@ -58,64 +59,58 @@ export default function SubscriptionFormModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
-    try {
-      const payload = {
-        name,
-        billingPeriodStart,
-        billingPeriodEnd,
-        basePrice: parseFloat(basePrice.replace(",", ".")),
-        members,
-      };
+    const payload = {
+      name,
+      billingPeriodStart,
+      billingPeriodEnd,
+      basePrice: parseFloat(basePrice.replace(",", ".")),
+      members,
+    };
 
-      const url = subscription
-        ? `/api/subscriptions/${subscription.id}`
-        : "/api/subscriptions";
+    const url = subscription
+      ? `/api/subscriptions/${subscription.id}`
+      : "/api/subscriptions";
 
-      const method = subscription ? "PATCH" : "POST";
+    const method = subscription ? "PATCH" : "POST";
 
-      const res = await fetch(url, {
+    const result = await fetchAction(
+      url,
+      {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });
+      },
+      { fallbackError: tc("saveError") },
+    );
 
-      if (res.ok) {
-        if (subscription) onUpdated?.();
-        else onCreated?.();
-        onClose();
-      } else {
-        const data = await res.json();
-        setError(data.error || tc("saveError"));
-      }
-    } catch (_err) {
-      setError(tc("genericError"));
-    } finally {
-      setLoading(false);
+    if (!result.ok) {
+      setError(result.error);
+      return { ok: false, error: result.error };
     }
+    if (subscription) onUpdated?.();
+    else onCreated?.();
+    onClose();
+    return { ok: true };
   };
 
   const handleDelete = async () => {
-    if (!confirm(t("deleteConfirm"))) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/subscriptions/${subscription.id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        onUpdated?.();
-        onClose();
-      } else {
-        const data = await res.json();
-        setError(data.error || tc("deleteError"));
-      }
-    } catch (_err) {
-      setError(tc("genericError"));
-    } finally {
-      setLoading(false);
+    if (!confirm(t("deleteConfirm")))
+      return { ok: false, error: "Abgebrochen" };
+    setError("");
+    const result = await fetchAction(
+      `/api/subscriptions/${subscription.id}`,
+      { method: "DELETE" },
+      { fallbackError: tc("deleteError") },
+    );
+    if (!result.ok) {
+      setError(result.error);
+      return { ok: false, error: result.error };
     }
+    onUpdated?.();
+    onClose();
+    return { ok: true };
   };
 
   const addMember = () => {
@@ -374,15 +369,15 @@ export default function SubscriptionFormModal({
 
         <div className="px-6 py-6 border-t border-border bg-muted/20 flex flex-wrap items-center justify-between gap-4 shrink-0">
           {subscription ? (
-            <button
+            <SubmitButton
               type="button"
-              disabled={loading}
               onClick={handleDelete}
-              className="flex items-center gap-2 px-5 py-2.5 text-destructive font-medium hover:bg-destructive/10 rounded-xl transition-colors disabled:opacity-50"
-            >
-              <Trash2 size={18} />
-              {t("deleteSubscription")}
-            </button>
+              icon={<Trash2 size={18} />}
+              label={t("deleteSubscription")}
+              showInlineError={false}
+              successDuration={0}
+              className="flex items-center gap-2 px-5 py-2.5 text-destructive font-medium hover:bg-destructive/10 rounded-xl"
+            />
           ) : (
             <div />
           )}
@@ -395,18 +390,15 @@ export default function SubscriptionFormModal({
             >
               {tc("cancel")}
             </button>
-            <button
+            <SubmitButton
+              type="submit"
               onClick={handleSubmit}
-              disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <Check size={18} />
-              )}
-              {tc("save")}
-            </button>
+              icon={<Check size={18} />}
+              label={tc("save")}
+              successDuration={0}
+              showInlineError={false}
+              className="flex items-center gap-2 px-6 py-2.5 shadow-lg shadow-primary/20"
+            />
           </div>
         </div>
       </div>

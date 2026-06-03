@@ -4,6 +4,7 @@ import { startRegistration } from "@simplewebauthn/browser";
 import { Fingerprint, Plus, Trash2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 export default function PasskeyManager() {
   const t = useTranslations("Settings.login");
@@ -63,7 +64,7 @@ export default function PasskeyManager() {
   }
 
   async function confirmAddPasskey() {
-    if (!tempAttestation) return;
+    if (!tempAttestation) return { ok: false, error: "Keine Daten" };
     setAdding(true);
     setError("");
 
@@ -78,20 +79,22 @@ export default function PasskeyManager() {
         setShowNameModal(false);
         setTempAttestation(null);
         fetchPasskeys();
-      } else {
-        const data = await verifyRes.json();
-        throw new Error(data.error || "Verifizierung fehlgeschlagen.");
+        return { ok: true };
       }
+      const data = await verifyRes.json();
+      throw new Error(data.error || "Verifizierung fehlgeschlagen.");
     } catch (err) {
       console.error(err);
       setError(err.message || "Fehler beim Hinzufügen des Passkeys.");
+      return { ok: false, error: err.message };
     } finally {
       setAdding(false);
     }
   }
 
   async function handleDelete(id) {
-    if (!confirm(t("passkeyDeleteConfirm"))) return;
+    if (!confirm(t("passkeyDeleteConfirm")))
+      return { ok: false, error: "Abgebrochen" };
 
     try {
       const res = await fetch("/api/auth/passkey/delete", {
@@ -101,9 +104,12 @@ export default function PasskeyManager() {
       });
       if (res.ok) {
         setPasskeys(passkeys.filter((pk) => pk.id !== id));
+        return { ok: true };
       }
+      return { ok: false, error: "Fehler beim Löschen" };
     } catch (err) {
       console.error("Fehler beim Löschen", err);
+      return { ok: false, error: "Fehler beim Löschen" };
     }
   }
 
@@ -142,14 +148,17 @@ export default function PasskeyManager() {
                     ` • ${t("passkeyLastUsed")}: ${new Date(pk.lastUsedAt).toLocaleDateString(locale === "en" ? "en-GB" : "de-DE")}`}
                 </p>
               </div>
-              <button
+              <SubmitButton
                 type="button"
+                size="icon"
+                variant="ghost"
                 onClick={() => handleDelete(pk.id)}
-                className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                icon={<Trash2 className="w-4 h-4" />}
+                showInlineError={false}
+                successDuration={0}
+                className="p-2 text-muted-foreground hover:text-destructive"
                 title="Löschen"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+              />
             </div>
           ))
         )}
@@ -165,7 +174,6 @@ export default function PasskeyManager() {
         {adding ? t("passkeyAdding") : t("addPasskey")}
       </button>
 
-      {/* Name Modal */}
       {showNameModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-card border border-border w-full max-w-sm rounded-2xl shadow-2xl p-6">
@@ -196,14 +204,18 @@ export default function PasskeyManager() {
               >
                 {tCommon("cancel")}
               </button>
-              <button
+              <SubmitButton
                 type="button"
                 onClick={confirmAddPasskey}
+                loading={adding}
+                label={tCommon("save")}
+                successToast={t("passkeySuccess")}
+                errorToast={tCommon("error")}
+                showInlineError={false}
+                successDuration={0}
                 disabled={adding || !newName.trim()}
-                className="flex-1 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
-              >
-                {tCommon("save")}
-              </button>
+                className="flex-1 rounded-full"
+              />
             </div>
           </div>
         </div>

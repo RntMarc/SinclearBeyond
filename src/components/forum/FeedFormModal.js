@@ -4,7 +4,7 @@ import { Feather, Music, Newspaper, Play, SquarePlay, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import VisibilityToggle from "@/components/profile/VisibilityToggle";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
   const t = useTranslations("Feed.form");
@@ -64,15 +64,14 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (saving) return;
+    e?.preventDefault?.();
+    if (saving) return { ok: false, error: tCommon("genericError") };
     setError("");
 
-    // Validation
     if (category === "music") {
       if (!form.artist || !form.title) {
         setError(t("errors.music"));
-        return;
+        return { ok: false, error: t("errors.music") };
       }
       if (
         !form.spotifyUrl &&
@@ -81,10 +80,8 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
         !form.soundcloudUrl
       ) {
         setError(t("errors.musicLink"));
-        return;
+        return { ok: false, error: t("errors.musicLink") };
       }
-
-      // URL Validations
       if (
         form.spotifyUrl &&
         !form.spotifyUrl.match(
@@ -92,7 +89,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
         )
       ) {
         setError(t("errors.invalidUrl"));
-        return;
+        return { ok: false, error: t("errors.invalidUrl") };
       }
       if (
         form.youtubeMusicUrl &&
@@ -101,7 +98,7 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
         )
       ) {
         setError(t("errors.invalidUrl"));
-        return;
+        return { ok: false, error: t("errors.invalidUrl") };
       }
       if (
         form.youtubeUrl &&
@@ -110,29 +107,29 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
         )
       ) {
         setError(t("errors.invalidUrl"));
-        return;
+        return { ok: false, error: t("errors.invalidUrl") };
       }
       if (
         form.soundcloudUrl &&
         !form.soundcloudUrl.match(/^(https?:\/\/)?(soundcloud\.com\/).+$/)
       ) {
         setError(t("errors.invalidUrl"));
-        return;
+        return { ok: false, error: t("errors.invalidUrl") };
       }
     } else if (category === "video") {
       if (!form.videoUrl || !form.videoPlatform) {
         setError(t("errors.video"));
-        return;
+        return { ok: false, error: t("errors.video") };
       }
     } else if (category === "news") {
       if (!form.newsTitle || !form.newsSite || !form.newsUrl) {
         setError(t("errors.news"));
-        return;
+        return { ok: false, error: t("errors.news") };
       }
     } else if (category === "other") {
       if (!form.otherTitle || !form.otherUrl) {
         setError(t("errors.other"));
-        return;
+        return { ok: false, error: t("errors.other") };
       }
     }
 
@@ -144,8 +141,6 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
         forumId: forumId || post?.forumId,
       };
 
-      // If category is text, we use otherTitle as the optional title
-      // But we should probably keep it clean if other categories were selected before
       if (category === "text") {
         payload.artist = null;
         payload.title = null;
@@ -160,9 +155,9 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
         payload.newsUrl = null;
         payload.otherUrl = null;
         if (!payload.content?.trim()) {
-          setError(t("errors.text"));
-          setSaving(false);
-          return;
+          const err = t("errors.text");
+          setError(err);
+          return { ok: false, error: err };
         }
       }
 
@@ -176,12 +171,16 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
 
       if (res.ok) {
         onSuccess(post ? t("successUpdate") : t("successShare"));
-      } else {
-        const data = await res.json();
-        setError(data.error || t("errors.generic"));
+        return { ok: true };
       }
+      const data = await res.json().catch(() => ({}));
+      const err = data.error || t("errors.generic");
+      setError(err);
+      return { ok: false, error: err };
     } catch (_err) {
-      setError(t("errors.connection"));
+      const err = t("errors.connection");
+      setError(err);
+      return { ok: false, error: err };
     } finally {
       setSaving(false);
     }
@@ -438,9 +437,13 @@ export default function FeedFormModal({ forumId, post, onClose, onSuccess }) {
           >
             {tCommon("cancel")}
           </button>
-          <SaveButton loading={saving} onClick={handleSubmit}>
-            {post ? t("update") : t("share")}
-          </SaveButton>
+          <SubmitButton
+            onClick={handleSubmit}
+            successToast={post ? t("successUpdate") : t("successShare")}
+            errorToast={t("errors.generic")}
+            label={post ? t("update") : t("share")}
+            className="px-6 py-2.5"
+          />
         </div>
       </div>
     </div>

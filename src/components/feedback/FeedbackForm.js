@@ -1,35 +1,38 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function FeedbackForm() {
   const t = useTranslations("Feedback");
+  const tc = useTranslations("Common");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("idle");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim()) return { ok: false };
 
     setStatus("saving");
-    try {
-      const res = await fetch("/api/feedback", {
+    const result = await fetchAction(
+      "/api/feedback",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "feedback", message }),
-      });
+      },
+      { fallbackError: tc("saveError") },
+    );
 
-      if (res.ok) {
-        setStatus("saved");
-        setMessage("");
-        setTimeout(() => setStatus("idle"), 3000);
-      } else {
-        setStatus("error");
-      }
-    } catch (_err) {
-      setStatus("error");
+    if (result.ok) {
+      setStatus("saved");
+      setMessage("");
+      setTimeout(() => setStatus("idle"), 3000);
+      return { ok: true };
     }
+    setStatus("error");
+    return { ok: false, error: result.error };
   };
 
   return (
@@ -48,13 +51,13 @@ export default function FeedbackForm() {
           required
         />
         <div className="flex justify-end">
-          <SaveButton
+          <SubmitButton
             type="submit"
-            pending={status === "saving"}
-            state={{
-              ok: status === "saved" ? true : status === "error" ? false : null,
-            }}
+            onClick={handleSubmit}
             label={t("sendFeedback")}
+            successToast={t("feedbackSuccess")}
+            errorToast={tc("saveError")}
+            successDuration={2500}
           />
         </div>
         {status === "saved" && (

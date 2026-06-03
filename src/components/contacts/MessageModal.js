@@ -4,40 +4,39 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Avatar from "@/components/Avatar";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function MessageModal({ contact, onClose }) {
   const t = useTranslations("Contacts");
   const commonT = useTranslations("Common");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
   const handleSend = async (e) => {
     e.preventDefault();
-    setIsSending(true);
     setError(null);
 
-    try {
-      const res = await fetch(`/api/users/${contact.id}/message`, {
+    const result = await fetchAction(
+      `/api/users/${contact.id}/message`,
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subject, message }),
-      });
+      },
+      { fallbackError: commonT("genericError") },
+    );
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || commonT("genericError"));
-      }
-
-      setSuccess(true);
-      setTimeout(() => onClose(), 2000);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsSending(false);
+    if (!result.ok) {
+      setError(result.error);
+      return { ok: false, error: result.error };
     }
+
+    setSuccess(true);
+    setTimeout(() => onClose(), 2000);
+    return { ok: true };
   };
 
   return (
@@ -126,9 +125,18 @@ export default function MessageModal({ contact, onClose }) {
                 >
                   {commonT("cancel")}
                 </Button>
-                <Button type="submit" disabled={isSending} className="flex-1">
-                  {isSending ? commonT("loading") : t("sendButton")}
-                </Button>
+                <SubmitButton
+                  type="submit"
+                  onClick={handleSend}
+                  label={t("sendButton")}
+                  savingLabel={commonT("sending")}
+                  successDuration={0}
+                  successToast={t("messageSent")}
+                  errorToast={commonT("error")}
+                  showInlineError={!!error}
+                  state={error ? { ok: false, error } : null}
+                  className="flex-1"
+                />
               </div>
             </form>
           )}

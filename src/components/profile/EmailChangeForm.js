@@ -1,8 +1,9 @@
 "use client";
 
-import { AlertCircle, Check, Loader2, Mail } from "lucide-react";
+import { AlertCircle, Check, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
 import {
   requestEmailChangeOtp,
   verifyEmailChangeOtp,
@@ -13,35 +14,31 @@ export default function EmailChangeForm({ currentEmail }) {
   const tCommon = useTranslations("Common");
   const [newEmail, setNewEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState(1); // 1: Email, 2: OTP
-  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const handleRequestOtp = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
     setSuccess("");
 
     if (newEmail === currentEmail) {
       setError(t("emailErrorSame"));
-      setLoading(false);
-      return;
+      return { ok: false, error: t("emailErrorSame") };
     }
 
     const res = await requestEmailChangeOtp(newEmail);
     if (res.ok) {
       setStep(2);
-    } else {
-      setError(res.error || tCommon("error"));
+      return { ok: true };
     }
-    setLoading(false);
+    setError(res.error || tCommon("error"));
+    return { ok: false, error: res.error };
   };
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
     const res = await verifyEmailChangeOtp(newEmail, otp);
@@ -50,12 +47,11 @@ export default function EmailChangeForm({ currentEmail }) {
       setStep(1);
       setNewEmail("");
       setOtp("");
-      // Force reload to update session if needed (though session is in cookie)
       window.location.reload();
-    } else {
-      setError(res.error || "Code ungültig.");
+      return { ok: true };
     }
-    setLoading(false);
+    setError(res.error || "Code ungültig.");
+    return { ok: false, error: res.error };
   };
 
   return (
@@ -102,14 +98,16 @@ export default function EmailChangeForm({ currentEmail }) {
               placeholder={t("newEmailPlaceholder")}
             />
           </div>
-          <button
+          <SubmitButton
             type="submit"
-            disabled={loading}
-            className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-          >
-            {loading && <Loader2 size={16} className="animate-spin" />}
-            {t("requestCode")}
-          </button>
+            onClick={handleRequestOtp}
+            label={t("requestCode")}
+            successToast={t("emailSuccess")}
+            errorToast={tCommon("error")}
+            showInlineError={!!error}
+            state={error ? { ok: false, error } : null}
+            className="w-full"
+          />
         </form>
       ) : (
         <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -139,14 +137,16 @@ export default function EmailChangeForm({ currentEmail }) {
             >
               {tCommon("cancel")}
             </button>
-            <button
+            <SubmitButton
               type="submit"
-              disabled={loading}
-              className="flex-[2] px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-            >
-              {loading && <Loader2 size={16} className="animate-spin" />}
-              {t("verifyEmail")}
-            </button>
+              onClick={handleVerifyOtp}
+              label={t("verifyEmail")}
+              successToast={t("emailSuccess")}
+              errorToast={tCommon("error")}
+              showInlineError={!!error}
+              state={error ? { ok: false, error } : null}
+              className="flex-[2]"
+            />
           </div>
         </form>
       )}

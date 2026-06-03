@@ -4,6 +4,7 @@ import { Loader2, Plus, Trash2, Upload, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 const CLIENT_MAX_WIDTH = 1920;
 const CLIENT_MAX_HEIGHT = 1920;
@@ -570,15 +571,15 @@ export default function RecipeFormModal({
           >
             {tc("cancel")}
           </button>
-          <Button
+          <SubmitButton
             type="submit"
-            disabled={loading}
+            loading={loading}
             onClick={handleSubmit}
+            label={isEditing ? tc("save") : t("createRecipe")}
+            successDuration={0}
+            showInlineError={false}
             className="shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {loading && <Loader2 size={18} className="animate-spin" />}
-            {isEditing ? tc("save") : t("createRecipe")}
-          </Button>
+          />
         </div>
       </div>
     </div>

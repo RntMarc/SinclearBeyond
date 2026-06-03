@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import LanguageTimezoneFields from "@/components/profile/LanguageTimezoneFields";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 import { isContrastAcceptable, mixColors } from "@/lib/utils";
 
 export default function AppearanceForm({ initialPreferences }) {
@@ -21,7 +23,6 @@ export default function AppearanceForm({ initialPreferences }) {
   const [localTimezone, setLocalTimezone] = useState(
     initialPreferences?.timezone || "",
   );
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!localTimezone) {
@@ -29,11 +30,9 @@ export default function AppearanceForm({ initialPreferences }) {
     }
   }, [localTimezone]);
 
-  const [saved, setSaved] = useState(false);
-
   const suggestedColors = {
-    light: ["#86680e", "#3568cc", "#0a7e0a", "#a42be0"], // Gold, Blue, Green, Violet
-    dark: ["#8c7328", "#216bfe", "#0b890b", "#b22ff4"], // Gold, Blue, Green, Violet
+    light: ["#86680e", "#3568cc", "#0a7e0a", "#a42be0"],
+    dark: ["#8c7328", "#216bfe", "#0b890b", "#b22ff4"],
   };
 
   const currentSuggested =
@@ -51,10 +50,11 @@ export default function AppearanceForm({ initialPreferences }) {
   const isContrastOk = isBgContrastOk && isTextContrastOk;
 
   const handleSave = async () => {
-    if (!isContrastOk) return;
-    setSaving(true);
-    try {
-      const res = await fetch("/api/user/preferences", {
+    if (!isContrastOk) return { ok: false, error: t("contrastError") };
+
+    const result = await fetchAction(
+      "/api/user/preferences",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -63,19 +63,17 @@ export default function AppearanceForm({ initialPreferences }) {
           language: localLanguage,
           timezone: localTimezone,
         }),
-      });
-      if (res.ok) {
-        setTheme(localTheme);
-        setPrimaryColor(localColor);
-        setSaved(true);
-        router.refresh();
-        setTimeout(() => setSaved(false), 3000);
-      }
-    } catch (error) {
-      console.error("Failed to save preferences", error);
-    } finally {
-      setSaving(false);
+      },
+      { fallbackError: tCommon("saveError") },
+    );
+
+    if (result.ok) {
+      setTheme(localTheme);
+      setPrimaryColor(localColor);
+      router.refresh();
+      return { ok: true };
     }
+    return { ok: false, error: result.error };
   };
 
   return (
@@ -209,15 +207,15 @@ export default function AppearanceForm({ initialPreferences }) {
           </div>
 
           <div className="pt-4 border-t border-border">
-            <button
+            <SubmitButton
               type="button"
               onClick={handleSave}
-              disabled={saving || !isContrastOk}
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
-            >
-              {saving ? "..." : saved ? <Check size={16} /> : t("save")}
-              {saved && tCommon("saved")}
-            </button>
+              disabled={!isContrastOk}
+              label={t("save")}
+              successToast={tCommon("saved")}
+              errorToast={tCommon("saveError")}
+              className="px-6 py-2"
+            />
           </div>
         </div>
       </section>

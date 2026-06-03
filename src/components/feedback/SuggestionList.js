@@ -2,6 +2,7 @@
 import { Edit2, ThumbsUp, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Avatar from "@/components/Avatar";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 const STATUS_COLORS = {
   submitted: "bg-blue-500/10 text-blue-500 border-blue-500/20",
@@ -53,24 +54,29 @@ export default function SuggestionList({
         }`}
       >
         <div className="flex flex-col items-center gap-1">
-          <button
+          <SubmitButton
             type="button"
-            onClick={() => !isVotingDisabled && onVote(suggestion.id)}
+            size="icon"
+            variant={suggestion.hasUpvoted ? "secondary" : "ghost"}
+            onClick={() => onVote(suggestion.id)}
             disabled={isVotingDisabled}
-            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+            icon={
+              <ThumbsUp
+                size={20}
+                fill={suggestion.hasUpvoted ? "currentColor" : "none"}
+              />
+            }
+            showInlineError={false}
+            successDuration={0}
+            title={isVotingDisabled ? "" : t("upvote")}
+            className={`w-12 h-12 rounded-xl ${
               suggestion.hasUpvoted
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
                 : isVotingDisabled
                   ? "bg-muted text-muted-foreground cursor-not-allowed"
-                  : "bg-primary/10 text-primary hover:bg-primary/20"
+                  : "bg-sidebar-accent/50 text-primary hover:bg-primary/10"
             }`}
-            title={isVotingDisabled ? "" : t("upvote")}
-          >
-            <ThumbsUp
-              size={20}
-              fill={suggestion.hasUpvoted ? "currentColor" : "none"}
-            />
-          </button>
+          />
           <span className="text-xs font-bold mt-1 text-muted-foreground">
             {suggestion.upvotes}
           </span>
@@ -124,26 +130,33 @@ export default function SuggestionList({
               {suggestion.userId === user?.id &&
                 suggestion.upvotes <= (suggestion.hasUpvoted ? 1 : 0) && (
                   <div className="flex items-center gap-1 shrink-0">
-                    <button
+                    <SubmitButton
                       type="button"
+                      size="icon"
+                      variant="ghost"
                       onClick={() => onEdit(suggestion)}
-                      className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                      icon={<Edit2 size={16} />}
+                      showInlineError={false}
+                      successDuration={0}
                       title={t("editSuggestion")}
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
+                      className="p-2 hover:bg-muted text-muted-foreground hover:text-foreground"
+                    />
+                    <SubmitButton
                       type="button"
+                      size="icon"
+                      variant="ghost"
                       onClick={() => {
                         if (confirm(t("deleteConfirm"))) {
-                          onDelete(suggestion.id);
+                          return onDelete(suggestion.id);
                         }
+                        return { ok: false, error: "Abgebrochen" };
                       }}
-                      className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                      icon={<Trash2 size={16} />}
+                      showInlineError={false}
+                      successDuration={0}
                       title={commonT("delete")}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                      className="p-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                    />
                   </div>
                 )}
             </div>

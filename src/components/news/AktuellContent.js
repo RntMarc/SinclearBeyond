@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 export default function AktuellContent({ _userId }) {
   const t = useTranslations("News");
@@ -102,38 +104,42 @@ export default function AktuellContent({ _userId }) {
     };
   }, [loading, hasMore, loadMore]);
 
+  const [upvoting, setUpvoting] = useState(null);
+
   const handleUpvote = async (article) => {
-    try {
-      const res = await fetch("/api/news/upvote", {
+    setUpvoting(article.link);
+    const result = await fetchAction(
+      "/api/news/upvote",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ article }),
-      });
-      if (res.ok) {
-        // Optimistic update
-        setItems((prev) =>
-          prev.map((item) =>
-            item.link === article.link
-              ? { ...item, isUpvoted: true, upvotes: (item.upvotes || 0) + 1 }
-              : item,
-          ),
+      },
+      { fallbackError: t("error") },
+    );
+    setUpvoting(null);
+    if (!result.ok) return { ok: false, error: result.error };
+
+    setItems((prev) =>
+      prev.map((item) =>
+        item.link === article.link
+          ? { ...item, isUpvoted: true, upvotes: (item.upvotes || 0) + 1 }
+          : item,
+      ),
+    );
+    setImportantItems((prev) => {
+      const existing = prev.find((p) => p.url === article.link);
+      if (existing) {
+        return prev.map((p) =>
+          p.url === article.link
+            ? { ...p, upvoteCount: (p.upvoteCount || 0) + 1 }
+            : p,
         );
-        setImportantItems((prev) => {
-          const existing = prev.find((p) => p.url === article.link);
-          if (existing) {
-            return prev.map((p) =>
-              p.url === article.link
-                ? { ...p, upvoteCount: (p.upvoteCount || 0) + 1 }
-                : p,
-            );
-          }
-          return prev; // Important list might need full refresh or just wait for revalidate
-        });
-        fetchImportant();
       }
-    } catch (error) {
-      console.error("Error upvoting:", error);
-    }
+      return prev;
+    });
+    fetchImportant();
+    return { ok: true };
   };
 
   return (
@@ -202,6 +208,7 @@ export default function AktuellContent({ _userId }) {
             }`}
             article={item}
             onUpvote={() => handleUpvote(item)}
+            isUpvoting={upvoting === item.link}
           />
         ))}
       </div>
@@ -232,7 +239,7 @@ export default function AktuellContent({ _userId }) {
   );
 }
 
-function NewsItem({ article, onUpvote, _isSaved }) {
+function NewsItem({ article, onUpvote, isUpvoting = false, _isSaved }) {
   const t = useTranslations("News");
   const date = article.pubDate
     ? new Date(article.pubDate).toLocaleDateString("de-DE", {
@@ -290,25 +297,30 @@ function NewsItem({ article, onUpvote, _isSaved }) {
         )}
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-4 border-t border-sidebar-border">
-          <button
+          <SubmitButton
             type="button"
+            variant={article.isUpvoted ? "secondary" : "ghost"}
+            size="compact"
             onClick={(e) => {
               e.preventDefault();
               onUpvote();
             }}
+            loading={isUpvoting}
             disabled={article.isUpvoted}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            showInlineError={false}
+            successDuration={0}
+            className={
               article.isUpvoted
-                ? "bg-primary/10 text-primary"
-                : "hover:bg-primary/10 text-muted-foreground hover:text-primary"
-            }`}
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                : ""
+            }
           >
             <ArrowBigUp
               className={article.isUpvoted ? "fill-current" : ""}
               size={20}
             />
             <span className="text-sm font-bold">{article.upvotes || 0}</span>
-          </button>
+          </SubmitButton>
 
           <a
             href={article.link}

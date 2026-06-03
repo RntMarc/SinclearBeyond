@@ -2,6 +2,8 @@
 
 import { Check, Loader2, Search, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 const TYPES = [
   { value: "forum", label: "Forum" },
@@ -23,7 +25,6 @@ export default function NotificationTestModal({ onClose }) {
   const [deepLink, setDeepLink] = useState("/home");
   const [sendInternal, setSendInternal] = useState(true);
   const [sendPush, setSendPush] = useState(true);
-  const [sending, setSending] = useState(false);
   const [allUsers, setAllUsers] = useState(null);
   const [loadingAll, setLoadingAll] = useState(false);
   const searchRef = useRef(null);
@@ -108,11 +109,11 @@ export default function NotificationTestModal({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedUsers.length === 0) return;
-    setSending(true);
+    if (selectedUsers.length === 0) return { ok: false, error: "Keine User" };
 
-    try {
-      const res = await fetch("/api/admin/test-notification", {
+    const result = await fetchAction(
+      "/api/admin/test-notification",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -124,18 +125,11 @@ export default function NotificationTestModal({ onClose }) {
           sendInternal,
           sendPush,
         }),
-      });
-
-      if (res.ok) {
-        onClose();
-      } else {
-        console.error("Failed to send test notification");
-      }
-    } catch (error) {
-      console.error("Failed to send test notification", error);
-    } finally {
-      setSending(false);
-    }
+      },
+      { fallbackError: "Senden fehlgeschlagen" },
+    );
+    if (result.ok) onClose();
+    return result;
   };
 
   return (
@@ -338,17 +332,16 @@ export default function NotificationTestModal({ onClose }) {
             >
               Abbrechen
             </button>
-            <button
+            <SubmitButton
               type="submit"
-              disabled={sending || selectedUsers.length === 0}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 min-w-[120px]"
-            >
-              {sending ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                "Senden"
-              )}
-            </button>
+              onClick={handleSubmit}
+              label="Senden"
+              savingLabel="Wird gesendet…"
+              successDuration={0}
+              showInlineError={false}
+              disabled={selectedUsers.length === 0}
+              className="px-6 py-2.5 min-w-[120px]"
+            />
           </div>
         </form>
       </div>

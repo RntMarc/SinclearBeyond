@@ -29,6 +29,8 @@ import ReviewModal from "@/components/discover/ReviewModal";
 import SimpleOSM from "@/components/discover/SimpleOSM";
 import SubPageHeader from "@/components/layout/SubPageHeader";
 import Button from "@/components/ui/Button";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 
 const CATEGORY_SLUGS = {
   gastronomy: "gastronomie",
@@ -79,14 +81,17 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   async function toggleBookmark() {
     setBookmarkLoading(true);
     try {
-      const res = await fetch("/api/discover/bookmarks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ placeId: id }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setBookmarked(data.bookmarked);
+      const result = await fetchAction(
+        "/api/discover/bookmarks",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ placeId: id }),
+        },
+        { fallbackError: t("errorUpdate") },
+      );
+      if (result.ok) {
+        setBookmarked(result.data?.bookmarked);
       }
     } finally {
       setBookmarkLoading(false);
@@ -118,20 +123,19 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   }
 
   async function deletePlace() {
-    if (!confirm(t("deleteConfirm"))) return;
-    try {
-      const res = await fetch(`/api/discover/places/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        router.push(`/entdecken/${place.category}`);
-      } else {
-        const data = await res.json();
-        alert(data.error);
-      }
-    } catch (_err) {
-      alert(t("errorUpdate"));
+    if (!confirm(t("deleteConfirm")))
+      return { ok: false, error: "Abgebrochen" };
+    const result = await fetchAction(
+      `/api/discover/places/${id}`,
+      { method: "DELETE" },
+      { fallbackError: t("errorUpdate") },
+    );
+    if (result.ok) {
+      router.push(`/entdecken/${place.category}`);
+      return { ok: true };
     }
+    alert(result.error);
+    return { ok: false, error: result.error };
   }
 
   function handleEditReview(review) {
@@ -140,17 +144,19 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
   }
 
   async function deleteReview(reviewId) {
-    if (!confirm(t("deleteReviewConfirm"))) return;
-    try {
-      const res = await fetch(`/api/discover/reviews/${reviewId}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        loadPlace();
-      }
-    } catch (_err) {
-      alert(t("errorUpdate"));
+    if (!confirm(t("deleteReviewConfirm")))
+      return { ok: false, error: "Abgebrochen" };
+    const result = await fetchAction(
+      `/api/discover/reviews/${reviewId}`,
+      { method: "DELETE" },
+      { fallbackError: t("errorUpdate") },
+    );
+    if (result.ok) {
+      loadPlace();
+      return { ok: true };
     }
+    alert(result.error);
+    return { ok: false, error: result.error };
   }
 
   async function refreshFromOSM() {
@@ -235,24 +241,32 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
             </span>
           )}
         </button>
-        <button
+        <SubmitButton
           type="button"
+          size="icon"
+          variant="ghost"
           onClick={toggleBookmark}
-          disabled={bookmarkLoading}
-          className={`p-2 hover:bg-muted rounded-full transition-colors ${bookmarked ? "text-primary" : ""}`}
+          loading={bookmarkLoading}
+          icon={
+            <Bookmark size={20} fill={bookmarked ? "currentColor" : "none"} />
+          }
+          showInlineError={false}
+          successDuration={0}
           title={t("bookmarks")}
-        >
-          <Bookmark size={20} fill={bookmarked ? "currentColor" : "none"} />
-        </button>
+          className={`p-2 hover:bg-muted rounded-full ${bookmarked ? "text-primary" : ""}`}
+        />
         {(place.creatorId === userId || isAdmin) && (
-          <button
+          <SubmitButton
             type="button"
+            size="icon"
+            variant="ghost"
             onClick={deletePlace}
-            className="p-2 hover:bg-muted rounded-full transition-colors text-destructive"
+            icon={<Trash2 size={20} />}
+            showInlineError={false}
+            successDuration={0}
             title="Löschen"
-          >
-            <Trash2 size={20} />
-          </button>
+            className="p-2 hover:bg-muted rounded-full text-destructive"
+          />
         )}
       </SubPageHeader>
 
@@ -537,20 +551,22 @@ export default function PlaceDetailPage({ id, userId, isAdmin }) {
 
                           {(review.userId === userId || isAdmin) && (
                             <div className="pt-2 flex justify-end gap-3">
-                              <button
+                              <SubmitButton
                                 type="button"
                                 onClick={() => handleEditReview(review)}
-                                className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors hover:underline"
-                              >
-                                {t("edit")}
-                              </button>
-                              <button
+                                label={t("edit")}
+                                showInlineError={false}
+                                successDuration={0}
+                                className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary hover:underline p-0 h-auto"
+                              />
+                              <SubmitButton
                                 type="button"
                                 onClick={() => deleteReview(review.id)}
-                                className="text-[10px] uppercase font-bold text-destructive hover:underline"
-                              >
-                                {t("delete")}
-                              </button>
+                                label={t("delete")}
+                                showInlineError={false}
+                                successDuration={0}
+                                className="text-[10px] uppercase font-bold text-destructive hover:underline p-0 h-auto"
+                              />
                             </div>
                           )}
                         </div>

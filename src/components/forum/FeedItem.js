@@ -16,7 +16,9 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { useFeedPreview } from "@/hooks/forum/useFeedPreview";
+import { fetchAction } from "@/lib/asyncAction";
 import { unvotePost, votePost } from "@/lib/forums/actions";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
@@ -93,17 +95,17 @@ export default function FeedItem({
 
   const handleDelete = async () => {
     setDeleteError("");
-    try {
-      const res = await fetch(`/api/posts/${post.id}`, { method: "DELETE" });
-      if (res.ok) {
-        onDeleteSuccess?.();
-      } else {
-        const data = await res.json().catch(() => ({}));
-        setDeleteError(data.error || "Löschen fehlgeschlagen.");
-      }
-    } catch {
-      setDeleteError("Verbindungsfehler beim Löschen.");
+    const result = await fetchAction(
+      `/api/posts/${post.id}`,
+      { method: "DELETE" },
+      { fallbackError: "Verbindungsfehler beim Löschen." },
+    );
+    if (result.ok) {
+      onDeleteSuccess?.();
+      return { ok: true };
     }
+    setDeleteError(result.error || "Löschen fehlgeschlagen.");
+    return { ok: false, error: result.error };
   };
 
   return (
@@ -340,22 +342,26 @@ export default function FeedItem({
 
           {/* Footer / Votes */}
           <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
-            <button
+            <SubmitButton
               type="button"
+              variant={hasVoted ? "secondary" : "ghost"}
+              size="compact"
               onClick={handleVote}
-              disabled={isVoting}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+              loading={isVoting}
+              showInlineError={false}
+              successDuration={0}
+              className={
                 hasVoted
-                  ? "bg-primary/10 text-primary border border-primary/20"
-                  : "text-muted-foreground hover:bg-muted border border-transparent"
-              }`}
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : ""
+              }
             >
               <ArrowBigUp
                 size={20}
-                className={hasVoted ? "fill-primary" : ""}
+                className={hasVoted ? "fill-current" : ""}
               />
               <span className="text-sm font-medium">{voteCount}</span>
-            </button>
+            </SubmitButton>
           </div>
         </div>
       </div>

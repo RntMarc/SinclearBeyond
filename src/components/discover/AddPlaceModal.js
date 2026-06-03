@@ -14,7 +14,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import SaveButton from "@/components/SaveButton";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { fetchAction } from "@/lib/asyncAction";
 import ReportMissingPlaceModal from "./ReportMissingPlaceModal";
 
 export default function AddPlaceModal({ onClose }) {
@@ -67,11 +68,12 @@ export default function AddPlaceModal({ onClose }) {
   }
 
   async function handleImport() {
-    if (!selectedPlace) return;
-    setSaving(true);
+    if (!selectedPlace) return { ok: false, error: "Kein Ort ausgewählt." };
     setError("");
-    try {
-      const res = await fetch(`/api/discover/places`, {
+
+    const result = await fetchAction(
+      `/api/discover/places`,
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -79,21 +81,17 @@ export default function AddPlaceModal({ onClose }) {
           rating: form.rating,
           comment: form.comment,
         }),
-      });
+      },
+      { fallbackError: "Fehler beim Speichern." },
+    );
 
-      if (res.ok) {
-        const data = await res.json();
-        router.push(`/entdecken/orte/${data.id}`);
-        handleClose();
-      } else {
-        const data = await res.json();
-        setError(data.error || "Fehler beim Speichern.");
-      }
-    } catch (_err) {
-      setError("Ein Fehler ist aufgetreten.");
-    } finally {
-      setSaving(false);
+    if (result.ok) {
+      router.push(`/entdecken/orte/${result.data.id}`);
+      handleClose();
+      return { ok: true };
     }
+    setError(result.error || "Fehler beim Speichern.");
+    return { ok: false, error: result.error };
   }
 
   return (
@@ -344,9 +342,13 @@ export default function AddPlaceModal({ onClose }) {
             {tCommon("cancel")}
           </button>
           {selectedPlace && (
-            <SaveButton loading={saving} onClick={handleImport}>
-              {t("savePlace")}
-            </SaveButton>
+            <SubmitButton
+              onClick={handleImport}
+              label={t("savePlace")}
+              successToast={t("successAdded")}
+              errorToast="Fehler beim Speichern."
+              successDuration={0}
+            />
           )}
         </div>
       </div>
