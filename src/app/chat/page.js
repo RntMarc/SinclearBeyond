@@ -1,31 +1,51 @@
 import { MessageCircle } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import ChatClient from "@/components/chat/ChatClient";
 import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
+import { listChatRooms } from "@/lib/chat/backend";
+import { getContacts } from "@/lib/profile/contacts";
 import { getProfileData } from "@/lib/profile/profile";
 
 export default async function ChatPage() {
+  const t = await getTranslations("Chat");
   const session = await getSessionWithSubs();
-  const profile = session ? await getProfileData(session) : null;
+  if (!session) redirect("/login");
+
+  const profile = await getProfileData(session);
+  if (!profile) redirect("/login");
+
+  let contacts = [];
+  let contactsError = false;
+  try {
+    contacts = (await getContacts()) || [];
+  } catch (error) {
+    console.error("[ChatPage] Error fetching contacts:", error);
+    contactsError = true;
+  }
+
+  const roomResult = await listChatRooms();
+  const initialRooms = roomResult.ok ? roomResult.data?.data || [] : [];
+  const initialRoomsError = roomResult.ok ? null : roomResult.error;
 
   return (
-    <AppShell user={profile?.user} session={session}>
-      <div className="flex flex-col h-full bg-background">
+    <AppShell user={profile.user} session={session}>
+      <div className="flex h-full flex-col bg-background">
         <PageHeader
-          subtitle="Kommunikation"
-          title="Chat"
+          subtitle={t("subtitle")}
+          title={t("title")}
+          description={t("description")}
           icon={MessageCircle}
         />
-        <div className="flex-1 flex items-center justify-center p-6 md:p-10">
-          <div className="text-center space-y-4">
-            <div className="p-4 bg-primary/10 rounded-full w-fit mx-auto text-primary">
-              <MessageCircle size={32} />
-            </div>
-            <p className="text-muted-foreground font-medium">
-              Hier wird später noch etwas eingebaut.
-            </p>
-          </div>
-        </div>
+        <ChatClient
+          contacts={contacts}
+          contactsError={contactsError}
+          initialRooms={initialRooms}
+          initialRoomsError={initialRoomsError}
+          currentUser={profile.user}
+        />
       </div>
     </AppShell>
   );
