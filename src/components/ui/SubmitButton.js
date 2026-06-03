@@ -157,8 +157,11 @@ export default function SubmitButton({
     if (loading) {
       return (
         <>
-          <Loader2 size={16} className="animate-spin shrink-0" />
-          <span>{loadingLabel || t("saving")}</span>
+          <Loader2
+            size={variant === "link" ? 14 : 16}
+            className="animate-spin shrink-0"
+          />
+          {variant !== "link" && <span>{loadingLabel || t("saving")}</span>}
         </>
       );
     }
