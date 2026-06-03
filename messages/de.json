@@ -112,6 +112,8 @@
     "newPoll": "Neu",
     "newAppointment": "Neue Terminfindung",
     "newSurvey": "Neue Umfrage",
+    "archive": "Archiv",
+    "archiveSubtitle": "Vergangene Umfragen und Termine",
     "pollTitle": "Titel",
     "pollTitlePlaceholder": "z.B. Stammtisch oder Feedback zur Tour",
     "description": "Beschreibung",
@@ -179,6 +181,8 @@
       "errorDelete": "Fehler beim Löschen",
       "errorVote": "Fehler beim Abstimmen",
       "errorFillAll": "Bitte alle Daten ausfüllen",
+      "errorPastDate": "Termine in der Vergangenheit sind nicht erlaubt",
+      "errorDuplicateOptions": "Doppelte Auswahlmöglichkeiten sind nicht erlaubt",
       "networkError": "Netzwerkfehler"
     },
     "results": "Antworten",

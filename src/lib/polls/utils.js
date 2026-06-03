@@ -9,7 +9,7 @@ import {
   users,
 } from "@/lib/db/schema";
 
-export async function getPolls(userId) {
+export async function getPolls(userId, includeArchived = false) {
   // Get polls created by the user or where the user is invited
   const { data: invitedRows, error: inviteErr } = await safeQuery(
     db
@@ -20,6 +20,66 @@ export async function getPolls(userId) {
   if (inviteErr) throw inviteErr;
 
   const invitedPollIds = (invitedRows || []).map((p) => p.pollId);
+
+  const now = new Date();
+  const appointmentArchiveThreshold = new Date(
+    now.getTime() - 24 * 60 * 60 * 1000,
+  ); // 1 day ago
+  const surveyArchiveThreshold = new Date(
+    now.getTime() - 7 * 24 * 60 * 60 * 1000,
+  ); // 7 days ago
+
+  const visibilityCondition = or(
+    eq(polls.creatorId, userId),
+    invitedPollIds.length > 0 ? inArray(polls.id, invitedPollIds) : sql`1=0`,
+  );
+
+  const isArchivedCondition = or(
+    // Appointments finalized with an option
+    and(
+      eq(polls.type, "appointment"),
+      sql`${polls.finalizedOptionId} IS NOT NULL`,
+      sql`${polls.finalizedOptionId} != 'closed'`,
+      sql`${pollOptions.dateValue} < ${appointmentArchiveThreshold}`,
+    ),
+    // Appointments closed without an option
+    and(
+      eq(polls.type, "appointment"),
+      eq(polls.finalizedOptionId, "closed"),
+      sql`${polls.updatedAt} < ${appointmentArchiveThreshold}`,
+    ),
+    // Surveys
+    and(
+      eq(polls.type, "survey"),
+      sql`${polls.finalizedOptionId} IS NOT NULL`,
+      sql`${polls.updatedAt} < ${surveyArchiveThreshold}`,
+    ),
+  );
+
+  const archiveFilter = includeArchived
+    ? isArchivedCondition
+    : or(
+        sql`${polls.finalizedOptionId} IS NULL`,
+        and(
+          eq(polls.type, "appointment"),
+          sql`${polls.finalizedOptionId} IS NOT NULL`,
+          or(
+            and(
+              sql`${polls.finalizedOptionId} != 'closed'`,
+              sql`${pollOptions.dateValue} >= ${appointmentArchiveThreshold}`,
+            ),
+            and(
+              eq(polls.finalizedOptionId, "closed"),
+              sql`${polls.updatedAt} >= ${appointmentArchiveThreshold}`,
+            ),
+          ),
+        ),
+        and(
+          eq(polls.type, "survey"),
+          sql`${polls.finalizedOptionId} IS NOT NULL`,
+          sql`${polls.updatedAt} >= ${surveyArchiveThreshold}`,
+        ),
+      );
 
   const { data: userPolls, error: pollErr } = await safeQuery(
     db
@@ -38,14 +98,8 @@ export async function getPolls(userId) {
       })
       .from(polls)
       .leftJoin(users, eq(polls.creatorId, users.id))
-      .where(
-        or(
-          eq(polls.creatorId, userId),
-          invitedPollIds.length > 0
-            ? inArray(polls.id, invitedPollIds)
-            : sql`1=0`,
-        ),
-      )
+      .leftJoin(pollOptions, eq(polls.finalizedOptionId, pollOptions.id))
+      .where(and(visibilityCondition, archiveFilter))
       .orderBy(sql`${polls.createdAt} DESC`),
   );
   if (pollErr) throw pollErr;
@@ -70,7 +124,7 @@ export async function getPolls(userId) {
         .select()
         .from(pollOptions)
         .where(inArray(pollOptions.questionId, questionIds))
-        .orderBy(pollOptions.order),
+        .orderBy(pollOptions.dateValue, pollOptions.order),
     );
     if (optErr) throw optErr;
     allOptions = optData || [];
@@ -89,6 +143,34 @@ export async function getPolls(userId) {
   });
 
   return enrichedPolls;
+}
+
+export function validatePollData(questions) {
+  const now = new Date();
+  for (const q of questions) {
+    if (["single_choice", "multiple_choice", "date"].includes(q.type)) {
+      const values = q.options.map((opt) =>
+        q.type === "date" ? opt.dateValue : opt.label?.trim(),
+      );
+
+      // Check for duplicates
+      if (values.some((val, idx) => values.indexOf(val) !== idx)) {
+        return { valid: false, error: "Duplicate options" };
+      }
+
+      // Check for past dates
+      if (q.type === "date") {
+        if (
+          q.options.some(
+            (opt) => opt.dateValue && new Date(opt.dateValue) < now,
+          )
+        ) {
+          return { valid: false, error: "Past date not allowed" };
+        }
+      }
+    }
+  }
+  return { valid: true };
 }
 
 export async function getPoll(pollId, userId) {
@@ -154,7 +236,7 @@ export async function getPoll(pollId, userId) {
         .select()
         .from(pollOptions)
         .where(inArray(pollOptions.questionId, questionIds))
-        .orderBy(pollOptions.order),
+        .orderBy(pollOptions.dateValue, pollOptions.order),
     );
     if (error) throw error;
     options = data || [];
