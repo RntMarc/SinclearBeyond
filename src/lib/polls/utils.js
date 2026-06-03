@@ -1,4 +1,4 @@
-import { eq, inArray, or, sql } from "drizzle-orm";
+import { and, eq, inArray, or, sql } from "drizzle-orm";
 import { db, safeQuery } from "@/lib/db/db";
 import {
   pollInvites,
