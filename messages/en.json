@@ -112,6 +112,8 @@
     "newPoll": "New",
     "newAppointment": "New Appointment Poll",
     "newSurvey": "New Survey",
+    "archive": "Archive",
+    "archiveSubtitle": "Past surveys and appointments",
     "pollTitle": "Title",
     "pollTitlePlaceholder": "e.g. Weekly Meeting or Feedback",
     "description": "Description",
@@ -179,6 +181,8 @@
       "errorDelete": "Error deleting",
       "errorVote": "Error voting",
       "errorFillAll": "Please fill in all data",
+      "errorPastDate": "Dates in the past are not allowed",
+      "errorDuplicateOptions": "Duplicate options are not allowed",
       "networkError": "Network error"
     },
     "results": "Answers",
@@ -581,7 +585,7 @@
       "primaryColorLabel": "Primary Colour",
       "suggestedColors": "Suggested Colours",
       "customColor": "Custom Colour",
-      "contrastError": "This colour is too similar to the background or text colour and is therefore not allowed.",
+      "contrastError": "This colour has low contrast against the background or text colour. Readability may be affected.",
       "save": "Save Design",
       "timezoneLabel": "Timezone"
     },

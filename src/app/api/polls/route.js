@@ -9,15 +9,18 @@ import {
   polls,
 } from "@/lib/db/schema";
 import { sendNotification } from "@/lib/notifications/service";
-import { getPolls } from "@/lib/polls/utils";
+import { getPolls, validatePollData } from "@/lib/polls/utils";
 
-export async function GET() {
+export async function GET(request) {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userPolls = await getPolls(session.sub);
+  const { searchParams } = new URL(request.url);
+  const includeArchived = searchParams.get("archived") === "true";
+
+  const userPolls = await getPolls(session.sub, includeArchived);
   return NextResponse.json(userPolls);
 }
 
@@ -41,8 +44,13 @@ export async function POST(request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
+    // Validation
+    const validation = validatePollData(questions);
+    if (!validation.valid) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
     const pollId = crypto.randomUUID();
-    const now = new Date();
 
     const { error: txError } = await safeQuery(
       db.transaction(async (tx) => {

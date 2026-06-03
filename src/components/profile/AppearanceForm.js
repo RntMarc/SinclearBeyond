@@ -50,8 +50,6 @@ export default function AppearanceForm({ initialPreferences }) {
   const isContrastOk = isBgContrastOk && isTextContrastOk;
 
   const handleSave = async () => {
-    if (!isContrastOk) return { ok: false, error: t("contrastError") };
-
     const result = await fetchAction(
       "/api/user/preferences",
       {
@@ -199,7 +197,7 @@ export default function AppearanceForm({ initialPreferences }) {
             </div>
 
             {!isContrastOk && (
-              <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-xs">
+              <div className="flex items-center gap-2 p-3 bg-amber-500/10 text-amber-500 rounded-lg text-xs border border-amber-500/20">
                 <AlertTriangle size={14} />
                 {t("contrastError")}
               </div>
@@ -210,7 +208,6 @@ export default function AppearanceForm({ initialPreferences }) {
             <SubmitButton
               type="button"
               onClick={handleSave}
-              disabled={!isContrastOk}
               label={t("save")}
               successToast={tCommon("saved")}
               errorToast={tCommon("saveError")}

@@ -152,6 +152,37 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validation
+    for (const q of form.questions) {
+      if (["single_choice", "multiple_choice", "date"].includes(q.type)) {
+        const values = q.options.map((opt) =>
+          q.type === "date" ? opt.dateValue : opt.label?.trim(),
+        );
+
+        // Check for duplicates
+        const hasDuplicates = values.some(
+          (val, idx) => values.indexOf(val) !== idx,
+        );
+        if (hasDuplicates) {
+          alert(t("form.errorDuplicateOptions"));
+          return;
+        }
+
+        // Check for past dates
+        if (q.type === "date") {
+          const now = new Date();
+          const hasPastDate = q.options.some(
+            (opt) => opt.dateValue && new Date(opt.dateValue) < now,
+          );
+          if (hasPastDate) {
+            alert(t("form.errorPastDate"));
+            return;
+          }
+        }
+      }
+    }
+
     onSubmit(form);
   };
 
@@ -380,6 +411,7 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                             {q.type === "date" ? (
                               <input
                                 type="datetime-local"
+                                min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                                 value={
                                   opt.dateValue
                                     ? new Date(

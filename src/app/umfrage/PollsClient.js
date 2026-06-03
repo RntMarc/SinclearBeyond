@@ -1,5 +1,5 @@
 "use client";
-import { Plus } from "lucide-react";
+import { Archive, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -12,7 +12,10 @@ import { markAllPollsAsRead } from "@/lib/polls/actions";
 export default function PollsClient({ initialPolls }) {
   const t = useTranslations("Polls");
   const [polls, _setPolls] = useState(initialPolls);
+  const [archivedPolls, setArchivedPolls] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isArchiveOpen, setIsArchiveOpen] = useState(false);
+  const [loadingArchive, setLoadingArchive] = useState(false);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
 
@@ -50,9 +53,32 @@ export default function PollsClient({ initialPolls }) {
     return { ok: false, error: result.error };
   };
 
+  const handleOpenArchive = async () => {
+    setIsArchiveOpen(true);
+    setLoadingArchive(true);
+    try {
+      const res = await fetch("/api/polls?archived=true");
+      if (res.ok) {
+        const data = await res.json();
+        setArchivedPolls(data);
+      }
+    } catch (e) {
+      console.error("Failed to load archive", e);
+    } finally {
+      setLoadingArchive(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        <SubmitButton
+          variant="secondary"
+          size="compact"
+          icon={<Archive size={16} />}
+          label={t("archive")}
+          onClick={handleOpenArchive}
+        />
         <SubmitButton
           size="compact"
           icon={<Plus size={18} />}
@@ -63,7 +89,13 @@ export default function PollsClient({ initialPolls }) {
         />
       </div>
 
-      <PollList polls={polls} />
+      <PollList
+        polls={polls}
+        isArchiveOpen={isArchiveOpen}
+        onCloseArchive={() => setIsArchiveOpen(false)}
+        archivedPolls={archivedPolls}
+        loadingArchive={loadingArchive}
+      />
 
       <PollFormModal
         isOpen={isModalOpen}

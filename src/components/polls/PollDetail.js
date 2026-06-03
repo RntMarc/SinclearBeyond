@@ -70,10 +70,20 @@ export default function PollDetail({
   const isCreator = poll.creatorId === userId;
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleString(locale === "en" ? "en-GB" : "de-DE", {
+    const d = new Date(date);
+    const now = new Date();
+    const pollDates = poll.options
+      .filter((o) => o.dateValue)
+      .map((o) => new Date(o.dateValue));
+    const years = [...new Set(pollDates.map((pd) => pd.getFullYear()))];
+
+    const showYear = d.getFullYear() !== now.getFullYear() || years.length > 1;
+
+    return d.toLocaleString(locale === "en" ? "en-GB" : "de-DE", {
       weekday: "short",
       day: "2-digit",
       month: "2-digit",
+      year: showYear ? "numeric" : undefined,
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -178,13 +188,25 @@ export default function PollDetail({
                           )}
                         </div>
                         <div className="text-sm font-black leading-tight">
-                          {new Date(option.dateValue).toLocaleDateString(
-                            locale,
-                            {
+                          {(() => {
+                            const d = new Date(option.dateValue);
+                            const now = new Date();
+                            const pollDates = poll.options
+                              .filter((o) => o.dateValue)
+                              .map((o) => new Date(o.dateValue));
+                            const years = [
+                              ...new Set(pollDates.map((pd) => pd.getFullYear())),
+                            ];
+                            const showYear =
+                              d.getFullYear() !== now.getFullYear() ||
+                              years.length > 1;
+
+                            return d.toLocaleDateString(locale, {
                               day: "2-digit",
                               month: "2-digit",
-                            },
-                          )}
+                              year: showYear ? "numeric" : undefined,
+                            });
+                          })()}
                         </div>
                         <div className="text-xs font-medium text-muted-foreground">
                           {new Date(option.dateValue).toLocaleTimeString(
@@ -444,6 +466,7 @@ export default function PollDetail({
                   </label>
                   <input
                     type="datetime-local"
+                    min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                     value={counterProposalDate}
                     onChange={(e) => setCounterProposalDate(e.target.value)}
                     className="w-full bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
@@ -468,10 +491,27 @@ export default function PollDetail({
                       disabled={!counterProposalDate}
                       successDuration={2000}
                       onClick={async () => {
+                        const now = new Date();
+                        if (new Date(counterProposalDate) < now) {
+                          alert(t("form.errorPastDate"));
+                          return;
+                        }
+
+                        const isDuplicate = options.some(
+                          (opt) =>
+                            opt.dateValue &&
+                            new Date(opt.dateValue).getTime() ===
+                              new Date(counterProposalDate).getTime(),
+                        );
+                        if (isDuplicate) {
+                          alert(t("form.errorDuplicateOptions"));
+                          return;
+                        }
+
                         const result = await runCounterProposal(() =>
                           onCounterProposal(counterProposalDate),
                         );
-                        if (result !== undefined) {
+                        if (result !== undefined && result.ok) {
                           setShowCounterProposal(false);
                           setCounterProposalDate("");
                         }

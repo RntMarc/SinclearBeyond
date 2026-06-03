@@ -21,7 +21,7 @@ export default async function PollsPage() {
   let polls = [];
   let pollError = false;
   try {
-    polls = await getPolls(session.sub);
+    polls = await getPolls(session.sub, false);
   } catch (e) {
     console.error("[PollsPage] Error fetching polls:", e);
     pollError = true;
