@@ -299,6 +299,8 @@ function NewsItem({ article, onUpvote, isUpvoting = false, _isSaved }) {
         <div className="mt-auto flex items-center justify-between gap-3 pt-4 border-t border-sidebar-border">
           <SubmitButton
             type="button"
+            variant={article.isUpvoted ? "secondary" : "ghost"}
+            size="compact"
             onClick={(e) => {
               e.preventDefault();
               onUpvote();
@@ -307,11 +309,11 @@ function NewsItem({ article, onUpvote, isUpvoting = false, _isSaved }) {
             disabled={article.isUpvoted}
             showInlineError={false}
             successDuration={0}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            className={
               article.isUpvoted
-                ? "bg-primary/10 text-primary"
-                : "hover:bg-primary/10 text-muted-foreground hover:text-primary"
-            }`}
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                : ""
+            }
           >
             <ArrowBigUp
               className={article.isUpvoted ? "fill-current" : ""}

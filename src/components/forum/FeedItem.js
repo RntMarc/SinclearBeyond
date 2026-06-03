@@ -344,19 +344,21 @@ export default function FeedItem({
           <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
             <SubmitButton
               type="button"
+              variant={hasVoted ? "secondary" : "ghost"}
+              size="compact"
               onClick={handleVote}
               loading={isVoting}
               showInlineError={false}
               successDuration={0}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${
+              className={
                 hasVoted
-                  ? "bg-primary/10 text-primary border border-primary/20"
-                  : "text-muted-foreground hover:bg-muted border border-transparent"
-              }`}
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : ""
+              }
             >
               <ArrowBigUp
                 size={20}
-                className={hasVoted ? "fill-primary" : ""}
+                className={hasVoted ? "fill-current" : ""}
               />
               <span className="text-sm font-medium">{voteCount}</span>
             </SubmitButton>
