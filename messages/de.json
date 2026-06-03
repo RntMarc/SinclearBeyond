@@ -687,7 +687,7 @@
       "primaryColorLabel": "Primärfarbe",
       "suggestedColors": "Vorgeschlagene Farben",
       "customColor": "Eigene Farbe",
-      "contrastError": "Diese Farbe ist zu ähnlich zur Hintergrund- oder Textfarbe und daher nicht erlaubt.",
+      "contrastError": "Diese Farbe hat einen geringen Kontrast zur Hintergrund- oder Textfarbe. Die Lesbarkeit könnte beeinträchtigt sein.",
       "save": "Design speichern",
       "timezoneLabel": "Zeitzone"
     },
