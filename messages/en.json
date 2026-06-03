@@ -581,7 +581,7 @@
       "primaryColorLabel": "Primary Colour",
       "suggestedColors": "Suggested Colours",
       "customColor": "Custom Colour",
-      "contrastError": "This colour is too similar to the background or text colour and is therefore not allowed.",
+      "contrastError": "This colour has low contrast against the background or text colour. Readability may be affected.",
       "save": "Save Design",
       "timezoneLabel": "Timezone"
     },
