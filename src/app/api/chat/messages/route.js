@@ -45,7 +45,7 @@ export async function GET(request) {
     if (value) outgoing.set(key, value);
   }
 
-  const result = await chatApiRequest(`/api/messages?${outgoing.toString()}`);
+  const result = await chatApiRequest("/api/messages", { query: outgoing });
   if (!result.ok) {
     return NextResponse.json(
       { error: getMessageError(t, result) },

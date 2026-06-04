@@ -1095,6 +1095,9 @@
     "emptyMessages": "Noch keine Nachrichten. Schreib die erste Nachricht.",
     "loadOlder": "Ältere Nachrichten laden",
     "messageSent": "Nachricht gesendet.",
+    "attachmentButton": "Anhang hinzufügen",
+    "attachmentPlaceholder": "Bild-URL (https://…)",
+    "attachmentRemove": "Anhang entfernen",
     "errors": {
       "rooms": "Chaträume konnten nicht geladen werden.",
       "messages": "Nachrichten konnten nicht geladen werden.",
