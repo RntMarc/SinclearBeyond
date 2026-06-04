@@ -57,16 +57,17 @@ final class MessageController
             }
         }
 
-        $attachmentUrl = isset($input['attachment_url']) ? trim((string) $input['attachment_url']) : null;
-        if ($attachmentUrl === '') {
-            $attachmentUrl = null;
+        $attachmentType = isset($input['attachment_type']) ? trim((string) $input['attachment_type']) : null;
+        if ($attachmentType === '') {
+            $attachmentType = null;
         }
-        if ($attachmentUrl !== null && !filter_var($attachmentUrl, FILTER_VALIDATE_URL) && !str_starts_with($attachmentUrl, '/')) {
-            return Response::error('attachment_url must be a valid URL or a relative path');
+        $attachmentBody = isset($input['attachment_body']) ? (string) $input['attachment_body'] : null;
+        if ($attachmentBody === '') {
+            $attachmentBody = null;
         }
 
         try {
-            $message = Message::create($userId, $chatId, $chatType, $body, $attachmentUrl);
+            $message = Message::create($userId, $chatId, $chatType, $body, $attachmentType, $attachmentBody);
             return Response::created(['message' => $message]);
         } catch (\Throwable $e) {
             error_log("[SinclearChat] Failed to create message: " . $e->getMessage());

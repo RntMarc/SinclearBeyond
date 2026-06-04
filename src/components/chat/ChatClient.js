@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  ArrowLeft,
   Hash,
+  Image as ImageIcon,
   Loader2,
   MessageCircle,
   Paperclip,
@@ -11,10 +13,12 @@ import {
   X,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { fetchAction } from "@/lib/asyncAction";
+import { processBase64Image } from "@/lib/images/imageProcessing";
 import { cn } from "@/lib/utils";
 
 const POLL_INTERVAL_ACTIVE_MS = 5_000;
@@ -43,14 +47,28 @@ export default function ChatClient({
   const t = useTranslations("Chat");
   const tCommon = useTranslations("Common");
   const locale = useLocale();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [rooms, setRooms] = useState(initialRooms || []);
   const [roomsError, setRoomsError] = useState(initialRoomsError);
-  const [mode, setMode] = useState(
-    (initialRooms || []).length > 0 ? "group" : "direct",
-  );
-  const [selectedId, setSelectedId] = useState(
-    (initialRooms || [])[0]?.id || contacts?.[0]?.id || null,
-  );
+
+  const initialRoomId = searchParams.get("room");
+  const initialUserId = searchParams.get("user");
+
+  const [mode, setMode] = useState(() => {
+    if (initialRoomId) return "group";
+    if (initialUserId) return "direct";
+    return (initialRooms || []).length > 0 ? "group" : "direct";
+  });
+
+  const [selectedId, setSelectedId] = useState(() => {
+    if (initialRoomId) return initialRoomId;
+    if (initialUserId) return initialUserId;
+    return (initialRooms || [])[0]?.id || contacts?.[0]?.id || null;
+  });
+
+  const [showListOnMobile, setShowListOnMobile] = useState(!selectedId);
   const [messages, setMessages] = useState([]);
   const [pagination, setPagination] = useState({
     has_more: false,
@@ -58,6 +76,8 @@ export default function ChatClient({
   });
   const [messageText, setMessageText] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
+  const [showAttachmentDrawer, setShowAttachmentDrawer] = useState(false);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [messageError, setMessageError] = useState(null);
@@ -155,7 +175,20 @@ export default function ChatClient({
   useEffect(() => {
     if (!selectedId) return;
     loadMessages();
-  }, [selectedId, loadMessages]);
+
+    // Update URL without full navigation
+    const params = new URLSearchParams();
+    if (mode === "group") params.set("room", selectedId);
+    else params.set("user", selectedId);
+    router.replace(`/chat?${params.toString()}`, { scroll: false });
+  }, [selectedId, mode, loadMessages, router]);
+
+  // Handle mobile list visibility when selectedId changes
+  useEffect(() => {
+    if (selectedId) {
+      setShowListOnMobile(false);
+    }
+  }, [selectedId]);
 
   useEffect(() => {
     if (!selectedId) return undefined;
@@ -192,11 +225,13 @@ export default function ChatClient({
   const selectMode = (nextMode) => {
     setMode(nextMode);
     const nextItems = nextMode === "group" ? rooms : contacts;
-    setSelectedId(nextItems[0]?.id || null);
+    const nextId = nextItems[0]?.id || null;
+    setSelectedId(nextId);
     setMessages([]);
     setPagination({ has_more: false, next_before: null });
     setMessageError(null);
     requestTokenRef.current++;
+    if (!nextId) setShowListOnMobile(true);
   };
 
   const loadOlderMessages = async () => {
@@ -222,15 +257,17 @@ export default function ChatClient({
 
   const sendMessage = async () => {
     const trimmed = messageText.trim();
-    if (!trimmed || !selectedId)
+    const attachment = attachmentUrl.trim();
+    if ((!trimmed && !attachment) || !selectedId)
       return { ok: false, error: t("errors.emptyMessage") };
+
     const payload = {
       chat_type: mode,
       chat_id: selectedId,
-      body: trimmed,
+      body: trimmed || (attachment ? t("imageAttachment") : ""),
     };
-    const attachment = attachmentUrl.trim();
     if (attachment) payload.attachment_url = attachment;
+
     const result = await fetchAction(
       "/api/chat/messages",
       {
@@ -240,8 +277,38 @@ export default function ChatClient({
       },
       { fallbackError: t("errors.send") },
     );
-    if (result.ok) setAttachmentUrl("");
+    if (result.ok) {
+      setAttachmentUrl("");
+      setShowAttachmentDrawer(false);
+    }
     return result;
+  };
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsProcessingImage(true);
+    setShowAttachmentDrawer(false);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const base64 = e.target.result;
+          const processed = await processBase64Image(base64);
+          setAttachmentUrl(processed);
+        } catch (error) {
+          console.error("Image processing failed:", error);
+        } finally {
+          setIsProcessingImage(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("File reading failed:", error);
+      setIsProcessingImage(false);
+    }
   };
 
   const formatTime = (value) =>
@@ -263,7 +330,12 @@ export default function ChatClient({
 
   return (
     <div className="grid flex-1 gap-4 overflow-hidden p-4 md:grid-cols-[320px_minmax(0,1fr)] md:p-6 lg:p-10">
-      <aside className="flex min-h-0 flex-col rounded-2xl border border-border bg-card shadow-sm">
+      <aside
+        className={cn(
+          "min-h-0 flex-col rounded-2xl border border-border bg-card shadow-sm md:flex",
+          showListOnMobile ? "flex" : "hidden",
+        )}
+      >
         <div className="border-b border-border p-4">
           <div className="grid grid-cols-2 gap-2 rounded-full bg-muted p-1">
             <button
@@ -359,8 +431,20 @@ export default function ChatClient({
         </div>
       </aside>
 
-      <section className="flex min-h-0 flex-col rounded-2xl border border-border bg-card shadow-sm">
+      <section
+        className={cn(
+          "min-h-0 flex-col rounded-2xl border border-border bg-card shadow-sm md:flex",
+          !showListOnMobile ? "flex" : "hidden",
+        )}
+      >
         <div className="flex items-center gap-3 border-b border-border p-4">
+          <button
+            type="button"
+            onClick={() => setShowListOnMobile(true)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-colors hover:bg-muted/80 md:hidden"
+          >
+            <ArrowLeft size={20} />
+          </button>
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             {mode === "group" ? (
               <Hash size={20} />
@@ -441,22 +525,35 @@ export default function ChatClient({
                         {author.displayName}
                       </p>
                     )}
-                    {message.attachment_url && (
-                      <a
-                        href={message.attachment_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mb-2 block overflow-hidden rounded-xl border border-current/20"
-                      >
-                        {/* biome-ignore lint/performance/noImgElement: user-supplied external attachment URL, next/image would require remote-pattern config */}
-                        <img
-                          src={message.attachment_url}
-                          alt=""
-                          className="max-h-64 w-full object-cover"
-                          loading="lazy"
-                        />
-                      </a>
-                    )}
+                    {message.attachment_type === "image" &&
+                      message.attachment_body && (
+                        <div className="mb-2 block overflow-hidden rounded-xl border border-current/20">
+                          {/* biome-ignore lint/performance/noImgElement: local data URL or optimized attachment */}
+                          <img
+                            src={message.attachment_body}
+                            alt=""
+                            className="max-h-64 w-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+                    {message.attachment_type === "link" &&
+                      message.attachment_body && (
+                        <a
+                          href={message.attachment_body}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mb-2 block overflow-hidden rounded-xl border border-current/20"
+                        >
+                          {/* biome-ignore lint/performance/noImgElement: external attachment URL */}
+                          <img
+                            src={message.attachment_body}
+                            alt=""
+                            className="max-h-64 w-full object-cover"
+                            loading="lazy"
+                          />
+                        </a>
+                      )}
                     <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
                       {message.body}
                     </p>
@@ -477,41 +574,122 @@ export default function ChatClient({
           )}
         </div>
 
-        <div className="border-t border-border p-4">
+        <div className="relative border-t border-border p-4">
+          {showAttachmentDrawer && (
+            <div className="absolute bottom-full left-4 right-4 mb-2 animate-in fade-in slide-in-from-bottom-2">
+              <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-2 shadow-xl">
+                <label className="flex cursor-pointer items-center gap-3 rounded-xl p-3 transition-colors hover:bg-muted">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <ImageIcon size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold">{t("attachImage")}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("attachImageSubtitle")}
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttachmentUrl("https://");
+                    setShowAttachmentDrawer(false);
+                  }}
+                  className="flex items-center gap-3 rounded-xl p-3 text-left transition-colors hover:bg-muted"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                    <Paperclip size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold">{t("attachLink")}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("attachLinkSubtitle")}
+                    </p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-end gap-3">
             <button
               type="button"
-              onClick={() =>
-                setAttachmentUrl((current) => (current ? "" : "https://"))
-              }
-              disabled={!selectedItem}
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-background text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+              onClick={() => setShowAttachmentDrawer(!showAttachmentDrawer)}
+              disabled={!selectedItem || isProcessingImage}
+              className={cn(
+                "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-background transition-colors disabled:opacity-50",
+                showAttachmentDrawer
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
               aria-label={t("attachmentButton")}
             >
-              <Paperclip size={18} />
+              {isProcessingImage ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Paperclip size={18} />
+              )}
             </button>
             <div className="flex-1 space-y-2">
               {attachmentUrl !== "" && (
-                <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2">
-                  <Paperclip
-                    size={14}
-                    className="shrink-0 text-muted-foreground"
-                  />
-                  <input
-                    type="url"
-                    value={attachmentUrl}
-                    onChange={(event) => setAttachmentUrl(event.target.value)}
-                    placeholder={t("attachmentPlaceholder")}
-                    className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setAttachmentUrl("")}
-                    className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
-                    aria-label={t("attachmentRemove")}
-                  >
-                    <X size={14} />
-                  </button>
+                <div className="group relative overflow-hidden rounded-xl border border-border bg-background">
+                  {attachmentUrl.startsWith("data:") ? (
+                    <div className="flex items-center gap-3 p-2">
+                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+                        {/* biome-ignore lint/performance/noImgElement: local data URL */}
+                        <img
+                          src={attachmentUrl}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs font-bold text-foreground">
+                          {t("imageAttachment")}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {t("readyToSend")}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setAttachmentUrl("")}
+                        className="mr-1 rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 px-3 py-2">
+                      <Paperclip
+                        size={14}
+                        className="shrink-0 text-muted-foreground"
+                      />
+                      <input
+                        type="url"
+                        value={attachmentUrl}
+                        onChange={(event) =>
+                          setAttachmentUrl(event.target.value)
+                        }
+                        placeholder={t("attachmentPlaceholder")}
+                        className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setAttachmentUrl("")}
+                        className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+                        aria-label={t("attachmentRemove")}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
               <textarea
@@ -543,7 +721,9 @@ export default function ChatClient({
               }}
               successToast={t("messageSent")}
               errorToast={t("errors.send")}
-              disabled={!selectedItem || !messageText.trim()}
+              disabled={
+                !selectedItem || (!messageText.trim() && !attachmentUrl.trim())
+              }
               successDuration={800}
               className="h-12 px-5"
             />

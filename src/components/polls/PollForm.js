@@ -411,7 +411,12 @@ export default function PollForm({ initialData, saving, onSubmit, onCancel }) {
                             {q.type === "date" ? (
                               <input
                                 type="datetime-local"
-                                min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                                min={new Date(
+                                  new Date().getTime() -
+                                    new Date().getTimezoneOffset() * 60000,
+                                )
+                                  .toISOString()
+                                  .slice(0, 16)}
                                 value={
                                   opt.dateValue
                                     ? new Date(

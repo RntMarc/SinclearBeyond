@@ -193,7 +193,9 @@ function ArchiveModal({ onClose, polls, loading, t, tc }) {
                 className="mx-auto text-muted-foreground opacity-20"
                 size={48}
               />
-              <p className="text-muted-foreground font-medium">{t("noPolls")}</p>
+              <p className="text-muted-foreground font-medium">
+                {t("noPolls")}
+              </p>
             </div>
           ) : (
             <div className="space-y-3">

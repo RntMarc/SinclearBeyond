@@ -31,4 +31,14 @@ final class Room
 
         return $row ?: null;
     }
+
+    public static function findMembers(string $id): array
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare(
+            'SELECT user_id FROM ChatRoomMembers WHERE chat_room_id = :id'
+        );
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
 }
