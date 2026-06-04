@@ -69,7 +69,8 @@ final class MessageController
             $message = Message::create($userId, $chatId, $chatType, $body, $attachmentUrl);
             return Response::created(['message' => $message]);
         } catch (\Throwable $e) {
-            return Response::error('Failed to create message', 500);
+            error_log("[SinclearChat] Failed to create message: " . $e->getMessage());
+            return Response::error('Failed to create message: ' . $e->getMessage(), 500);
         }
     }
 
@@ -139,6 +140,7 @@ final class MessageController
                 ],
             ]);
         } catch (\Throwable $e) {
+            error_log("[SinclearChat] Failed to fetch messages: " . $e->getMessage());
             return Response::error('Failed to fetch messages: ' . $e->getMessage(), 500);
         }
     }

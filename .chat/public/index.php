@@ -49,7 +49,18 @@ if (!in_array($uri, $publicPaths, true)) {
 $router = new Router();
 
 $router->get('/api/health', function () {
-    return Response::success(['status' => 'ok', 'timestamp' => gmdate('Y-m-d\TH:i:s\Z')]);
+    $dbStatus = 'unknown';
+    try {
+        \SinclearChat\Database::getConnection();
+        $dbStatus = 'connected';
+    } catch (\Throwable $e) {
+        $dbStatus = 'error: ' . $e->getMessage();
+    }
+    return Response::success([
+        'status' => 'ok',
+        'database' => $dbStatus,
+        'timestamp' => gmdate('Y-m-d\TH:i:s\Z')
+    ]);
 });
 
 $router->post('/api/messages', function () {
@@ -72,7 +83,14 @@ try {
     $response = $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
     $response->send();
 } catch (\Throwable $e) {
-    Response::error('Internal server error', 500)->send();
+    error_log(sprintf(
+        "[SinclearChat] Uncaught Exception: %s in %s:%d\nStack trace:\n%s",
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine(),
+        $e->getTraceAsString()
+    ));
+    Response::error('Internal server error: ' . $e->getMessage(), 500)->send();
 }
 
 function getRequestHeaders(): array

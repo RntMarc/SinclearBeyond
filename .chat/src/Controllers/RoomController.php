@@ -15,6 +15,7 @@ final class RoomController
             $rooms = Room::findAll();
             return Response::success(['data' => $rooms]);
         } catch (\Throwable $e) {
+            error_log("[SinclearChat] Failed to fetch rooms: " . $e->getMessage());
             return Response::error('Failed to fetch rooms: ' . $e->getMessage(), 500);
         }
     }
@@ -36,6 +37,7 @@ final class RoomController
 
             return Response::success(['data' => $room]);
         } catch (\Throwable $e) {
+            error_log("[SinclearChat] Failed to fetch room: " . $e->getMessage());
             return Response::error('Failed to fetch room: ' . $e->getMessage(), 500);
         }
     }

@@ -21,7 +21,7 @@ final class Message
         $idBytes = UuidV7::toBytes($id);
 
         $stmt = $db->prepare(
-            'INSERT INTO messages (id, user_id, chat_id, chat_type, body, attachment_url)
+            'INSERT INTO ChatMessages (id, user_id, chat_id, chat_type, body, attachment_url)
              VALUES (:id, :user_id, :chat_id, :chat_type, :body, :attachment_url)'
         );
 
@@ -48,7 +48,7 @@ final class Message
 
         $stmt = $db->prepare(
             'SELECT id, user_id, chat_id, chat_type, body, attachment_url, created_at
-             FROM messages WHERE id = :id'
+             FROM ChatMessages WHERE id = :id'
         );
         $stmt->execute([':id' => $idBytes]);
         $row = $stmt->fetch();
@@ -89,7 +89,7 @@ final class Message
 
         $where = implode(' AND ', $conditions);
         $sql = "SELECT id, user_id, chat_id, chat_type, body, attachment_url, created_at
-                FROM messages WHERE {$where}
+                FROM ChatMessages WHERE {$where}
                 ORDER BY created_at DESC
                 LIMIT :limit";
 
@@ -116,7 +116,7 @@ final class Message
         $conditions = [
             'm.chat_type = :chat_type',
             'm.chat_id = :chat_id',
-            'EXISTS (SELECT 1 FROM chat_room_members crm
+            'EXISTS (SELECT 1 FROM ChatRoomMembers crm
                       WHERE crm.chat_room_id = m.chat_id
                         AND crm.user_id = :user_id)',
         ];
@@ -138,7 +138,7 @@ final class Message
 
         $where = implode(' AND ', $conditions);
         $sql = "SELECT m.id, m.user_id, m.chat_id, m.chat_type, m.body, m.attachment_url, m.created_at
-                FROM messages m WHERE {$where}
+                FROM ChatMessages m WHERE {$where}
                 ORDER BY m.created_at DESC
                 LIMIT :limit";
 
@@ -157,7 +157,7 @@ final class Message
     {
         $db = Database::getConnection();
         $stmt = $db->prepare(
-            'SELECT 1 FROM chat_room_members
+            'SELECT 1 FROM ChatRoomMembers
               WHERE chat_room_id = :chat_id AND user_id = :user_id
               LIMIT 1'
         );
