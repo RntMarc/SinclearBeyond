@@ -117,7 +117,15 @@ export default function SubmitButton({
     try {
       const result = await executeAction(() => onClick(event));
       if (result.ok) {
-        setInternalStatus("success");
+        if (successDuration > 0) {
+          setInternalStatus("success");
+          successTimerRef.current = setTimeout(() => {
+            setInternalStatus("idle");
+            successTimerRef.current = null;
+          }, successDuration);
+        } else {
+          setInternalStatus("idle");
+        }
         if (successToast) {
           setToast({
             type: "success",
@@ -126,12 +134,6 @@ export default function SubmitButton({
           });
         }
         if (onSuccess) onSuccess(result.data);
-        if (successDuration > 0) {
-          successTimerRef.current = setTimeout(() => {
-            setInternalStatus("idle");
-            successTimerRef.current = null;
-          }, successDuration);
-        }
       } else {
         setInternalStatus("error");
         setInternalError(result.error);
@@ -154,6 +156,8 @@ export default function SubmitButton({
 
   const renderContent = () => {
     const hasChildren = Children.count(children) > 0;
+    const isSmall = size === "icon" || size === "compact";
+
     if (loading) {
       return (
         <>
@@ -161,7 +165,9 @@ export default function SubmitButton({
             size={variant === "link" ? 14 : 16}
             className="animate-spin shrink-0"
           />
-          {variant !== "link" && <span>{loadingLabel || t("saving")}</span>}
+          {variant !== "link" && (loadingLabel || !isSmall) && (
+            <span>{loadingLabel || t("saving")}</span>
+          )}
         </>
       );
     }
@@ -169,7 +175,9 @@ export default function SubmitButton({
       return (
         <>
           <Check size={16} className="shrink-0" />
-          <span>{successLabel || t("saved")}</span>
+          {(successLabel || !isSmall) && (
+            <span>{successLabel || t("saved")}</span>
+          )}
         </>
       );
     }
@@ -177,7 +185,7 @@ export default function SubmitButton({
       return (
         <>
           <X size={16} className="shrink-0" />
-          <span>{errorLabel || t("error")}</span>
+          {(errorLabel || !isSmall) && <span>{errorLabel || t("error")}</span>}
         </>
       );
     }
@@ -187,7 +195,7 @@ export default function SubmitButton({
     return (
       <>
         {icon}
-        <span>{label}</span>
+        {label && <span>{label}</span>}
       </>
     );
   };
