@@ -309,11 +309,6 @@ function NewsItem({ article, onUpvote, isUpvoting = false, _isSaved }) {
             disabled={article.isUpvoted}
             showInlineError={false}
             successDuration={0}
-            className={
-              article.isUpvoted
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : ""
-            }
           >
             <ArrowBigUp
               className={article.isUpvoted ? "fill-current" : ""}
