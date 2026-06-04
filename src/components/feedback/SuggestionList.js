@@ -60,23 +60,22 @@ export default function SuggestionList({
             variant={suggestion.hasUpvoted ? "secondary" : "ghost"}
             onClick={() => onVote(suggestion.id)}
             disabled={isVotingDisabled}
-            icon={
-              <ThumbsUp
-                size={20}
-                fill={suggestion.hasUpvoted ? "currentColor" : "none"}
-              />
-            }
             showInlineError={false}
             successDuration={0}
             title={isVotingDisabled ? "" : t("upvote")}
             className={`w-12 h-12 rounded-xl ${
-              suggestion.hasUpvoted
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : isVotingDisabled
-                  ? "bg-muted text-muted-foreground cursor-not-allowed"
-                  : "bg-sidebar-accent/50 text-primary hover:bg-primary/10"
+              isVotingDisabled
+                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                : !suggestion.hasUpvoted
+                  ? "bg-sidebar-accent/50 text-primary hover:bg-primary/10"
+                  : ""
             }`}
-          />
+          >
+            <ThumbsUp
+              size={20}
+              fill={suggestion.hasUpvoted ? "currentColor" : "none"}
+            />
+          </SubmitButton>
           <span className="text-xs font-bold mt-1 text-muted-foreground">
             {suggestion.upvotes}
           </span>

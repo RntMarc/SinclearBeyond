@@ -350,17 +350,12 @@ export default function FeedItem({
               loading={isVoting}
               showInlineError={false}
               successDuration={0}
-              className={
-                hasVoted
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : ""
-              }
             >
               <ArrowBigUp
                 size={20}
                 className={hasVoted ? "fill-current" : ""}
               />
-              <span className="text-sm font-medium">{voteCount}</span>
+              <span className="text-sm font-bold">{voteCount}</span>
             </SubmitButton>
           </div>
         </div>
