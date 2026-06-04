@@ -4,9 +4,11 @@ import {
   Hash,
   Loader2,
   MessageCircle,
+  Paperclip,
   RefreshCw,
   Send,
   Users,
+  X,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -14,6 +16,9 @@ import Avatar from "@/components/Avatar";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { fetchAction } from "@/lib/asyncAction";
 import { cn } from "@/lib/utils";
+
+const POLL_INTERVAL_ACTIVE_MS = 5_000;
+const POLL_INTERVAL_HIDDEN_MS = 60_000;
 
 function sortMessages(messages) {
   return [...messages].sort(
@@ -52,10 +57,13 @@ export default function ChatClient({
     next_before: null,
   });
   const [messageText, setMessageText] = useState("");
+  const [attachmentUrl, setAttachmentUrl] = useState("");
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [messageError, setMessageError] = useState(null);
   const scrollRef = useRef(null);
+  const requestTokenRef = useRef(0);
+  const pollRef = useRef(null);
 
   const activeItems = mode === "group" ? rooms : contacts;
   const selectedItem =
@@ -77,7 +85,7 @@ export default function ChatClient({
       else params.set("chat_partner_id", selectedId);
       if (after) params.set("after", after);
       if (before) params.set("before", before);
-      return `/api/chat/messages?${params.toString()}`;
+      return { path: "/api/chat/messages", query: params };
     },
     [mode, selectedId],
   );
@@ -98,13 +106,17 @@ export default function ChatClient({
   }, [mode, selectedId, t]);
 
   const loadMessages = useCallback(async () => {
-    const url = selectedQuery();
-    if (!url) return;
+    const q = selectedQuery();
+    if (!q) return;
+    const myToken = ++requestTokenRef.current;
     setLoadingMessages(true);
     setMessageError(null);
-    const result = await fetchAction(url, undefined, {
-      fallbackError: t("errors.messages"),
-    });
+    const result = await fetchAction(
+      `${q.path}?${q.query.toString()}`,
+      undefined,
+      { fallbackError: t("errors.messages") },
+    );
+    if (myToken !== requestTokenRef.current) return;
     setLoadingMessages(false);
     if (!result.ok) {
       setMessageError(result.error || t("errors.messages"));
@@ -122,11 +134,13 @@ export default function ChatClient({
 
   const pollMessages = useCallback(async () => {
     if (!newestTimestamp) return;
-    const url = selectedQuery({ after: newestTimestamp, limit: 100 });
-    if (!url) return;
-    const result = await fetchAction(url, undefined, {
-      fallbackError: t("errors.messages"),
-    });
+    const q = selectedQuery({ after: newestTimestamp, limit: 100 });
+    if (!q) return;
+    const result = await fetchAction(
+      `${q.path}?${q.query.toString()}`,
+      undefined,
+      { fallbackError: t("errors.messages") },
+    );
     if (result.ok) {
       const incoming = result.data?.data || [];
       if (incoming.length > 0)
@@ -135,32 +149,66 @@ export default function ChatClient({
   }, [newestTimestamp, selectedQuery, t]);
 
   useEffect(() => {
+    pollRef.current = pollMessages;
+  }, [pollMessages]);
+
+  useEffect(() => {
     if (!selectedId) return;
     loadMessages();
   }, [selectedId, loadMessages]);
 
   useEffect(() => {
     if (!selectedId) return undefined;
-    const interval = setInterval(pollMessages, 5000);
-    return () => clearInterval(interval);
-  }, [pollMessages, selectedId]);
+    if (typeof document === "undefined") return undefined;
+
+    let timer = null;
+    let cancelled = false;
+
+    const schedule = () => {
+      if (cancelled) return;
+      const hidden = document.visibilityState === "hidden";
+      const delay = hidden ? POLL_INTERVAL_HIDDEN_MS : POLL_INTERVAL_ACTIVE_MS;
+      timer = setTimeout(async () => {
+        if (cancelled) return;
+        await pollRef.current?.();
+        schedule();
+      }, delay);
+    };
+    schedule();
+
+    const onVisibility = () => {
+      if (timer) clearTimeout(timer);
+      schedule();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [selectedId]);
 
   const selectMode = (nextMode) => {
     setMode(nextMode);
     const nextItems = nextMode === "group" ? rooms : contacts;
     setSelectedId(nextItems[0]?.id || null);
     setMessages([]);
+    setPagination({ has_more: false, next_before: null });
     setMessageError(null);
+    requestTokenRef.current++;
   };
 
   const loadOlderMessages = async () => {
     if (!pagination?.has_more || !pagination?.next_before) return;
-    const url = selectedQuery({ before: pagination.next_before });
-    if (!url) return;
+    const q = selectedQuery({ before: pagination.next_before });
+    if (!q) return;
     setLoadingOlder(true);
-    const result = await fetchAction(url, undefined, {
-      fallbackError: t("errors.messages"),
-    });
+    const result = await fetchAction(
+      `${q.path}?${q.query.toString()}`,
+      undefined,
+      { fallbackError: t("errors.messages") },
+    );
     setLoadingOlder(false);
     if (!result.ok) {
       setMessageError(result.error || t("errors.messages"));
@@ -176,19 +224,24 @@ export default function ChatClient({
     const trimmed = messageText.trim();
     if (!trimmed || !selectedId)
       return { ok: false, error: t("errors.emptyMessage") };
-    return fetchAction(
+    const payload = {
+      chat_type: mode,
+      chat_id: selectedId,
+      body: trimmed,
+    };
+    const attachment = attachmentUrl.trim();
+    if (attachment) payload.attachment_url = attachment;
+    const result = await fetchAction(
       "/api/chat/messages",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_type: mode,
-          chat_id: selectedId,
-          body: trimmed,
-        }),
+        body: JSON.stringify(payload),
       },
       { fallbackError: t("errors.send") },
     );
+    if (result.ok) setAttachmentUrl("");
+    return result;
   };
 
   const formatTime = (value) =>
@@ -388,6 +441,22 @@ export default function ChatClient({
                         {author.displayName}
                       </p>
                     )}
+                    {message.attachment_url && (
+                      <a
+                        href={message.attachment_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mb-2 block overflow-hidden rounded-xl border border-current/20"
+                      >
+                        {/* biome-ignore lint/performance/noImgElement: user-supplied external attachment URL, next/image would require remote-pattern config */}
+                        <img
+                          src={message.attachment_url}
+                          alt=""
+                          className="max-h-64 w-full object-cover"
+                          loading="lazy"
+                        />
+                      </a>
+                    )}
                     <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
                       {message.body}
                     </p>
@@ -410,14 +479,50 @@ export default function ChatClient({
 
         <div className="border-t border-border p-4">
           <div className="flex items-end gap-3">
-            <textarea
-              value={messageText}
-              onChange={(event) => setMessageText(event.target.value)}
-              rows={2}
+            <button
+              type="button"
+              onClick={() =>
+                setAttachmentUrl((current) => (current ? "" : "https://"))
+              }
               disabled={!selectedItem}
-              placeholder={t("messagePlaceholder")}
-              className="min-h-12 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary disabled:opacity-50"
-            />
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-background text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+              aria-label={t("attachmentButton")}
+            >
+              <Paperclip size={18} />
+            </button>
+            <div className="flex-1 space-y-2">
+              {attachmentUrl !== "" && (
+                <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2">
+                  <Paperclip
+                    size={14}
+                    className="shrink-0 text-muted-foreground"
+                  />
+                  <input
+                    type="url"
+                    value={attachmentUrl}
+                    onChange={(event) => setAttachmentUrl(event.target.value)}
+                    placeholder={t("attachmentPlaceholder")}
+                    className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setAttachmentUrl("")}
+                    className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+                    aria-label={t("attachmentRemove")}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
+              <textarea
+                value={messageText}
+                onChange={(event) => setMessageText(event.target.value)}
+                rows={2}
+                disabled={!selectedItem}
+                placeholder={t("messagePlaceholder")}
+                className="min-h-12 w-full resize-none rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary disabled:opacity-50"
+              />
+            </div>
             <SubmitButton
               icon={<Send size={16} />}
               label={t("send")}

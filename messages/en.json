@@ -1046,6 +1046,9 @@
     "emptyMessages": "No messages yet. Write the first message.",
     "loadOlder": "Load older messages",
     "messageSent": "Message sent.",
+    "attachmentButton": "Add attachment",
+    "attachmentPlaceholder": "Image URL (https://…)",
+    "attachmentRemove": "Remove attachment",
     "errors": {
       "rooms": "Chat rooms could not be loaded.",
       "messages": "Messages could not be loaded.",

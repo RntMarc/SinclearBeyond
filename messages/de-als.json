@@ -989,6 +989,9 @@
     "emptyMessages": "No koi Nåchrichte. Schreib du die erschde.",
     "loadOlder": "Ältere Nåchrichte lada",
     "messageSent": "Nåchricht isch raus.",
+    "attachmentButton": "Anhäng drzua dua",
+    "attachmentPlaceholder": "Bild-URL (https://…)",
+    "attachmentRemove": "Anhäng wegloh",
     "errors": {
       "rooms": "Schwätzräum hent net glada werda kenna.",
       "messages": "Nåchrichte hent net glada werda kenna.",

@@ -14,30 +14,43 @@ function getChatApiConfig() {
   return { baseUrl, secret };
 }
 
-function createSignature({ secret, timestamp, method, uri, body }) {
-  const payload = `${timestamp}.${method.toUpperCase()}.${uri}.${body}`;
+function createSignature({ secret, timestamp, method, path, body }) {
+  const payload = `${timestamp}.${method.toUpperCase()}.${path}.${body}`;
   return createHmac("sha256", secret).update(payload).digest("hex");
 }
 
-export async function chatApiRequest(uri, { method = "GET", body } = {}) {
+function normalizeQuery(query) {
+  if (!query) return "";
+  if (typeof query === "string") return query.replace(/^\?/, "");
+  if (query instanceof URLSearchParams) return query.toString();
+  if (Array.isArray(query)) return new URLSearchParams(query).toString();
+  return new URLSearchParams(query).toString();
+}
+
+export async function chatApiRequest(
+  path,
+  { method = "GET", body, query } = {},
+) {
   const config = getChatApiConfig();
   if (config.error) {
     return { ok: false, status: 503, data: null, error: config.error };
   }
 
   const normalizedMethod = method.toUpperCase();
+  const queryString = normalizeQuery(query);
+  const fullPath = queryString ? `${path}?${queryString}` : path;
   const requestBody = body === undefined ? "" : JSON.stringify(body);
   const timestamp = Math.floor(Date.now() / 1000).toString();
   const signature = createSignature({
     secret: config.secret,
     timestamp,
     method: normalizedMethod,
-    uri,
+    path,
     body: requestBody,
   });
 
   try {
-    const response = await fetch(`${config.baseUrl}${uri}`, {
+    const response = await fetch(`${config.baseUrl}${fullPath}`, {
       method: normalizedMethod,
       headers: {
         Accept: "application/json",
