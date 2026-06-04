@@ -10,6 +10,8 @@ use SinclearChat\Models\Room;
 
 final class MessageController
 {
+    /** Maximum length (in bytes) for the attachment_body base64 string (Next.js MAX_FILE_SIZE_KB ≈ 546 KB base64 + margin). */
+    public const MAX_ATTACHMENT_SIZE_BYTES = 600_000;
     public static function push(): Response
     {
         $rawBody = file_get_contents('php://input');
@@ -64,6 +66,12 @@ final class MessageController
         $attachmentBody = isset($input['attachment_body']) ? (string) $input['attachment_body'] : null;
         if ($attachmentBody === '') {
             $attachmentBody = null;
+        }
+
+        if ($attachmentBody !== null && strlen($attachmentBody) > self::MAX_ATTACHMENT_SIZE_BYTES) {
+            return Response::error(
+                'attachment_body too large (max ' . self::MAX_ATTACHMENT_SIZE_BYTES . ' bytes)'
+            );
         }
 
         try {

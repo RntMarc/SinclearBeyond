@@ -139,59 +139,83 @@ The application uses an opt-in/push-based notification system.
 
 # Image Processing
 
-All image uploads that are stored as base64 in a database column **MUST** use the shared utilities in `@/lib/images/imageProcessing` to ensure consistency, performance, and predictable storage size.
+The project uses a **two-tier image processing approach**: client-side Canvas preprocessing for all uploads, followed by optional server-side sharp/AVIF processing in API routes. This ensures predictable storage size while keeping the network payload small.
 
-### Server-Side Processing (sharp / AVIF)
+## Two-Tier Processing Pipeline
 
-**File:** `src/lib/images/imageProcessing.js`
-
-The `processImage(input, options)` and `processBase64Image(dataUrl, options)` functions handle:
-1. **AVIF conversion** — modern standard with better compression than JPEG.
-2. **Dimension limiting** — resizes if width/height exceed `MAX_WIDTH` (1920) / `MAX_HEIGHT` (1920).
-3. **Iterative compression** — reduces quality stepwise until the file is under `MAX_FILE_SIZE_KB` (500 KB).
-4. **Base64 encoding** — returns a ready-to-store `data:image/avif;base64,…` string.
-
-**Usage in API routes:**
-```js
-import { processBase64Image } from "@/lib/images/imageProcessing";
-
-// In POST/PATCH handler:
-const processed = await processBase64Image(body.image);
-db.insert(table).values({ image: processed });
-```
-
-Wrap the call in try/catch — the API should fall back to storing the original image if processing fails.
+| Layer | Where | Technology | Output | Purpose |
+|-------|-------|------------|--------|---------|
+| **Client** | Browser (Canvas) | `clientProcessImage()` | JPEG base64 data URL | Resize + compress before upload |
+| **Server** | API route (Node.js) | `processBase64Image()` | AVIF base64 data URL | Convert to optimal format for DB storage |
 
 ### Client-Side Preprocessing (Canvas)
 
-Before a file is sent to the API, client components MUST preprocess images with the Canvas API to:
-- Resize to max 1920×1920 (avoid sending huge originals over the network).
-- Compress as JPEG at 80 % quality.
-- Show a loading indicator during processing (use a `processingImage` state + `Loader2` spinner).
+**File:** `src/lib/images/clientImageProcessing.js`
 
-**Pattern (RecipeFormModal.js as reference):**
+The `clientProcessImage(file)` function runs in the browser before any image is sent to the server:
+1. Resizes to max **1920×1920** pixels (avoids sending huge originals).
+2. Compresses as **JPEG at 80% quality**.
+3. Returns a base64 data URL ready for upload.
+
+**When to use:** Every client component that accepts image uploads. This MUST be used to reduce network payload before sending to any API route.
+
+**Usage in client components:**
 ```js
+import { clientProcessImage } from "@/lib/images/clientImageProcessing";
+
 const [processingImage, setProcessingImage] = useState(false);
 
 async function handleImageUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  setImagePreview(URL.createObjectURL(file));
   setProcessingImage(true);
   try {
     const processed = await clientProcessImage(file);
-    setForm({ ...form, image: processed });
+    // send `processed` to the API
   } catch {
-    // fallback to FileReader
+    // fallback
   } finally {
     setProcessingImage(false);
   }
 }
 ```
 
+### Server-Side Processing (sharp / AVIF)
+
+**File:** `src/lib/images/imageProcessing.js`
+
+The `processBase64Image(dataUrl, options)` function runs in API routes (server-only, uses `sharp`):
+1. Converts to **AVIF** (modern format with better compression than JPEG).
+2. Resizes if dimensions exceed **MAX_WIDTH (500)** / **MAX_HEIGHT (500)**.
+3. Iteratively reduces quality until file is under **MAX_FILE_SIZE_KB (400 KB)**.
+4. Returns `data:image/avif;base64,…` string ready for database storage.
+
+**When to use:** Only in Next.js API routes (server-side) that store images in the database. This is the final processing step before persistence.
+
+**Usage in API routes:**
+```js
+import { processBase64Image } from "@/lib/images/imageProcessing";
+
+const processed = await processBase64Image(body.image);
+db.insert(table).values({ image: processed });
+```
+
+Wrap the call in try/catch — fall back to storing the original image if processing fails.
+
+### Why Two Tiers?
+- **Client-side** (JPEG, 1920×1920) keeps network payloads small — the user uploads a 10 MB photo, Canvas shrinks it to ~200-500 KB before the HTTP request.
+- **Server-side** (AVIF, 500×500, quality-optimized) ensures all stored images are under 400 KB regardless of input format or quality differences between browsers.
+- The client tier is **always required**; the server tier is **always required for final DB writes** in Next.js API routes.
+
+### PHP Chat Backend Validation
+
+The PHP chat backend (`.chat/`) does NOT run the sharp pipeline. Client-processed images are stored as-is in the `attachment_body` column. To prevent oversized payloads, the API endpoint **MUST validate** that `attachment_body` does not exceed a reasonable size limit (slightly above the Next.js `MAX_FILE_SIZE_KB` to account for encoding and calculation differences).
+
 ### Rules for AI Agents
-1. **Always use the lib:** Never store raw user-uploaded base64 directly. Always pass it through `processBase64Image()` in API routes.
-2. **Client-side preprocessing:** Always use Canvas-based resize + compress before sending to reduce payload.
-3. **Loading state:** Always show a spinner/indicator while the client-side processing is running (key: `processingImage` in the locale files).
-4. **Fail gracefully:** If server-side processing fails, log the error and store the original image to avoid blocking the user.
+1. **Always use both tiers:** Client-side Canvas preprocessing (`clientProcessImage`) for the upload, then server-side sharp processing (`processBase64Image`) for the database write — except in the PHP chat backend which stores client-processed images directly.
+2. **Client-side preprocessing:** Always import from `@/lib/images/clientImageProcessing`. Never use `sharp` (server-only) in client components.
+3. **Server-side processing:** Always import from `@/lib/images/imageProcessing`. Only use in API routes, never in client components.
+4. **Loading state:** Always show a spinner/indicator while client-side processing is running (i18n key: `processingImage`).
+5. **Fail gracefully on server:** If `processBase64Image()` fails, log the error and store the original (client-processed) image to avoid blocking the user.
+6. **PHP backend validation:** When creating or editing chat message endpoints in `.chat/`, always validate that `attachment_body` length does not exceed `MAX_ATTACHMENT_SIZE_BYTES` (defined alongside the validation logic) to prevent oversized database entries.

@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { fetchAction } from "@/lib/asyncAction";
-import { processBase64Image } from "@/lib/images/imageProcessing";
+import { clientProcessImage } from "@/lib/images/clientImageProcessing";
 import { cn } from "@/lib/utils";
 
 const POLL_INTERVAL_ACTIVE_MS = 5_000;
@@ -292,21 +292,11 @@ export default function ChatClient({
     setShowAttachmentDrawer(false);
 
     try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const base64 = e.target.result;
-          const processed = await processBase64Image(base64);
-          setAttachmentUrl(processed);
-        } catch (error) {
-          console.error("Image processing failed:", error);
-        } finally {
-          setIsProcessingImage(false);
-        }
-      };
-      reader.readAsDataURL(file);
+      const processed = await clientProcessImage(file);
+      setAttachmentUrl(processed);
     } catch (error) {
-      console.error("File reading failed:", error);
+      console.error("Image processing failed:", error);
+    } finally {
       setIsProcessingImage(false);
     }
   };
