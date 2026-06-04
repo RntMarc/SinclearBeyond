@@ -13,7 +13,7 @@ final class Room
         $db = Database::getConnection();
         $stmt = $db->query(
             'SELECT id, name, description, ttl_days, created_at, updated_at
-             FROM chat_rooms
+             FROM ChatRooms
              ORDER BY name ASC'
         );
         return $stmt->fetchAll();
@@ -24,7 +24,7 @@ final class Room
         $db = Database::getConnection();
         $stmt = $db->prepare(
             'SELECT id, name, description, ttl_days, created_at, updated_at
-             FROM chat_rooms WHERE id = :id'
+             FROM ChatRooms WHERE id = :id'
         );
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
