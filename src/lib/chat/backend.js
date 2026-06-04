@@ -92,3 +92,11 @@ export async function chatApiRequest(
 export async function listChatRooms() {
   return chatApiRequest("/api/rooms");
 }
+
+export async function getChatRoom(id) {
+  return chatApiRequest(`/api/rooms/${id}`);
+}
+
+export async function listChatRoomMembers(id) {
+  return chatApiRequest(`/api/rooms/${id}/members`);
+}

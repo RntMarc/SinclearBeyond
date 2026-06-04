@@ -49,6 +49,15 @@ DO NOT use `utf8mb4_general_ci` or any other collation, as this will lead to run
 It is allowed to edit the schema of the database, if instructed to do so by the user. However, it is not allowed to do the migration after changing the schema. The user is responsible to migrate the database to the new schema after editing.
 Do not build any kind of fallback to support multiple schemas, always only build for the newest version of the schema - in case of editing it, the version you create. Just imagine the database to already be migrated to the newest schema change.
 
+### PHP Chat Migrations
+The database for the PHP chat backend is managed separately via SQL files in `.chat/migrations/`.
+1. **Never edit existing migration files:** Once a migration file is created and committed, it MUST NOT be modified.
+2. **Incremental Changes:** To change the database schema, you MUST create a NEW migration file (e.g., `003_xxx.sql`).
+3. **Delta only:** New migration files should only contain the specific `ALTER TABLE`, `CREATE TABLE`, etc., commands required to reach the next state from the previous one.
+4. **Naming:** Use the next available three-digit prefix (001, 002, 003...).
+
+*Note: This does not apply to the Drizzle migrations in the Next.js project, which are managed automatically and should not be modified or manually added by agents.*
+
 # Async Action Buttons (SubmitButton)
 
 To prevent race conditions, double-submits, and inconsistent loading UX, **every client-side button that triggers a database write** (POST/PATCH/DELETE/Server Action) MUST use the unified `SubmitButton` component (`src/components/ui/SubmitButton.js`) instead of a raw `<button>` or the legacy `SaveButton` (removed).

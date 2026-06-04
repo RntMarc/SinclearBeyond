@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
+import { eq, inArray } from "drizzle-orm";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { chatApiRequest } from "@/lib/chat/backend";
+import {
+  chatApiRequest,
+  getChatRoom,
+  listChatRoomMembers,
+} from "@/lib/chat/backend";
+import { db, safeQuery } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
+import { sendNotification } from "@/lib/notifications/service";
 
 const ALLOWED_CHAT_TYPES = new Set(["direct", "group"]);
 
@@ -86,13 +94,70 @@ export async function POST(request) {
   };
 
   if (typeof body?.attachment_url === "string" && body.attachment_url.trim()) {
-    payload.attachment_url = body.attachment_url.trim();
+    const attachment = body.attachment_url.trim();
+    if (attachment.startsWith("data:")) {
+      payload.attachment_type = "image";
+      payload.attachment_body = attachment;
+    } else {
+      payload.attachment_type = "link";
+      payload.attachment_body = attachment;
+    }
   }
 
   const result = await chatApiRequest("/api/messages", {
     method: "POST",
     body: payload,
   });
+
+  if (result.ok) {
+    try {
+      // Background: Send notifications to other participants
+      const senderId = session.sub;
+      const { data: senderData } = await safeQuery(
+        db
+          .select({ displayName: users.displayName })
+          .from(users)
+          .where(eq(users.id, senderId))
+          .limit(1),
+      );
+      const senderName = senderData?.[0]?.displayName || "Nutzer";
+
+      let recipients = [];
+      let notificationTitle = senderName;
+      let notificationLink = "/chat";
+
+      if (chatType === "group") {
+        const [roomRes, membersRes] = await Promise.all([
+          getChatRoom(chatId),
+          listChatRoomMembers(chatId),
+        ]);
+
+        if (roomRes.ok && membersRes.ok) {
+          notificationTitle = roomRes.data?.data?.name || "Gruppen-Chat";
+          recipients = (membersRes.data?.data || []).filter(
+            (id) => id !== senderId,
+          );
+          notificationLink = `/chat?room=${chatId}`;
+        }
+      } else {
+        recipients = [chatId];
+        notificationLink = `/chat?user=${senderId}`;
+      }
+
+      if (recipients.length > 0) {
+        await sendNotification({
+          userIds: recipients,
+          type: "chat",
+          entityId: chatId,
+          title: notificationTitle,
+          body: `${senderName}: ${messageBody}`,
+          link: notificationLink,
+        });
+      }
+    } catch (error) {
+      console.error("[ChatAPI] Notification error:", error);
+    }
+  }
 
   if (!result.ok) {
     return NextResponse.json(

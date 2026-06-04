@@ -79,6 +79,10 @@ $router->get('/api/rooms/{id}', function (array $params) {
     return RoomController::show($params);
 });
 
+$router->get('/api/rooms/{id}/members', function (array $params) {
+    return RoomController::members($params);
+});
+
 try {
     $response = $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
     $response->send();
