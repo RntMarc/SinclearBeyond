@@ -23,9 +23,16 @@ export async function POST(req) {
       );
     }
 
-    const id = crypto.randomUUID();
     const now = new Date();
 
+    // Delete existing subscription for this endpoint to avoid duplicates
+    await safeQuery(
+      db
+        .delete(pushSubscriptions)
+        .where(eq(pushSubscriptions.endpoint, endpoint)),
+    );
+
+    const id = crypto.randomUUID();
     const { error } = await safeQuery(
       db.insert(pushSubscriptions).values({
         id,
