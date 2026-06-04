@@ -21,12 +21,20 @@ final class Database
 
             $dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
 
-            self::$instance = new \PDO($dsn, $user, $pass, [
-                \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                \PDO::ATTR_EMULATE_PREPARES   => false,
-            ]);
-            self::$instance->exec("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
+            error_log("[SinclearChat] Connecting to DB: host=$host, port=$port, name=$name, user=$user");
+
+            try {
+                self::$instance = new \PDO($dsn, $user, $pass, [
+                    \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                    \PDO::ATTR_EMULATE_PREPARES   => false,
+                    \PDO::ATTR_TIMEOUT            => 5,
+                ]);
+                self::$instance->exec("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
+            } catch (\PDOException $e) {
+                error_log("[SinclearChat] DB Connection failed: " . $e->getMessage());
+                throw $e;
+            }
         }
 
         return self::$instance;
