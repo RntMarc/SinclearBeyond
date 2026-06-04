@@ -525,22 +525,35 @@ export default function ChatClient({
                         {author.displayName}
                       </p>
                     )}
-                    {message.attachment_url && (
-                      <a
-                        href={message.attachment_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mb-2 block overflow-hidden rounded-xl border border-current/20"
-                      >
-                        {/* biome-ignore lint/performance/noImgElement: user-supplied external attachment URL, next/image would require remote-pattern config */}
-                        <img
-                          src={message.attachment_url}
-                          alt=""
-                          className="max-h-64 w-full object-cover"
-                          loading="lazy"
-                        />
-                      </a>
-                    )}
+                    {message.attachment_type === "image" &&
+                      message.attachment_body && (
+                        <div className="mb-2 block overflow-hidden rounded-xl border border-current/20">
+                          {/* biome-ignore lint/performance/noImgElement: local data URL or optimized attachment */}
+                          <img
+                            src={message.attachment_body}
+                            alt=""
+                            className="max-h-64 w-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+                    {message.attachment_type === "link" &&
+                      message.attachment_body && (
+                        <a
+                          href={message.attachment_body}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mb-2 block overflow-hidden rounded-xl border border-current/20"
+                        >
+                          {/* biome-ignore lint/performance/noImgElement: external attachment URL */}
+                          <img
+                            src={message.attachment_body}
+                            alt=""
+                            className="max-h-64 w-full object-cover"
+                            loading="lazy"
+                          />
+                        </a>
+                      )}
                     <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
                       {message.body}
                     </p>

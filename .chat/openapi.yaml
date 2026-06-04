@@ -280,11 +280,16 @@ components:
           type: string
           description: Nachrichteninhalt
           example: "Hallo, wie geht's?"
-        attachment_url:
+        attachment_type:
           type: string
           nullable: true
-          description: Optionaler Anhang (z.B. Bild-URL)
-          example: "https://cdn.example.com/uploads/image.jpg"
+          description: "Typ des Anhangs (z.B. 'image', 'link')"
+          example: "image"
+        attachment_body:
+          type: string
+          nullable: true
+          description: "Inhalt des Anhangs (Base64-Bild, JSON oder URL)"
+          example: "data:image/avif;base64,..."
     MessageObject:
       type: object
       properties:
@@ -307,10 +312,14 @@ components:
         body:
           type: string
           example: "Hallo, wie geht's?"
-        attachment_url:
+        attachment_type:
           type: string
           nullable: true
-          example: "https://cdn.example.com/uploads/image.jpg"
+          example: "image"
+        attachment_body:
+          type: string
+          nullable: true
+          example: "data:image/avif;base64,..."
         created_at:
           type: string
           format: date-time

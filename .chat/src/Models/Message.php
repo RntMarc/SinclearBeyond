@@ -14,24 +14,26 @@ final class Message
         string $chatId,
         string $chatType,
         string $body,
-        ?string $attachmentUrl = null,
+        ?string $attachmentType = null,
+        ?string $attachmentBody = null,
     ): array {
         $db = Database::getConnection();
         $id = UuidV7::generate();
         $idBytes = UuidV7::toBytes($id);
 
         $stmt = $db->prepare(
-            'INSERT INTO ChatMessages (id, user_id, chat_id, chat_type, body, attachment_url)
-             VALUES (:id, :user_id, :chat_id, :chat_type, :body, :attachment_url)'
+            'INSERT INTO ChatMessages (id, user_id, chat_id, chat_type, body, attachment_type, attachment_body)
+             VALUES (:id, :user_id, :chat_id, :chat_type, :body, :attachment_type, :attachment_body)'
         );
 
         $stmt->execute([
-            ':id'             => $idBytes,
-            ':user_id'        => $userId,
-            ':chat_id'        => $chatId,
-            ':chat_type'      => $chatType,
-            ':body'           => $body,
-            ':attachment_url' => $attachmentUrl,
+            ':id'              => $idBytes,
+            ':user_id'         => $userId,
+            ':chat_id'         => $chatId,
+            ':chat_type'       => $chatType,
+            ':body'            => $body,
+            ':attachment_type' => $attachmentType,
+            ':attachment_body' => $attachmentBody,
         ]);
 
         return self::findById($id);
@@ -47,7 +49,7 @@ final class Message
         $idBytes = UuidV7::toBytes($id);
 
         $stmt = $db->prepare(
-            'SELECT id, user_id, chat_id, chat_type, body, attachment_url, created_at
+            'SELECT id, user_id, chat_id, chat_type, body, attachment_type, attachment_body, created_at
              FROM ChatMessages WHERE id = :id'
         );
         $stmt->execute([':id' => $idBytes]);
@@ -88,7 +90,7 @@ final class Message
         }
 
         $where = implode(' AND ', $conditions);
-        $sql = "SELECT id, user_id, chat_id, chat_type, body, attachment_url, created_at
+        $sql = "SELECT id, user_id, chat_id, chat_type, body, attachment_type, attachment_body, created_at
                 FROM ChatMessages WHERE {$where}
                 ORDER BY created_at DESC
                 LIMIT :limit";
@@ -137,7 +139,7 @@ final class Message
         }
 
         $where = implode(' AND ', $conditions);
-        $sql = "SELECT m.id, m.user_id, m.chat_id, m.chat_type, m.body, m.attachment_url, m.created_at
+        $sql = "SELECT m.id, m.user_id, m.chat_id, m.chat_type, m.body, m.attachment_type, m.attachment_body, m.created_at
                 FROM ChatMessages m WHERE {$where}
                 ORDER BY m.created_at DESC
                 LIMIT :limit";
@@ -171,13 +173,14 @@ final class Message
     private static function formatRow(array $row): array
     {
         return [
-            'id'             => bin2hex($row['id']),
-            'user_id'        => $row['user_id'],
-            'chat_id'        => $row['chat_id'],
-            'chat_type'      => $row['chat_type'],
-            'body'           => $row['body'],
-            'attachment_url' => $row['attachment_url'],
-            'created_at'     => self::formatTimestamp($row['created_at']),
+            'id'              => bin2hex($row['id']),
+            'user_id'         => $row['user_id'],
+            'chat_id'         => $row['chat_id'],
+            'chat_type'       => $row['chat_type'],
+            'body'            => $row['body'],
+            'attachment_type' => $row['attachment_type'],
+            'attachment_body' => $row['attachment_body'],
+            'created_at'      => self::formatTimestamp($row['created_at']),
         ];
     }
 

@@ -94,7 +94,14 @@ export async function POST(request) {
   };
 
   if (typeof body?.attachment_url === "string" && body.attachment_url.trim()) {
-    payload.attachment_url = body.attachment_url.trim();
+    const attachment = body.attachment_url.trim();
+    if (attachment.startsWith("data:")) {
+      payload.attachment_type = "image";
+      payload.attachment_body = attachment;
+    } else {
+      payload.attachment_type = "link";
+      payload.attachment_body = attachment;
+    }
   }
 
   const result = await chatApiRequest("/api/messages", {
