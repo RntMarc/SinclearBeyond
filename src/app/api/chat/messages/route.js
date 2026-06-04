@@ -1,5 +1,5 @@
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { eq, inArray } from "drizzle-orm";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import {

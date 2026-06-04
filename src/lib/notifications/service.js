@@ -26,10 +26,12 @@ export async function sendNotification({
 }) {
   if (!userIds || userIds.length === 0) return;
 
+  // Deduplicate userIds to prevent multiple notifications for the same user
+  const uniqueUserIds = [...new Set(userIds)];
   const now = new Date();
 
   // 1. Create in-app notifications in database
-  const notificationValues = userIds.map((userId) => {
+  const notificationValues = uniqueUserIds.map((userId) => {
     const id = crypto.randomUUID();
     return {
       id,
