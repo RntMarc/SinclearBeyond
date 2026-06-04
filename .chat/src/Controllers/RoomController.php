@@ -41,4 +41,21 @@ final class RoomController
             return Response::error('Failed to fetch room: ' . $e->getMessage(), 500);
         }
     }
+
+    public static function members(array $params): Response
+    {
+        $id = $params['id'] ?? '';
+
+        if ($id === '') {
+            return Response::error('Room ID is required');
+        }
+
+        try {
+            $members = Room::findMembers($id);
+            return Response::success(['data' => $members]);
+        } catch (\Throwable $e) {
+            error_log("[SinclearChat] Failed to fetch room members: " . $e->getMessage());
+            return Response::error('Failed to fetch room members: ' . $e->getMessage(), 500);
+        }
+    }
 }

@@ -1,0 +1,65 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 1050ms
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+
+○ Compiling /chat ...
+⨯ ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/detect-libc.js:6:22
+Module not found: Can't resolve 'child_process'
+  [90m4 |[0m [32m'use strict'[0m;
+  [90m5 |[0m
+[31m[1m>[0m [90m6 |[0m [36mconst[0m childProcess = require([32m'child_process'[0m);
+  [90m  |[0m                      [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mconst[0m { isLinux, getReport } = require([32m'./process'[0m);
+  [90m8 |[0m [36mconst[0m { [33mLDD_PATH[0m, [33mSELF_PATH[0m, readFile, readFileSync } = require([32m'./filesystem'[0m);
+  [90m9 |[0m [36mconst[0m { interpreterPath } = require([32m'./elf'[0m);
+
+
+
+Import trace:
+  Client Component Browser:
+    ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/detect-libc.js [Client Component Browser]
+    ./node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/utility.js [Client Component Browser]
+    ./node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/index.js [Client Component Browser]
+    ./src/lib/images/imageProcessing.js [Client Component Browser]
+    ./src/components/chat/ChatClient.js [Client Component Browser]
+    ./src/components/chat/ChatClient.js [Server Component]
+    ./src/app/chat/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/filesystem.js:6:12
+Module not found: Can't resolve 'fs'
+  [90m4 |[0m [32m'use strict'[0m;
+  [90m5 |[0m
+[31m[1m>[0m [90m6 |[0m [36mconst[0m fs = require([32m'fs'[0m);
+  [90m  |[0m            [31m[1m^^^^^^^^^^^^^[0m
+  [90m7 |[0m
+  [90m8 |[0m [36mconst[0m [33mLDD_PATH[0m = [32m'/usr/bin/ldd'[0m;
+  [90m9 |[0m [36mconst[0m [33mSELF_PATH[0m = [32m'/proc/self/exe'[0m;
+
+
+
+Import trace:
+  Client Component Browser:
+    ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/filesystem.js [Client Component Browser]
+    ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/detect-libc.js [Client Component Browser]
+    ./node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/utility.js [Client Component Browser]
+    ./node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/index.js [Client Component Browser]
+    ./src/lib/images/imageProcessing.js [Client Component Browser]
+    ./src/components/chat/ChatClient.js [Client Component Browser]
+    ./src/components/chat/ChatClient.js [Server Component]
+    ./src/app/chat/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ HEAD /chat 500 in 21.0s (next.js: 20.8s, application-code: 282ms)

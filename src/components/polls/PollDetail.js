@@ -195,7 +195,9 @@ export default function PollDetail({
                               .filter((o) => o.dateValue)
                               .map((o) => new Date(o.dateValue));
                             const years = [
-                              ...new Set(pollDates.map((pd) => pd.getFullYear())),
+                              ...new Set(
+                                pollDates.map((pd) => pd.getFullYear()),
+                              ),
                             ];
                             const showYear =
                               d.getFullYear() !== now.getFullYear() ||
@@ -466,7 +468,12 @@ export default function PollDetail({
                   </label>
                   <input
                     type="datetime-local"
-                    min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                    min={new Date(
+                      new Date().getTime() -
+                        new Date().getTimezoneOffset() * 60000,
+                    )
+                      .toISOString()
+                      .slice(0, 16)}
                     value={counterProposalDate}
                     onChange={(e) => setCounterProposalDate(e.target.value)}
                     className="w-full bg-background border border-sidebar-border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"

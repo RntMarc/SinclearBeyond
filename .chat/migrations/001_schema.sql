@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS ChatMessages (
     chat_id VARCHAR(255) NOT NULL,
     chat_type ENUM('direct', 'group') NOT NULL,
     body TEXT NOT NULL,
-    attachment_url VARCHAR(2048) DEFAULT NULL,
+    attachment_url LONGTEXT DEFAULT NULL,
     created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     INDEX idx_messages_chat (chat_type, chat_id, created_at),
     INDEX idx_messages_user (user_id, chat_type, chat_id),
