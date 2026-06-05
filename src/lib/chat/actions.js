@@ -1,3 +1,5 @@
+"use server";
+
 import { getSession } from "@/lib/auth/session";
 import { chatApiRequest } from "@/lib/chat/backend";
 
