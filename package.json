@@ -10,7 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "^0.8.9",
+    "@formatjs/intl-localematcher": "^0.8.10",
     "@simplewebauthn/browser": "^13.3.0",
     "@simplewebauthn/server": "^13.3.1",
     "@tiptap/extension-collaboration": "^3.25.0",
@@ -40,6 +40,7 @@
     "rate-limiter-flexible": "^11.1.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "server-only": "^0.0.1",
     "shadcn": "^4.10.0",
     "sharp": "^0.34.5",
     "simple-icons": "^16.22.0",

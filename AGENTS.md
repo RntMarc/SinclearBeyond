@@ -49,7 +49,26 @@ DO NOT use `utf8mb4_general_ci` or any other collation, as this will lead to run
 It is allowed to edit the schema of the database, if instructed to do so by the user. However, it is not allowed to do the migration after changing the schema. The user is responsible to migrate the database to the new schema after editing.
 Do not build any kind of fallback to support multiple schemas, always only build for the newest version of the schema - in case of editing it, the version you create. Just imagine the database to already be migrated to the newest schema change.
 
-### PHP Chat Migrations
+# Server / Client Boundary
+
+In the App Router, server-only modules (`db.js`, `auth/session.js`, anything that uses `next/headers` or `node:*` built-ins) MUST never end up in a client bundle. A leaking import causes build-time errors like "this API is only available in Server Components" and "Module not found: Can't resolve 'net'/'tls'".
+
+### Rules for AI Agents
+1. **Mark server-only modules explicitly.** Add `import "server-only";` as the first line of any module that:
+   - imports `next/headers` (`cookies`, `headers`, `draftMode`)
+   - imports the database layer (`@/lib/db/db`)
+   - uses Node built-ins (`node:crypto`, `node:fs`, …)
+   This converts a silent bundler error into a build-time error if a future component ever imports it from a client context.
+2. **Client components fetch server data via API routes — never via `import()` of server-only modules.** Inside a Client Component (`"use client"`) `useEffect`/`useCallback`/`useTransition`, do NOT use `await import("@/lib/.../actions")` to call helper functions that touch the database. The bundler will pull the module into the client graph even from a dynamic import. The canonical pattern is:
+   ```js
+   const res = await fetch("/api/whatever", { cache: "no-store" });
+   if (!res.ok) return;
+   const data = await res.json();
+   ```
+3. **Action files are either `"use server"` or they are not.** A file in `@/lib/*/actions.js` that imports the database or `next/headers` MUST start with `"use server"` — even if it is currently only called from API routes. The directive prevents client-side bleeding if a future component accidentally imports one of its helpers. Examples in this repo: `changelog/actions.js`, `forums/actions.js`, `travel/actions.js`, `calendar/actions.js`, `polls/actions.js`, `profile/birthdayActions.js`, `profile/profile.js`, and `chat/actions.js` (after fix).
+4. **Unified badge endpoint.** The sidebar unread badges are produced by `GET /api/notifications/badges`. New badge sources MUST be added there, not by adding more `await import(...)` blocks in `Appshell.js`.
+
+# PHP Chat Migrations
 The database for the PHP chat backend is managed separately via SQL files in `.chat/migrations/`.
 1. **Never edit existing migration files:** Once a migration file is created and committed, it MUST NOT be modified.
 2. **Incremental Changes:** To change the database schema, you MUST create a NEW migration file (e.g., `003_xxx.sql`).
