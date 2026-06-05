@@ -12,8 +12,8 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
 import SubmitButton from "@/components/ui/SubmitButton";
@@ -65,10 +65,11 @@ export default function ChatClient({
   const [selectedId, setSelectedId] = useState(() => {
     if (initialRoomId) return initialRoomId;
     if (initialUserId) return initialUserId;
-    return (initialRooms || [])[0]?.id || contacts?.[0]?.id || null;
+    return null;
   });
 
   const [showListOnMobile, setShowListOnMobile] = useState(!selectedId);
+  const [unreadCounts, setUnreadCounts] = useState({ group: {}, direct: {} });
   const [messages, setMessages] = useState([]);
   const [pagination, setPagination] = useState({
     has_more: false,
@@ -93,6 +94,59 @@ export default function ChatClient({
     () => messages.at(-1)?.created_at || null,
     [messages],
   );
+
+  const scrollToBottom = useCallback((force = false) => {
+    if (!scrollRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    // 100px tolerance
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+
+    if (force || isNearBottom) {
+      scrollRef.current.scrollTo({
+        top: scrollHeight,
+        behavior: force ? "auto" : "smooth",
+      });
+    }
+  }, []);
+
+  const markAsRead = useCallback(async () => {
+    if (!selectedId) return;
+    try {
+      await fetch("/api/chat/read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatId: selectedId, chatType: mode }),
+      });
+      // Update local unread counts
+      setUnreadCounts((prev) => {
+        const next = { ...prev };
+        if (mode === "group") {
+          const nextGroup = { ...next.group };
+          delete nextGroup[selectedId];
+          next.group = nextGroup;
+        } else {
+          const nextDirect = { ...next.direct };
+          delete nextDirect[selectedId];
+          next.direct = nextDirect;
+        }
+        return next;
+      });
+    } catch (error) {
+      console.error("Failed to mark chat as read", error);
+    }
+  }, [selectedId, mode]);
+
+  const loadUnreadCounts = useCallback(async () => {
+    try {
+      const res = await fetch("/api/chat/unread");
+      if (res.ok) {
+        const data = await res.json();
+        setUnreadCounts(data);
+      }
+    } catch (error) {
+      console.error("Failed to load unread counts", error);
+    }
+  }, []);
 
   const selectedQuery = useCallback(
     ({ after, before, limit = 50 } = {}) => {
@@ -147,10 +201,10 @@ export default function ChatClient({
       result.data?.pagination || { has_more: false, next_before: null },
     );
     requestAnimationFrame(() => {
-      if (scrollRef.current)
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollToBottom(true);
+      markAsRead();
     });
-  }, [selectedQuery, t]);
+  }, [selectedQuery, t, scrollToBottom, markAsRead]);
 
   const pollMessages = useCallback(async () => {
     if (!newestTimestamp) return;
@@ -163,14 +217,28 @@ export default function ChatClient({
     );
     if (result.ok) {
       const incoming = result.data?.data || [];
-      if (incoming.length > 0)
+      if (incoming.length > 0) {
         setMessages((current) => mergeMessages(current, incoming));
+        requestAnimationFrame(() => {
+          scrollToBottom();
+          // If we are at the bottom, mark as read
+          const { scrollTop, scrollHeight, clientHeight } =
+            scrollRef.current || {};
+          if (scrollHeight - scrollTop - clientHeight < 100) {
+            markAsRead();
+          }
+        });
+      }
     }
-  }, [newestTimestamp, selectedQuery, t]);
+  }, [newestTimestamp, selectedQuery, t, scrollToBottom, markAsRead]);
 
   useEffect(() => {
     pollRef.current = pollMessages;
   }, [pollMessages]);
+
+  useEffect(() => {
+    loadUnreadCounts();
+  }, [loadUnreadCounts]);
 
   useEffect(() => {
     if (!selectedId) return;
@@ -224,14 +292,12 @@ export default function ChatClient({
 
   const selectMode = (nextMode) => {
     setMode(nextMode);
-    const nextItems = nextMode === "group" ? rooms : contacts;
-    const nextId = nextItems[0]?.id || null;
-    setSelectedId(nextId);
+    setSelectedId(null);
     setMessages([]);
     setPagination({ has_more: false, next_before: null });
     setMessageError(null);
     requestTokenRef.current++;
-    if (!nextId) setShowListOnMobile(true);
+    setShowListOnMobile(true);
   };
 
   const loadOlderMessages = async () => {
@@ -384,38 +450,50 @@ export default function ChatClient({
             </div>
           ) : (
             <div className="space-y-2">
-              {activeItems.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setSelectedId(item.id)}
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all",
-                    selectedId === item.id
-                      ? "border-primary/60 bg-primary/10"
-                      : "border-transparent hover:border-border hover:bg-muted/60",
-                  )}
-                >
-                  {mode === "group" ? (
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Hash size={18} />
+              {activeItems.map((item) => {
+                const unreadCount =
+                  mode === "group"
+                    ? unreadCounts.group?.[item.id]
+                    : unreadCounts.direct?.[item.id];
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setSelectedId(item.id)}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all relative",
+                      selectedId === item.id
+                        ? "border-primary/60 bg-primary/10"
+                        : "border-transparent hover:border-border hover:bg-muted/60",
+                    )}
+                  >
+                    {unreadCount > 0 && (
+                      <span className="absolute top-3 right-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground animate-in zoom-in">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+                    {mode === "group" ? (
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <Hash size={18} />
+                      </div>
+                    ) : (
+                      <Avatar src={item.image} displayName={item.displayName} />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold text-foreground">
+                        {item.name || item.displayName}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {mode === "group"
+                          ? item.description ||
+                            t("ttl", { days: item.ttl_days ?? 30 })
+                          : item.email || tCommon("emailHidden")}
+                      </p>
                     </div>
-                  ) : (
-                    <Avatar src={item.image} displayName={item.displayName} />
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-foreground">
-                      {item.name || item.displayName}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {mode === "group"
-                        ? item.description ||
-                          t("ttl", { days: item.ttl_days ?? 30 })
-                        : item.email || tCommon("emailHidden")}
-                    </p>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -486,8 +564,15 @@ export default function ChatClient({
               {messageError}
             </div>
           ) : !selectedItem ? (
-            <div className="flex h-full items-center justify-center text-center text-muted-foreground">
-              {t("selectConversation")}
+            <div className="flex h-full items-center justify-center text-center text-muted-foreground px-8">
+              <div className="max-w-xs space-y-4">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+                  <MessageCircle size={32} />
+                </div>
+                <p className="text-sm font-medium leading-relaxed">
+                  {t("selectConversationPlaceholder")}
+                </p>
+              </div>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex h-full items-center justify-center text-center text-muted-foreground">
@@ -692,11 +777,11 @@ export default function ChatClient({
               />
             </div>
             <SubmitButton
-              icon={<Send size={16} />}
-              label={t("send")}
-              loadingLabel={tCommon("sending")}
-              successLabel={tCommon("sent")}
-              errorLabel={tCommon("error")}
+              icon={<Send size={18} />}
+              size="icon"
+              loadingLabel=""
+              successLabel=""
+              errorLabel=""
               onClick={sendMessage}
               onSuccess={(data) => {
                 const created = data?.message;
@@ -704,9 +789,8 @@ export default function ChatClient({
                   setMessages((current) => mergeMessages(current, [created]));
                 setMessageText("");
                 requestAnimationFrame(() => {
-                  if (scrollRef.current)
-                    scrollRef.current.scrollTop =
-                      scrollRef.current.scrollHeight;
+                  scrollToBottom(true);
+                  markAsRead();
                 });
               }}
               successToast={t("messageSent")}
@@ -714,8 +798,8 @@ export default function ChatClient({
               disabled={
                 !selectedItem || (!messageText.trim() && !attachmentUrl.trim())
               }
-              successDuration={800}
-              className="h-12 px-5"
+              successDuration={0}
+              className="h-12 w-12 shrink-0 rounded-2xl"
             />
           </div>
         </div>

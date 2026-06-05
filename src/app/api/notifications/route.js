@@ -228,6 +228,14 @@ export async function GET(req) {
         const user = dataContext.user?.[bUserId];
         title = `${t(`types.${n.type}`)}: ${user?.displayName || "Nutzer"}`;
         link = "/geburtstage";
+      } else if (n.type === "chat" && n.entityId) {
+        if (n.entityId.startsWith("group-")) {
+          const roomId = n.entityId.replace("group-", "");
+          link = `/chat?room=${roomId}`;
+        } else if (n.entityId.startsWith("direct-")) {
+          const userId = n.entityId.replace("direct-", "");
+          link = `/chat?user=${userId}`;
+        }
       }
     } catch (e) {
       console.error("Error enriching notification", e);

@@ -55,6 +55,7 @@ export default function AppShell({ children, user, session }) {
   const [unreadCalendar, setUnreadCalendar] = useState(0);
   const [unreadPolls, setUnreadPolls] = useState(0);
   const [unreadBirthdays, setUnreadBirthdays] = useState(0);
+  const [unreadChat, setUnreadChat] = useState(0);
 
   const [localUser, setLocalUser] = useState(user);
 
@@ -65,6 +66,7 @@ export default function AppShell({ children, user, session }) {
     unreadCalendar,
     unreadPolls,
     unreadBirthdays,
+    unreadChat,
   };
 
   useEffect(() => {
@@ -82,6 +84,7 @@ export default function AppShell({ children, user, session }) {
         const { getUnreadBirthdaysCount } = await import(
           "@/lib/profile/birthdayActions"
         );
+        const { getUnreadChatCount } = await import("@/lib/chat/actions");
         const [
           changelogCount,
           forumsCount,
@@ -89,6 +92,7 @@ export default function AppShell({ children, user, session }) {
           calendarCount,
           pollsCount,
           birthdaysCount,
+          chatCount,
         ] = await Promise.all([
           getUnreadChangelogCount(),
           getUnreadForumsCount(),
@@ -96,6 +100,7 @@ export default function AppShell({ children, user, session }) {
           getUnreadCalendarCount(),
           getUnreadPollsCount(),
           getUnreadBirthdaysCount(),
+          getUnreadChatCount(),
         ]);
         setUnreadChangelog(changelogCount);
         setUnreadForums(forumsCount);
@@ -103,6 +108,7 @@ export default function AppShell({ children, user, session }) {
         setUnreadCalendar(calendarCount);
         setUnreadPolls(pollsCount);
         setUnreadBirthdays(birthdaysCount);
+        setUnreadChat(chatCount);
       } catch (error) {
         console.error("Failed to fetch unread count", error);
       }
