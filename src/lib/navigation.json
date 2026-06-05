@@ -5,7 +5,12 @@
       "items": [
         { "href": "/home", "labelKey": "home", "icon": "Home" },
         { "href": "/aktuell", "labelKey": "news", "icon": "Newspaper" },
-        { "href": "/chat", "labelKey": "chat", "icon": "MessageCircle" },
+        {
+          "href": "/chat",
+          "labelKey": "chat",
+          "icon": "MessageCircle",
+          "badgeKey": "unreadChat"
+        },
         { "href": "/fotos", "labelKey": "photos", "icon": "Camera" }
       ]
     },
