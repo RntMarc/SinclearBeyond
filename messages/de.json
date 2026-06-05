@@ -1093,6 +1093,7 @@
     "groupSubtitle": "Gruppenchat",
     "directSubtitle": "Direktnachricht",
     "selectConversation": "Wähle links einen Chat aus.",
+    "selectConversationPlaceholder": "Öffne einen Chat, um die Nachrichten anzuzeigen",
     "emptyMessages": "Noch keine Nachrichten. Schreib die erste Nachricht.",
     "loadOlder": "Ältere Nachrichten laden",
     "messageSent": "Nachricht gesendet.",

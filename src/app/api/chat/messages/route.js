@@ -125,6 +125,7 @@ export async function POST(request) {
       let recipients = [];
       let notificationTitle = senderName;
       let notificationLink = "/chat";
+      let entityId = chatId;
 
       if (chatType === "group") {
         const [roomRes, membersRes] = await Promise.all([
@@ -138,17 +139,19 @@ export async function POST(request) {
             (id) => id !== senderId,
           );
           notificationLink = `/chat?room=${chatId}`;
+          entityId = `group-${chatId}`;
         }
       } else {
         recipients = [chatId];
         notificationLink = `/chat?user=${senderId}`;
+        entityId = `direct-${senderId}`;
       }
 
       if (recipients.length > 0) {
         await sendNotification({
           userIds: recipients,
           type: "chat",
-          entityId: chatId,
+          entityId: entityId,
           title: notificationTitle,
           body: `${senderName}: ${messageBody}`,
           link: notificationLink,
