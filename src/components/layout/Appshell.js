@@ -72,43 +72,18 @@ export default function AppShell({ children, user, session }) {
   useEffect(() => {
     async function checkUnread() {
       try {
-        const { getUnreadChangelogCount } = await import(
-          "@/lib/changelog/actions"
-        );
-        const { getUnreadForumsCount } = await import("@/lib/forums/actions");
-        const { getUnreadTravelCount } = await import("@/lib/travel/actions");
-        const { getUnreadCalendarCount } = await import(
-          "@/lib/calendar/actions"
-        );
-        const { getUnreadPollsCount } = await import("@/lib/polls/actions");
-        const { getUnreadBirthdaysCount } = await import(
-          "@/lib/profile/birthdayActions"
-        );
-        const { getUnreadChatCount } = await import("@/lib/chat/actions");
-        const [
-          changelogCount,
-          forumsCount,
-          travelCount,
-          calendarCount,
-          pollsCount,
-          birthdaysCount,
-          chatCount,
-        ] = await Promise.all([
-          getUnreadChangelogCount(),
-          getUnreadForumsCount(),
-          getUnreadTravelCount(),
-          getUnreadCalendarCount(),
-          getUnreadPollsCount(),
-          getUnreadBirthdaysCount(),
-          getUnreadChatCount(),
-        ]);
-        setUnreadChangelog(changelogCount);
-        setUnreadForums(forumsCount);
-        setUnreadTravel(travelCount);
-        setUnreadCalendar(calendarCount);
-        setUnreadPolls(pollsCount);
-        setUnreadBirthdays(birthdaysCount);
-        setUnreadChat(chatCount);
+        const res = await fetch("/api/notifications/badges", {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const counts = await res.json();
+        setUnreadChangelog(counts.unreadChangelog || 0);
+        setUnreadForums(counts.unreadForums || 0);
+        setUnreadTravel(counts.unreadTravel || 0);
+        setUnreadCalendar(counts.unreadCalendar || 0);
+        setUnreadPolls(counts.unreadPolls || 0);
+        setUnreadBirthdays(counts.unreadBirthdays || 0);
+        setUnreadChat(counts.unreadChat || 0);
       } catch (error) {
         console.error("Failed to fetch unread count", error);
       }
@@ -122,10 +97,12 @@ export default function AppShell({ children, user, session }) {
     async function fetchUser() {
       if (!user && session?.sub) {
         try {
-          const { getProfileData } = await import("@/lib/profile/profile");
-          const profile = await getProfileData(session);
-          if (profile) {
-            setLocalUser(profile.user);
+          const res = await fetch("/api/profile/me", { cache: "no-store" });
+          if (res.ok) {
+            const profile = await res.json();
+            if (profile?.user) {
+              setLocalUser(profile.user);
+            }
           }
         } catch (error) {
           console.error("Failed to fetch user data in AppShell", error);
