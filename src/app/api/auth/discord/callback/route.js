@@ -10,6 +10,7 @@ import {
   processDiscordAvatar,
 } from "@/lib/auth/discord";
 import { getSession } from "@/lib/auth/session";
+import { completeV2AuthFlowIfPresent } from "@/lib/auth/v2Flow";
 import { db, safeQuery } from "@/lib/db/db";
 import { contactInfo, users } from "@/lib/db/schema";
 import { normalizeOrigin, validateRelativeCallbackUrl } from "@/lib/utils";
@@ -263,6 +264,11 @@ async function createSessionAndRedirect(user, origin, callbackUrl) {
     maxAge: 60 * 60 * 24 * 7, // 7 days
     path: "/",
   });
+
+  const v2Flow = await completeV2AuthFlowIfPresent();
+  if (v2Flow?.redirect) {
+    return NextResponse.redirect(new URL(v2Flow.redirect));
+  }
 
   const validatedCallbackUrl = validateRelativeCallbackUrl(callbackUrl);
   return NextResponse.redirect(
