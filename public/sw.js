@@ -46,7 +46,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname.startsWith("/api/")) {
+  if (url.pathname.startsWith("/api/") && !url.pathname.startsWith("/api/auth/")) {
     event.respondWith(networkFirst(request));
     return;
   }
