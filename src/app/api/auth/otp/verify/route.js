@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { verifyOtp } from "@/lib/auth/otp";
 import { otpVerifyLimiter } from "@/lib/auth/rateLimiter";
+import { completeV2AuthFlowIfPresent } from "@/lib/auth/v2Flow";
 
 export async function POST(req) {
   const t = await getTranslations("Common");
@@ -27,5 +28,14 @@ export async function POST(req) {
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
   });
+
+  const v2Flow = await completeV2AuthFlowIfPresent();
+  if (v2Flow?.redirect) {
+    return NextResponse.json({
+      ok: true,
+      redirect: v2Flow.redirect,
+      user: result.user,
+    });
+  }
   return res;
 }

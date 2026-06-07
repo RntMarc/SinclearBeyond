@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { createSessionToken } from "@/lib/auth/auth";
 import { verifyAuthentication } from "@/lib/auth/passkey";
 import { passkeyLimiter } from "@/lib/auth/rateLimiter";
+import { completeV2AuthFlowIfPresent } from "@/lib/auth/v2Flow";
 import { getClientIp } from "@/lib/utils/ip";
 
 export async function POST(req) {
@@ -34,6 +35,10 @@ export async function POST(req) {
         maxAge: 60 * 60 * 24 * 7, // 7 days
       });
 
+      const v2Flow = await completeV2AuthFlowIfPresent();
+      if (v2Flow?.redirect) {
+        return NextResponse.json({ ok: true, redirect: v2Flow.redirect, user });
+      }
       return NextResponse.json({ ok: true });
     } else {
       return NextResponse.json({ error: t("error") }, { status: 400 });
