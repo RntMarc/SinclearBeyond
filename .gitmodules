@@ -1,3 +1,6 @@
 [submodule "SinclearChat"]
 	path = SinclearChat
 	url = https://github.com/RntMarc/SinclearChat
+[submodule "SinclearBeyondApp"]
+	path = SinclearBeyondApp
+	url = https://github.com/RntMarc/SinclearBeyondApp
