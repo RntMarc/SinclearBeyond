@@ -130,6 +130,11 @@ export default function LoginPage() {
       });
 
       if (verifyRes.ok) {
+        const data = await verifyRes.json().catch(() => ({}));
+        if (data.redirect) {
+          window.location.href = data.redirect;
+          return;
+        }
         const urlParams = new URLSearchParams(window.location.search);
         const callbackUrl = urlParams.get("callbackUrl");
         const validatedCallbackUrl = validateRelativeCallbackUrl(callbackUrl);
@@ -160,6 +165,11 @@ export default function LoginPage() {
     setLoading(false);
     if (!res.ok) {
       setError(t("errors.otp.invalid"));
+      return;
+    }
+    const data = await res.json().catch(() => ({}));
+    if (data.redirect) {
+      window.location.href = data.redirect;
       return;
     }
     const urlParams = new URLSearchParams(window.location.search);
