@@ -1,60 +1,28 @@
 "use server";
-import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import sharp from "sharp";
-import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { contactInfo, socialInfo, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function getProfileData(session) {
   if (!session?.sub) return null;
 
-  const { data: userData, error: userError } = await safeQuery(
-    db
-      .select({
-        id: users.id,
-        displayName: users.displayName,
-        email: users.email,
-        birthday: users.birthday,
-        birthdayVisibility: users.birthdayVisibility,
-        emailVisibility: users.emailVisibility,
-        discordId: users.discordId,
-        image: users.image,
-        onboardingCompleted: users.onboardingCompleted,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .where(eq(users.id, session.sub))
-      .limit(1),
-  );
+  const [userRes, contactRes, socialRes] = await Promise.all([
+    phpFetch(`/users/${session.sub}`),
+    phpFetch(`/contact-info/${session.sub}`), // Assuming this route based on generic CRUD
+    phpFetch(`/social-info/${session.sub}`), // Assuming this route based on generic CRUD
+  ]);
 
-  const { data: contactData, error: contactError } = await safeQuery(
-    db
-      .select()
-      .from(contactInfo)
-      .where(eq(contactInfo.userId, session.sub))
-      .limit(1),
-  );
-
-  const { data: socialData, error: socialError } = await safeQuery(
-    db
-      .select()
-      .from(socialInfo)
-      .where(eq(socialInfo.userId, session.sub))
-      .limit(1),
-  );
-
-  if (userError || contactError || socialError || !userData?.[0]) return null;
+  if (!userRes.ok) return null;
 
   return {
-    user: userData[0],
-    contact: contactData?.[0] ?? null,
-    social: socialData?.[0] ?? null,
+    user: userRes.data,
+    contact: contactRes.ok ? contactRes.data : null,
+    social: socialRes.ok ? socialRes.data : null,
   };
 }
 
 export async function saveProfile(_prevState, formData) {
-  const session = await getSession();
+  const session = await (await import("@/lib/auth/session")).getSession();
   if (!session?.sub) return { ok: false, error: "Nicht angemeldet." };
 
   try {
@@ -101,7 +69,7 @@ export async function saveProfile(_prevState, formData) {
     };
     if (displayName) userUpdate.displayName = displayName;
     if (birthday) {
-      userUpdate.birthday = new Date(birthday);
+      userUpdate.birthday = birthday;
     } else {
       userUpdate.birthday = null;
     }
@@ -120,37 +88,15 @@ export async function saveProfile(_prevState, formData) {
       userUpdate.image = `data:image/jpeg;base64,${processedBuffer.toString("base64")}`;
     }
 
-    const { error: userUpdateError } = await safeQuery(
-      db.update(users).set(userUpdate).where(eq(users.id, session.sub)),
-    );
-    if (userUpdateError) throw new Error("Update failed");
-
-    const { data: existingContactData, error: contactSelectError } =
-      await safeQuery(
-        db
-          .select()
-          .from(contactInfo)
-          .where(eq(contactInfo.userId, session.sub))
-          .limit(1),
-      );
-    if (contactSelectError) throw new Error("Select failed");
-    const existing = existingContactData?.[0];
-
-    const { data: userData, error: userSelectError } = await safeQuery(
-      db
-        .select({ discordId: users.discordId })
-        .from(users)
-        .where(eq(users.id, session.sub))
-        .limit(1),
-    );
-    if (userSelectError) throw new Error("Select failed");
-    const user = userData?.[0];
+    const userUpdateRes = await phpFetch(`/users/${session.sub}`, {
+      method: "PUT",
+      body: userUpdate,
+    });
+    if (!userUpdateRes.ok) throw new Error("User update failed");
 
     const contactData = {
-      discordHandle: user?.discordId ? existing?.discordHandle : discord,
+      discordHandle: discord,
       fluxerHandle: fluxer,
-      matrixUser: existing?.matrixUser ?? null,
-      matrixHomeserver: existing?.matrixHomeserver ?? null,
       signalNumber: signal,
       whatsappNumber: whatsapp,
       discordVisibility: discordVis,
@@ -160,35 +106,17 @@ export async function saveProfile(_prevState, formData) {
       whatsappVisibility: whatsappVis,
     };
 
-    if (existing) {
-      const { error: contactUpdateError } = await safeQuery(
-        db
-          .update(contactInfo)
-          .set(contactData)
-          .where(eq(contactInfo.id, existing.id)),
-      );
-      if (contactUpdateError) throw new Error("Update failed");
-    } else {
-      const { error: contactInsertError } = await safeQuery(
-        db.insert(contactInfo).values({
-          id: crypto.randomUUID(),
-          userId: session.sub,
-          ...contactData,
-        }),
-      );
-      if (contactInsertError) throw new Error("Insert failed");
+    const contactUpdateRes = await phpFetch(`/contact-info/${session.sub}`, {
+      method: "PUT",
+      body: contactData,
+    });
+    if (!contactUpdateRes.ok) {
+      // Try POST if PUT fails (might not exist yet)
+      await phpFetch("/contact-info", {
+        method: "POST",
+        body: { userId: session.sub, ...contactData },
+      });
     }
-
-    const { data: existingSocialData, error: socialSelectError } =
-      await safeQuery(
-        db
-          .select({ id: socialInfo.id })
-          .from(socialInfo)
-          .where(eq(socialInfo.userId, session.sub))
-          .limit(1),
-      );
-    if (socialSelectError) throw new Error("Select failed");
-    const existingSocial = existingSocialData?.[0];
 
     const socialData = {
       unsplashHandle: unsplash,
@@ -207,28 +135,21 @@ export async function saveProfile(_prevState, formData) {
       twitchVisibility: twitchVis,
     };
 
-    if (existingSocial) {
-      const { error: socialUpdateError } = await safeQuery(
-        db
-          .update(socialInfo)
-          .set(socialData)
-          .where(eq(socialInfo.id, existingSocial.id)),
-      );
-      if (socialUpdateError) throw new Error("Update failed");
-    } else {
-      const { error: socialInsertError } = await safeQuery(
-        db.insert(socialInfo).values({
-          id: crypto.randomUUID(),
-          userId: session.sub,
-          ...socialData,
-        }),
-      );
-      if (socialInsertError) throw new Error("Insert failed");
+    const socialUpdateRes = await phpFetch(`/social-info/${session.sub}`, {
+      method: "PUT",
+      body: socialData,
+    });
+    if (!socialUpdateRes.ok) {
+      await phpFetch("/social-info", {
+        method: "POST",
+        body: { userId: session.sub, ...socialData },
+      });
     }
 
     revalidatePath("/einstellungen");
     return { ok: true };
-  } catch {
+  } catch (error) {
+    console.error("[Profile] Save failed:", error);
     return { ok: false, error: "Speichern fehlgeschlagen." };
   }
 }

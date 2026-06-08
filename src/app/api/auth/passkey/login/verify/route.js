@@ -22,12 +22,30 @@ export async function POST(req) {
     const result = await verifyAuthentication(body);
 
     if (result.verified) {
-      const { user } = result;
-
-      const jwt = await createSessionToken(user);
+      const { user, token, refreshToken, expiresIn } = result;
 
       const cookieStore = await cookies();
-      cookieStore.set("session", jwt, {
+
+      cookieStore.set("accessToken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: expiresIn || 900,
+        path: "/",
+      });
+
+      if (refreshToken) {
+        cookieStore.set("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+          path: "/",
+        });
+      }
+
+      // Legacy session cookie for compatibility during migration
+      cookieStore.set("session", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
