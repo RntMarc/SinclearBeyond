@@ -1,108 +1,34 @@
-import crypto from "node:crypto";
-import { and, eq, gt, isNull, lt } from "drizzle-orm";
-import { createSessionToken } from "@/lib/auth/auth";
-import { sendOtpEmail } from "@/lib/auth/email";
-import { db, safeQuery } from "@/lib/db/db";
-import { otpTokens, users } from "@/lib/db/schema";
-
-async function purgeExpiredTokens() {
-  await safeQuery(
-    db.delete(otpTokens).where(lt(otpTokens.expiresAt, new Date())),
-  );
-}
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function requestOtp(email) {
-  const { data: usersData, error: userError } = await safeQuery(
-    db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1),
-  );
-
-  if (userError) throw userError;
-  const user = usersData?.[0];
-
-  if (!user) return { ok: false, error: "user_not_found" };
-
-  // Invalidate all prior unused tokens for this email
-  await safeQuery(
-    db
-      .delete(otpTokens)
-      .where(and(eq(otpTokens.email, email), isNull(otpTokens.usedAt))),
-  );
-
-  // Purge all expired tokens across all users
-  await purgeExpiredTokens();
-
-  const code = String(crypto.randomInt(100000, 999999));
-  const now = new Date();
-
-  const { error: insertError } = await safeQuery(
-    db.insert(otpTokens).values({
-      id: crypto.randomUUID(),
-      email,
-      code,
-      expiresAt: new Date(now.getTime() + 10 * 60 * 1000),
-      createdAt: now,
-    }),
-  );
-
-  if (insertError) throw insertError;
-
-  await sendOtpEmail(email, code).catch((err) => {
-    console.error("[OTP] sendOtpEmail failed:", err);
-    throw new Error("mail_send_failed");
+  const result = await phpFetch("/auth/otp/request", {
+    method: "POST",
+    body: { email },
   });
+
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
   return { ok: true };
 }
 
 export async function verifyOtp(email, code) {
-  const now = new Date();
+  const result = await phpFetch("/auth/otp/verify", {
+    method: "POST",
+    body: { email, code },
+  });
 
-  const { data: tokens, error: tokenError } = await safeQuery(
-    db
-      .select()
-      .from(otpTokens)
-      .where(
-        and(
-          eq(otpTokens.email, email),
-          eq(otpTokens.code, code),
-          gt(otpTokens.expiresAt, now),
-          isNull(otpTokens.usedAt),
-        ),
-      )
-      .limit(1),
-  );
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
 
-  if (tokenError) throw tokenError;
-  const token = tokens?.[0];
-
-  if (!token) return { ok: false, error: "invalid_or_expired" };
-
-  await safeQuery(
-    db.update(otpTokens).set({ usedAt: now }).where(eq(otpTokens.id, token.id)),
-  );
-
-  const { data: usersData, error: userError } = await safeQuery(
-    db.select().from(users).where(eq(users.email, email)).limit(1),
-  );
-
-  if (userError) throw userError;
-  const user = usersData?.[0];
-
-  if (!user) return { ok: false, error: "user_not_found" };
-
-  const jwt = await createSessionToken(user);
-
+  // result.data contains { accessToken, refreshToken, expiresIn, user }
   return {
     ok: true,
-    token: jwt,
-    user: {
-      id: user.id,
-      email: user.email,
-      displayName: user.displayName,
-      isAdmin: user.isAdmin,
-    },
+    token: result.data.accessToken,
+    refreshToken: result.data.refreshToken,
+    expiresIn: result.data.expiresIn,
+    user: result.data.user,
   };
 }

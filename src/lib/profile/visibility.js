@@ -1,6 +1,4 @@
-import { and, eq } from "drizzle-orm";
-import { db, safeQuery } from "@/lib/db/db";
-import { closeFriends } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export const CONTACT_FIELDS = [
   { key: "discordHandle", vis: "discordVisibility" },
@@ -55,22 +53,13 @@ export async function canSeePrivateInfo(targetUserId, currentUserId) {
   if (currentUserId === targetUserId) return true;
 
   // Der Ziel-Nutzer muss den aktuellen Nutzer als engen Freund markiert haben
-  const { data: friends, error } = await safeQuery(
-    db
-      .select()
-      .from(closeFriends)
-      .where(
-        and(
-          eq(closeFriends.userId, targetUserId),
-          eq(closeFriends.friendId, currentUserId),
-        ),
-      )
-      .limit(1),
+  const result = await phpFetch(
+    `/close-friends/${targetUserId}/${currentUserId}`,
   );
 
-  if (error) throw error;
+  if (!result.ok) return false;
 
-  return !!friends?.[0];
+  return !!result.data;
 }
 
 /**

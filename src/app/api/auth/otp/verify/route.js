@@ -21,6 +21,26 @@ export async function POST(req) {
     return NextResponse.json({ error: result.error }, { status: 401 });
 
   const res = NextResponse.json({ ok: true, user: result.user });
+
+  res.cookies.set("accessToken", result.token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: result.expiresIn || 900,
+    path: "/",
+  });
+
+  if (result.refreshToken) {
+    res.cookies.set("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+  }
+
+  // Legacy session cookie for compatibility during migration
   res.cookies.set("session", result.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
