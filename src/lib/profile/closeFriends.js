@@ -1,30 +1,17 @@
 "use server";
-import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { closeFriends, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function getCloseFriends() {
   const session = await getSession();
   if (!session?.sub) return [];
 
-  const { data: friends, error } = await safeQuery(
-    db
-      .select({
-        id: users.id,
-        displayName: users.displayName,
-        image: users.image,
-        closeFriendId: closeFriends.id,
-      })
-      .from(closeFriends)
-      .innerJoin(users, eq(closeFriends.friendId, users.id))
-      .where(eq(closeFriends.userId, session.sub)),
-  );
+  const result = await phpFetch(`/close-friends/${session.sub}`);
 
-  if (error) throw error;
+  if (!result.ok) return [];
 
-  return friends || [];
+  return result.data || [];
 }
 
 export async function addCloseFriend(friendId) {
@@ -35,31 +22,12 @@ export async function addCloseFriend(friendId) {
     return { ok: false, error: "Man kann sich nicht selbst hinzufügen" };
 
   try {
-    const { data: existingRows, error: fetchErr } = await safeQuery(
-      db
-        .select()
-        .from(closeFriends)
-        .where(
-          and(
-            eq(closeFriends.userId, session.sub),
-            eq(closeFriends.friendId, friendId),
-          ),
-        )
-        .limit(1),
-    );
+    const result = await phpFetch(`/close-friends/${session.sub}/${friendId}`, {
+        method: "POST",
+        body: { userId: session.sub, friendId }
+    });
 
-    if (fetchErr) throw fetchErr;
-    if (existingRows && existingRows.length > 0) return { ok: true };
-
-    const { error: inErr } = await safeQuery(
-      db.insert(closeFriends).values({
-        id: crypto.randomUUID(),
-        userId: session.sub,
-        friendId: friendId,
-        createdAt: new Date(),
-      }),
-    );
-    if (inErr) throw inErr;
+    if (!result.ok) throw new Error(result.error);
 
     revalidatePath("/einstellungen");
     return { ok: true };
@@ -74,17 +42,11 @@ export async function removeCloseFriend(friendId) {
   if (!session?.sub) return { ok: false, error: "Nicht angemeldet" };
 
   try {
-    const { error: delErr } = await safeQuery(
-      db
-        .delete(closeFriends)
-        .where(
-          and(
-            eq(closeFriends.userId, session.sub),
-            eq(closeFriends.friendId, friendId),
-          ),
-        ),
-    );
-    if (delErr) throw delErr;
+    const result = await phpFetch(`/close-friends/${session.sub}/${friendId}`, {
+      method: "DELETE",
+    });
+
+    if (!result.ok) throw new Error(result.error);
 
     revalidatePath("/einstellungen");
     return { ok: true };
