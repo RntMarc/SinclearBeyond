@@ -6,8 +6,10 @@ import { callInternalV2Endpoint } from "@/lib/auth/internalV2";
  * Called by login success handlers (OTP verify, Passkey verify, Discord callback).
  * If a `v2_auth_flow` cookie is present, issues an auth code and returns the
  * redirect target for the native client. Otherwise returns null.
+ *
+ * @param {object} [providedSession] Optional session object to avoid /auth/me call
  */
-export async function completeV2AuthFlowIfPresent() {
+export async function completeV2AuthFlowIfPresent(providedSession) {
   const cookieStore = await cookies();
   const flowCookie = cookieStore.get("v2_auth_flow")?.value;
 
@@ -26,8 +28,12 @@ export async function completeV2AuthFlowIfPresent() {
     return null;
   }
 
-  const { getSession } = await import("@/lib/auth/session");
-  const session = await getSession();
+  let session = providedSession;
+  if (!session) {
+    const { getSession } = await import("@/lib/auth/session");
+    session = await getSession();
+  }
+
   if (!session?.sub) {
     return null;
   }

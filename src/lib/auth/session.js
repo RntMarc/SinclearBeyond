@@ -1,5 +1,4 @@
 import "server-only";
-import { cookies } from "next/headers";
 import { phpFetch } from "@/lib/api/phpClient";
 
 /**
@@ -14,8 +13,9 @@ export async function getSession() {
 
   // result.data.data contains the user object
   const user = result.data.data;
+  const prefs = user.preferences || {};
 
-  // Adapt to the format expected by the rest of the app (sub, email, isAdmin, etc.)
+  // Adapt to the format expected by the rest of the app
   return {
     sub: user.id,
     id: user.id,
@@ -24,9 +24,9 @@ export async function getSession() {
     isAdmin: user.isAdmin,
     onboardingCompleted: user.onboardingCompleted,
     image: user.image,
-    // Note: theme/language/primaryColor/timezone were previously in the JWT.
-    // They might need to be fetched separately if needed globally,
-    // or we might need /auth/me to return them.
-    // For now, I'll keep them as defaults or try to get them from user-preferences.
+    language: prefs.language || "de",
+    theme: prefs.theme || "dark",
+    primaryColor: prefs.primaryColor || "#7c3aed",
+    timezone: prefs.timezone || null,
   };
 }

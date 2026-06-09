@@ -11,7 +11,9 @@ export async function GET() {
   const result = await phpFetch(`/user-preferences/${session.sub}`);
 
   if (!result.ok) {
-    return NextResponse.json({ theme: "dark", primaryColor: "#7c3aed" });
+     return NextResponse.json(
+       { theme: "dark", primaryColor: "#7c3aed" },
+     );
   }
 
   return NextResponse.json(result.data);
@@ -30,11 +32,10 @@ export async function POST(req) {
   });
 
   if (!updateResult.ok) {
-    // Try POST if PUT fails
-    await phpFetch("/user-preferences", {
-      method: "POST",
-      body: { userId: session.sub, ...body },
-    });
+     await phpFetch("/user-preferences", {
+       method: "POST",
+       body: { id: session.sub, ...body },
+     });
   }
 
   const cookieStore = await cookies();
@@ -47,10 +48,6 @@ export async function POST(req) {
       sameSite: "lax",
     });
   }
-
-  // Session handling for preferences is now tricky because we don't have a local JWT to update.
-  // The phpFetch calls use accessToken from cookies.
-  // We'll rely on the next getSession() call fetching from PHP API.
 
   return NextResponse.json({ success: true });
 }

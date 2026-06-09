@@ -49,7 +49,11 @@ export async function POST(req) {
     path: "/",
   });
 
-  const v2Flow = await completeV2AuthFlowIfPresent();
+  const v2Flow = await completeV2AuthFlowIfPresent({
+    sub: result.user.id,
+    id: result.user.id,
+    email: result.user.email,
+  });
   if (v2Flow?.redirect) {
     return NextResponse.json({
       ok: true,
