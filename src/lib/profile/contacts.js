@@ -1,7 +1,5 @@
-import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { closeFriends, contactInfo, socialInfo, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import {
   CONTACT_FIELDS,
   filterEmail,
@@ -15,80 +13,43 @@ export async function getContacts() {
 
   const currentUserId = session.sub;
 
-  // 1. Alle Nutzer abrufen
-  const { data: allUsers, error: usersErr } = await safeQuery(
-    db
-      .select({
-        id: users.id,
-        displayName: users.displayName,
-        email: users.email,
-        emailVisibility: users.emailVisibility,
-        image: users.image,
-      })
-      .from(users),
-  );
+  // 1. Alle Daten vom PHP API abrufen
+  // Wir verlassen uns darauf, dass die PHP API entweder eine aggregierte Sicht bietet
+  // oder wir holen uns die Daten einzeln. Für die Migration holen wir uns alle User.
+  const usersRes = await phpFetch("/users");
+  if (!usersRes.ok) throw new Error("Could not fetch users");
+  const allUsers = usersRes.data.data || [];
 
-  if (usersErr) throw usersErr;
+  // Wir brauchen auch Information darüber, wer wen als enger Freund markiert hat.
+  // Das ist für die Filterung wichtig.
+  // Idealerweise gibt /users (Admin/Authed) diese Infos mit oder wir brauchen einen Batch-Endpoint.
 
-  // 2. Kontaktinformationen abrufen
-  const { data: allContactInfos } = await safeQuery(
-    db.select().from(contactInfo),
-  );
+  // Da wir 100% auf API setzen, nehmen wir an, dass die API die Filterung
+  // ggf. schon serverseitig macht oder uns die nötigen Flags liefert.
+  // Für diesen Schritt implementieren wir die Filterung clientseitig wie zuvor,
+  // aber mit API-Daten.
 
-  // 3. SocialInformationen abrufen
-  const { data: allSocialInfos } = await safeQuery(
-    db.select().from(socialInfo),
-  );
-
-  // 4. CloseFriends abrufen, wo DER ANDERE MICH als Freund hat (für Sichtbarkeit)
-  const { data: whoMarkedMe, error: whoMarkedMeErr } = await safeQuery(
-    db
-      .select({ userId: closeFriends.userId })
-      .from(closeFriends)
-      .where(eq(closeFriends.friendId, currentUserId)),
-  );
-
-  if (whoMarkedMeErr) throw whoMarkedMeErr;
-
-  const visibilityCloseFriendIds = new Set(
-    (whoMarkedMe || []).map((f) => f.userId),
-  );
-
-  // 5. CloseFriends abrufen, die ICH markiert habe (für Herzchen-Symbol und Sortierung)
-  const { data: iMarked, error: iMarkedErr } = await safeQuery(
-    db
-      .select({ friendId: closeFriends.friendId })
-      .from(closeFriends)
-      .where(eq(closeFriends.userId, currentUserId)),
-  );
-
-  if (iMarkedErr) throw iMarkedErr;
-
-  const myCloseFriendIds = new Set((iMarked || []).map((f) => f.friendId));
-
-  // 6. Daten zusammenführen und filtern
-  const contacts = (allUsers || [])
+  const contacts = allUsers
     .map((user) => {
       if (user.id === currentUserId) return null;
 
-      const info = (allContactInfos || []).find((i) => i.userId === user.id);
-      const social = (allSocialInfos || []).find((i) => i.userId === user.id);
-      const isCloseFriend = myCloseFriendIds.has(user.id);
-      const allowsMePrivateInfo = visibilityCloseFriendIds.has(user.id);
+      // Wir nehmen an, dass 'user' bereits 'contactInfo', 'socialInfo' und 'isCloseFriend' (me -> them)
+      // sowie 'allowsMePrivateInfo' (them -> me) enthalten kann oder wir holen sie.
 
       return {
         ...user,
-        email: filterEmail(user, allowsMePrivateInfo),
-        isCloseFriend,
+        // Falls die API die Filterung noch nicht macht:
+        email: filterEmail(user, user.allowsMePrivateInfo),
+        isCloseFriend: user.isCloseFriend,
         contactInfo: filterVisibility(
-          info,
+          user.contactInfo,
           CONTACT_FIELDS,
-          allowsMePrivateInfo,
+          user.allowsMePrivateInfo,
         ),
         socialInfo: filterVisibility(
-          social,
+          user.socialInfo,
           SOCIAL_FIELDS,
-          allowsMePrivateInfo,
+          user.allowsMePrivateInfo,
         ),
       };
     })

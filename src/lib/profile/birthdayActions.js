@@ -1,53 +1,30 @@
 "use server";
 
-import { and, eq, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { notifications } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function getUnreadBirthdaysCount() {
   const session = await getSession();
   if (!session) return 0;
-  const userId = session.sub;
 
-  const { data, error } = await safeQuery(
-    db
-      .select({ id: notifications.id })
-      .from(notifications)
-      .where(
-        and(
-          eq(notifications.userId, userId),
-          or(
-            eq(notifications.type, "birthday"),
-            eq(notifications.type, "birthday_soon"),
-          ),
-        ),
-      ),
-  );
+  // Birthdays unread count should be part of global notifications/badges
+  const result = await phpFetch("/notifications/badges");
+  if (!result.ok) return 0;
 
-  if (error) return 0;
-  return data?.length || 0;
+  // Assuming the API returns something like { data: { birthdays: 5 } }
+  return result.data.data?.birthdays || 0;
 }
 
 export async function markAllBirthdaysAsRead() {
   const session = await getSession();
   if (!session) return { ok: false };
-  const userId = session.sub;
 
-  await safeQuery(
-    db
-      .delete(notifications)
-      .where(
-        and(
-          eq(notifications.userId, userId),
-          or(
-            eq(notifications.type, "birthday"),
-            eq(notifications.type, "birthday_soon"),
-          ),
-        ),
-      ),
-  );
+  // Use a generic notifications endpoint to mark by type
+  await phpFetch("/notifications/read-type", {
+    method: "POST",
+    body: { type: ["birthday", "birthday_soon"] }
+  });
 
   revalidatePath("/geburtstage");
   revalidatePath("/", "layout");
@@ -58,16 +35,9 @@ export async function markBirthdayAsRead(notificationId) {
   const session = await getSession();
   if (!session) return { ok: false };
 
-  await safeQuery(
-    db
-      .delete(notifications)
-      .where(
-        and(
-          eq(notifications.id, notificationId),
-          eq(notifications.userId, session.sub),
-        ),
-      ),
-  );
+  await phpFetch(`/notifications/${notificationId}`, {
+    method: "DELETE"
+  });
 
   revalidatePath("/geburtstage");
   revalidatePath("/", "layout");

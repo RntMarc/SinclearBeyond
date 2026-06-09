@@ -4,6 +4,8 @@
 - `/user-preferences/{userId}`: GET/PUT/POST for managing user preferences.
 - `/contact-info/{userId}`: GET/PUT/POST for managing contact information.
 - `/social-info/{userId}`: GET/PUT/POST for managing social information.
-- `/close-friends/{userId}/{friendId}`: GET to check if a user is a close friend (needed for visibility checks).
+- `/close-friends/{userId}/{friendId}`: GET to check, POST to add, DELETE to remove close friends.
+- `/close-friends/{userId}`: GET to list all close friends of a user.
 - Profile picture handling: Ensure `PUT /users/{id}` accepts the `image` field (base64).
-- `/auth/login`: POST with email/password to get tokens (if still supported/needed alongside OTP/Passkey).
+- `/auth/login`: POST with email/password to get tokens.
+- `/notifications/read-type`: POST with `{ type: string[] }` to mark specific notification types as read.
