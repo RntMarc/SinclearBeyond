@@ -53,7 +53,11 @@ export async function POST(req) {
         maxAge: 60 * 60 * 24 * 7, // 7 days
       });
 
-      const v2Flow = await completeV2AuthFlowIfPresent();
+      const v2Flow = await completeV2AuthFlowIfPresent({
+        sub: user.id,
+        id: user.id,
+        email: user.email,
+      });
       if (v2Flow?.redirect) {
         return NextResponse.json({ ok: true, redirect: v2Flow.redirect, user });
       }

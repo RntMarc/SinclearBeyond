@@ -8,8 +8,8 @@ export async function getProfileData(session) {
 
   const [userRes, contactRes, socialRes] = await Promise.all([
     phpFetch(`/users/${session.sub}`),
-    phpFetch(`/contact-info/${session.sub}`), // Assuming this route based on generic CRUD
-    phpFetch(`/social-info/${session.sub}`), // Assuming this route based on generic CRUD
+    phpFetch(`/contact-info/${session.sub}`),
+    phpFetch(`/social-info/${session.sub}`),
   ]);
 
   if (!userRes.ok) return null;
@@ -111,11 +111,10 @@ export async function saveProfile(_prevState, formData) {
       body: contactData,
     });
     if (!contactUpdateRes.ok) {
-      // Try POST if PUT fails (might not exist yet)
-      await phpFetch("/contact-info", {
-        method: "POST",
-        body: { userId: session.sub, ...contactData },
-      });
+       await phpFetch("/contact-info", {
+         method: "POST",
+         body: { id: session.sub, ...contactData }, // Changed userId to id as per param {id} in POST path
+       });
     }
 
     const socialData = {
@@ -140,10 +139,10 @@ export async function saveProfile(_prevState, formData) {
       body: socialData,
     });
     if (!socialUpdateRes.ok) {
-      await phpFetch("/social-info", {
-        method: "POST",
-        body: { userId: session.sub, ...socialData },
-      });
+        await phpFetch("/social-info", {
+          method: "POST",
+          body: { id: session.sub, ...socialData },
+        });
     }
 
     revalidatePath("/einstellungen");

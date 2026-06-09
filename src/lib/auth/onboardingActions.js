@@ -1,12 +1,8 @@
 "use server";
-import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { createSessionToken } from "@/lib/auth/auth";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
 import { saveProfile } from "@/lib/profile/profile";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function completeOnboarding(formData) {
   const session = await getSession();
@@ -22,63 +18,33 @@ export async function completeOnboarding(formData) {
     const timezone = formData.get("timezone")?.toString();
 
     if (language || timezone) {
-      const { userPreferences } = await import("@/lib/db/schema");
       const prefData = {};
       if (language) prefData.language = language;
       if (timezone) prefData.timezone = timezone;
 
-      const { data: existingPrefs } = await safeQuery(
-        db
-          .select()
-          .from(userPreferences)
-          .where(eq(userPreferences.userId, session.sub))
-          .limit(1),
-      );
+      const updatePrefRes = await phpFetch(`/user-preferences/${session.sub}`, {
+        method: "PUT",
+        body: prefData,
+      });
 
-      if (existingPrefs && existingPrefs.length > 0) {
-        await safeQuery(
-          db
-            .update(userPreferences)
-            .set(prefData)
-            .where(eq(userPreferences.userId, session.sub)),
-        );
-      } else {
-        await safeQuery(
-          db.insert(userPreferences).values({
-            id: crypto.randomUUID(),
-            userId: session.sub,
-            ...prefData,
-          }),
-        );
+      if (!updatePrefRes.ok) {
+          await phpFetch("/user-preferences", {
+            method: "POST",
+            body: { userId: session.sub, ...prefData },
+          });
       }
     }
 
     // Mark onboarding as completed
-    const { error } = await safeQuery(
-      db
-        .update(users)
-        .set({ onboardingCompleted: 1 })
-        .where(eq(users.id, session.sub)),
-    );
+    const userUpdateRes = await phpFetch(`/users/${session.sub}`, {
+      method: "PUT",
+      body: { onboardingCompleted: true },
+    });
 
-    if (error) throw error;
+    if (!userUpdateRes.ok) throw new Error("User update failed");
 
-    // Refresh the session cookie with the updated onboarding status
-    const { data: updatedUserData } = await safeQuery(
-      db.select().from(users).where(eq(users.id, session.sub)).limit(1),
-    );
-
-    if (updatedUserData?.[0]) {
-      const newToken = await createSessionToken(updatedUserData[0]);
-      const cookieStore = await cookies();
-      cookieStore.set("session", newToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-        path: "/",
-      });
-    }
+    // In the new system, session is fetched from /auth/me on each request or as needed.
+    // We don't manually recreate a local JWT here anymore.
 
     revalidatePath("/");
     return { ok: true };
