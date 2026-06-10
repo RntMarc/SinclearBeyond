@@ -28,10 +28,10 @@ export async function completeOnboarding(formData) {
       });
 
       if (!updatePrefRes.ok) {
-          await phpFetch("/user-preferences", {
-            method: "POST",
-            body: { userId: session.sub, ...prefData },
-          });
+        await phpFetch("/user-preferences", {
+          method: "POST",
+          body: { userId: session.sub, ...prefData },
+        });
       }
     }
 

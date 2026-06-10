@@ -11,9 +11,7 @@ export async function GET() {
   const result = await phpFetch(`/user-preferences/${session.sub}`);
 
   if (!result.ok) {
-     return NextResponse.json(
-       { theme: "dark", primaryColor: "#7c3aed" },
-     );
+    return NextResponse.json({ theme: "dark", primaryColor: "#7c3aed" });
   }
 
   return NextResponse.json(result.data);
@@ -32,10 +30,10 @@ export async function POST(req) {
   });
 
   if (!updateResult.ok) {
-     await phpFetch("/user-preferences", {
-       method: "POST",
-       body: { id: session.sub, ...body },
-     });
+    await phpFetch("/user-preferences", {
+      method: "POST",
+      body: { id: session.sub, ...body },
+    });
   }
 
   const cookieStore = await cookies();

@@ -19,10 +19,14 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
+    console.log("[Passkey Login Verify] Attempting verification");
     const result = await verifyAuthentication(body);
 
     if (result.verified) {
       const { user, token, refreshToken, expiresIn } = result;
+      console.log(
+        `[Passkey Login Verify] Verification successful for user: ${user?.id}`,
+      );
 
       const cookieStore = await cookies();
 
@@ -63,10 +67,11 @@ export async function POST(req) {
       }
       return NextResponse.json({ ok: true });
     } else {
+      console.warn("[Passkey Login Verify] Verification failed");
       return NextResponse.json({ error: t("error") }, { status: 400 });
     }
   } catch (err) {
-    console.error(err);
+    console.error("[Passkey Login Verify] Exception:", err);
     return NextResponse.json(
       { error: err.message || t("error") },
       { status: 500 },

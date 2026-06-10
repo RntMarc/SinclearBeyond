@@ -23,8 +23,8 @@ export async function addCloseFriend(friendId) {
 
   try {
     const result = await phpFetch(`/close-friends/${session.sub}/${friendId}`, {
-        method: "POST",
-        body: { userId: session.sub, friendId }
+      method: "POST",
+      body: { userId: session.sub, friendId },
     });
 
     if (!result.ok) throw new Error(result.error);

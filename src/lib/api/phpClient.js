@@ -21,6 +21,13 @@ export async function phpFetch(
 
   const url = `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[PHP API] Request: ${method} ${url}`, {
+      headers: { ...defaultHeaders, ...headers },
+      body,
+    });
+  }
+
   try {
     const response = await fetch(url, {
       method,
@@ -35,13 +42,21 @@ export async function phpFetch(
 
     // Handle token refresh if 401
     if (response.status === 401 && !path.includes("/auth/refresh")) {
+      console.warn(
+        `[PHP API] 401 Unauthorized for ${url}, attempting refresh...`,
+      );
       const refreshToken = cookieStore.get("refreshToken")?.value;
       if (refreshToken) {
         const refreshed = await refreshTokens(refreshToken);
         if (refreshed.ok) {
+          console.log(`[PHP API] Token refresh successful, retrying ${url}`);
           // Retry original request with new token
           return phpFetch(path, { method, body, headers, cache, next });
+        } else {
+          console.error(`[PHP API] Token refresh failed for ${url}`);
         }
+      } else {
+        console.warn(`[PHP API] No refresh token available for ${url}`);
       }
     }
 
@@ -52,6 +67,10 @@ export async function phpFetch(
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
+      console.error(`[PHP API] Error Response: ${response.status} ${url}`, {
+        error: data?.error || response.statusText,
+        data,
+      });
       return {
         ok: false,
         status: response.status,
@@ -62,7 +81,7 @@ export async function phpFetch(
 
     return { ok: true, status: response.status, data };
   } catch (error) {
-    console.error(`[PHP API] Error fetching ${url}:`, error);
+    console.error(`[PHP API] Fetch Exception: ${method} ${url}`, error);
     return {
       ok: false,
       status: 500,

@@ -7,18 +7,30 @@ import { completeV2AuthFlowIfPresent } from "@/lib/auth/v2Flow";
 export async function POST(req) {
   const t = await getTranslations("Common");
   const { email, code } = await req.json();
-  if (!email || !code)
+
+  console.log(`[OTP Verify] Attempt for email: ${email}`);
+
+  if (!email || !code) {
+    console.warn("[OTP Verify] Missing fields", { email, hasCode: !!code });
     return NextResponse.json({ error: t("missingFields") }, { status: 400 });
+  }
 
   try {
     await otpVerifyLimiter.consume(email);
   } catch {
+    console.warn(`[OTP Verify] Rate limit exceeded for email: ${email}`);
     return NextResponse.json({ error: t("tooManyRequests") }, { status: 429 });
   }
 
   const result = await verifyOtp(email, code);
-  if (!result.ok)
+  if (!result.ok) {
+    console.error(`[OTP Verify] Failed for email: ${email}`, result.error);
     return NextResponse.json({ error: result.error }, { status: 401 });
+  }
+
+  console.log(
+    `[OTP Verify] Success for email: ${email}, userId: ${result.user?.id}`,
+  );
 
   const res = NextResponse.json({ ok: true, user: result.user });
 

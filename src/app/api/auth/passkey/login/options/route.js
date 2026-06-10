@@ -15,10 +15,11 @@ export async function POST() {
   }
 
   try {
+    console.log("[Passkey Login Options] Requesting options for IP:", ip);
     const options = await getAuthenticationOptions();
     return NextResponse.json(options);
   } catch (err) {
-    console.error(err);
+    console.error("[Passkey Login Options] Error:", err);
     return NextResponse.json({ error: t("error") }, { status: 500 });
   }
 }
