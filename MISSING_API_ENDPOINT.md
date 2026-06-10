@@ -3,16 +3,12 @@
 The following endpoints are defined in the OpenAPI spec but are currently missing from the central Sinclear Beyond API (`api.sinclear.de`).
 
 ## Auth
-- `/auth/passkey/list`: List registered passkeys for the current user.
-- `/auth/passkey/delete/{id}`: Delete a specific passkey.
+- (All endpoints from OpenAPI spec for Auth are now available)
 
 ## Users
 - `/users`: List users (Admin).
 - `/users/{id}`: GET/PUT/DELETE for specific user.
 - `/users/{id}/export`: GDPR data export.
-- `/user-preferences/{id}`: CRUD for preferences (if separate from `/auth/me`).
-- `/contact-info/{id}`: CRUD for contact information.
-- `/social-info/{id}`: CRUD for social information.
 
 ## Modules
 - `Events`: `/events` (GET/POST), `/events/{id}` (GET/PUT/DELETE).

@@ -1,10 +1,8 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
+import { phpFetch } from "@/lib/api/phpClient";
 import { passkeyLimiter } from "@/lib/auth/rateLimiter";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { passkeys } from "@/lib/db/schema";
 
 export async function GET() {
   const t = await getTranslations("Common");
@@ -19,11 +17,15 @@ export async function GET() {
     return NextResponse.json({ error: t("tooManyRequests") }, { status: 429 });
   }
 
-  const { data: userPasskeys, error } = await safeQuery(
-    db.select().from(passkeys).where(eq(passkeys.userId, session.sub)),
-  );
+  const result = await phpFetch("/auth/passkey/list");
 
-  if (error) throw error;
+  if (!result.ok) {
+    console.error(`[Passkey List] PHP API Error: ${result.error}`);
+    return NextResponse.json(
+      { error: result.error },
+      { status: result.status },
+    );
+  }
 
-  return NextResponse.json(userPasskeys || []);
+  return NextResponse.json(result.data?.data || []);
 }
