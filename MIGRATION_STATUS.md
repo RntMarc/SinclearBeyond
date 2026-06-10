@@ -4,14 +4,16 @@ This document tracks the progress of migrating database interactions from local 
 
 ## Authenticated / Migrated (100% PHP API)
 - **Auth (Core)**: Login, OTP Request/Verify, Passkey Login begin/finish, Discord OAuth2.
+- **Passkeys**: Registration and Management (List/Delete).
 - **Session Management**: `getSession()` now uses `/auth/me`.
 - **User Profile**: Preferences, Contact Info, Social Info, Close Friends (via `/api/v1` endpoints).
+- **Registration**: User registration (`POST /users`).
 - **Chat**: Integrated with SinclearChat PHP backend.
 - **Birthdays**: Notifications and unread counts.
 - **Subscriptions**: User subscription checks.
 
 ## Partially Migrated
-- **Passkeys**: Login/Registration is PHP-based; management (List/Delete) is still local Drizzle.
+- (None)
 
 ## Pending Migration (Still using local Drizzle)
 - **Events**: `src/app/api/events/`

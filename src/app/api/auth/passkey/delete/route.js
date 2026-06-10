@@ -1,10 +1,8 @@
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
+import { phpFetch } from "@/lib/api/phpClient";
 import { passkeyLimiter } from "@/lib/auth/rateLimiter";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { passkeys } from "@/lib/db/schema";
 
 export async function POST(req) {
   const t = await getTranslations("Common");
@@ -21,16 +19,25 @@ export async function POST(req) {
 
   try {
     const { id } = await req.json();
-    const { error } = await safeQuery(
-      db
-        .delete(passkeys)
-        .where(and(eq(passkeys.id, id), eq(passkeys.userId, session.sub))),
-    );
-    if (error) throw error;
+    if (!id) {
+      return NextResponse.json({ error: t("missingFields") }, { status: 400 });
+    }
+
+    const result = await phpFetch(`/auth/passkey/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!result.ok) {
+      console.error(`[Passkey Delete] PHP API Error: ${result.error}`);
+      return NextResponse.json(
+        { error: result.error },
+        { status: result.status },
+      );
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error(err);
+    console.error("[Passkey Delete] Exception:", err);
     return NextResponse.json({ error: t("error") }, { status: 500 });
   }
 }
