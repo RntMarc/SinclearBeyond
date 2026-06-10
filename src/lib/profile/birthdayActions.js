@@ -23,7 +23,7 @@ export async function markAllBirthdaysAsRead() {
   // Use a generic notifications endpoint to mark by type
   await phpFetch("/notifications/read-type", {
     method: "POST",
-    body: { type: ["birthday", "birthday_soon"] }
+    body: { type: ["birthday", "birthday_soon"] },
   });
 
   revalidatePath("/geburtstage");
@@ -36,7 +36,7 @@ export async function markBirthdayAsRead(notificationId) {
   if (!session) return { ok: false };
 
   await phpFetch(`/notifications/${notificationId}`, {
-    method: "DELETE"
+    method: "DELETE",
   });
 
   revalidatePath("/geburtstage");

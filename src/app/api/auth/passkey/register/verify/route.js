@@ -19,15 +19,25 @@ export async function POST(req) {
 
   try {
     const { body, name } = await req.json();
+    console.log(
+      `[Passkey Register Verify] Attempting verification for user: ${session.sub}`,
+    );
     const verification = await verifyRegistration(session.sub, body, name);
 
     if (verification.verified) {
+      console.log(`[Passkey Register Verify] Success for user: ${session.sub}`);
       return NextResponse.json({ ok: true });
     } else {
+      console.warn(
+        `[Passkey Register Verify] Verification failed for user: ${session.sub}`,
+      );
       return NextResponse.json({ error: t("error") }, { status: 400 });
     }
   } catch (err) {
-    console.error(err);
+    console.error(
+      `[Passkey Register Verify] Exception for user ${session.sub}:`,
+      err,
+    );
     return NextResponse.json(
       { error: err.message || t("error") },
       { status: 500 },

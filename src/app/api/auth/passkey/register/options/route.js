@@ -32,10 +32,13 @@ export async function POST() {
   }
 
   try {
+    console.log(
+      `[Passkey Register Options] Requesting options for user: ${user.id}`,
+    );
     const options = await getRegistrationOptions(user);
     return NextResponse.json(options);
   } catch (err) {
-    console.error(err);
+    console.error("[Passkey Register Options] Error:", err);
     return NextResponse.json({ error: t("error") }, { status: 500 });
   }
 }

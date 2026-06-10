@@ -111,10 +111,10 @@ export async function saveProfile(_prevState, formData) {
       body: contactData,
     });
     if (!contactUpdateRes.ok) {
-       await phpFetch("/contact-info", {
-         method: "POST",
-         body: { id: session.sub, ...contactData }, // Changed userId to id as per param {id} in POST path
-       });
+      await phpFetch("/contact-info", {
+        method: "POST",
+        body: { id: session.sub, ...contactData }, // Changed userId to id as per param {id} in POST path
+      });
     }
 
     const socialData = {
@@ -139,10 +139,10 @@ export async function saveProfile(_prevState, formData) {
       body: socialData,
     });
     if (!socialUpdateRes.ok) {
-        await phpFetch("/social-info", {
-          method: "POST",
-          body: { id: session.sub, ...socialData },
-        });
+      await phpFetch("/social-info", {
+        method: "POST",
+        body: { id: session.sub, ...socialData },
+      });
     }
 
     revalidatePath("/einstellungen");
