@@ -1,7 +1,5 @@
-import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
-
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+import { getSession } from "@/lib/auth/session";
 
 export async function proxy(req) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
@@ -24,7 +22,6 @@ export async function proxy(req) {
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", cspHeader);
 
-  const token = req.cookies.get("session")?.value;
   let origin = process.env.NEXT_PUBLIC_ORIGIN || req.url;
   if (
     origin &&
@@ -34,19 +31,20 @@ export async function proxy(req) {
     origin = `https://${origin}`;
   }
 
-  if (!token) {
-    const url = new URL("/login", origin);
-    url.searchParams.set(
-      "callbackUrl",
-      req.nextUrl.pathname + req.nextUrl.search,
-    );
-    const response = NextResponse.redirect(url);
-    response.headers.set("Content-Security-Policy", cspHeader);
-    return response;
-  }
-
   try {
-    await jwtVerify(token, secret);
+    // getSession calls /auth/me in PHP API using the accessToken cookie via phpFetch
+    const session = await getSession();
+
+    if (!session) {
+      const url = new URL("/login", origin);
+      url.searchParams.set(
+        "callbackUrl",
+        req.nextUrl.pathname + req.nextUrl.search,
+      );
+      const response = NextResponse.redirect(url);
+      response.headers.set("Content-Security-Policy", cspHeader);
+      return response;
+    }
 
     const response = NextResponse.next({
       request: {
@@ -57,7 +55,8 @@ export async function proxy(req) {
     response.headers.set("Content-Security-Policy", cspHeader);
 
     return response;
-  } catch {
+  } catch (err) {
+    console.error("[Proxy] Session verification failed:", err);
     const url = new URL("/login", origin);
     url.searchParams.set(
       "callbackUrl",
