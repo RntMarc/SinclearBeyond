@@ -1,13 +1,11 @@
 # Missing API Endpoints
 
-The following endpoints were identified as missing or requiring specific behavior during the migration:
-
-- `/notifications/read-type`: POST with `{ type: string[] }` to mark specific notification types (e.g., `birthday`, `birthday_soon`) as read.
-- `/subscriptions/user/{userId}`: GET to list all subscriptions for a specific user (used in `getSessionWithSubs`).
-- `/users/{id}`: Ensure `PUT` accepts `email` for email change verification.
-- Profile picture handling: Ensure `PUT /users/{id}` accepts the `image` field (base64).
+The core migration of Auth, Users, and Profiles is complete. The following observations remain for future iterations:
 
 ## Observations on existing endpoints
-- `/auth/me`: Ideally should return the user's preferences directly in the response to avoid extra API calls in `getSession()`.
-- `/auth/otp/verify`: Used for both login and email change verification. Ensure it works correctly in an authenticated context for email changes.
-- Generic CRUD paths (`/contact-info/{id}`, `/social-info/{id}`, `/user-preferences/{id}`): Migrated to use `PUT` for updates and `POST` for creation where the ID is the `userId`.
+- `/auth/me`: Now returns the user's preferences directly in the response, which is used in `getSession()`.
+- `/auth/otp/verify`: Verified to work for both login and email change verification.
+- Generic CRUD paths (`/contact-info/{id}`, `/social-info/{id}`, `/user-preferences/{id}`): Implemented using `PUT` for updates and `POST` for creation.
+- `/close-friends/{userId}/{friendId}`: Successfully integrated for visibility checks and management.
+- `/notifications/read-type`: Successfully integrated to mark birthdays as read.
+- `/subscriptions/user/{userId}`: Successfully integrated to check for user subscriptions.
