@@ -9,14 +9,28 @@ import { phpFetch } from "@/lib/api/phpClient";
 export async function getSession() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+  const refreshToken = cookieStore.get("refreshToken")?.value;
+
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[getSession] accessToken present: ${!!accessToken}, refreshToken present: ${!!refreshToken}`);
+    if (accessToken) {
+      console.log(`[getSession] accessToken preview: ${accessToken.substring(0, 20)}...`);
+    }
+  }
 
   if (!accessToken) {
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[getSession] No access token, returning null");
+    }
     return null;
   }
 
   const result = await phpFetch("/auth/me");
 
   if (!result.ok) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[getSession] phpFetch failed:", result.error, "status:", result.status);
+    }
     return null;
   }
 

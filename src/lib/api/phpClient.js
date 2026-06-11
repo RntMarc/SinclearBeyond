@@ -9,10 +9,10 @@ const API_BASE_URL =
  */
 export async function phpFetch(
   path,
-  { method = "GET", body, headers = {}, cache = "no-store", next } = {},
+  { method = "GET", body, headers = {}, cache = "no-store", next, accessToken: explicitAccessToken } = {},
 ) {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
+  const accessToken = explicitAccessToken ?? cookieStore.get("accessToken")?.value;
 
   const defaultHeaders = {
     "Content-Type": "application/json",
@@ -23,7 +23,8 @@ export async function phpFetch(
 
   if (process.env.NODE_ENV !== "production") {
     console.log(`[PHP API] Request: ${method} ${url}`, {
-      headers: { ...defaultHeaders, ...headers },
+      hasAuth: !!accessToken,
+      authPreview: accessToken ? `${accessToken.substring(0, 20)}...` : "none",
       body,
     });
   }
@@ -48,10 +49,10 @@ export async function phpFetch(
       const refreshToken = cookieStore.get("refreshToken")?.value;
       if (refreshToken) {
         const refreshed = await refreshTokens(refreshToken);
-        if (refreshed.ok) {
-          console.log(`[PHP API] Token refresh successful, retrying ${url}`);
-          // Retry original request with new token
-          return phpFetch(path, { method, body, headers, cache, next });
+        if (refreshed.ok && refreshed.accessToken) {
+          console.log(`[PHP API] Token refresh successful, retrying ${url} with new token`);
+          // Retry original request with NEW access token (not from cookie store)
+          return phpFetch(path, { method, body, headers, cache, next, accessToken: refreshed.accessToken });
         } else {
           console.error(`[PHP API] Token refresh failed for ${url}`);
         }
@@ -79,6 +80,9 @@ export async function phpFetch(
       };
     }
 
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[PHP API] Success: ${method} ${url}`);
+    }
     return { ok: true, status: response.status, data };
   } catch (error) {
     console.error(`[PHP API] Fetch Exception: ${method} ${url}`, error);
@@ -124,7 +128,8 @@ async function refreshTokens(refreshToken) {
       });
     }
 
-    return { ok: true };
+    // Return the new access token so caller can use it immediately
+    return { ok: true, accessToken: data.accessToken };
   } catch (error) {
     console.error("[PHP API] Token refresh failed:", error);
     return { ok: false };
