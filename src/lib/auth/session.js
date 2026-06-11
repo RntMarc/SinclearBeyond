@@ -1,10 +1,19 @@
 import "server-only";
+import { cookies } from "next/headers";
 import { phpFetch } from "@/lib/api/phpClient";
 
 /**
  * Gets the current session by calling the PHP API /auth/me
+ * Returns null immediately if no access token cookie exists (no API call)
  */
 export async function getSession() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  if (!accessToken) {
+    return null;
+  }
+
   const result = await phpFetch("/auth/me");
 
   if (!result.ok) {
