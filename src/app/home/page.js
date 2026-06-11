@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { Home } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -8,8 +7,6 @@ import AppShell from "@/components/layout/Appshell";
 import PageHeader from "@/components/layout/PageHeader";
 import { HomeSkeleton } from "@/components/layout/Skeletons";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
 
 export default async function HomePage() {
   const t = await getTranslations("Home");
@@ -18,20 +15,12 @@ export default async function HomePage() {
 
   const userId = session.sub;
 
-  const { data: userData } = await safeQuery(
-    db
-      .select({
-        displayName: users.displayName,
-        email: users.email,
-        image: users.image,
-        onboardingCompleted: users.onboardingCompleted,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1),
-  );
-  const user = userData?.[0];
+  const user = {
+    displayName: session.displayName,
+    email: session.email,
+    image: session.image,
+    onboardingCompleted: session.onboardingCompleted,
+  };
 
   return (
     <AppShell
