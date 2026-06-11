@@ -48,11 +48,19 @@ export async function phpFetch(
       );
       const refreshToken = cookieStore.get("refreshToken")?.value;
       if (refreshToken) {
-        const refreshed = await refreshTokens(refreshToken);
-        if (refreshed.ok && refreshed.accessToken) {
+        // Make direct call to PHP API /auth/refresh to get new token
+        const refreshUrl = `${API_BASE_URL}/auth/refresh`;
+        const refreshResponse = await fetch(refreshUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken }),
+        });
+
+        if (refreshResponse.ok) {
+          const refreshData = await refreshResponse.json();
           console.log(`[PHP API] Token refresh successful, retrying ${url} with new token`);
-          // Retry original request with NEW access token (not from cookie store)
-          return phpFetch(path, { method, body, headers, cache, next, accessToken: refreshed.accessToken });
+          // Retry original request with the new token
+          return phpFetch(path, { method, body, headers, cache, next, accessToken: refreshData.accessToken });
         } else {
           console.error(`[PHP API] Token refresh failed for ${url}`);
         }
@@ -91,47 +99,5 @@ export async function phpFetch(
       status: 500,
       error: error.message || "Internal Server Error",
     };
-  }
-}
-
-async function refreshTokens(refreshToken) {
-  const url = `${API_BASE_URL}/auth/refresh`;
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-
-    if (!response.ok) {
-      return { ok: false };
-    }
-
-    const data = await response.json();
-    const cookieStore = await cookies();
-
-    cookieStore.set("accessToken", data.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: data.expiresIn || 900,
-      path: "/",
-    });
-
-    if (data.refreshToken) {
-      cookieStore.set("refreshToken", data.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: "/",
-      });
-    }
-
-    // Return the new access token so caller can use it immediately
-    return { ok: true, accessToken: data.accessToken };
-  } catch (error) {
-    console.error("[PHP API] Token refresh failed:", error);
-    return { ok: false };
   }
 }

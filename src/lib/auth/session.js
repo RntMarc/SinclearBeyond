@@ -9,10 +9,9 @@ import { phpFetch } from "@/lib/api/phpClient";
 export async function getSession() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
-  const refreshToken = cookieStore.get("refreshToken")?.value;
 
   if (process.env.NODE_ENV !== "production") {
-    console.log(`[getSession] accessToken present: ${!!accessToken}, refreshToken present: ${!!refreshToken}`);
+    console.log(`[getSession] accessToken present: ${!!accessToken}`);
     if (accessToken) {
       console.log(`[getSession] accessToken preview: ${accessToken.substring(0, 20)}...`);
     }
