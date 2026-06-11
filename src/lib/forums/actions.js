@@ -5,13 +5,8 @@ import { revalidatePath } from "next/cache";
 import sharp from "sharp";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import {
-  feedPosts,
-  feedPostVotes,
-  forumMembers,
-  forums,
-  notifications,
-} from "@/lib/db/schema";
+import { feedPosts, feedPostVotes, forumMembers, forums } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function createForum(formData) {
   const session = await getSession();
@@ -103,13 +98,10 @@ export async function deleteForum(id) {
   );
   await safeQuery(db.delete(feedPosts).where(eq(feedPosts.forumId, id)));
   await safeQuery(db.delete(forumMembers).where(eq(forumMembers.forumId, id)));
-  await safeQuery(
-    db
-      .delete(notifications)
-      .where(
-        and(eq(notifications.type, "forum"), eq(notifications.entityId, id)),
-      ),
-  );
+  await phpFetch("/notifications/read-type", {
+    method: "POST",
+    body: { type: ["forum"] },
+  });
   const { error } = await safeQuery(db.delete(forums).where(eq(forums.id, id)));
 
   if (error) throw error;
@@ -244,29 +236,10 @@ export async function markForumAsRead(forumId) {
   const session = await getSession();
   if (!session) return { ok: false };
 
-  // Get all post IDs in this forum
-  const { data: posts, error: postsErr } = await safeQuery(
-    db
-      .select({ id: feedPosts.id })
-      .from(feedPosts)
-      .where(eq(feedPosts.forumId, forumId)),
-  );
-  if (postsErr) throw postsErr;
-
-  const postIds = (posts || []).map((p) => p.id);
-  if (postIds.length === 0) return { ok: true };
-
-  await safeQuery(
-    db
-      .delete(notifications)
-      .where(
-        and(
-          eq(notifications.userId, session.sub),
-          eq(notifications.type, "forum"),
-          inArray(notifications.entityId, postIds),
-        ),
-      ),
-  );
+  await phpFetch("/notifications/read-type", {
+    method: "POST",
+    body: { type: ["forum"] },
+  });
 
   revalidatePath("/forum");
   revalidatePath("/", "layout");
@@ -277,17 +250,10 @@ export async function markPostAsRead(postId) {
   const session = await getSession();
   if (!session) return { ok: false };
 
-  await safeQuery(
-    db
-      .delete(notifications)
-      .where(
-        and(
-          eq(notifications.userId, session.sub),
-          eq(notifications.type, "forum"),
-          eq(notifications.entityId, postId),
-        ),
-      ),
-  );
+  await phpFetch("/notifications/read-type", {
+    method: "POST",
+    body: { type: ["forum"] },
+  });
 
   revalidatePath("/forum");
   revalidatePath("/", "layout");
@@ -298,18 +264,7 @@ export async function getUnreadForumsCount() {
   const session = await getSession();
   if (!session) return 0;
 
-  const { data, error } = await safeQuery(
-    db
-      .select({ count: sql`count(*)` })
-      .from(notifications)
-      .where(
-        and(
-          eq(notifications.userId, session.sub),
-          eq(notifications.type, "forum"),
-        ),
-      ),
-  );
-
-  if (error) return 0;
-  return Number(data?.[0]?.count || 0);
+  const result = await phpFetch("/notifications/badges");
+  if (!result.ok) return 0;
+  return result.data.data?.forum || 0;
 }

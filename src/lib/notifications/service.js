@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
-import { db, safeQuery } from "@/lib/db/db";
-import { notifications } from "@/lib/db/schema";
 import { sendPushToUsers } from "@/lib/notifications/push";
+import { phpFetch } from "@/lib/api/phpClient";
 
 /**
  * Unified service to send notifications (both in-app and push).
@@ -30,7 +29,7 @@ export async function sendNotification({
   const uniqueUserIds = [...new Set(userIds)];
   const now = new Date();
 
-  // 1. Create in-app notifications in database
+  // 1. Create in-app notifications via PHP API
   const notificationValues = uniqueUserIds.map((userId) => {
     const id = crypto.randomUUID();
     return {
@@ -43,11 +42,22 @@ export async function sendNotification({
   });
 
   try {
-    await safeQuery(db.insert(notifications).values(notificationValues));
+    await Promise.all(
+      notificationValues.map((n) =>
+        phpFetch("/notifications", {
+          method: "POST",
+          body: {
+            id: n.id,
+            userId: n.userId,
+            type: n.type,
+            entityId: n.entityId,
+            createdAt: n.createdAt.toISOString(),
+          },
+        }),
+      ),
+    );
   } catch (error) {
-    console.error("[NotificationService] Database insert error:", error);
-    // Continue with push even if DB insert fails?
-    // Usually we want both, but if DB fails, push might still work.
+    console.error("[NotificationService] API insert error:", error);
   }
 
   // 2. Send push notifications

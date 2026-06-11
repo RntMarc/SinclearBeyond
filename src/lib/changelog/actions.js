@@ -1,10 +1,11 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { changelogEntries, notifications, users } from "@/lib/db/schema";
+import { changelogEntries, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { sendNotification } from "@/lib/notifications/service";
 
 export async function createChangelogEntry(data) {
@@ -61,21 +62,15 @@ export async function getChangelogEntries() {
     db.select().from(changelogEntries).orderBy(changelogEntries.createdAt),
   );
 
-  const { data: notificationEntries, error: readError } = await safeQuery(
-    db
-      .select({ entityId: notifications.entityId })
-      .from(notifications)
-      .where(
-        and(
-          eq(notifications.userId, session.sub),
-          eq(notifications.type, "changelog"),
-        ),
-      ),
+  const notifResult = await phpFetch("/notifications");
+  const userNotifications = notifResult.ok ? (notifResult.data?.data || []) : [];
+  const unreadIds = new Set(
+    userNotifications
+      .filter((n) => n.type === "changelog")
+      .map((n) => n.entityId),
   );
 
-  if (entriesError || readError) return [];
-
-  const unreadIds = new Set((notificationEntries || []).map((n) => n.entityId));
+  if (entriesError) return [];
 
   return (entries || []).reverse().map((entry) => ({
     ...entry,
@@ -87,19 +82,13 @@ export async function markAllChangelogAsRead() {
   const session = await getSession();
   if (!session) return { ok: false };
 
-  await safeQuery(
-    db
-      .delete(notifications)
-      .where(
-        and(
-          eq(notifications.userId, session.sub),
-          eq(notifications.type, "changelog"),
-        ),
-      ),
-  );
+  await phpFetch("/notifications/read-type", {
+    method: "POST",
+    body: { type: ["changelog"] },
+  });
 
   revalidatePath("/info");
-  revalidatePath("/", "layout"); // Revalidate layout for the nav badge
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 
@@ -107,17 +96,10 @@ export async function markChangelogAsRead(id) {
   const session = await getSession();
   if (!session) return { ok: false };
 
-  await safeQuery(
-    db
-      .delete(notifications)
-      .where(
-        and(
-          eq(notifications.userId, session.sub),
-          eq(notifications.type, "changelog"),
-          eq(notifications.entityId, id),
-        ),
-      ),
-  );
+  await phpFetch("/notifications/read-type", {
+    method: "POST",
+    body: { type: ["changelog"] },
+  });
 
   revalidatePath("/info");
   revalidatePath("/", "layout");
@@ -128,18 +110,7 @@ export async function getUnreadChangelogCount() {
   const session = await getSession();
   if (!session) return 0;
 
-  const { data, error } = await safeQuery(
-    db
-      .select({ id: notifications.id })
-      .from(notifications)
-      .where(
-        and(
-          eq(notifications.userId, session.sub),
-          eq(notifications.type, "changelog"),
-        ),
-      ),
-  );
-
-  if (error) return 0;
-  return data?.length || 0;
+  const result = await phpFetch("/notifications/badges");
+  if (!result.ok) return 0;
+  return result.data.data?.changelog || 0;
 }
