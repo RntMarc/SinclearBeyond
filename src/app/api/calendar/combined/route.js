@@ -5,13 +5,10 @@ import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
   eventPermissions,
-  eventRelations,
   events,
-  travelEvents,
-  travelRelations,
-  travelTrips,
   users,
 } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getWhoMarkedMe, getWhoIMarked } from "@/lib/profile/closeFriends";
 
 export async function GET() {
@@ -70,56 +67,15 @@ export async function GET() {
     })) || [];
 
   // 2. Trips
-  const { data: userRelations, error: travelRelError } = await safeQuery(
-    db
-      .select({ tripId: travelRelations.tripId })
-      .from(travelRelations)
-      .where(eq(travelRelations.userId, userId)),
-  );
-
-  const participantTripIds = userRelations?.map((r) => r.tripId) || [];
-
-  const { data: userEventRelations, error: eventRelError } = await safeQuery(
-    db
-      .select({ eventId: eventRelations.eventId })
-      .from(eventRelations)
-      .where(eq(eventRelations.userId, userId)),
-  );
-  const participantEventIds = userEventRelations?.map((r) => r.eventId) || [];
-
   let trips = [];
-  let tripsError = false;
-  if (session.isAdmin) {
-    const { data: adminTrips, error: adminTripsError } = await safeQuery(
-      db.select().from(travelTrips).orderBy(travelTrips.start),
-    );
-    trips = adminTrips || [];
-    tripsError = adminTripsError;
-  } else if (participantTripIds.length > 0) {
-    const { data: userTrips, error: userTripsError } = await safeQuery(
-      db
-        .select()
-        .from(travelTrips)
-        .where(inArray(travelTrips.id, participantTripIds))
-        .orderBy(travelTrips.start),
-    );
-    trips = userTrips || [];
-    tripsError = userTripsError;
-  }
-
-  // 3. Travel Events
   let trvEvents = [];
-  let trvEventsError = false;
-  if (participantEventIds.length > 0) {
-    const { data: travelEventsData, error: travelEventsErr } = await safeQuery(
-      db
-        .select()
-        .from(travelEvents)
-        .where(inArray(travelEvents.id, participantEventIds))
-        .orderBy(travelEvents.start),
-    );
-    trvEvents = travelEventsData || [];
-    trvEventsError = travelEventsErr;
+  const myTripsResult = await phpFetch("/travel/my-trips");
+  if (myTripsResult.ok) {
+    trips = myTripsResult.data?.data || [];
+  }
+  const myEventsResult = await phpFetch("/travel/my-events");
+  if (myEventsResult.ok) {
+    trvEvents = myEventsResult.data?.data || [];
   }
 
   // 4. Birthdays
@@ -150,10 +106,6 @@ export async function GET() {
     viewPermError ||
     eventsError ||
     editPermError ||
-    travelRelError ||
-    eventRelError ||
-    tripsError ||
-    trvEventsError ||
     usersError
   ) {
     return NextResponse.json({ error: t("dbError") }, { status: 500 });

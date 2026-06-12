@@ -6,7 +6,6 @@ import {
   discoverPlaces,
   discoverReviews,
   eventPermissions,
-  eventRelations,
   events,
   feedPosts,
   feedPostVotes,
@@ -17,11 +16,9 @@ import {
   pollInvites,
   pollOptions,
   polls,
-  travelEvents,
-  travelRelations,
-  travelTrips,
   users,
 } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getWhoMarkedMe } from "@/lib/profile/closeFriends";
 import { getUnsplashPhotos } from "@/lib/photos/unsplash";
 import { getBirthdays } from "@/lib/profile/birthdays";
@@ -67,55 +64,18 @@ export default async function HomeContent({ userId, isAdmin }) {
   );
 
   // 2. Fetch Upcoming Trips (next 7 days OR currently active)
-  const { data: userTripRelations, error: tripRelError } = await safeQuery(
-    db
-      .select({ tripId: travelRelations.tripId })
-      .from(travelRelations)
-      .where(eq(travelRelations.userId, userId)),
-  );
-  const participantTripIds = userTripRelations?.map((r) => r.tripId) || [];
-
   let trips = [];
   let tripsError = false;
-  if (isAdmin) {
-    const { data: adminTrips, error: adminTripsErr } = await safeQuery(
-      db
-        .select()
-        .from(travelTrips)
-        .where(
-          or(
-            and(
-              gte(travelTrips.start, now),
-              lte(travelTrips.start, sevenDaysLater),
-            ),
-            and(lte(travelTrips.start, now), gte(travelTrips.end, now)),
-          ),
-        )
-        .orderBy(travelTrips.start),
-    );
-    trips = adminTrips || [];
-    tripsError = adminTripsErr;
-  } else if (participantTripIds.length > 0) {
-    const { data: userTrips, error: userTripsErr } = await safeQuery(
-      db
-        .select()
-        .from(travelTrips)
-        .where(
-          and(
-            inArray(travelTrips.id, participantTripIds),
-            or(
-              and(
-                gte(travelTrips.start, now),
-                lte(travelTrips.start, sevenDaysLater),
-              ),
-              and(lte(travelTrips.start, now), gte(travelTrips.end, now)),
-            ),
-          ),
-        )
-        .orderBy(travelTrips.start),
-    );
-    trips = userTrips || [];
-    tripsError = userTripsErr;
+  const tripsResult = await phpFetch("/travel/my-trips");
+  if (tripsResult.ok) {
+    const allTrips = tripsResult.data?.data || [];
+    trips = allTrips.filter((trip) => {
+      const start = new Date(trip.start);
+      const end = new Date(trip.end);
+      return (start >= now && start <= sevenDaysLater) || (start <= now && end >= now);
+    });
+  } else {
+    tripsError = true;
   }
 
   // 3. Upcoming Birthdays (next 7 days)
@@ -258,37 +218,20 @@ export default async function HomeContent({ userId, isAdmin }) {
         .limit(5),
     );
 
-  const { data: userEventRelations, error: eventRelError } = await safeQuery(
-    db
-      .select({ eventId: eventRelations.eventId })
-      .from(eventRelations)
-      .where(eq(eventRelations.userId, userId)),
-  );
-  const participantEventIds = userEventRelations?.map((r) => r.eventId) || [];
-
   let upcomingTravelEvents = [];
   let travelEventsError = false;
-  if (participantEventIds.length > 0) {
-    const { data: travelEventsData, error: travelEventsErr } = await safeQuery(
-      db
-        .select()
-        .from(travelEvents)
-        .where(
-          and(
-            inArray(travelEvents.id, participantEventIds),
-            or(
-              and(
-                gte(travelEvents.start, now),
-                lte(travelEvents.start, sevenDaysLater),
-              ),
-              and(lte(travelEvents.start, now), gte(travelEvents.end, now)),
-            ),
-          ),
-        )
-        .orderBy(travelEvents.start),
-    );
-    upcomingTravelEvents = travelEventsData || [];
-    travelEventsError = travelEventsErr;
+  const eventsResult = await phpFetch("/travel/my-events");
+  if (eventsResult.ok) {
+    const allEvents = eventsResult.data?.data || [];
+    upcomingTravelEvents = allEvents
+      .filter((event) => {
+        const start = new Date(event.start);
+        const end = new Date(event.end);
+        return (start >= now && start <= sevenDaysLater) || (start <= now && end >= now);
+      })
+      .sort((a, b) => new Date(a.start) - new Date(b.start));
+  } else {
+    travelEventsError = true;
   }
 
   const combinedEvents = [
@@ -372,11 +315,9 @@ export default async function HomeContent({ userId, isAdmin }) {
   const hasAnyError =
     viewPermError ||
     eventsError ||
-    tripRelError ||
     tripsError ||
     mediaReviewsError ||
     discoverReviewsError ||
-    eventRelError ||
     travelEventsError ||
     pollInvitesError ||
     activePollsError ||

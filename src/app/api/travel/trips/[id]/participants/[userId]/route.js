@@ -1,9 +1,7 @@
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { travelRelations } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function PATCH(req, { params }) {
   const t = await getTranslations("Common");
@@ -17,19 +15,14 @@ export async function PATCH(req, { params }) {
   try {
     const { accommodationId } = await req.json();
 
-    const { error: updateError } = await safeQuery(
-      db
-        .update(travelRelations)
-        .set({ accommodationId: accommodationId || null })
-        .where(
-          and(
-            eq(travelRelations.tripId, id),
-            eq(travelRelations.userId, userId),
-          ),
-        ),
-    );
+    const result = await phpFetch(`/travel/trips/${id}/participants/${userId}`, {
+      method: "PATCH",
+      body: { accommodationId: accommodationId || null },
+    });
 
-    if (updateError) throw updateError;
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("saveError") }, { status: result.status || 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -48,25 +41,17 @@ export async function DELETE(_req, { params }) {
   }
 
   try {
-    const { error: deleteError } = await safeQuery(
-      db
-        .delete(travelRelations)
-        .where(
-          and(
-            eq(travelRelations.tripId, id),
-            eq(travelRelations.userId, userId),
-          ),
-        ),
-    );
+    const result = await phpFetch(`/travel/trips/${id}/participants/${userId}`, {
+      method: "DELETE",
+    });
 
-    if (deleteError) throw deleteError;
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("deleteError") }, { status: result.status || 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error(
-      "[API/Travel/Trips/Participants/UserID] DELETE Error:",
-      error,
-    );
+    console.error("[API/Travel/Trips/Participants/UserID] DELETE Error:", error);
     return NextResponse.json({ error: t("deleteError") }, { status: 500 });
   }
 }

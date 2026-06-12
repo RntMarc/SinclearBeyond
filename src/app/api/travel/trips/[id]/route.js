@@ -1,9 +1,7 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { travelTrips } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function PATCH(req, { params }) {
   const t = await getTranslations("Common");
@@ -16,18 +14,19 @@ export async function PATCH(req, { params }) {
 
   try {
     const body = await req.json();
-    const updateData = {};
-    if (body.name) updateData.name = body.name;
-    if (body.description !== undefined)
-      updateData.description = body.description;
-    if (body.start) updateData.start = new Date(body.start);
-    if (body.end) updateData.end = new Date(body.end);
+    const result = await phpFetch(`/travel/trips/${id}`, {
+      method: "PATCH",
+      body: {
+        name: body.name,
+        description: body.description,
+        start: body.start,
+        end: body.end,
+      },
+    });
 
-    const { error: updateError } = await safeQuery(
-      db.update(travelTrips).set(updateData).where(eq(travelTrips.id, id)),
-    );
-
-    if (updateError) throw updateError;
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("saveError") }, { status: result.status || 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -46,11 +45,11 @@ export async function DELETE(_req, { params }) {
   }
 
   try {
-    const { error: deleteError } = await safeQuery(
-      db.delete(travelTrips).where(eq(travelTrips.id, id)),
-    );
+    const result = await phpFetch(`/travel/trips/${id}`, { method: "DELETE" });
 
-    if (deleteError) throw deleteError;
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("deleteError") }, { status: result.status || 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

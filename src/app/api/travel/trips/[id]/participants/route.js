@@ -1,10 +1,7 @@
-import crypto from "node:crypto";
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { travelRelations, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { sendNotification } from "@/lib/notifications/service";
 
 export async function GET(_req, { params }) {
@@ -17,21 +14,13 @@ export async function GET(_req, { params }) {
   }
 
   try {
-    const { data: participants, error: participantsError } = await safeQuery(
-      db
-        .select({
-          id: users.id,
-          displayName: users.displayName,
-          email: users.email,
-        })
-        .from(travelRelations)
-        .innerJoin(users, eq(travelRelations.userId, users.id))
-        .where(eq(travelRelations.tripId, id)),
-    );
+    const result = await phpFetch(`/travel/trips/${id}/participants`);
 
-    if (participantsError) throw participantsError;
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("loadError") }, { status: result.status || 500 });
+    }
 
-    return NextResponse.json(participants || []);
+    return NextResponse.json(result.data?.data || []);
   } catch (error) {
     console.error("[API/Travel/Trips/Participants] GET Error:", error);
     return NextResponse.json({ error: t("loadError") }, { status: 500 });
@@ -54,37 +43,18 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: t("missingFields") }, { status: 400 });
     }
 
-    const { data: existingData, error: existingError } = await safeQuery(
-      db
-        .select()
-        .from(travelRelations)
-        .where(
-          and(
-            eq(travelRelations.tripId, id),
-            eq(travelRelations.userId, userId),
-          ),
-        )
-        .limit(1),
-    );
+    const result = await phpFetch(`/travel/trips/${id}/participants`, {
+      method: "POST",
+      body: { userId },
+    });
 
-    if (existingError) throw existingError;
-    const existing = existingData?.[0];
-
-    if (existing) {
-      return NextResponse.json({ ok: true, message: t("alreadyParticipant") });
+    if (!result.ok) {
+      if (result.status === 409) {
+        return NextResponse.json({ ok: true, message: t("alreadyParticipant") });
+      }
+      return NextResponse.json({ error: result.error || t("saveError") }, { status: result.status || 500 });
     }
 
-    const { error: insertError } = await safeQuery(
-      db.insert(travelRelations).values({
-        id: crypto.randomUUID(),
-        tripId: id,
-        userId,
-      }),
-    );
-
-    if (insertError) throw insertError;
-
-    // Create notification for the new participant
     if (userId !== session.sub) {
       try {
         await sendNotification({
