@@ -1,75 +1,31 @@
-import { desc, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  feedPosts,
-  forumMembers,
-  forums,
-  notifications,
-} from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET() {
   const session = await getSession();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const userId = session.sub;
-
   try {
     // 1. Get all forums where user is member
-    const { data: joined, error: joinedError } = await safeQuery(
-      db
-        .select({
-          id: forums.id,
-          name: forums.name,
-          description: forums.description,
-          image: forums.image,
-          postCount: sql`CAST((SELECT count(*) FROM ${feedPosts} WHERE ${feedPosts.forumId} = ${forums.id}) AS SIGNED)`,
-          hasUnread: sql`EXISTS (
-            SELECT 1 FROM ${notifications}
-            INNER JOIN ${feedPosts} ON ${feedPosts.id} = ${notifications.entityId}
-            WHERE ${notifications.userId} = ${userId}
-              AND ${notifications.type} = 'forum'
-              AND ${feedPosts.forumId} = ${forums.id}
-          )`,
-        })
-        .from(forums)
-        .innerJoin(forumMembers, eq(forumMembers.forumId, forums.id))
-        .where(eq(forumMembers.userId, userId))
-        .orderBy(desc(forums.createdAt)),
-    );
-
-    if (joinedError) {
-      return NextResponse.json(
-        { error: "Failed to fetch joined forums" },
-        { status: 500 },
-      );
-    }
+    const myForumsResult = await phpFetch("/forums/my");
+    const joined = myForumsResult.ok ? (myForumsResult.data?.data || []) : [];
 
     // 2. Get all other forums
-    const joinedIds = (joined || []).map((f) => f.id);
-    const { data: allForums, error: allForumsError } = await safeQuery(
-      db
-        .select({
-          id: forums.id,
-          name: forums.name,
-          description: forums.description,
-          image: forums.image,
-        })
-        .from(forums),
-    );
+    const allForumsResult = await phpFetch("/forums");
 
-    if (allForumsError) {
+    if (!allForumsResult.ok) {
       return NextResponse.json(
-        { error: "Failed to fetch all forums" },
+        { error: "Failed to fetch forums" },
         { status: 500 },
       );
     }
 
-    const notJoined = (allForums || []).filter(
-      (f) => !joinedIds.includes(f.id),
-    );
+    const allForumsData = allForumsResult.data;
+    const allForums = allForumsData?.data || [];
+    const joinedIds = joined.map((f) => f.id);
+    const notJoined = allForums.filter((f) => !joinedIds.includes(f.id));
 
     return NextResponse.json({
       joined: joined || [],

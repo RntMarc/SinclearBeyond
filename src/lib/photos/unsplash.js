@@ -1,9 +1,6 @@
 "use server";
-import { and, eq, inArray, or } from "drizzle-orm";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { socialInfo, users } from "@/lib/db/schema";
-import { getWhoMarkedMe } from "@/lib/profile/closeFriends";
 import { fetchWithTimeout } from "@/lib/utils";
 
 const UNSPLASH_API_KEY = process.env.UNSPLASH_API_KEY;
@@ -12,44 +9,11 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
   const session = await getSession();
   if (!session?.sub) return [];
 
-  const currentUserId = session.sub;
+  // 1. Get all users who have a visible Unsplash handle
+  const result = await phpFetch("/social-info/unsplash-visible");
+  if (!result.ok) return [];
 
-  // 1. Get all users who have an Unsplash handle and appropriate visibility
-  // To do this efficiently, we first find who has me as a close friend
-  const whoMarkedMe = await getWhoMarkedMe();
-  const closeFriendIds = whoMarkedMe.map((f) => f.userId);
-
-  // Users I can see:
-  // - Visibility = 1 (All)
-  // - Visibility = 2 AND userId in closeFriendIds
-  // - userId = currentUserId (Myself)
-
-  const { data: visibleSocialInfos, error: visErr } = await safeQuery(
-    db
-      .select({
-        unsplashHandle: socialInfo.unsplashHandle,
-        userId: socialInfo.userId,
-        displayName: users.displayName,
-      })
-      .from(socialInfo)
-      .innerJoin(users, eq(socialInfo.userId, users.id))
-      .where(
-        and(
-          or(
-            eq(socialInfo.unsplashVisibility, 1),
-            and(
-              eq(socialInfo.unsplashVisibility, 2),
-              closeFriendIds.length > 0
-                ? inArray(socialInfo.userId, closeFriendIds)
-                : eq(socialInfo.userId, "none"),
-            ),
-            eq(socialInfo.userId, currentUserId),
-          ),
-        ),
-      ),
-  );
-
-  if (visErr) throw visErr;
+  const visibleSocialInfos = result.data?.data || [];
 
   const handles = (visibleSocialInfos || [])
     .filter((s) => s.unsplashHandle)
@@ -59,10 +23,7 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
       userId: s.userId,
     }));
 
-  console.log("[Unsplash] handles:", handles);
-
   if (handles.length === 0) {
-    console.log("[Unsplash] No handles with Unsplash found or visible.");
     return [];
   }
 
@@ -76,7 +37,7 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
             headers: {
               Authorization: `Client-ID ${UNSPLASH_API_KEY}`,
             },
-            next: { revalidate: 3600 }, // Cache for 1 hour
+            next: { revalidate: 3600 },
           },
           20000,
         );
@@ -84,9 +45,6 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
         if (!res.ok) return [];
 
         const photos = await res.json();
-        console.log(
-          `[Unsplash] Fetched ${photos.length} photos for handle ${handle}`,
-        );
         return photos.map((p) => ({
           id: p.id,
           url: p.urls.regular,
