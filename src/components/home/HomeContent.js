@@ -7,8 +7,6 @@ import {
   discoverReviews,
   feedPosts,
   feedPostVotes,
-  forumMembers,
-  forums,
   mediaItems,
   mediaReviews,
   pollInvites,
@@ -64,13 +62,14 @@ export default async function HomeContent({ userId, isAdmin }) {
     allBirthdays?.filter((b) => b.daysUntil >= 0 && b.daysUntil <= 7) || [];
 
   // 4. Forum Posts (from joined forums)
-  const { data: joinedForums, error: joinedForumsError } = await safeQuery(
-    db
-      .select({ forum: forums })
-      .from(forumMembers)
-      .innerJoin(forums, eq(forumMembers.forumId, forums.id))
-      .where(eq(forumMembers.userId, userId)),
-  );
+  let joinedForums = [];
+  let joinedForumsError = false;
+  const forumsResult = await phpFetch("/forums/my");
+  if (forumsResult.ok) {
+    joinedForums = (forumsResult.data?.data || []).map((f) => ({ forum: f }));
+  } else {
+    joinedForumsError = true;
+  }
 
   const whoMarkedMe = await getWhoMarkedMe();
   const usersWhoMarkedMeIds = whoMarkedMe.map((r) => r.userId);
