@@ -1,9 +1,7 @@
-import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { travelTrips } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(req) {
   const t = await getTranslations("Common");
@@ -20,19 +18,16 @@ export async function POST(req) {
       return NextResponse.json({ error: t("missingFields") }, { status: 400 });
     }
 
-    const id = crypto.randomUUID();
+    const result = await phpFetch("/travel/trips", {
+      method: "POST",
+      body: { name, description: description || null, start, end },
+    });
 
-    await safeQuery(
-      db.insert(travelTrips).values({
-        id,
-        name,
-        description: description || null,
-        start: new Date(start),
-        end: new Date(end),
-      }),
-    );
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("saveError") }, { status: result.status || 500 });
+    }
 
-    return NextResponse.json({ ok: true, id });
+    return NextResponse.json({ ok: true, id: result.data?.id });
   } catch (error) {
     console.error("[API/Travel/Trips] Error:", error);
     return NextResponse.json({ error: t("saveError") }, { status: 500 });

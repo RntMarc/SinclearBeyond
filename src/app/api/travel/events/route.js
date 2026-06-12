@@ -1,9 +1,7 @@
-import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { eventRelations, travelEvents } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(req) {
   const t = await getTranslations("Common");
@@ -15,74 +13,21 @@ export async function POST(req) {
 
   try {
     const data = await req.json();
-    const {
-      tripId,
-      name,
-      description,
-      start,
-      end,
-      hasTickets,
-      ticketId,
-      ticketUrl,
-      url,
-      image,
-      organizer,
-      address,
-      latitude,
-      longitude,
-      osmId,
-      participantIds, // New field
-    } = data;
 
-    if (!name || !start || !end) {
+    if (!data.name || !data.start || !data.end) {
       return NextResponse.json({ error: t("missingFields") }, { status: 400 });
     }
 
-    const id = crypto.randomUUID();
+    const result = await phpFetch("/travel/events", {
+      method: "POST",
+      body: data,
+    });
 
-    const { error: insertError } = await safeQuery(
-      db.insert(travelEvents).values({
-        id,
-        tripId: tripId || null,
-        name,
-        description: description || null,
-        start: new Date(start),
-        end: new Date(end),
-        hasTickets: hasTickets || "0",
-        ticketId: ticketId || null,
-        ticketUrl: ticketUrl || null,
-        url: url || null,
-        image: image || null,
-        organizer: organizer || null,
-        address: address || null,
-        latitude: latitude ? parseFloat(latitude) : null,
-        longitude: longitude ? parseFloat(longitude) : null,
-        osmId: osmId ? BigInt(osmId) : null,
-      }),
-    );
-
-    if (insertError) throw insertError;
-
-    if (participantIds && Array.isArray(participantIds)) {
-      for (const userId of participantIds) {
-        const { error: relErr } = await safeQuery(
-          db.insert(eventRelations).values({
-            id: crypto.randomUUID(),
-            eventId: id,
-            userId,
-            createdAt: new Date(),
-          }),
-        );
-        if (relErr) {
-          console.error(
-            `Failed to insert event relation for user ${userId}:`,
-            relErr,
-          );
-        }
-      }
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("saveError") }, { status: result.status || 500 });
     }
 
-    return NextResponse.json({ ok: true, id });
+    return NextResponse.json({ ok: true, id: result.data?.data?.id });
   } catch (error) {
     console.error("[API/Travel/Events] POST Error:", error);
     return NextResponse.json({ error: t("saveError") }, { status: 500 });

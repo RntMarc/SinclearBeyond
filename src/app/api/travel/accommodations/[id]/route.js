@@ -1,9 +1,7 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { travelAccommodations } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function PATCH(req, { params }) {
   const t = await getTranslations("Common");
@@ -16,30 +14,26 @@ export async function PATCH(req, { params }) {
 
   try {
     const data = await req.json();
-    const updateData = {};
+    const body = {};
 
-    if (data.name !== undefined) updateData.name = data.name;
-    if (data.description !== undefined)
-      updateData.description = data.description;
-    if (data.address !== undefined) updateData.address = data.address;
-    if (data.latitude !== undefined)
-      updateData.latitude = data.latitude ? parseFloat(data.latitude) : null;
-    if (data.longitude !== undefined)
-      updateData.longitude = data.longitude ? parseFloat(data.longitude) : null;
-    if (data.phone !== undefined) updateData.phone = data.phone;
-    if (data.mail !== undefined) updateData.mail = data.mail;
-    if (data.osmId !== undefined)
-      updateData.osmId = data.osmId ? BigInt(data.osmId) : null;
-    if (data.isHotel !== undefined) updateData.isHotel = data.isHotel ? 1 : 0;
+    if (data.name !== undefined) body.name = data.name;
+    if (data.description !== undefined) body.description = data.description;
+    if (data.address !== undefined) body.address = data.address;
+    if (data.latitude !== undefined) body.latitude = data.latitude ? parseFloat(data.latitude) : null;
+    if (data.longitude !== undefined) body.longitude = data.longitude ? parseFloat(data.longitude) : null;
+    if (data.phone !== undefined) body.phone = data.phone;
+    if (data.mail !== undefined) body.mail = data.mail;
+    if (data.osmId !== undefined) body.OSMID = data.osmId ? BigInt(data.osmId) : null;
+    if (data.isHotel !== undefined) body.ishotel = data.isHotel ? 1 : 0;
 
-    const { error: updateError } = await safeQuery(
-      db
-        .update(travelAccommodations)
-        .set(updateData)
-        .where(eq(travelAccommodations.id, id)),
-    );
+    const result = await phpFetch(`/travel/accommodations/${id}`, {
+      method: "PATCH",
+      body,
+    });
 
-    if (updateError) throw updateError;
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("saveError") }, { status: result.status || 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -58,10 +52,11 @@ export async function DELETE(_req, { params }) {
   }
 
   try {
-    const { error: deleteError } = await safeQuery(
-      db.delete(travelAccommodations).where(eq(travelAccommodations.id, id)),
-    );
-    if (deleteError) throw deleteError;
+    const result = await phpFetch(`/travel/accommodations/${id}`, { method: "DELETE" });
+
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error || t("deleteError") }, { status: result.status || 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
