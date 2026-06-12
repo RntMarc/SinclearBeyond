@@ -3,7 +3,6 @@ import HomeClient from "@/components/home/HomeClient";
 import { InlineError } from "@/components/ui/InlineError";
 import { db, safeQuery } from "@/lib/db/db";
 import {
-  closeFriends,
   discoverPlaces,
   discoverReviews,
   eventPermissions,
@@ -23,6 +22,7 @@ import {
   travelTrips,
   users,
 } from "@/lib/db/schema";
+import { getWhoMarkedMe } from "@/lib/profile/closeFriends";
 import { getUnsplashPhotos } from "@/lib/photos/unsplash";
 import { getBirthdays } from "@/lib/profile/birthdays";
 
@@ -132,19 +132,12 @@ export default async function HomeContent({ userId, isAdmin }) {
       .where(eq(forumMembers.userId, userId)),
   );
 
+  const whoMarkedMe = await getWhoMarkedMe();
+  const usersWhoMarkedMeIds = whoMarkedMe.map((r) => r.userId);
+
   let forumInternalError = false;
   const forumsWithPosts = await Promise.all(
     (joinedForums || []).map(async (row) => {
-      const { data: usersWhoMarkedMeAsCloseFriend, error: cfError } =
-        await safeQuery(
-          db
-            .select({ userId: closeFriends.userId })
-            .from(closeFriends)
-            .where(eq(closeFriends.friendId, userId)),
-        );
-      if (cfError) forumInternalError = true;
-      const usersWhoMarkedMeIds =
-        usersWhoMarkedMeAsCloseFriend?.map((r) => r.userId) || [];
 
       const postVisibilityConditions = [
         eq(feedPosts.visibility, 1),

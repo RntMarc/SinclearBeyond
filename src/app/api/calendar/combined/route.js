@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
-  closeFriends,
   eventPermissions,
   eventRelations,
   events,
@@ -13,6 +12,7 @@ import {
   travelTrips,
   users,
 } from "@/lib/db/schema";
+import { getWhoMarkedMe, getWhoIMarked } from "@/lib/profile/closeFriends";
 
 export async function GET() {
   const t = await getTranslations("Common");
@@ -135,29 +135,15 @@ export async function GET() {
       .where(and(eq(users.id, users.id))),
   ); // Dummy to ensure select
 
-  const { data: whoMarkedMeAsCloseFriend, error: closeFriendsError } =
-    await safeQuery(
-      db
-        .select({ userId: closeFriends.userId })
-        .from(closeFriends)
-        .where(eq(closeFriends.friendId, userId)),
-    );
-
+  const whoMarkedMeRecords = await getWhoMarkedMe();
   const visibilityCloseFriendIds = new Set(
-    whoMarkedMeAsCloseFriend?.map((f) => f.userId) || [],
+    whoMarkedMeRecords.map((r) => r.userId),
   );
 
   // 5. CloseFriends abrufen, die ICH markiert habe (für Herzchen-Symbol)
-  const { data: iMarkedAsCloseFriend, error: myCloseFriendsError } =
-    await safeQuery(
-      db
-        .select({ friendId: closeFriends.friendId })
-        .from(closeFriends)
-        .where(eq(closeFriends.userId, userId)),
-    );
-
+  const whoIMarkedRecords = await getWhoIMarked();
   const myCloseFriendIds = new Set(
-    iMarkedAsCloseFriend?.map((f) => f.friendId) || [],
+    whoIMarkedRecords.map((r) => r.friendId),
   );
 
   if (
@@ -168,9 +154,7 @@ export async function GET() {
     eventRelError ||
     tripsError ||
     trvEventsError ||
-    usersError ||
-    closeFriendsError ||
-    myCloseFriendsError
+    usersError
   ) {
     return NextResponse.json({ error: t("dbError") }, { status: 500 });
   }

@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
-  closeFriends,
   feedPosts,
   forumMembers,
   forums,
   users,
 } from "@/lib/db/schema";
+import { getWhoMarkedMe } from "@/lib/profile/closeFriends";
 
 export async function GET(_req, { params }) {
   const { id: forumId } = await params;
@@ -57,13 +57,8 @@ export async function GET(_req, { params }) {
     const members = membersRows || [];
 
     // 4. Get Posts (using visibility logic)
-    const { data: whoMarkedMe } = await safeQuery(
-      db
-        .select({ userId: closeFriends.userId })
-        .from(closeFriends)
-        .where(eq(closeFriends.friendId, userId)),
-    );
-    const usersWhoMarkedMeIds = (whoMarkedMe || []).map((r) => r.userId);
+    const whoMarkedMe = await getWhoMarkedMe();
+    const usersWhoMarkedMeIds = whoMarkedMe.map((r) => r.userId);
 
     const visibilityConditions = [
       eq(feedPosts.visibility, 1),

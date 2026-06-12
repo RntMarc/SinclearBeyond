@@ -2,7 +2,6 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
-  closeFriends,
   contactInfo,
   eventRelations,
   socialInfo,
@@ -12,6 +11,7 @@ import {
   travelTrips,
   users,
 } from "@/lib/db/schema";
+import { getWhoMarkedMe, getWhoIMarked } from "@/lib/profile/closeFriends";
 import {
   CONTACT_FIELDS,
   filterEmail,
@@ -166,27 +166,11 @@ export async function getTripById(id) {
   if (relErr) throw relErr;
 
   // Visibility logic
-  const { data: whoMarkedMe, error: whoMarkedMeErr } = await safeQuery(
-    db
-      .select({ userId: closeFriends.userId })
-      .from(closeFriends)
-      .where(eq(closeFriends.friendId, session.sub)),
-  );
-  if (whoMarkedMeErr) throw whoMarkedMeErr;
+  const whoMarkedMe = await getWhoMarkedMe();
+  const visibilityCloseFriendIds = new Set(whoMarkedMe.map((f) => f.userId));
 
-  const visibilityCloseFriendIds = new Set(
-    (whoMarkedMe || []).map((f) => f.userId),
-  );
-
-  const { data: iMarked, error: iMarkedErr } = await safeQuery(
-    db
-      .select({ friendId: closeFriends.friendId })
-      .from(closeFriends)
-      .where(eq(closeFriends.userId, session.sub)),
-  );
-  if (iMarkedErr) throw iMarkedErr;
-
-  const myCloseFriendIds = new Set((iMarked || []).map((f) => f.friendId));
+  const iMarked = await getWhoIMarked();
+  const myCloseFriendIds = new Set(iMarked.map((f) => f.friendId));
 
   const { data: events, error: eventErr } = await safeQuery(
     db

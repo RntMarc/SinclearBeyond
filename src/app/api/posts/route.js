@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { closeFriends, feedPosts, forumMembers, users } from "@/lib/db/schema";
+import { feedPosts, forumMembers, users } from "@/lib/db/schema";
+import { getWhoMarkedMe, getWhoIMarked } from "@/lib/profile/closeFriends";
 import { sendNotification } from "@/lib/notifications/service";
 
 export async function GET(req) {
@@ -21,27 +22,13 @@ export async function GET(req) {
   try {
     // 1. Who has marked ME as their close friend
     //    → these users' visibility=2 posts are visible to me
-    const { data: whoMarkedMe, error: whoMarkedMeErr } = await safeQuery(
-      db
-        .select({ userId: closeFriends.userId })
-        .from(closeFriends)
-        .where(eq(closeFriends.friendId, userId)),
-    );
-    if (whoMarkedMeErr) throw whoMarkedMeErr;
-
-    const usersWhoMarkedMeIds = (whoMarkedMe || []).map((r) => r.userId);
+    const whoMarkedMe = await getWhoMarkedMe();
+    const usersWhoMarkedMeIds = whoMarkedMe.map((r) => r.userId);
 
     // 2. Who I have marked as my close friend
     //    → used for the onlyCloseFriends UI filter
-    const { data: myFriends, error: myFriendsErr } = await safeQuery(
-      db
-        .select({ friendId: closeFriends.friendId })
-        .from(closeFriends)
-        .where(eq(closeFriends.userId, userId)),
-    );
-    if (myFriendsErr) throw myFriendsErr;
-
-    const myCloseFriendIds = (myFriends || []).map((r) => r.friendId);
+    const myFriends = await getWhoIMarked();
+    const myCloseFriendIds = myFriends.map((r) => r.friendId);
     const myCloseFriendIdsSet = new Set(myCloseFriendIds);
 
     // Visibility rules:

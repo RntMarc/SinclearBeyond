@@ -2,7 +2,8 @@
 import { and, eq, inArray, or } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
-import { closeFriends, socialInfo, users } from "@/lib/db/schema";
+import { socialInfo, users } from "@/lib/db/schema";
+import { getWhoMarkedMe } from "@/lib/profile/closeFriends";
 import { fetchWithTimeout } from "@/lib/utils";
 
 const UNSPLASH_API_KEY = process.env.UNSPLASH_API_KEY;
@@ -15,16 +16,8 @@ export async function getUnsplashPhotos({ page = 1, perPage = 20 } = {}) {
 
   // 1. Get all users who have an Unsplash handle and appropriate visibility
   // To do this efficiently, we first find who has me as a close friend
-  const { data: whoMarkedMe, error: whoMarkedMeErr } = await safeQuery(
-    db
-      .select({ userId: closeFriends.userId })
-      .from(closeFriends)
-      .where(eq(closeFriends.friendId, currentUserId)),
-  );
-
-  if (whoMarkedMeErr) throw whoMarkedMeErr;
-
-  const closeFriendIds = (whoMarkedMe || []).map((f) => f.userId);
+  const whoMarkedMe = await getWhoMarkedMe();
+  const closeFriendIds = whoMarkedMe.map((f) => f.userId);
 
   // Users I can see:
   // - Visibility = 1 (All)
