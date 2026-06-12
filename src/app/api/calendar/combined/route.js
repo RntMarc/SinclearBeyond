@@ -1,11 +1,9 @@
-import { and, eq, inArray, or } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
 import { db, safeQuery } from "@/lib/db/db";
 import {
-  eventPermissions,
-  events,
   users,
 } from "@/lib/db/schema";
 import { phpFetch } from "@/lib/api/phpClient";
@@ -20,51 +18,20 @@ export async function GET() {
   const userId = session.sub;
 
   // 1. Standard Events
-  const { data: viewPermRows, error: viewPermError } = await safeQuery(
-    db
-      .select({ eventId: eventPermissions.eventId })
-      .from(eventPermissions)
-      .where(
-        and(
-          eq(eventPermissions.userId, userId),
-          eq(eventPermissions.canView, 1),
-        ),
-      ),
-  );
-
-  const permEventIds = viewPermRows?.map((r) => r.eventId) || [];
-  const conditions = [eq(events.isPublic, 1), eq(events.creatorId, userId)];
-  if (permEventIds.length > 0)
-    conditions.push(inArray(events.id, permEventIds));
-
-  const { data: rows, error: eventsError } = await safeQuery(
-    db
-      .select()
-      .from(events)
-      .where(or(...conditions))
-      .orderBy(events.startAt),
-  );
-
-  const { data: editPermRows, error: editPermError } = await safeQuery(
-    db
-      .select({ eventId: eventPermissions.eventId })
-      .from(eventPermissions)
-      .where(
-        and(
-          eq(eventPermissions.userId, userId),
-          eq(eventPermissions.canEdit, 1),
-        ),
-      ),
-  );
-
-  const editEventIds = new Set(editPermRows?.map((r) => r.eventId) || []);
-
-  const standardEvents =
-    rows?.map((ev) => ({
-      ...ev,
-      canEdit:
-        session.isAdmin || ev.creatorId === userId || editEventIds.has(ev.id),
-    })) || [];
+  let standardEvents = [];
+  let eventsError = false;
+  const calResult = await phpFetch("/calendar/combined");
+  if (calResult.ok) {
+    const allItems = calResult.data?.data || [];
+    standardEvents = allItems
+      .filter((item) => item.source === "event")
+      .map((ev) => ({
+        ...ev,
+        canEdit: session.isAdmin || ev.creatorId === userId || ev.canEdit === 1,
+      }));
+  } else {
+    eventsError = true;
+  }
 
   // 2. Trips
   let trips = [];
@@ -103,9 +70,7 @@ export async function GET() {
   );
 
   if (
-    viewPermError ||
     eventsError ||
-    editPermError ||
     usersError
   ) {
     return NextResponse.json({ error: t("dbError") }, { status: 500 });

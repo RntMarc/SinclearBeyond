@@ -5,8 +5,6 @@ import { db, safeQuery } from "@/lib/db/db";
 import {
   discoverPlaces,
   discoverReviews,
-  eventPermissions,
-  events,
   feedPosts,
   feedPostVotes,
   forumMembers,
@@ -29,39 +27,21 @@ export default async function HomeContent({ userId, isAdmin }) {
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
   // 1. Fetch Upcoming Events (next 7 days)
-  const { data: viewPermRows, error: viewPermError } = await safeQuery(
-    db
-      .select({ eventId: eventPermissions.eventId })
-      .from(eventPermissions)
-      .where(
-        and(
-          eq(eventPermissions.userId, userId),
-          eq(eventPermissions.canView, 1),
-        ),
-      ),
-  );
-
-  const permEventIds = viewPermRows?.map((r) => r.eventId) || [];
-  const standardEventConditions = [
-    eq(events.isPublic, 1),
-    eq(events.creatorId, userId),
-  ];
-  if (permEventIds.length > 0)
-    standardEventConditions.push(inArray(events.id, permEventIds));
-
-  const { data: standardEvents, error: eventsError } = await safeQuery(
-    db
-      .select()
-      .from(events)
-      .where(
-        and(
-          or(...standardEventConditions),
-          gte(events.startAt, now),
-          lte(events.startAt, sevenDaysLater),
-        ),
-      )
-      .orderBy(events.startAt),
-  );
+  let standardEvents = [];
+  let eventsError = false;
+  const calResult = await phpFetch("/calendar/combined");
+  if (calResult.ok) {
+    const allItems = calResult.data?.data || [];
+    standardEvents = allItems
+      .filter((item) => item.source === "event")
+      .filter((event) => {
+        const start = new Date(event.startAt);
+        return start >= now && start <= sevenDaysLater;
+      })
+      .sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+  } else {
+    eventsError = true;
+  }
 
   // 2. Fetch Upcoming Trips (next 7 days OR currently active)
   let trips = [];
@@ -313,7 +293,6 @@ export default async function HomeContent({ userId, isAdmin }) {
     })) || [];
 
   const hasAnyError =
-    viewPermError ||
     eventsError ||
     tripsError ||
     mediaReviewsError ||
