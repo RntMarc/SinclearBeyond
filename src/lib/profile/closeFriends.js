@@ -7,11 +7,11 @@ export async function getCloseFriends() {
   const session = await getSession();
   if (!session?.sub) return [];
 
-  const result = await phpFetch(`/close-friends/${session.sub}`);
+  const result = await phpFetch("/close-friends");
 
   if (!result.ok) return [];
 
-  return result.data || [];
+  return result.data?.data || [];
 }
 
 export async function addCloseFriend(friendId) {
@@ -24,7 +24,6 @@ export async function addCloseFriend(friendId) {
   try {
     const result = await phpFetch(`/close-friends/${session.sub}/${friendId}`, {
       method: "POST",
-      body: { userId: session.sub, friendId },
     });
 
     if (!result.ok) throw new Error(result.error);
@@ -54,4 +53,34 @@ export async function removeCloseFriend(friendId) {
     console.error(error);
     return { ok: false, error: "Fehler beim Entfernen" };
   }
+}
+
+/**
+ * Users who marked the current user as a close friend.
+ * Returns array of { userId }.
+ */
+export async function getWhoMarkedMe() {
+  const session = await getSession();
+  if (!session?.sub) return [];
+
+  const result = await phpFetch("/close-friends/incoming");
+  if (!result.ok) return [];
+
+  const records = result.data?.data || [];
+  return records.map((r) => ({ userId: r.userId }));
+}
+
+/**
+ * Users the current user has marked as close friends.
+ * Returns array of { friendId }.
+ */
+export async function getWhoIMarked() {
+  const session = await getSession();
+  if (!session?.sub) return [];
+
+  const result = await phpFetch("/close-friends");
+  if (!result.ok) return [];
+
+  const records = result.data?.data || [];
+  return records.map((r) => ({ friendId: r.friendId }));
 }
