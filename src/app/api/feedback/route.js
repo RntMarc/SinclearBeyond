@@ -110,7 +110,7 @@ export async function POST(req) {
 
       const insertResult = await phpFetch("/feedback-suggestions", {
         method: "POST",
-        body: { title, description },
+        body: { userId, title, description },
       });
 
       if (!insertResult.ok) {
