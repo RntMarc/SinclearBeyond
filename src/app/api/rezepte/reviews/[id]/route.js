@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { recipeReviews } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
@@ -13,19 +11,12 @@ export async function PATCH(req, { params }) {
   try {
     const { rating, comment } = await req.json();
 
-    const { data: existing } = await safeQuery(
-      db
-        .select({ userId: recipeReviews.userId })
-        .from(recipeReviews)
-        .where(eq(recipeReviews.id, id))
-        .limit(1),
-    );
-
-    if (!existing || existing.length === 0) {
+    const existingRes = await phpFetch(`/recipe-reviews/${id}`);
+    if (!existingRes.ok) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    if (existing[0].userId !== session.sub && !session.isAdmin) {
+    if (existingRes.data.userId !== session.sub && !session.isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -33,11 +24,12 @@ export async function PATCH(req, { params }) {
     if (rating !== undefined) updateData.rating = parseInt(rating, 10);
     if (comment !== undefined) updateData.comment = comment;
 
-    const { error: updateError } = await safeQuery(
-      db.update(recipeReviews).set(updateData).where(eq(recipeReviews.id, id)),
-    );
+    const updateResult = await phpFetch(`/recipe-reviews/${id}`, {
+      method: "PATCH",
+      body: updateData,
+    });
 
-    if (updateError) {
+    if (!updateResult.ok) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
@@ -57,27 +49,20 @@ export async function DELETE(_req, { params }) {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data: existing } = await safeQuery(
-    db
-      .select({ userId: recipeReviews.userId })
-      .from(recipeReviews)
-      .where(eq(recipeReviews.id, id))
-      .limit(1),
-  );
-
-  if (!existing || existing.length === 0) {
+  const existingRes = await phpFetch(`/recipe-reviews/${id}`);
+  if (!existingRes.ok) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (existing[0].userId !== session.sub && !session.isAdmin) {
+  if (existingRes.data.userId !== session.sub && !session.isAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { error: deleteError } = await safeQuery(
-    db.delete(recipeReviews).where(eq(recipeReviews.id, id)),
-  );
+  const deleteResult = await phpFetch(`/recipe-reviews/${id}`, {
+    method: "DELETE",
+  });
 
-  if (deleteError) {
+  if (!deleteResult.ok) {
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 

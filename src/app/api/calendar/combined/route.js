@@ -1,13 +1,7 @@
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  users,
-} from "@/lib/db/schema";
 import { phpFetch } from "@/lib/api/phpClient";
-import { getWhoMarkedMe, getWhoIMarked } from "@/lib/profile/closeFriends";
 
 export async function GET() {
   const t = await getTranslations("Common");
@@ -46,50 +40,12 @@ export async function GET() {
   }
 
   // 4. Birthdays
-  const { data: allUsersWithBirthday, error: usersError } = await safeQuery(
-    db
-      .select({
-        id: users.id,
-        displayName: users.displayName,
-        birthday: users.birthday,
-        birthdayVisibility: users.birthdayVisibility,
-      })
-      .from(users)
-      .where(and(eq(users.id, users.id))),
-  ); // Dummy to ensure select
+  const birthdaysResult = await phpFetch("/home/birthdays");
+  const birthdays = birthdaysResult.ok ? (birthdaysResult.data?.data || []) : [];
 
-  const whoMarkedMeRecords = await getWhoMarkedMe();
-  const visibilityCloseFriendIds = new Set(
-    whoMarkedMeRecords.map((r) => r.userId),
-  );
-
-  // 5. CloseFriends abrufen, die ICH markiert habe (für Herzchen-Symbol)
-  const whoIMarkedRecords = await getWhoIMarked();
-  const myCloseFriendIds = new Set(
-    whoIMarkedRecords.map((r) => r.friendId),
-  );
-
-  if (
-    eventsError ||
-    usersError
-  ) {
+  if (eventsError) {
     return NextResponse.json({ error: t("dbError") }, { status: 500 });
   }
-
-  const birthdays = (allUsersWithBirthday || [])
-    .filter((u) => {
-      if (!u.birthday) return false;
-      if (u.id === userId) return true;
-      const visibility = u.birthdayVisibility;
-      const allowsMePrivateInfo = visibilityCloseFriendIds.has(u.id);
-      return visibility === 1 || (visibility === 2 && allowsMePrivateInfo);
-    })
-    .map((u) => ({
-      id: u.id,
-      displayName: u.displayName,
-      birthday: u.birthday,
-      isCloseFriend: myCloseFriendIds.has(u.id),
-    }));
 
   return NextResponse.json({
     events: standardEvents.map((ev) => ({ ...ev, type: "event" })),

@@ -1,9 +1,6 @@
-import crypto from "node:crypto";
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { recipeBookmarks } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(req) {
   const session = await getSession();
@@ -13,37 +10,23 @@ export async function POST(req) {
   try {
     const { recipeId } = await req.json();
 
-    const { data: existingData } = await safeQuery(
-      db
-        .select()
-        .from(recipeBookmarks)
-        .where(
-          and(
-            eq(recipeBookmarks.userId, session.sub),
-            eq(recipeBookmarks.recipeId, recipeId),
-          ),
-        )
-        .limit(1),
+    const existing = await phpFetch(
+      `/recipe-bookmarks?userId=${session.sub}&recipeId=${recipeId}&limit=1`,
     );
+    const existingBookmark = existing.ok && existing.data?.[0];
 
-    const existing = existingData?.[0];
-
-    if (existing) {
-      const { error: deleteError } = await safeQuery(
-        db.delete(recipeBookmarks).where(eq(recipeBookmarks.id, existing.id)),
-      );
-      if (deleteError) throw deleteError;
+    if (existingBookmark) {
+      const del = await phpFetch(`/recipe-bookmarks/${existingBookmark.id}`, {
+        method: "DELETE",
+      });
+      if (!del.ok) throw new Error(del.error);
       return NextResponse.json({ ok: true, bookmarked: false });
     } else {
-      const { error: insertError } = await safeQuery(
-        db.insert(recipeBookmarks).values({
-          id: crypto.randomUUID(),
-          userId: session.sub,
-          recipeId,
-          createdAt: new Date(),
-        }),
-      );
-      if (insertError) throw insertError;
+      const ins = await phpFetch("/recipe-bookmarks", {
+        method: "POST",
+        body: { userId: session.sub, recipeId },
+      });
+      if (!ins.ok) throw new Error(ins.error);
       return NextResponse.json({ ok: true, bookmarked: true });
     }
   } catch (error) {

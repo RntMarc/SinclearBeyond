@@ -1,17 +1,6 @@
-import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  albumTracks,
-  episodeReviews,
-  mediaItems,
-  mediaReviews,
-  seriesEpisodes,
-} from "@/lib/db/schema";
-import { getGameDetails } from "@/lib/kritik/igdb";
-import { getMusicDetails } from "@/lib/kritik/musicbrainz";
-import { getMovieDetails, getSeriesDetails } from "@/lib/kritik/tmdb";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(_req, { params }) {
   const session = await getSession();
@@ -22,40 +11,31 @@ export async function GET(_req, { params }) {
   const { id } = await params;
 
   try {
-    const { data: items, error: itemError } = await safeQuery(
-      db
-        .select({
-          id: mediaItems.id,
-          title: mediaItems.title,
-          description: mediaItems.description,
-          image: mediaItems.image,
-          type: mediaItems.type,
-          format: mediaItems.format,
-          releaseDate: mediaItems.releaseDate,
-          links: mediaItems.links,
-          updatedAt: mediaItems.updatedAt,
-          externalId: mediaItems.externalId,
-          avgRating: sql`AVG(${mediaReviews.rating})`,
-          reviewCount: sql`COUNT(${mediaReviews.id})`,
-        })
-        .from(mediaItems)
-        .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
-        .where(eq(mediaItems.id, id))
-        .groupBy(mediaItems.id)
-        .limit(1),
-    );
-
-    if (itemError) throw itemError;
-
-    if (!items || items.length === 0) {
-      return NextResponse.json({ error: "Not Found" }, { status: 404 });
+    const result = await phpFetch(`/media/${id}/detail`);
+    if (!result.ok) {
+      if (result.status === 404) {
+        return NextResponse.json({ error: "Not Found" }, { status: 404 });
+      }
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
     }
 
-    const item = items[0];
+    const data = result.data?.data || result.data;
 
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    item.needsUpdate = item.externalId && item.updatedAt < sevenDaysAgo;
+    const item = data.item || data;
+    item.reviews = data.reviews || [];
+
+    if (data.episodes) {
+      item.episodes = data.episodes;
+    }
+    if (data.tracks) {
+      item.tracks = data.tracks;
+    }
+    if (data.albums) {
+      item.albums = data.albums;
+    }
 
     try {
       item.links = item.links ? JSON.parse(item.links) : [];
@@ -63,106 +43,9 @@ export async function GET(_req, { params }) {
       item.links = [];
     }
 
-    // Add extra data based on type
-    if (item.type === "movie" && item.format === "series") {
-      const { data: episodes, error: epsError } = await safeQuery(
-        db
-          .select({
-            id: seriesEpisodes.id,
-            seasonNumber: seriesEpisodes.seasonNumber,
-            episodeNumber: seriesEpisodes.episodeNumber,
-            title: seriesEpisodes.title,
-            releaseDate: seriesEpisodes.releaseDate,
-            avgRating: sql`AVG(${episodeReviews.rating})`,
-            reviewCount: sql`COUNT(${episodeReviews.id})`,
-            userRating: sql`MAX(CASE WHEN ${episodeReviews.userId} = ${session.sub} THEN ${episodeReviews.rating} ELSE NULL END)`,
-          })
-          .from(seriesEpisodes)
-          .leftJoin(
-            episodeReviews,
-            eq(seriesEpisodes.id, episodeReviews.episodeId),
-          )
-          .where(eq(seriesEpisodes.seriesId, item.id))
-          .groupBy(seriesEpisodes.id)
-          .orderBy(seriesEpisodes.seasonNumber, seriesEpisodes.episodeNumber),
-      );
-
-      if (epsError) throw epsError;
-      item.episodes = episodes || [];
-    }
-
-    if (item.type === "music") {
-      if (item.format === "album") {
-        const { data: tracks, error: tracksError } = await safeQuery(
-          db
-            .select({
-              id: mediaItems.id,
-              title: mediaItems.title,
-              format: mediaItems.format,
-              trackNumber: albumTracks.trackNumber,
-              avgRating: sql`AVG(${mediaReviews.rating})`,
-              reviewCount: sql`COUNT(${mediaReviews.id})`,
-            })
-            .from(albumTracks)
-            .innerJoin(mediaItems, eq(albumTracks.songId, mediaItems.id))
-            .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
-            .where(eq(albumTracks.albumId, item.id))
-            .groupBy(mediaItems.id, albumTracks.trackNumber)
-            .orderBy(albumTracks.trackNumber),
-        );
-
-        if (tracksError) throw tracksError;
-        item.tracks = tracks || [];
-      } else if (item.format === "song") {
-        const { data: albumsResult, error: albError } = await safeQuery(
-          db
-            .select({
-              id: mediaItems.id,
-              title: mediaItems.title,
-              image: mediaItems.image,
-              format: mediaItems.format,
-            })
-            .from(albumTracks)
-            .innerJoin(mediaItems, eq(albumTracks.albumId, mediaItems.id))
-            .where(eq(albumTracks.songId, item.id)),
-        );
-
-        if (albError) throw albError;
-
-        // For each album, get all tracks
-        const albumsWithTracks = await Promise.all(
-          (albumsResult || []).map(async (album) => {
-            const { data: tracks, error: tErr } = await safeQuery(
-              db
-                .select({
-                  id: mediaItems.id,
-                  title: mediaItems.title,
-                  format: mediaItems.format,
-                  trackNumber: albumTracks.trackNumber,
-                  avgRating: sql`AVG(${mediaReviews.rating})`,
-                  reviewCount: sql`COUNT(${mediaReviews.id})`,
-                })
-                .from(albumTracks)
-                .innerJoin(mediaItems, eq(albumTracks.songId, mediaItems.id))
-                .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
-                .where(eq(albumTracks.albumId, album.id))
-                .groupBy(mediaItems.id, albumTracks.trackNumber)
-                .orderBy(albumTracks.trackNumber),
-            );
-            if (tErr) {
-              console.error(
-                `[API/Kritik/Items/ID] Track load error for album ${album.id}:`,
-                tErr,
-              );
-              return { ...album, tracks: [] };
-            }
-            return { ...album, tracks: tracks || [] };
-          }),
-        );
-
-        item.albums = albumsWithTracks;
-      }
-    }
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    item.needsUpdate = item.externalId && item.updatedAt < sevenDaysAgo;
 
     return NextResponse.json(item);
   } catch (error) {
@@ -183,16 +66,11 @@ export async function PATCH(_req, { params }) {
   const { id } = await params;
 
   try {
-    const { data: items, error: itemFetchError } = await safeQuery(
-      db.select().from(mediaItems).where(eq(mediaItems.id, id)).limit(1),
-    );
-
-    if (itemFetchError) throw itemFetchError;
-    const item = items?.[0];
-
-    if (!item) {
+    const itemRes = await phpFetch(`/media-items/${id}`);
+    if (!itemRes.ok) {
       return NextResponse.json({ error: "Not Found" }, { status: 404 });
     }
+    const item = itemRes.data;
 
     if (!item.externalId) {
       return NextResponse.json({ error: "No external ID" }, { status: 400 });
@@ -201,14 +79,19 @@ export async function PATCH(_req, { params }) {
     let updatedData = null;
 
     if (item.type === "music") {
+      const { getMusicDetails } = await import("@/lib/kritik/musicbrainz");
       updatedData = await getMusicDetails(item.externalId, item.format);
     } else if (item.type === "movie") {
+      const { getMovieDetails, getSeriesDetails } = await import(
+        "@/lib/kritik/tmdb"
+      );
       if (item.format === "series") {
         updatedData = await getSeriesDetails(item.externalId);
       } else {
         updatedData = await getMovieDetails(item.externalId);
       }
     } else if (item.type === "game") {
+      const { getGameDetails } = await import("@/lib/kritik/igdb");
       updatedData = await getGameDetails(item.externalId);
     }
 
@@ -219,21 +102,19 @@ export async function PATCH(_req, { params }) {
       );
     }
 
-    const { error: updateError } = await safeQuery(
-      db
-        .update(mediaItems)
-        .set({
-          title: updatedData.title,
-          description: updatedData.description,
-          image: updatedData.image,
-          releaseDate: updatedData.releaseDate,
-          links: JSON.stringify(updatedData.links),
-          updatedAt: new Date(),
-        })
-        .where(eq(mediaItems.id, id)),
-    );
+    const updateResult = await phpFetch(`/media-items/${id}`, {
+      method: "PATCH",
+      body: {
+        title: updatedData.title,
+        description: updatedData.description,
+        image: updatedData.image,
+        releaseDate: updatedData.releaseDate,
+        links: JSON.stringify(updatedData.links),
+        updatedAt: new Date().toISOString(),
+      },
+    });
 
-    if (updateError) throw updateError;
+    if (!updateResult.ok) throw new Error(updateResult.error);
 
     return NextResponse.json({ ok: true });
   } catch (error) {

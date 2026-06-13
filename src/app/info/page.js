@@ -1,11 +1,9 @@
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
 import { getChangelogEntries } from "@/lib/changelog/actions";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import InfoClient from "./InfoClient";
 
 export async function generateMetadata() {
@@ -19,19 +17,8 @@ export default async function InfoPage() {
   const session = await getSessionWithSubs();
   if (!session) redirect("/login");
 
-  const { data: userData } = await safeQuery(
-    db
-      .select({
-        displayName: users.displayName,
-        email: users.email,
-        image: users.image,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .where(eq(users.id, session.sub))
-      .limit(1),
-  );
-  const user = userData?.[0];
+  const userResult = await phpFetch(`/users/${session.sub}`);
+  const user = userResult.ok ? (userResult.data?.data || userResult.data) : null;
 
   const entries = (await getChangelogEntries()) || [];
 

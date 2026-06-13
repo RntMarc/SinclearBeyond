@@ -1,5 +1,4 @@
 import crypto from "node:crypto";
-import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createSessionToken } from "@/lib/auth/auth";
@@ -11,8 +10,7 @@ import {
 } from "@/lib/auth/discord";
 import { getSession } from "@/lib/auth/session";
 import { completeV2AuthFlowIfPresent } from "@/lib/auth/v2Flow";
-import { db, safeQuery } from "@/lib/db/db";
-import { contactInfo, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { normalizeOrigin, validateRelativeCallbackUrl } from "@/lib/utils";
 
 export async function GET(req) {
@@ -20,7 +18,7 @@ export async function GET(req) {
 
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-  const state = searchParams.get("state") || ""; // 'login', 'register', or 'link' (potentially with |callbackUrl)
+  const state = searchParams.get("state") || "";
 
   const [mode, ...rest] = state.split("|");
   const callbackUrl = rest.length > 0 ? rest.join("|") : null;
@@ -41,25 +39,14 @@ export async function GET(req) {
       (g) => g.id === process.env.DISCORD_ALLOWED_GUILD_ID,
     );
 
-    const [{ data: byId }, { data: byEmail }] = await Promise.all([
-      safeQuery(
-        db
-          .select()
-          .from(users)
-          .where(eq(users.discordId, discordUser.id))
-          .limit(1),
-      ),
-      safeQuery(
-        db
-          .select()
-          .from(users)
-          .where(eq(users.email, discordUser.email))
-          .limit(1),
-      ),
+    // Find existing user by discordId or email
+    const [byIdRes, byEmailRes] = await Promise.all([
+      phpFetch(`/users?filter[discordId]=${discordUser.id}&limit=1`),
+      phpFetch(`/users?filter[email]=${encodeURIComponent(discordUser.email)}&limit=1`),
     ]);
 
-    const existingByDiscordId = byId || [];
-    const existingByEmail = byEmail || [];
+    const existingByDiscordId = byIdRes.ok ? (byIdRes.data?.data || []) : [];
+    const existingByEmail = byEmailRes.ok ? (byEmailRes.data?.data || []) : [];
 
     if (mode === "link") {
       const session = await getSession();
@@ -67,7 +54,6 @@ export async function GET(req) {
         return NextResponse.redirect(new URL("/login", origin));
       }
 
-      // Check if this Discord account is already linked to another user
       if (
         existingByDiscordId.length > 0 &&
         existingByDiscordId[0].id !== session.sub
@@ -77,41 +63,25 @@ export async function GET(req) {
         );
       }
 
-      // Update current user
-      const { error: upErr } = await safeQuery(
-        db
-          .update(users)
-          .set({ discordId: discordUser.id })
-          .where(eq(users.id, session.sub)),
-      );
-      if (upErr) throw upErr;
+      await phpFetch(`/users/${session.sub}`, {
+        method: "PATCH",
+        body: { discordId: discordUser.id },
+      });
 
-      // Update or create contact info
-      const { data: contactRows, error: contactErr } = await safeQuery(
-        db
-          .select()
-          .from(contactInfo)
-          .where(eq(contactInfo.userId, session.sub))
-          .limit(1),
-      );
-      if (contactErr) throw contactErr;
-      const existingContact = contactRows?.[0];
-
-      if (existingContact) {
-        await safeQuery(
-          db
-            .update(contactInfo)
-            .set({ discordHandle: discordUser.username })
-            .where(eq(contactInfo.userId, session.sub)),
-        );
+      const contactRes = await phpFetch(`/contact-info/${session.sub}`);
+      if (contactRes.ok) {
+        await phpFetch(`/contact-info/${session.sub}`, {
+          method: "PATCH",
+          body: { discordHandle: discordUser.username },
+        });
       } else {
-        await safeQuery(
-          db.insert(contactInfo).values({
-            id: crypto.randomUUID(),
+        await phpFetch("/contact-info", {
+          method: "POST",
+          body: {
             userId: session.sub,
             discordHandle: discordUser.username,
-          }),
-        );
+          },
+        });
       }
 
       return NextResponse.redirect(
@@ -138,32 +108,28 @@ export async function GET(req) {
         discordUser.avatar,
       );
 
-      // Get displayName from cookie if present (set by client before redirect)
       const cookieStore = await cookies();
       const pendingDisplayName = cookieStore.get("pending_display_name")?.value;
 
-      // Create user
-      const { error: inUserErr } = await safeQuery(
-        db.insert(users).values({
+      await phpFetch("/users", {
+        method: "POST",
+        body: {
           id: userId,
           email: discordUser.email,
           displayName: (pendingDisplayName || discordUser.username).trim(),
           passwordHash: "OAUTH_USER",
           discordId: discordUser.id,
           image: imageBase64,
-          createdAt: new Date(),
-        }),
-      );
-      if (inUserErr) throw inUserErr;
+        },
+      });
 
-      // Create contact info
-      await safeQuery(
-        db.insert(contactInfo).values({
-          id: crypto.randomUUID(),
+      await phpFetch("/contact-info", {
+        method: "POST",
+        body: {
           userId: userId,
           discordHandle: discordUser.username,
-        }),
-      );
+        },
+      });
 
       return await createSessionAndRedirect(
         {
@@ -185,53 +151,31 @@ export async function GET(req) {
       );
     }
 
-    // Update discordId if it was found by email but not linked yet
     if (!user.discordId) {
-      const { error: upDisErr } = await safeQuery(
-        db
-          .update(users)
-          .set({ discordId: discordUser.id })
-          .where(eq(users.id, user.id)),
-      );
-      if (upDisErr) throw upDisErr;
+      await phpFetch(`/users/${user.id}`, {
+        method: "PATCH",
+        body: { discordId: discordUser.id },
+      });
 
-      // Also update discordHandle if not set
-      const { data: contactRows, error: contactErr } = await safeQuery(
-        db
-          .select()
-          .from(contactInfo)
-          .where(eq(contactInfo.userId, user.id))
-          .limit(1),
-      );
-      if (contactErr) throw contactErr;
-      const existingContact = contactRows?.[0];
-
-      if (existingContact) {
-        if (!existingContact.discordHandle) {
-          await safeQuery(
-            db
-              .update(contactInfo)
-              .set({ discordHandle: discordUser.username })
-              .where(eq(contactInfo.userId, user.id)),
-          );
+      const contactRes = await phpFetch(`/contact-info/${user.id}`);
+      if (contactRes.ok) {
+        if (!contactRes.data?.discordHandle) {
+          await phpFetch(`/contact-info/${user.id}`, {
+            method: "PATCH",
+            body: { discordHandle: discordUser.username },
+          });
         }
       } else {
-        await safeQuery(
-          db.insert(contactInfo).values({
-            id: crypto.randomUUID(),
+        await phpFetch("/contact-info", {
+          method: "POST",
+          body: {
             userId: user.id,
             discordHandle: discordUser.username,
-          }),
-        );
+          },
+        });
       }
 
-      // Re-fetch user to get updated data (though discordId doesn't affect session, it's cleaner)
-      const { data: updatedUser } = await safeQuery(
-        db.select().from(users).where(eq(users.id, user.id)).limit(1),
-      );
-      if (updatedUser?.[0]) {
-        user = updatedUser[0];
-      }
+      user = { ...user, discordId: discordUser.id };
     }
 
     return await createSessionAndRedirect(user, origin, callbackUrl);
@@ -239,7 +183,6 @@ export async function GET(req) {
     const duration = Date.now() - startTime;
     console.error(`Discord callback error after ${duration}ms:`, error);
 
-    // Specific error handling for timeouts or fetch failures
     if (
       error.code === "UND_ERR_CONNECT_TIMEOUT" ||
       error.message?.includes("fetch failed")
@@ -261,7 +204,7 @@ async function createSessionAndRedirect(user, origin, callbackUrl) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: 60 * 60 * 24 * 7,
     path: "/",
   });
 

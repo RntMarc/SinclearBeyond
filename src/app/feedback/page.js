@@ -1,32 +1,17 @@
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import FeedbackClient from "@/components/feedback/FeedbackClient";
 import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export default async function FeedbackPage() {
   const _t = await getTranslations("Feedback");
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const userId = session.sub;
-  const { data: userData } = await safeQuery(
-    db
-      .select({
-        id: users.id,
-        displayName: users.displayName,
-        email: users.email,
-        image: users.image,
-        isAdmin: users.isAdmin,
-      })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1),
-  );
-  const user = userData?.[0];
+  const userResult = await phpFetch(`/users/${session.sub}`);
+  const user = userResult.ok ? (userResult.data?.data || userResult.data) : null;
 
   return (
     <AppShell user={user} session={session}>

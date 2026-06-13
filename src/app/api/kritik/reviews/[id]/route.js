@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { mediaReviews } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function DELETE(_req, { params }) {
   const session = await getSession();
@@ -13,26 +11,20 @@ export async function DELETE(_req, { params }) {
   const { id } = await params;
 
   try {
-    // Check if review exists and belongs to user (or user is admin)
-    const { data: reviews, error: fetchErr } = await safeQuery(
-      db.select().from(mediaReviews).where(eq(mediaReviews.id, id)).limit(1),
-    );
-
-    if (fetchErr) throw fetchErr;
-    const review = reviews?.[0];
-
-    if (!review) {
+    const reviewRes = await phpFetch(`/media-reviews/${id}`);
+    if (!reviewRes.ok) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
+    const review = reviewRes.data;
     if (review.userId !== session.sub && !session.isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { error: delErr } = await safeQuery(
-      db.delete(mediaReviews).where(eq(mediaReviews.id, id)),
-    );
-    if (delErr) throw delErr;
+    const deleteResult = await phpFetch(`/media-reviews/${id}`, {
+      method: "DELETE",
+    });
+    if (!deleteResult.ok) throw new Error(deleteResult.error);
 
     return NextResponse.json({ ok: true });
   } catch (error) {

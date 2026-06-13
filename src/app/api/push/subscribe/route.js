@@ -1,8 +1,6 @@
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { pushSubscriptions } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(req) {
   const session = await getSession();
@@ -23,28 +21,26 @@ export async function POST(req) {
       );
     }
 
-    const now = new Date();
-
     // Delete existing subscription for this endpoint to avoid duplicates
-    await safeQuery(
-      db
-        .delete(pushSubscriptions)
-        .where(eq(pushSubscriptions.endpoint, endpoint)),
-    );
+    await phpFetch(`/push-subscriptions?endpoint=${encodeURIComponent(endpoint)}`, {
+      method: "DELETE",
+    });
 
+    // Create new subscription via generic CRUD
     const id = crypto.randomUUID();
-    const { error } = await safeQuery(
-      db.insert(pushSubscriptions).values({
+    const result = await phpFetch("/push-subscriptions", {
+      method: "POST",
+      body: {
         id,
         userId: session.sub,
         endpoint,
         p256dh,
         auth,
-        createdAt: now,
-      }),
-    );
+        createdAt: new Date().toISOString(),
+      },
+    });
 
-    if (error) {
+    if (!result.ok) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
@@ -67,22 +63,13 @@ export async function DELETE(req) {
   const endpoint = searchParams.get("endpoint");
 
   if (endpoint) {
-    await safeQuery(
-      db
-        .delete(pushSubscriptions)
-        .where(
-          and(
-            eq(pushSubscriptions.endpoint, endpoint),
-            eq(pushSubscriptions.userId, session.sub),
-          ),
-        ),
-    );
+    await phpFetch(`/push-subscriptions?endpoint=${encodeURIComponent(endpoint)}`, {
+      method: "DELETE",
+    });
   } else {
-    await safeQuery(
-      db
-        .delete(pushSubscriptions)
-        .where(eq(pushSubscriptions.userId, session.sub)),
-    );
+    await phpFetch(`/push-subscriptions?userId=${session.sub}`, {
+      method: "DELETE",
+    });
   }
 
   return NextResponse.json({ ok: true });
@@ -94,20 +81,10 @@ export async function GET(_req) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await safeQuery(
-    db
-      .select({
-        id: pushSubscriptions.id,
-        endpoint: pushSubscriptions.endpoint,
-        createdAt: pushSubscriptions.createdAt,
-      })
-      .from(pushSubscriptions)
-      .where(eq(pushSubscriptions.userId, session.sub)),
-  );
-
-  if (error) {
+  const result = await phpFetch(`/push-subscriptions?userId=${session.sub}`);
+  if (!result.ok) {
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 
-  return NextResponse.json(data || []);
+  return NextResponse.json(result.data?.data || []);
 }

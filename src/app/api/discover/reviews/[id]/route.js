@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { discoverReviews } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function PATCH(req, { params }) {
   const session = await getSession();
@@ -21,38 +19,22 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    const { data: reviewsData, error: selectError } = await safeQuery(
-      db
-        .select()
-        .from(discoverReviews)
-        .where(eq(discoverReviews.id, id))
-        .limit(1),
-    );
-
-    if (selectError) {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    const reviewRes = await phpFetch(`/discover-reviews/${id}`);
+    if (!reviewRes.ok) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const review = reviewsData?.[0];
-
-    if (!review)
-      return NextResponse.json({ error: "Review not found" }, { status: 404 });
-
+    const review = reviewRes.data;
     if (review.userId !== session.sub && !session.isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { error: updateError } = await safeQuery(
-      db
-        .update(discoverReviews)
-        .set({
-          rating: parseInt(rating, 10),
-          comment,
-        })
-        .where(eq(discoverReviews.id, id)),
-    );
+    const updateResult = await phpFetch(`/discover-reviews/${id}`, {
+      method: "PATCH",
+      body: { rating: parseInt(rating, 10), comment },
+    });
 
-    if (updateError) {
+    if (!updateResult.ok) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
@@ -74,32 +56,21 @@ export async function DELETE(_req, { params }) {
   const { id } = await params;
 
   try {
-    const { data: reviewsData, error: selectError } = await safeQuery(
-      db
-        .select()
-        .from(discoverReviews)
-        .where(eq(discoverReviews.id, id))
-        .limit(1),
-    );
-
-    if (selectError) {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    const reviewRes = await phpFetch(`/discover-reviews/${id}`);
+    if (!reviewRes.ok) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const review = reviewsData?.[0];
-
-    if (!review)
-      return NextResponse.json({ error: "Review not found" }, { status: 404 });
-
+    const review = reviewRes.data;
     if (review.userId !== session.sub && !session.isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { error: deleteError } = await safeQuery(
-      db.delete(discoverReviews).where(eq(discoverReviews.id, id)),
-    );
+    const deleteResult = await phpFetch(`/discover-reviews/${id}`, {
+      method: "DELETE",
+    });
 
-    if (deleteError) {
+    if (!deleteResult.ok) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 

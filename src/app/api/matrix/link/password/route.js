@@ -1,8 +1,6 @@
-import { and, eq, ne } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { contactInfo } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { normalizeHomeserver, resolveHomeserver } from "@/lib/matrix/oauth";
 import { setMatrixSession } from "@/lib/matrix/session";
 
@@ -24,7 +22,6 @@ export async function POST(request) {
   const matrixHomeserver = homeserver.replace(/^https?:\/\//, "");
   const resolvedHomeserver = await resolveHomeserver(rawHomeserver);
 
-  // Verify credentials with Matrix Homeserver
   const loginRes = await fetch(
     `${resolvedHomeserver}/_matrix/client/v3/login`,
     {
@@ -56,25 +53,13 @@ export async function POST(request) {
   const matrixHomeserverCanonical = canDomain;
 
   // Check for duplicates
-  const { data: duplicate, error: duplicateError } = await safeQuery(
-    db
-      .select({ id: contactInfo.id })
-      .from(contactInfo)
-      .where(
-        and(
-          eq(contactInfo.matrixUser, matrixUser),
-          eq(contactInfo.matrixHomeserver, matrixHomeserver),
-          ne(contactInfo.userId, appSession.sub),
-        ),
-      )
-      .limit(1),
+  const dupCheck = await phpFetch(
+    `/contact-info?matrixUser=${matrixUser}&matrixHomeserver=${matrixHomeserver}&limit=1`,
   );
+  const duplicates = dupCheck.ok ? (dupCheck.data?.data || []) : [];
+  const otherUserDup = duplicates.find((d) => d.userId !== appSession.sub);
 
-  if (duplicateError) {
-    return NextResponse.json({ error: "Database error" }, { status: 500 });
-  }
-
-  if (duplicate?.length) {
+  if (otherUserDup) {
     return NextResponse.json(
       { error: "Matrix account already linked to another user" },
       { status: 400 },
@@ -82,42 +67,31 @@ export async function POST(request) {
   }
 
   // Save to DB
-  const { data: existing } = await safeQuery(
-    db
-      .select({ id: contactInfo.id })
-      .from(contactInfo)
-      .where(eq(contactInfo.userId, appSession.sub))
-      .limit(1),
-  );
-
-  if (existing?.[0]) {
-    await safeQuery(
-      db
-        .update(contactInfo)
-        .set({
-          matrixUser: matrixUserCanonical,
-          matrixHomeserver: matrixHomeserverCanonical,
-        })
-        .where(eq(contactInfo.id, existing[0].id)),
-    );
+  const existingRes = await phpFetch(`/contact-info/${appSession.sub}`);
+  if (existingRes.ok) {
+    await phpFetch(`/contact-info/${appSession.sub}`, {
+      method: "PATCH",
+      body: {
+        matrixUser: matrixUserCanonical,
+        matrixHomeserver: matrixHomeserverCanonical,
+      },
+    });
   } else {
-    await safeQuery(
-      db.insert(contactInfo).values({
-        id: crypto.randomUUID(),
+    await phpFetch("/contact-info", {
+      method: "POST",
+      body: {
         userId: appSession.sub,
         matrixUser: matrixUserCanonical,
         matrixHomeserver: matrixHomeserverCanonical,
-      }),
-    );
+      },
+    });
   }
 
-  // Set Matrix session (with password for subsequent "logins" if needed,
-  // although Matrix uses access tokens. User wanted password in session storage/cookie)
   await setMatrixSession({
     accessToken: loginData.access_token,
     matrixUserId: loginData.user_id,
     homeserver: resolvedHomeserver,
-    password: password, // Stored in HttpOnly Secure session cookie
+    password: password,
   });
 
   return NextResponse.json({ ok: true, matrixUserId: loginData.user_id });

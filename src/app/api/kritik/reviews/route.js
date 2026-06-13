@@ -1,9 +1,6 @@
-import crypto from "node:crypto";
-import { and, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { mediaItems, mediaReviews, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(req) {
   const session = await getSession();
@@ -19,29 +16,15 @@ export async function GET(req) {
   }
 
   try {
-    const { data: reviews, error } = await safeQuery(
-      db
-        .select({
-          id: mediaReviews.id,
-          rating: mediaReviews.rating,
-          comment: mediaReviews.comment,
-          platform: mediaReviews.platform,
-          createdAt: mediaReviews.createdAt,
-          user: {
-            id: users.id,
-            displayName: users.displayName,
-            image: users.image,
-          },
-        })
-        .from(mediaReviews)
-        .innerJoin(users, eq(mediaReviews.userId, users.id))
-        .where(eq(mediaReviews.itemId, itemId))
-        .orderBy(sql`${mediaReviews.createdAt} DESC`),
-    );
+    const result = await phpFetch(`/media/${itemId}/reviews`);
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
 
-    if (error) throw error;
-
-    return NextResponse.json(reviews || []);
+    return NextResponse.json(result.data?.data || []);
   } catch (error) {
     console.error("[API/Kritik/Reviews] GET Error:", error);
     return NextResponse.json(
@@ -68,72 +51,19 @@ export async function POST(req) {
       );
     }
 
-    const now = new Date();
+    const result = await phpFetch(`/media/${itemId}/reviews`, {
+      method: "POST",
+      body: { rating: parseInt(rating, 10), comment, platform },
+    });
 
-    // Check if review already exists from this user for this item
-    const { data: existingData, error: existErr } = await safeQuery(
-      db
-        .select()
-        .from(mediaReviews)
-        .where(
-          and(
-            eq(mediaReviews.itemId, itemId),
-            eq(mediaReviews.userId, session.sub),
-          ),
-        )
-        .limit(1),
-    );
-
-    if (existErr) throw existErr;
-    const existingReview = existingData?.[0];
-
-    let id = existingReview?.id;
-
-    if (existingReview) {
-      const { error: upErr } = await safeQuery(
-        db
-          .update(mediaReviews)
-          .set({
-            rating: parseInt(rating, 10),
-            comment,
-            platform,
-            createdAt: now, // Update date to show it was refreshed
-          })
-          .where(eq(mediaReviews.id, existingReview.id)),
-      );
-      if (upErr) throw upErr;
-    } else {
-      id = crypto.randomUUID();
-      const { error: inErr } = await safeQuery(
-        db.insert(mediaReviews).values({
-          id,
-          itemId,
-          userId: session.sub,
-          rating: parseInt(rating, 10),
-          comment,
-          platform,
-          createdAt: now,
-        }),
-      );
-      if (inErr) throw inErr;
-    }
-
-    // Update the item's updatedAt timestamp
-    const { error: upItemErr } = await safeQuery(
-      db
-        .update(mediaItems)
-        .set({ updatedAt: now })
-        .where(eq(mediaItems.id, itemId)),
-    );
-
-    if (upItemErr) {
-      console.error(
-        `[API/Kritik/Reviews] Failed to update item ${itemId} timestamp:`,
-        upItemErr,
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
       );
     }
 
-    return NextResponse.json({ ok: true, id });
+    return NextResponse.json({ ok: true, id: result.data?.data?.id });
   } catch (error) {
     console.error("[API/Kritik/Reviews] POST Error:", error);
     return NextResponse.json(

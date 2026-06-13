@@ -1,16 +1,6 @@
-import crypto from "node:crypto";
-import { and, eq, exists, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  albumTracks,
-  mediaItems,
-  mediaReviews,
-  seriesEpisodes,
-} from "@/lib/db/schema";
-import { getAlbumTracks } from "@/lib/kritik/musicbrainz";
-import { getSeriesEpisodes } from "@/lib/kritik/tmdb";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(req) {
   const session = await getSession();
@@ -22,51 +12,15 @@ export async function GET(req) {
   const type = searchParams.get("type");
 
   try {
-    let query = db
-      .select({
-        id: mediaItems.id,
-        title: mediaItems.title,
-        description: mediaItems.description,
-        image: mediaItems.image,
-        type: mediaItems.type,
-        avgRating: sql`AVG(${mediaReviews.rating})`,
-        reviewCount: sql`COUNT(${mediaReviews.id})`,
-      })
-      .from(mediaItems)
-      .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
-      .groupBy(mediaItems.id);
-
-    if (type) {
-      if (type === "music") {
-        // Only show music items with reviews
-        query = query.where(
-          and(
-            eq(mediaItems.type, "music"),
-            exists(
-              db
-                .select()
-                .from(mediaReviews)
-                .where(eq(mediaReviews.itemId, mediaItems.id)),
-            ),
-          ),
-        );
-      } else if (type === "movie") {
-        // Filter out episodes from general movie/series view
-        query = query.where(
-          and(
-            eq(mediaItems.type, "movie"),
-            sql`${mediaItems.format} IN ('movie', 'series')`,
-          ),
-        );
-      } else {
-        query = query.where(eq(mediaItems.type, type));
-      }
+    const result = await phpFetch(`/media/list?type=${type || "game"}`);
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
     }
 
-    const { data: items, error } = await safeQuery(query);
-    if (error) throw error;
-
-    return NextResponse.json(items || []);
+    return NextResponse.json(result.data?.data || []);
   } catch (error) {
     console.error("[API/Kritik/Items] GET Error:", error);
     return NextResponse.json(
@@ -96,26 +50,22 @@ export async function POST(req) {
 
     // Check if item already exists by externalId
     if (externalId) {
-      const { data: existing, error: existError } = await safeQuery(
-        db
-          .select()
-          .from(mediaItems)
-          .where(eq(mediaItems.externalId, externalId))
-          .limit(1),
+      const existingRes = await phpFetch(
+        `/media-items?filter[externalId]=${externalId}&limit=1`,
       );
-      if (existError) throw existError;
+      const existing = existingRes.ok
+        ? existingRes.data?.data || []
+        : [];
 
-      if (existing && existing.length > 0) {
+      if (existing.length > 0) {
         return NextResponse.json(existing[0]);
       }
     }
 
-    const id = crypto.randomUUID();
-    const now = new Date();
-
-    const { error: insertError } = await safeQuery(
-      db.insert(mediaItems).values({
-        id,
+    // Create media item via generic CRUD
+    const createResult = await phpFetch("/media-items", {
+      method: "POST",
+      body: {
         title,
         type,
         format,
@@ -124,64 +74,57 @@ export async function POST(req) {
         externalId,
         releaseDate,
         creatorId: session.sub,
-        createdAt: now,
-        updatedAt: now,
-      }),
-    );
+      },
+    });
 
-    if (insertError) throw insertError;
+    if (!createResult.ok) {
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+
+    const id = createResult.data?.data?.id;
 
     // Auto-populate episodes for series
     if (type === "movie" && format === "series" && externalId) {
+      const { getSeriesEpisodes } = await import("@/lib/kritik/tmdb");
       const episodes = await getSeriesEpisodes(externalId);
       if (episodes.length > 0) {
-        await safeQuery(
-          db.insert(seriesEpisodes).values(
-            episodes.map((ep) => ({
-              id: crypto.randomUUID(),
+        for (const ep of episodes) {
+          await phpFetch("/series-episodes", {
+            method: "POST",
+            body: {
               seriesId: id,
               seasonNumber: ep.seasonNumber,
               episodeNumber: ep.episodeNumber,
               title: ep.title,
               externalId: ep.externalId,
               releaseDate: ep.releaseDate,
-            })),
-          ),
-        );
+            },
+          });
+        }
       }
     }
 
     // Auto-populate tracks and songs for albums
     if (type === "music" && format === "album" && externalId) {
+      const { getAlbumTracks } = await import("@/lib/kritik/musicbrainz");
       const tracks = await getAlbumTracks(externalId);
       for (const track of tracks) {
         // Check if song already exists
         let songId;
-        const { data: existingSongs, error: songExistErr } = await safeQuery(
-          db
-            .select()
-            .from(mediaItems)
-            .where(eq(mediaItems.externalId, track.songExternalId))
-            .limit(1),
+        const songRes = await phpFetch(
+          `/media-items?filter[externalId]=${track.songExternalId}&limit=1`,
         );
+        const existingSongs = songRes.ok
+          ? songRes.data?.data || []
+          : [];
 
-        if (songExistErr) {
-          console.error(
-            `[API/Kritik/Items] DB error checking for song ${track.songExternalId}:`,
-            songExistErr,
-          );
-        }
-
-        const existingSong = existingSongs?.[0];
-
-        if (existingSong) {
-          songId = existingSong.id;
+        if (existingSongs.length > 0) {
+          songId = existingSongs[0].id;
         } else {
-          songId = crypto.randomUUID();
           const songArtist = track.artist || title.split(" - ")[0];
-          await safeQuery(
-            db.insert(mediaItems).values({
-              id: songId,
+          const songRes = await phpFetch("/media-items", {
+            method: "POST",
+            body: {
               type: "music",
               format: "song",
               title: `${songArtist} - ${track.title}`,
@@ -189,31 +132,26 @@ export async function POST(req) {
               externalId: track.songExternalId,
               releaseDate: track.releaseDate,
               creatorId: session.sub,
-              createdAt: now,
-              updatedAt: now,
-            }),
-          );
+            },
+          });
+          songId = songRes.data?.data?.id;
         }
 
         // Link song to album
-        await safeQuery(
-          db.insert(albumTracks).values({
-            id: crypto.randomUUID(),
+        await phpFetch("/album-tracks", {
+          method: "POST",
+          body: {
             albumId: id,
             songId,
             trackNumber: track.trackNumber,
-          }),
-        );
+          },
+        });
       }
     }
 
-    const { data: newItems, error: finalError } = await safeQuery(
-      db.select().from(mediaItems).where(eq(mediaItems.id, id)).limit(1),
-    );
-
-    if (finalError) throw finalError;
-
-    return NextResponse.json(newItems?.[0]);
+    // Return the created item
+    const itemRes = await phpFetch(`/media-items/${id}`);
+    return NextResponse.json(itemRes.data?.data || itemRes.data);
   } catch (error) {
     console.error("[API/Kritik/Items] POST Error:", error);
     return NextResponse.json(

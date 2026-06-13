@@ -1,17 +1,6 @@
-import crypto from "node:crypto";
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  eventPermissions,
-  eventRelations,
-  events,
-  pollInvites,
-  pollOptions,
-  pollQuestions,
-  polls,
-} from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(request, { params }) {
   const { id } = await params;
@@ -23,104 +12,70 @@ export async function POST(request, { params }) {
   try {
     const { optionId, closeOnly } = await request.json();
 
-    const { data: pollData, error: pollError } = await safeQuery(
-      db
-        .select()
-        .from(polls)
-        .where(and(eq(polls.id, id), eq(polls.creatorId, session.sub))),
-    );
-
-    if (pollError || !pollData?.[0]) {
+    // Get poll details to check type
+    const pollResult = await phpFetch(`/polls/${id}/detail`);
+    if (!pollResult.ok) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    const poll = pollData[0];
+    const poll = pollResult.data?.data;
 
-    let option = null;
-    if (optionId) {
-      const { data: optionData, error: optionError } = await safeQuery(
-        db
-          .select()
-          .from(pollOptions)
-          .leftJoin(pollQuestions, eq(pollOptions.questionId, pollQuestions.id))
-          .where(
-            and(eq(pollOptions.id, optionId), eq(pollQuestions.pollId, id)),
-          ),
+    // Finalize the poll
+    const finalizeResult = await phpFetch(`/polls/${id}/finalize`, {
+      method: "POST",
+      body: { optionId: optionId || "closed" },
+    });
+
+    if (!finalizeResult.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
       );
-
-      if (optionError || !optionData?.[0]) {
-        return NextResponse.json(
-          { error: "Option not found" },
-          { status: 404 },
-        );
-      }
-      option = optionData[0];
     }
 
-    const now = new Date();
-    const eventId = crypto.randomUUID();
+    // Create calendar event if appointment with selected option
+    let eventId = null;
+    if (poll.type === "appointment" && optionId && !closeOnly) {
+      // Find the selected option's date
+      const option = poll.options?.find((o) => o.id === optionId);
+      if (option?.dateValue) {
+        const startDate = new Date(option.dateValue);
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1h default
 
-    const { error: txError } = await safeQuery(
-      db.transaction(async (tx) => {
-        // 1. Mark poll as finalized
-        await tx
-          .update(polls)
-          .set({
-            finalizedOptionId: optionId || "closed",
-            updatedAt: now,
-          })
-          .where(eq(polls.id, id));
-
-        // 2. Create Kalender-Event (only if appointment and option selected)
-        if (poll.type === "appointment" && option && !closeOnly) {
-          await tx.insert(events).values({
-            id: eventId,
+        const eventResult = await phpFetch("/events", {
+          method: "POST",
+          body: {
             title: poll.title,
-            startAt: option.PollOption.dateValue,
-            endAt: new Date(
-              new Date(option.PollOption.dateValue).getTime() + 60 * 60 * 1000,
-            ), // Default 1h
-            allDay: 0,
-            isPublic: 0,
-            creatorId: session.sub,
-            createdAt: now,
-          });
+            startAt: startDate.toISOString(),
+            endAt: endDate.toISOString(),
+            allDay: false,
+            isPublic: false,
+          },
+        });
 
-          // 3. Add all participants to the event
-          const invites = await tx
-            .select()
-            .from(pollInvites)
-            .where(eq(pollInvites.pollId, id));
+        if (eventResult.ok) {
+          eventId = eventResult.data?.data?.id;
 
-          const participantUserIds = [
-            ...new Set([...invites.map((i) => i.userId), session.sub]),
-          ];
+          // Add participants and permissions
+          const inviteIds = (poll.invites || [])
+            .filter((i) => i.userId !== session.sub)
+            .map((i) => i.userId);
+          const participantIds = [session.sub, ...inviteIds];
 
-          if (participantUserIds.length > 0) {
-            await tx.insert(eventRelations).values(
-              participantUserIds.map((uId) => ({
-                id: crypto.randomUUID(),
-                eventId,
-                userId: uId,
-                createdAt: now,
-              })),
-            );
-
-            await tx.insert(eventPermissions).values(
-              participantUserIds.map((uId) => ({
-                id: crypto.randomUUID(),
-                eventId,
-                userId: uId,
-                canView: 1,
-                canEdit: uId === session.sub ? 1 : 0,
-                createdAt: now,
-              })),
-            );
+          if (participantIds.length > 0 && eventId) {
+            await phpFetch(`/events/${eventId}/permissions`, {
+              method: "POST",
+              body: {
+                permissions: participantIds.map((uId) => ({
+                  userId: uId,
+                  canView: true,
+                  canEdit: uId === session.sub,
+                })),
+              },
+            });
           }
         }
-      }),
-    );
-
-    if (txError) throw new Error("Transaction failed");
+      }
+    }
 
     return NextResponse.json({ success: true, eventId });
   } catch (error) {

@@ -1,19 +1,5 @@
-import { and, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm";
 import HomeClient from "@/components/home/HomeClient";
 import { InlineError } from "@/components/ui/InlineError";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  discoverPlaces,
-  discoverReviews,
-  feedPosts,
-  feedPostVotes,
-  mediaItems,
-  mediaReviews,
-  pollInvites,
-  pollOptions,
-  polls,
-  users,
-} from "@/lib/db/schema";
 import { phpFetch } from "@/lib/api/phpClient";
 import { getWhoMarkedMe } from "@/lib/profile/closeFriends";
 import { getUnsplashPhotos } from "@/lib/photos/unsplash";
@@ -61,77 +47,26 @@ export default async function HomeContent({ userId, isAdmin }) {
   const upcomingBirthdays =
     allBirthdays?.filter((b) => b.daysUntil >= 0 && b.daysUntil <= 7) || [];
 
-  // 4. Forum Posts (from joined forums)
-  let joinedForums = [];
+  // 4. Forum Posts (from all joined forums - single PHP call)
+  let forumPosts = [];
   let joinedForumsError = false;
-  const forumsResult = await phpFetch("/forums/my");
-  if (forumsResult.ok) {
-    joinedForums = (forumsResult.data?.data || []).map((f) => ({ forum: f }));
+  let forumInternalError = false;
+  const feedPostsResult = await phpFetch("/home/feed-posts?days=7");
+  if (feedPostsResult.ok) {
+    const allPosts = feedPostsResult.data?.data || [];
+    // Group posts by forumId
+    const postsByForum = {};
+    for (const post of allPosts) {
+      if (!postsByForum[post.forumId]) {
+        postsByForum[post.forumId] = { forumId: post.forumId, posts: [] };
+      }
+      postsByForum[post.forumId].posts.push(post);
+    }
+    forumPosts = Object.values(postsByForum);
   } else {
     joinedForumsError = true;
+    forumInternalError = true;
   }
-
-  const whoMarkedMe = await getWhoMarkedMe();
-  const usersWhoMarkedMeIds = whoMarkedMe.map((r) => r.userId);
-
-  let forumInternalError = false;
-  const forumsWithPosts = await Promise.all(
-    (joinedForums || []).map(async (row) => {
-
-      const postVisibilityConditions = [
-        eq(feedPosts.visibility, 1),
-        eq(feedPosts.userId, userId),
-      ];
-      if (usersWhoMarkedMeIds.length > 0) {
-        postVisibilityConditions.push(
-          and(
-            eq(feedPosts.visibility, 2),
-            inArray(feedPosts.userId, usersWhoMarkedMeIds),
-          ),
-        );
-      }
-
-      const { data: postsRows, error: pError } = await safeQuery(
-        db
-          .select({
-            post: feedPosts,
-            user: {
-              id: users.id,
-              displayName: users.displayName,
-              image: users.image,
-            },
-            voteCount: sql`(SELECT count(*) FROM ${feedPostVotes} WHERE postId = ${feedPosts.id})`,
-            hasVoted: sql`(SELECT count(*) FROM ${feedPostVotes} WHERE postId = ${feedPosts.id} AND userId = ${userId})`,
-          })
-          .from(feedPosts)
-          .innerJoin(users, eq(feedPosts.userId, users.id))
-          .where(
-            and(
-              eq(feedPosts.forumId, row.forum.id),
-              or(...postVisibilityConditions),
-              gte(feedPosts.createdAt, sevenDaysAgo),
-            ),
-          )
-          .orderBy(desc(feedPosts.createdAt))
-          .limit(5),
-      );
-      if (pError) forumInternalError = true;
-
-      return {
-        ...row.forum,
-        posts:
-          postsRows?.map((r) => ({
-            ...r.post,
-            user: r.user,
-            voteCount: Number(r.voteCount),
-            hasVoted: Number(r.hasVoted) > 0,
-            canEdit: r.post.userId === userId,
-          })) || [],
-      };
-    }),
-  );
-
-  const forumPosts = forumsWithPosts.filter((f) => f.posts.length > 0);
 
   // 5. Latest Photos (last 7 days)
   const allPhotos = await getUnsplashPhotos({ page: 1, perPage: 20 });
@@ -144,58 +79,65 @@ export default async function HomeContent({ userId, isAdmin }) {
       })
       .slice(0, 10) || [];
 
-  // 6. Latest Media Reviews (last 7 days)
-  const { data: latestMediaReviewsRows, error: mediaReviewsError } =
-    await safeQuery(
-      db
-        .select({
-          review: mediaReviews,
-          item: {
-            id: mediaItems.id,
-            title: mediaItems.title,
-            image: mediaItems.image,
-            type: mediaItems.type,
-          },
-          user: {
-            id: users.id,
-            displayName: users.displayName,
-            image: users.image,
-          },
-        })
-        .from(mediaReviews)
-        .innerJoin(mediaItems, eq(mediaReviews.itemId, mediaItems.id))
-        .innerJoin(users, eq(mediaReviews.userId, users.id))
-        .where(gte(mediaReviews.createdAt, sevenDaysAgo))
-        .orderBy(desc(mediaReviews.createdAt))
-        .limit(5),
-    );
+  // 6. Latest Media Reviews (last 7 days - PHP)
+  let latestMediaReviewsRows = [];
+  let mediaReviewsError = false;
+  const mediaResult = await phpFetch("/home/media-reviews?days=7");
+  if (mediaResult.ok) {
+    latestMediaReviewsRows = (mediaResult.data?.data || []).map((r) => ({
+      review: {
+        id: r.id,
+        itemId: r.itemId,
+        userId: r.userId,
+        rating: r.rating,
+        content: r.content,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
+      },
+      item: {
+        id: r.itemId,
+        title: r.itemTitle,
+        image: r.itemImage,
+        type: r.itemType,
+      },
+      user: {
+        id: r.userId,
+        displayName: r.displayName,
+        image: r.image,
+      },
+    }));
+  } else {
+    mediaReviewsError = true;
+  }
 
-  // 7. Latest Discover Reviews (last 7 days)
-  const { data: latestDiscoverReviewsRows, error: discoverReviewsError } =
-    await safeQuery(
-      db
-        .select({
-          review: discoverReviews,
-          place: {
-            id: discoverPlaces.id,
-            name: discoverPlaces.name,
-          },
-          user: {
-            id: users.id,
-            displayName: users.displayName,
-            image: users.image,
-          },
-        })
-        .from(discoverReviews)
-        .innerJoin(
-          discoverPlaces,
-          eq(discoverReviews.placeId, discoverPlaces.id),
-        )
-        .innerJoin(users, eq(discoverReviews.userId, users.id))
-        .where(gte(discoverReviews.createdAt, sevenDaysAgo))
-        .orderBy(desc(discoverReviews.createdAt))
-        .limit(5),
-    );
+  // 7. Latest Discover Reviews (last 7 days - PHP)
+  let latestDiscoverReviewsRows = [];
+  let discoverReviewsError = false;
+  const discoverResult = await phpFetch("/home/discover-reviews?days=7");
+  if (discoverResult.ok) {
+    latestDiscoverReviewsRows = (discoverResult.data?.data || []).map((r) => ({
+      review: {
+        id: r.id,
+        placeId: r.placeId,
+        userId: r.userId,
+        rating: r.rating,
+        content: r.content,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
+      },
+      place: {
+        id: r.placeId,
+        name: r.placeName,
+      },
+      user: {
+        id: r.userId,
+        displayName: r.displayName,
+        image: r.image,
+      },
+    }));
+  } else {
+    discoverReviewsError = true;
+  }
 
   let upcomingTravelEvents = [];
   let travelEventsError = false;
@@ -224,72 +166,33 @@ export default async function HomeContent({ userId, isAdmin }) {
     })),
   ].sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
 
-  // 8. Fetch Polls
-  const { data: invitedPollIdsRows, error: pollInvitesError } = await safeQuery(
-    db
-      .select({ pollId: pollInvites.pollId })
-      .from(pollInvites)
-      .where(eq(pollInvites.userId, userId)),
-  );
-  const invitedPollIds = invitedPollIdsRows?.map((r) => r.pollId) || [];
-
-  const { data: activePolls, error: activePollsError } = await safeQuery(
-    db
-      .select({
-        id: polls.id,
-        title: polls.title,
-        creatorId: polls.creatorId,
-        finalizedOptionId: polls.finalizedOptionId,
-        creatorName: users.displayName,
-      })
-      .from(polls)
-      .leftJoin(users, eq(polls.creatorId, users.id))
-      .where(
-        and(
-          or(
-            eq(polls.creatorId, userId),
-            invitedPollIds.length > 0
-              ? inArray(polls.id, invitedPollIds)
-              : sql`1=0`,
-          ),
-          sql`${polls.finalizedOptionId} IS NULL`,
-        ),
-      ),
-  );
-
-  const { data: finalizedPollsRows, error: finalizedPollsError } =
-    await safeQuery(
-      db
-        .select({
-          poll: {
-            id: polls.id,
-            title: polls.title,
-            finalizedOptionId: polls.finalizedOptionId,
-          },
-          option: pollOptions,
-        })
-        .from(polls)
-        .innerJoin(pollOptions, eq(polls.finalizedOptionId, pollOptions.id))
-        .where(
-          and(
-            or(
-              eq(polls.creatorId, userId),
-              invitedPollIds.length > 0
-                ? inArray(polls.id, invitedPollIds)
-                : sql`1=0`,
-            ),
-            sql`${polls.finalizedOptionId} IS NOT NULL`,
-            gte(polls.updatedAt, sevenDaysAgo),
-            gte(pollOptions.dateValue, now),
-          ),
-        ),
-    );
-
-  const finalizedPolls =
-    finalizedPollsRows?.map((row) => ({
-      ...row.poll,
-      options: [row.option],
-    })) || [];
+  // 8. Fetch Polls (PHP)
+  let activePolls = [];
+  let finalizedPolls = [];
+  let pollInvitesError = false;
+  let activePollsError = false;
+  let finalizedPollsError = false;
+  const pollsResult = await phpFetch("/home/polls");
+  if (pollsResult.ok) {
+    const pollsData = pollsResult.data?.data || {};
+    activePolls = pollsData.active || [];
+    finalizedPolls = (pollsData.finalized || []).map((row) => ({
+      id: row.id,
+      title: row.title,
+      finalizedOptionId: row.finalizedOptionId,
+      options: [{
+        id: row.optionId,
+        label: row.label,
+        dateValue: row.dateValue,
+        orderNum: row.orderNum,
+        questionId: row.questionId,
+      }],
+    }));
+  } else {
+    pollInvitesError = true;
+    activePollsError = true;
+    finalizedPollsError = true;
+  }
 
   const hasAnyError =
     eventsError ||
@@ -312,9 +215,9 @@ export default async function HomeContent({ userId, isAdmin }) {
         upcomingBirthdays={upcomingBirthdays}
         forumPosts={forumPosts}
         latestPhotos={latestPhotos}
-        latestMediaReviews={latestMediaReviewsRows || []}
-        latestDiscoverReviews={latestDiscoverReviewsRows || []}
-        activePolls={activePolls || []}
+        latestMediaReviews={latestMediaReviewsRows}
+        latestDiscoverReviews={latestDiscoverReviewsRows}
+        activePolls={activePolls}
         finalizedPolls={finalizedPolls}
       />
     </div>

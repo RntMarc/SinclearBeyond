@@ -1,11 +1,6 @@
-import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { mediaItems, mediaReviews } from "@/lib/db/schema";
-import { searchGames } from "@/lib/kritik/igdb";
-import { searchMusic } from "@/lib/kritik/musicbrainz";
-import { searchMovies } from "@/lib/kritik/tmdb";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(req) {
   const session = await getSession();
@@ -24,49 +19,52 @@ export async function GET(req) {
   try {
     let results = [];
     if (type === "game") {
+      const { searchGames } = await import("@/lib/kritik/igdb");
       results = await searchGames(q);
     } else if (type === "movie") {
+      const { searchMovies } = await import("@/lib/kritik/tmdb");
       results = await searchMovies(q);
     } else if (type === "music") {
+      const { searchMusic } = await import("@/lib/kritik/musicbrainz");
       results = await searchMusic(q);
     }
 
     // Enhance search results with existing database info
     const enhancedResults = await Promise.all(
       results.map(async (item) => {
-        const { data: existingData, error } = await safeQuery(
-          db
-            .select({
-              id: mediaItems.id,
-              avgRating: sql`AVG(${mediaReviews.rating})`,
-              reviewCount: sql`COUNT(${mediaReviews.id})`,
-            })
-            .from(mediaItems)
-            .leftJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
-            .where(eq(mediaItems.externalId, item.externalId))
-            .groupBy(mediaItems.id)
-            .limit(1),
-        );
+        try {
+          const existingRes = await phpFetch(
+            `/media-items?filter[externalId]=${item.externalId}&limit=1`,
+          );
+          const existing = existingRes.ok
+            ? existingRes.data?.data?.[0]
+            : null;
 
-        if (error) {
+          if (existing) {
+            // Get review stats
+            const statsRes = await phpFetch(`/media/${existing.id}/reviews`);
+            const reviews = statsRes.ok ? (statsRes.data?.data || []) : [];
+            const avgRating =
+              reviews.length > 0
+                ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) /
+                  reviews.length
+                : null;
+
+            return {
+              ...item,
+              id: existing.id,
+              avgRating: avgRating ? Math.round(avgRating * 10) / 10 : null,
+              reviewCount: reviews.length,
+            };
+          }
+          return item;
+        } catch (error) {
           console.error(
             `[API/Kritik/Search] DB error for item ${item.externalId}:`,
             error,
           );
-          return item; // Fallback to raw item if DB check fails
+          return item;
         }
-
-        const existing = existingData?.[0];
-
-        if (existing) {
-          return {
-            ...item,
-            id: existing.id,
-            avgRating: existing.avgRating,
-            reviewCount: existing.reviewCount,
-          };
-        }
-        return item;
       }),
     );
 

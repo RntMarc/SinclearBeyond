@@ -1,16 +1,7 @@
-import crypto from "node:crypto";
-import { eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  pollInvites,
-  pollOptions,
-  pollQuestions,
-  polls,
-  pollVotes,
-} from "@/lib/db/schema";
 import { getPoll, validatePollData } from "@/lib/polls/utils";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(_request, { params }) {
   const { id } = await params;
@@ -42,9 +33,7 @@ export async function PATCH(request, { params }) {
   try {
     const { title, description, allowCounterProposals, questions, invites } =
       await request.json();
-    const now = new Date();
 
-    // Validation
     if (questions) {
       const validation = validatePollData(questions);
       if (!validation.valid) {
@@ -52,88 +41,23 @@ export async function PATCH(request, { params }) {
       }
     }
 
-    const { error: dbError } = await safeQuery(
-      db.transaction(async (tx) => {
-        // Update poll metadata
-        await tx
-          .update(polls)
-          .set({
-            title: title ?? poll.title,
-            description: description ?? poll.description,
-            allowCounterProposals:
-              allowCounterProposals !== undefined
-                ? allowCounterProposals
-                  ? 1
-                  : 0
-                : poll.allowCounterProposals,
-            updatedAt: now,
-          })
-          .where(eq(polls.id, id));
+    const result = await phpFetch(`/polls/${id}`, {
+      method: "PATCH",
+      body: {
+        title,
+        description,
+        allowCounterProposals,
+        questions,
+        invites,
+      },
+    });
 
-        if (questions) {
-          const existingQuestions = await tx
-            .select({ id: pollQuestions.id })
-            .from(pollQuestions)
-            .where(eq(pollQuestions.pollId, id));
-
-          const qIds = existingQuestions.map((q) => q.id);
-          if (qIds.length > 0) {
-            await tx
-              .delete(pollVotes)
-              .where(inArray(pollVotes.questionId, qIds));
-            await tx
-              .delete(pollOptions)
-              .where(inArray(pollOptions.questionId, qIds));
-            await tx.delete(pollQuestions).where(eq(pollQuestions.pollId, id));
-          }
-
-          for (let i = 0; i < questions.length; i++) {
-            const q = questions[i];
-            const questionId = crypto.randomUUID();
-
-            await tx.insert(pollQuestions).values({
-              id: questionId,
-              pollId: id,
-              title: q.title,
-              type: q.type,
-              order: i,
-              createdAt: now,
-            });
-
-            if (q.options && q.options.length > 0) {
-              await tx.insert(pollOptions).values(
-                q.options.map((opt, optIdx) => ({
-                  id: crypto.randomUUID(),
-                  questionId,
-                  label: opt.label,
-                  dateValue: opt.dateValue ? new Date(opt.dateValue) : null,
-                  order: optIdx,
-                  createdAt: now,
-                })),
-              );
-            }
-          }
-        }
-
-        // Handle invites update
-        if (invites) {
-          await tx.delete(pollInvites).where(eq(pollInvites.pollId, id));
-          if (invites.length > 0) {
-            await tx.insert(pollInvites).values(
-              invites.map((i) => ({
-                id: crypto.randomUUID(),
-                pollId: id,
-                userId: i.userId,
-                isIndispensable: i.isIndispensable ? 1 : 0,
-                createdAt: now,
-              })),
-            );
-          }
-        }
-      }),
-    );
-
-    if (dbError) throw dbError;
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -158,29 +82,14 @@ export async function DELETE(_request, { params }) {
   }
 
   try {
-    const { error: dbError } = await safeQuery(
-      db.transaction(async (tx) => {
-        const questions = await tx
-          .select({ id: pollQuestions.id })
-          .from(pollQuestions)
-          .where(eq(pollQuestions.pollId, id));
+    const result = await phpFetch(`/polls/${id}`, { method: "DELETE" });
 
-        const qIds = questions.map((q) => q.id);
-
-        if (qIds.length > 0) {
-          await tx.delete(pollVotes).where(inArray(pollVotes.questionId, qIds));
-          await tx
-            .delete(pollOptions)
-            .where(inArray(pollOptions.questionId, qIds));
-        }
-
-        await tx.delete(pollQuestions).where(eq(pollQuestions.pollId, id));
-        await tx.delete(pollInvites).where(eq(pollInvites.pollId, id));
-        await tx.delete(polls).where(eq(polls.id, id));
-      }),
-    );
-
-    if (dbError) throw dbError;
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

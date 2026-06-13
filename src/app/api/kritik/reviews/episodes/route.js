@@ -1,9 +1,6 @@
-import crypto from "node:crypto";
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { episodeReviews } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(req) {
   const session = await getSession();
@@ -22,22 +19,11 @@ export async function GET(req) {
   }
 
   try {
-    // Only return the current user's rating for privacy
-    const { data: reviews, error } = await safeQuery(
-      db
-        .select()
-        .from(episodeReviews)
-        .where(
-          and(
-            eq(episodeReviews.episodeId, episodeId),
-            eq(episodeReviews.userId, session.sub),
-          ),
-        ),
+    const result = await phpFetch(
+      `/episode-reviews?episodeId=${episodeId}&userId=${session.sub}`,
     );
 
-    if (error) throw error;
-
-    return NextResponse.json(reviews || []);
+    return NextResponse.json(result.ok ? result.data || [] : []);
   } catch (error) {
     console.error("[API/Kritik/Reviews/Episodes] GET Error:", error);
     return NextResponse.json(
@@ -64,56 +50,37 @@ export async function POST(req) {
       );
     }
 
-    const now = new Date();
-
     // Check if review already exists
-    const { data: existingData, error: existErr } = await safeQuery(
-      db
-        .select()
-        .from(episodeReviews)
-        .where(
-          and(
-            eq(episodeReviews.episodeId, episodeId),
-            eq(episodeReviews.userId, session.sub),
-          ),
-        )
-        .limit(1),
+    const existingRes = await phpFetch(
+      `/episode-reviews?episodeId=${episodeId}&userId=${session.sub}&limit=1`,
     );
-
-    if (existErr) throw existErr;
-    const existing = existingData?.[0];
+    const existing =
+      existingRes.ok && existingRes.data?.[0] ? existingRes.data[0] : null;
 
     if (existing) {
       if (rating === 0) {
-        // Assume 0 means delete rating
-        const { error: delErr } = await safeQuery(
-          db.delete(episodeReviews).where(eq(episodeReviews.id, existing.id)),
-        );
-        if (delErr) throw delErr;
+        const delResult = await phpFetch(`/episode-reviews/${existing.id}`, {
+          method: "DELETE",
+        });
+        if (!delResult.ok) throw new Error(delResult.error);
         return NextResponse.json({ ok: true, deleted: true });
       }
-      const { error: upErr } = await safeQuery(
-        db
-          .update(episodeReviews)
-          .set({
-            rating: parseInt(rating, 10),
-            createdAt: now,
-          })
-          .where(eq(episodeReviews.id, existing.id)),
-      );
-      if (upErr) throw upErr;
+      const updateResult = await phpFetch(`/episode-reviews/${existing.id}`, {
+        method: "PATCH",
+        body: { rating: parseInt(rating, 10) },
+      });
+      if (!updateResult.ok) throw new Error(updateResult.error);
     } else {
       if (rating === 0) return NextResponse.json({ ok: true });
-      const { error: inErr } = await safeQuery(
-        db.insert(episodeReviews).values({
-          id: crypto.randomUUID(),
+      const createResult = await phpFetch("/episode-reviews", {
+        method: "POST",
+        body: {
           episodeId,
           userId: session.sub,
           rating: parseInt(rating, 10),
-          createdAt: now,
-        }),
-      );
-      if (inErr) throw inErr;
+        },
+      });
+      if (!createResult.ok) throw new Error(createResult.error);
     }
 
     return NextResponse.json({ ok: true });

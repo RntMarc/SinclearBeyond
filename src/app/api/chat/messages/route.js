@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
@@ -7,8 +6,7 @@ import {
   getChatRoom,
   listChatRoomMembers,
 } from "@/lib/chat/backend";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { sendNotification } from "@/lib/notifications/service";
 
 const ALLOWED_CHAT_TYPES = new Set(["direct", "group"]);
@@ -113,14 +111,8 @@ export async function POST(request) {
     try {
       // Background: Send notifications to other participants
       const senderId = session.sub;
-      const { data: senderData } = await safeQuery(
-        db
-          .select({ displayName: users.displayName })
-          .from(users)
-          .where(eq(users.id, senderId))
-          .limit(1),
-      );
-      const senderName = senderData?.[0]?.displayName || "Nutzer";
+      const senderRes = await phpFetch(`/users/${senderId}`);
+      const senderName = senderRes.ok ? senderRes.data?.displayName || "Nutzer" : "Nutzer";
 
       let recipients = [];
       let notificationTitle = senderName;

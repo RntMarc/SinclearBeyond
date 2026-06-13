@@ -1,8 +1,6 @@
-import { and, eq, ne, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth/auth";
-import { db, safeQuery } from "@/lib/db/db";
-import { feedbackSuggestions, feedbackVotes, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
@@ -14,38 +12,24 @@ export async function PATCH(req, { params }) {
     const payload = await verifyToken(token);
     const userId = payload.sub;
 
-    const { data: usersData, error: userFetchErr } = await safeQuery(
-      db.select().from(users).where(eq(users.id, userId)).limit(1),
-    );
-    if (userFetchErr) throw userFetchErr;
-    const user = usersData?.[0];
+    const userRes = await phpFetch(`/users/${userId}`);
+    const user = userRes.ok ? userRes.data : null;
 
     const body = await req.json();
     const { title, description, status } = body;
 
-    const { data: suggestions, error: suggestionFetchErr } = await safeQuery(
-      db
-        .select()
-        .from(feedbackSuggestions)
-        .where(eq(feedbackSuggestions.id, id))
-        .limit(1),
-    );
-    if (suggestionFetchErr) throw suggestionFetchErr;
-    const suggestion = suggestions?.[0];
-
-    if (!suggestion)
+    const suggestionRes = await phpFetch(`/feedback-suggestions/${id}`);
+    if (!suggestionRes.ok)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const suggestion = suggestionRes.data;
 
     // Admin can update status
     if (user?.isAdmin && status && status !== suggestion.status) {
-      const { error: updateErr } = await safeQuery(
-        db
-          .update(feedbackSuggestions)
-          .set({ status, updatedAt: new Date() })
-          .where(eq(feedbackSuggestions.id, id)),
-      );
-      if (updateErr) throw updateErr;
-
+      const updateResult = await phpFetch(`/feedback-suggestions/${id}`, {
+        method: "PATCH",
+        body: { status, updatedAt: new Date().toISOString() },
+      });
+      if (!updateResult.ok) throw new Error(updateResult.error);
       return NextResponse.json({ success: true });
     }
 
@@ -56,34 +40,23 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
 
     // Check if there are any upvotes from other users
-    const { data: votesData, error: votesErr } = await safeQuery(
-      db
-        .select({ count: sql`count(*)` })
-        .from(feedbackVotes)
-        .where(
-          and(
-            eq(feedbackVotes.suggestionId, id),
-            ne(feedbackVotes.userId, userId),
-          ),
-        ),
+    const votesRes = await phpFetch(
+      `/feedback-votes?suggestionId=${id}&userId[neq]=${userId}`,
     );
-    if (votesErr) throw votesErr;
-    const votes = votesData?.[0];
+    const otherVotes = votesRes.ok ? votesRes.data?.length || 0 : 0;
 
-    if (votes && Number(votes.count) > 0) {
+    if (otherVotes > 0) {
       return NextResponse.json(
         { error: "Cannot edit suggestion with existing upvotes from others" },
         { status: 400 },
       );
     }
 
-    const { error: finalUpdateErr } = await safeQuery(
-      db
-        .update(feedbackSuggestions)
-        .set({ title, description, updatedAt: new Date() })
-        .where(eq(feedbackSuggestions.id, id)),
-    );
-    if (finalUpdateErr) throw finalUpdateErr;
+    const finalUpdateResult = await phpFetch(`/feedback-suggestions/${id}`, {
+      method: "PATCH",
+      body: { title, description, updatedAt: new Date().toISOString() },
+    });
+    if (!finalUpdateResult.ok) throw new Error(finalUpdateResult.error);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -105,53 +78,34 @@ export async function DELETE(req, { params }) {
     const payload = await verifyToken(token);
     const userId = payload.sub;
 
-    const { data: suggestions, error: suggestErr } = await safeQuery(
-      db
-        .select()
-        .from(feedbackSuggestions)
-        .where(eq(feedbackSuggestions.id, id))
-        .limit(1),
-    );
-    if (suggestErr) throw suggestErr;
-    const suggestion = suggestions?.[0];
-
-    if (!suggestion)
+    const suggestionRes = await phpFetch(`/feedback-suggestions/${id}`);
+    if (!suggestionRes.ok)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const suggestion = suggestionRes.data;
+
     if (suggestion.userId !== userId)
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     // Check if there are any upvotes from other users
-    const { data: votesData, error: votesErr } = await safeQuery(
-      db
-        .select({ count: sql`count(*)` })
-        .from(feedbackVotes)
-        .where(
-          and(
-            eq(feedbackVotes.suggestionId, id),
-            ne(feedbackVotes.userId, userId),
-          ),
-        ),
+    const votesRes = await phpFetch(
+      `/feedback-votes?suggestionId=${id}&userId[neq]=${userId}`,
     );
-    if (votesErr) throw votesErr;
-    const votes = votesData?.[0];
+    const otherVotes = votesRes.ok ? votesRes.data?.length || 0 : 0;
 
-    if (votes && Number(votes.count) > 0) {
+    if (otherVotes > 0) {
       return NextResponse.json(
         { error: "Cannot delete suggestion with existing upvotes from others" },
         { status: 400 },
       );
     }
 
-    // Delete votes first (though there should only be the creator's vote if any, or none)
-    const { error: delVotesErr } = await safeQuery(
-      db.delete(feedbackVotes).where(eq(feedbackVotes.suggestionId, id)),
-    );
-    if (delVotesErr) throw delVotesErr;
+    // Delete votes first
+    await phpFetch(`/feedback-votes?suggestionId=${id}`, { method: "DELETE" });
 
-    const { error: delSuggestErr } = await safeQuery(
-      db.delete(feedbackSuggestions).where(eq(feedbackSuggestions.id, id)),
-    );
-    if (delSuggestErr) throw delSuggestErr;
+    const delResult = await phpFetch(`/feedback-suggestions/${id}`, {
+      method: "DELETE",
+    });
+    if (!delResult.ok) throw new Error(delResult.error);
 
     return NextResponse.json({ success: true });
   } catch (error) {
