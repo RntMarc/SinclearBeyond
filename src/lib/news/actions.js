@@ -1,50 +1,37 @@
 "use server";
 
-import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { db, safeQuery } from "@/lib/db/db";
-import { newsArticles, newsUpvotes, rssSources } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { fetchRssFeed } from "./rss";
 
 // ── RSS Sources (Admin) ───────────────────────────────────────────────────────
 
 export async function getRssSources() {
-  const result = await safeQuery(db.select().from(rssSources));
-  return result.data || [];
+  const result = await phpFetch("/rss-sources");
+  if (!result.ok) return [];
+  return result.data?.data || [];
 }
 
 export async function createRssSource(data) {
-  const id = crypto.randomUUID();
-  await safeQuery(
-    db.insert(rssSources).values({
-      id,
-      name: data.name,
-      url: data.url,
-      itemsPerPage: data.itemsPerPage || 10,
-      createdAt: new Date(),
-    }),
-  );
+  await phpFetch("/rss-sources", {
+    method: "POST",
+    body: data,
+  });
   revalidatePath("/admin");
   revalidatePath("/aktuell");
 }
 
 export async function updateRssSource(id, data) {
-  await safeQuery(
-    db
-      .update(rssSources)
-      .set({
-        name: data.name,
-        url: data.url,
-        itemsPerPage: data.itemsPerPage,
-      })
-      .where(eq(rssSources.id, id)),
-  );
+  await phpFetch(`/rss-sources/${id}`, {
+    method: "PATCH",
+    body: data,
+  });
   revalidatePath("/admin");
   revalidatePath("/aktuell");
 }
 
 export async function deleteRssSource(id) {
-  await safeQuery(db.delete(rssSources).where(eq(rssSources.id, id)));
+  await phpFetch(`/rss-sources/${id}`, { method: "DELETE" });
   revalidatePath("/admin");
   revalidatePath("/aktuell");
 }
@@ -89,139 +76,49 @@ export async function getNewsArticles(page = 1) {
 }
 
 export async function getImportantNews() {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-  const result = await safeQuery(
-    db
-      .select({
-        id: newsArticles.id,
-        title: newsArticles.title,
-        url: newsArticles.url,
-        sourceName: newsArticles.sourceName,
-        sourceIcon: newsArticles.sourceIcon,
-        savedAt: newsArticles.savedAt,
-        upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
-          "upvoteCount",
-        ),
-      })
-      .from(newsArticles)
-      .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
-      .where(gte(newsArticles.savedAt, sevenDaysAgo))
-      .groupBy(newsArticles.id)
-      .orderBy(desc(sql`upvoteCount`), desc(newsArticles.savedAt)),
-  );
-
-  return (result.data || []).map((r) => ({
+  const result = await phpFetch("/news/important");
+  if (!result.ok) return [];
+  return (result.data?.data || []).map((r) => ({
     ...r,
     savedAt: r.savedAt instanceof Date ? r.savedAt.toISOString() : r.savedAt,
   }));
 }
 
 export async function getArchivedNews() {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-  const result = await safeQuery(
-    db
-      .select({
-        id: newsArticles.id,
-        title: newsArticles.title,
-        url: newsArticles.url,
-        sourceName: newsArticles.sourceName,
-        sourceIcon: newsArticles.sourceIcon,
-        savedAt: newsArticles.savedAt,
-        upvoteCount: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`.as(
-          "upvoteCount",
-        ),
-      })
-      .from(newsArticles)
-      .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
-      .where(sql`${newsArticles.savedAt} < ${sevenDaysAgo}`)
-      .groupBy(newsArticles.id)
-      .orderBy(desc(newsArticles.savedAt)),
-  );
-
-  return (result.data || []).map((r) => ({
+  const result = await phpFetch("/news/archived");
+  if (!result.ok) return [];
+  return (result.data?.data || []).map((r) => ({
     ...r,
     savedAt: r.savedAt instanceof Date ? r.savedAt.toISOString() : r.savedAt,
   }));
 }
 
 export async function upvoteArticle(article, userId) {
-  const dbArticle = await safeQuery(
-    db.select().from(newsArticles).where(eq(newsArticles.url, article.link)),
-  );
+  const result = await phpFetch("/news/upvote", {
+    method: "POST",
+    body: {
+      link: article.link,
+      title: article.title,
+      sourceName: article.sourceName,
+      sourceIcon: article.sourceIcon,
+    },
+  });
 
-  let articleId;
-  if (!dbArticle.data || dbArticle.data.length === 0) {
-    articleId = crypto.randomUUID();
-    await safeQuery(
-      db.insert(newsArticles).values({
-        id: articleId,
-        title: article.title,
-        url: article.link,
-        sourceName: article.sourceName,
-        sourceIcon: article.sourceIcon,
-        savedAt: new Date(),
-      }),
-    );
-  } else {
-    articleId = dbArticle.data[0].id;
-  }
-
-  const existingUpvote = await safeQuery(
-    db
-      .select()
-      .from(newsUpvotes)
-      .where(
-        and(
-          eq(newsUpvotes.articleId, articleId),
-          eq(newsUpvotes.userId, userId),
-        ),
-      ),
-  );
-
-  if (!existingUpvote.data || existingUpvote.data.length === 0) {
-    await safeQuery(
-      db.insert(newsUpvotes).values({
-        id: crypto.randomUUID(),
-        articleId,
-        userId,
-        createdAt: new Date(),
-      }),
-    );
+  if (!result.ok) {
+    console.error("[News/Upvote] Failed:", result.error);
   }
 
   revalidatePath("/aktuell");
 }
 
 export async function getUpvotedArticleUrls(userId) {
-  const result = await safeQuery(
-    db
-      .select({ url: newsArticles.url })
-      .from(newsArticles)
-      .innerJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
-      .where(eq(newsUpvotes.userId, userId)),
-  );
-  return (result.data || []).map((r) => r.url);
+  const result = await phpFetch("/news/upvoted");
+  if (!result.ok) return [];
+  return result.data?.data || [];
 }
 
 export async function getUpvoteCounts() {
-  const result = await safeQuery(
-    db
-      .select({
-        url: newsArticles.url,
-        count: sql`CAST(COUNT(${newsUpvotes.id}) AS SIGNED)`,
-      })
-      .from(newsArticles)
-      .leftJoin(newsUpvotes, eq(newsArticles.id, newsUpvotes.articleId))
-      .groupBy(newsArticles.url),
-  );
-
-  const counts = {};
-  (result.data || []).forEach((r) => {
-    counts[r.url] = r.count;
-  });
-  return counts;
+  const result = await phpFetch("/news/upvote-counts");
+  if (!result.ok) return {};
+  return result.data?.data || {};
 }
