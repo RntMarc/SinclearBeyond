@@ -39,10 +39,10 @@ export async function GET(req) {
       (g) => g.id === process.env.DISCORD_ALLOWED_GUILD_ID,
     );
 
-    // Find existing user by discordId or email
+    // Find existing user by discordId or email via public endpoint
     const [byIdRes, byEmailRes] = await Promise.all([
-      phpFetch(`/users?filter[discordId]=${discordUser.id}&limit=1`),
-      phpFetch(`/users?filter[email]=${encodeURIComponent(discordUser.email)}&limit=1`),
+      phpFetch(`/auth/discord/find-user?discordId=${discordUser.id}`),
+      phpFetch(`/auth/discord/find-user?email=${encodeURIComponent(discordUser.email)}`),
     ]);
 
     const existingByDiscordId = byIdRes.ok ? (byIdRes.data?.data || []) : [];
