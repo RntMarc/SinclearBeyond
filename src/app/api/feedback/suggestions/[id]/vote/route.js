@@ -1,8 +1,6 @@
-import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth/auth";
-import { db, safeQuery } from "@/lib/db/db";
-import { feedbackSuggestions, feedbackVotes } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(req, { params }) {
   const { id } = await params;
@@ -14,18 +12,10 @@ export async function POST(req, { params }) {
     const payload = await verifyToken(token);
     const userId = payload.sub;
 
-    const { data: suggestions, error: suggestErr } = await safeQuery(
-      db
-        .select()
-        .from(feedbackSuggestions)
-        .where(eq(feedbackSuggestions.id, id))
-        .limit(1),
-    );
-    if (suggestErr) throw suggestErr;
-    const suggestion = suggestions?.[0];
-
-    if (!suggestion)
+    const suggestionRes = await phpFetch(`/feedback-suggestions/${id}`);
+    if (!suggestionRes.ok)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const suggestion = suggestionRes.data;
 
     // Voting frozen for done, cancelled, rejected
     if (["done", "cancelled", "rejected"].includes(suggestion.status)) {
@@ -36,48 +26,25 @@ export async function POST(req, { params }) {
     }
 
     // Check if already upvoted
-    const { data: votesData, error: votesErr } = await safeQuery(
-      db
-        .select()
-        .from(feedbackVotes)
-        .where(
-          and(
-            eq(feedbackVotes.suggestionId, id),
-            eq(feedbackVotes.userId, userId),
-          ),
-        )
-        .limit(1),
+    const votesRes = await phpFetch(
+      `/feedback-votes?suggestionId=${id}&userId=${userId}&limit=1`,
     );
-    if (votesErr) throw votesErr;
-    const existingVote = votesData?.[0];
+    const existingVote = votesRes.ok && votesRes.data?.[0] ? votesRes.data[0] : null;
 
     if (existingVote) {
-      // Already upvoted, remove it (toggle behavior)
-      const { error: delErr } = await safeQuery(
-        db
-          .delete(feedbackVotes)
-          .where(
-            and(
-              eq(feedbackVotes.suggestionId, id),
-              eq(feedbackVotes.userId, userId),
-            ),
-          ),
-      );
-      if (delErr) throw delErr;
-
+      const delResult = await phpFetch(`/feedback-votes/${existingVote.id}`, {
+        method: "DELETE",
+      });
+      if (!delResult.ok) throw new Error(delResult.error);
       return NextResponse.json({ status: "removed" });
     }
 
     // Add vote
-    const { error: inErr } = await safeQuery(
-      db.insert(feedbackVotes).values({
-        id: crypto.randomUUID(),
-        suggestionId: id,
-        userId,
-        createdAt: new Date(),
-      }),
-    );
-    if (inErr) throw inErr;
+    const createResult = await phpFetch("/feedback-votes", {
+      method: "POST",
+      body: { suggestionId: id, userId },
+    });
+    if (!createResult.ok) throw new Error(createResult.error);
 
     return NextResponse.json({ status: "added" });
   } catch (error) {

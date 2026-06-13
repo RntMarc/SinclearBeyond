@@ -1,7 +1,5 @@
-import { eq } from "drizzle-orm";
 import webpush from "web-push";
-import { db, safeQuery } from "@/lib/db/db";
-import { pushSubscriptions } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
@@ -12,14 +10,11 @@ if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
 }
 
 export async function sendPushToUser(userId, payload) {
-  const { data: subscriptions, error } = await safeQuery(
-    db
-      .select()
-      .from(pushSubscriptions)
-      .where(eq(pushSubscriptions.userId, userId)),
-  );
+  const result = await phpFetch(`/push-subscriptions?userId=${userId}`);
+  if (!result.ok) return;
 
-  if (error || !subscriptions || subscriptions.length === 0) return;
+  const subscriptions = result.data?.data || [];
+  if (subscriptions.length === 0) return;
 
   const results = await Promise.allSettled(
     subscriptions.map((sub) =>
@@ -49,11 +44,9 @@ export async function sendPushToUser(userId, payload) {
 
   if (expired.length > 0) {
     for (const endpoint of expired) {
-      await safeQuery(
-        db
-          .delete(pushSubscriptions)
-          .where(eq(pushSubscriptions.endpoint, endpoint)),
-      );
+      await phpFetch(`/push-subscriptions?endpoint=${encodeURIComponent(endpoint)}`, {
+        method: "DELETE",
+      });
     }
   }
 }

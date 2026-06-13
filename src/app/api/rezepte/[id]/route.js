@@ -1,17 +1,7 @@
-import crypto from "node:crypto";
-import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  recipeBookmarks,
-  recipeIngredients,
-  recipeReviews,
-  recipeSteps,
-  recipes,
-  users,
-} from "@/lib/db/schema";
 import { processBase64Image } from "@/lib/images/imageProcessing";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(_req, { params }) {
   const { id } = await params;
@@ -19,74 +9,15 @@ export async function GET(_req, { params }) {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data: recipeData, error } = await safeQuery(
-    db
-      .select({
-        id: recipes.id,
-        title: recipes.title,
-        description: recipes.description,
-        category: recipes.category,
-        servings: recipes.servings,
-        dietaryTags: recipes.dietaryTags,
-        image: recipes.image,
-        creatorId: recipes.creatorId,
-        creatorName: users.displayName,
-        creatorImage: users.image,
-        createdAt: recipes.createdAt,
-        updatedAt: recipes.updatedAt,
-        avgRating: sql`AVG(${recipeReviews.rating})`,
-        reviewCount: sql`COUNT(${recipeReviews.id})`,
-      })
-      .from(recipes)
-      .leftJoin(users, eq(recipes.creatorId, users.id))
-      .leftJoin(recipeReviews, eq(recipes.id, recipeReviews.recipeId))
-      .where(eq(recipes.id, id))
-      .groupBy(recipes.id, users.displayName, users.image)
-      .limit(1),
-  );
-
-  if (error) {
+  const result = await phpFetch(`/recipes/${id}/detail`);
+  if (!result.ok) {
+    if (result.status === 404) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 
-  if (!recipeData || recipeData.length === 0) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-
-  const recipe = recipeData[0];
-
-  const [ingredientsRes, stepsRes, bookmarksRes] = await Promise.all([
-    safeQuery(
-      db
-        .select()
-        .from(recipeIngredients)
-        .where(eq(recipeIngredients.recipeId, id))
-        .orderBy(recipeIngredients.order),
-    ),
-    safeQuery(
-      db
-        .select()
-        .from(recipeSteps)
-        .where(eq(recipeSteps.recipeId, id))
-        .orderBy(recipeSteps.order),
-    ),
-    safeQuery(
-      db
-        .select({ id: recipeBookmarks.id })
-        .from(recipeBookmarks)
-        .where(
-          sql`${recipeBookmarks.recipeId} = ${id} AND ${recipeBookmarks.userId} = ${session.sub}`,
-        )
-        .limit(1),
-    ),
-  ]);
-
-  recipe.ingredients = ingredientsRes.data || [];
-  recipe.steps = stepsRes.data || [];
-  recipe.isBookmarked =
-    bookmarksRes.data && bookmarksRes.data.length > 0 ? 1 : 0;
-
-  return NextResponse.json(recipe);
+  return NextResponse.json(result.data?.data || result.data);
 }
 
 export async function PATCH(req, { params }) {
@@ -108,23 +39,16 @@ export async function PATCH(req, { params }) {
       steps,
     } = body;
 
-    const { data: existing } = await safeQuery(
-      db
-        .select({ creatorId: recipes.creatorId })
-        .from(recipes)
-        .where(eq(recipes.id, id))
-        .limit(1),
-    );
-
-    if (!existing || existing.length === 0) {
+    const existingRes = await phpFetch(`/recipes/${id}`);
+    if (!existingRes.ok) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    if (existing[0].creatorId !== session.sub && !session.isAdmin) {
+    if (existingRes.data.creatorId !== session.sub && !session.isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const updateData = { updatedAt: new Date() };
+    const updateData = { updatedAt: new Date().toISOString() };
     if (title !== undefined) updateData.title = title.trim();
     if (description !== undefined)
       updateData.description = description?.trim() || null;
@@ -149,45 +73,46 @@ export async function PATCH(req, { params }) {
       }
     }
 
-    const { error: updateError } = await safeQuery(
-      db.update(recipes).set(updateData).where(eq(recipes.id, id)),
-    );
+    const updateResult = await phpFetch(`/recipes/${id}`, {
+      method: "PATCH",
+      body: updateData,
+    });
 
-    if (updateError) {
+    if (!updateResult.ok) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
     if (ingredients !== undefined) {
-      await safeQuery(
-        db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, id)),
-      );
+      await phpFetch(`/recipe-ingredients?recipeId=${id}`, { method: "DELETE" });
       if (ingredients.length > 0) {
         const ingredientValues = ingredients.map((ing, idx) => ({
-          id: crypto.randomUUID(),
           recipeId: id,
           amount: parseFloat(ing.amount) || 0,
           unit: ing.unit || "",
           name: ing.name.trim(),
           order: idx,
         }));
-        await safeQuery(db.insert(recipeIngredients).values(ingredientValues));
+        await phpFetch("/recipe-ingredients", {
+          method: "POST",
+          body: ingredientValues,
+        });
       }
     }
 
     if (steps !== undefined) {
-      await safeQuery(
-        db.delete(recipeSteps).where(eq(recipeSteps.recipeId, id)),
-      );
+      await phpFetch(`/recipe-steps?recipeId=${id}`, { method: "DELETE" });
       if (steps.length > 0) {
         const stepValues = steps.map((step, idx) => ({
-          id: crypto.randomUUID(),
           recipeId: id,
           category: step.category || "sonstiges",
           title: step.title?.trim() || null,
           description: step.description.trim(),
           order: idx,
         }));
-        await safeQuery(db.insert(recipeSteps).values(stepValues));
+        await phpFetch("/recipe-steps", {
+          method: "POST",
+          body: stepValues,
+        });
       }
     }
 
@@ -207,38 +132,25 @@ export async function DELETE(_req, { params }) {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data: existing } = await safeQuery(
-    db
-      .select({ creatorId: recipes.creatorId })
-      .from(recipes)
-      .where(eq(recipes.id, id))
-      .limit(1),
-  );
-
-  if (!existing || existing.length === 0) {
+  const existingRes = await phpFetch(`/recipes/${id}`);
+  if (!existingRes.ok) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (existing[0].creatorId !== session.sub && !session.isAdmin) {
+  if (existingRes.data.creatorId !== session.sub && !session.isAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   await Promise.all([
-    safeQuery(
-      db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, id)),
-    ),
-    safeQuery(db.delete(recipeSteps).where(eq(recipeSteps.recipeId, id))),
-    safeQuery(db.delete(recipeReviews).where(eq(recipeReviews.recipeId, id))),
-    safeQuery(
-      db.delete(recipeBookmarks).where(eq(recipeBookmarks.recipeId, id)),
-    ),
+    phpFetch(`/recipe-ingredients?recipeId=${id}`, { method: "DELETE" }),
+    phpFetch(`/recipe-steps?recipeId=${id}`, { method: "DELETE" }),
+    phpFetch(`/recipe-reviews?recipeId=${id}`, { method: "DELETE" }),
+    phpFetch(`/recipe-bookmarks?recipeId=${id}`, { method: "DELETE" }),
   ]);
 
-  const { error } = await safeQuery(
-    db.delete(recipes).where(eq(recipes.id, id)),
-  );
+  const deleteResult = await phpFetch(`/recipes/${id}`, { method: "DELETE" });
 
-  if (error) {
+  if (!deleteResult.ok) {
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 

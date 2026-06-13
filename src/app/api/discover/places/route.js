@@ -1,14 +1,7 @@
-import crypto from "node:crypto";
-import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  discoverGastronomy,
-  discoverPlaces,
-  discoverReviews,
-} from "@/lib/db/schema";
 import { getOpeningStatus } from "@/lib/discover/utils";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(req) {
   const session = await getSession();
@@ -18,7 +11,7 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const category = searchParams.get("category");
   const q = searchParams.get("q");
-  const mode = searchParams.get("mode"); // "in" or "around"
+  const mode = searchParams.get("mode");
   const lat = searchParams.get("lat");
   const lon = searchParams.get("lon");
   const radius = searchParams.get("radius");
@@ -26,71 +19,26 @@ export async function GET(req) {
   const locationName = searchParams.get("locationName");
 
   try {
-    let query = db
-      .select({
-        id: discoverPlaces.id,
-        name: discoverPlaces.name,
-        address: discoverPlaces.address,
-        category: discoverPlaces.category,
-        latitude: discoverPlaces.latitude,
-        longitude: discoverPlaces.longitude,
-        openingHours: discoverPlaces.openingHours,
-        avgRating: sql`AVG(${discoverReviews.rating})`,
-        reviewCount: sql`COUNT(${discoverReviews.id})`,
-      })
-      .from(discoverPlaces)
-      .leftJoin(discoverReviews, eq(discoverPlaces.id, discoverReviews.placeId))
-      .groupBy(discoverPlaces.id);
+    const queryParams = new URLSearchParams();
+    if (category) queryParams.set("category", category);
+    if (q) queryParams.set("q", q);
+    if (mode) queryParams.set("mode", mode);
+    if (lat) queryParams.set("lat", lat);
+    if (lon) queryParams.set("lon", lon);
+    if (radius) queryParams.set("radius", radius);
+    if (random) queryParams.set("random", random);
+    if (locationName) queryParams.set("locationName", locationName);
 
-    const conditions = [];
-
-    if (category) {
-      conditions.push(eq(discoverPlaces.category, category));
-    }
-
-    if (q) {
-      conditions.push(
-        sql`${discoverPlaces.name} LIKE ${`%${q}%`} OR ${discoverPlaces.address} LIKE ${`%${q}%`}`,
+    const result = await phpFetch(`/discover/places-search?${queryParams.toString()}`);
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
       );
     }
 
-    if (mode === "around" && lat && lon && radius) {
-      const r = parseFloat(radius);
-      const latitude = parseFloat(lat);
-      const longitude = parseFloat(lon);
-
-      // Haversine formula for distance in km
-      conditions.push(
-        sql`(6371 * acos(cos(radians(${latitude})) * cos(radians(${discoverPlaces.latitude})) * cos(radians(${discoverPlaces.longitude}) - radians(${longitude})) + sin(radians(${latitude})) * sin(radians(${discoverPlaces.latitude})))) <= ${r}`,
-      );
-    } else if (mode === "in" && lat && lon) {
-      const latitude = parseFloat(lat);
-      const longitude = parseFloat(lon);
-
-      let inCondition = sql`(6371 * acos(cos(radians(${latitude})) * cos(radians(${discoverPlaces.latitude})) * cos(radians(${discoverPlaces.longitude}) - radians(${longitude})) + sin(radians(${latitude})) * sin(radians(${discoverPlaces.latitude})))) <= 15`;
-
-      if (locationName) {
-        const cityPart = locationName.split(",")[0].trim();
-        inCondition = sql`${inCondition} OR ${discoverPlaces.address} LIKE ${`%${cityPart}%`}`;
-      }
-
-      conditions.push(inCondition);
-    }
-
-    if (conditions.length > 0) {
-      query = query.where(sql`${sql.join(conditions, sql` AND `)}`);
-    }
-
-    if (random) {
-      query = query.orderBy(sql`RAND()`).limit(parseInt(random, 10));
-    } else {
-      query = query.orderBy(sql`${discoverPlaces.name} ASC`);
-    }
-
-    const { data: places, error: queryError } = await safeQuery(query);
-    if (queryError) throw queryError;
-
-    const placesWithStatus = (places || []).map((p) => ({
+    const places = result.data?.data || [];
+    const placesWithStatus = places.map((p) => ({
       ...p,
       openingStatus: getOpeningStatus(p.openingHours, session?.timezone),
     }));
@@ -136,12 +84,9 @@ export async function POST(req) {
       );
     }
 
-    const placeId = crypto.randomUUID();
-    const now = new Date();
-
-    const { error: insertError } = await safeQuery(
-      db.insert(discoverPlaces).values({
-        id: placeId,
+    const placeResult = await phpFetch("/discover-places", {
+      method: "POST",
+      body: {
         name,
         category,
         address,
@@ -153,37 +98,32 @@ export async function POST(req) {
         website,
         email,
         openingHours,
-        lastUpdated: now,
         creatorId: session.sub,
-        createdAt: now,
-      }),
-    );
+      },
+    });
 
-    if (insertError) throw insertError;
+    if (!placeResult.ok) throw new Error(placeResult.error);
+    const placeId = placeResult.data?.data?.id;
 
     if (category === "gastronomy") {
-      const { error: gastroErr } = await safeQuery(
-        db.insert(discoverGastronomy).values({
-          id: crypto.randomUUID(),
-          placeId,
-          cuisine,
-        }),
-      );
-      if (gastroErr) throw gastroErr;
+      const gastroResult = await phpFetch("/discover-gastronomy", {
+        method: "POST",
+        body: { placeId, cuisine },
+      });
+      if (!gastroResult.ok) throw new Error(gastroResult.error);
     }
 
     if (rating) {
-      const { error: reviewErr } = await safeQuery(
-        db.insert(discoverReviews).values({
-          id: crypto.randomUUID(),
+      const reviewResult = await phpFetch("/discover-reviews", {
+        method: "POST",
+        body: {
           placeId,
           userId: session.sub,
           rating: parseInt(rating, 10),
           comment,
-          createdAt: now,
-        }),
-      );
-      if (reviewErr) throw reviewErr;
+        },
+      });
+      if (!reviewResult.ok) throw new Error(reviewResult.error);
     }
 
     return NextResponse.json({ ok: true, id: placeId });

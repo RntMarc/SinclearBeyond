@@ -1,13 +1,6 @@
-import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  pollInvites,
-  pollOptions,
-  pollQuestions,
-  polls,
-} from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { sendNotification } from "@/lib/notifications/service";
 import { getPolls, validatePollData } from "@/lib/polls/utils";
 
@@ -44,71 +37,74 @@ export async function POST(request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // Validation
     const validation = validatePollData(questions);
     if (!validation.valid) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const pollId = crypto.randomUUID();
+    const result = await phpFetch("/polls", {
+      method: "POST",
+      body: {
+        type,
+        title,
+        description,
+        allowCounterProposals: allowCounterProposals ? 1 : 0,
+        creatorId: session.sub,
+      },
+    });
 
-    const { error: txError } = await safeQuery(
-      db.transaction(async (tx) => {
-        await tx.insert(polls).values({
-          id: pollId,
-          type,
-          title,
-          description,
-          allowCounterProposals: allowCounterProposals ? 1 : 0,
-          creatorId: session.sub,
-          createdAt: now,
-          updatedAt: now,
-        });
+    if (!result.ok) {
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
 
-        for (let i = 0; i < questions.length; i++) {
-          const q = questions[i];
-          const questionId = crypto.randomUUID();
+    const pollId = result.data?.data?.id;
 
-          await tx.insert(pollQuestions).values({
-            id: questionId,
-            pollId,
-            title: q.title,
-            type: q.type,
-            order: i,
-            createdAt: now,
+    // Create questions and options via generic CRUD
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      const qResult = await phpFetch("/poll-questions", {
+        method: "POST",
+        body: {
+          pollId,
+          title: q.title,
+          type: q.type,
+          order: i,
+        },
+      });
+
+      const questionId = qResult.data?.data?.id;
+
+      if (q.options && q.options.length > 0) {
+        for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
+          const opt = q.options[optIdx];
+          await phpFetch("/poll-options", {
+            method: "POST",
+            body: {
+              questionId,
+              label: opt.label,
+              dateValue: opt.dateValue
+                ? new Date(opt.dateValue).toISOString()
+                : null,
+              order: optIdx,
+            },
           });
-
-          if (q.options && q.options.length > 0) {
-            await tx.insert(pollOptions).values(
-              q.options.map((opt, optIdx) => ({
-                id: crypto.randomUUID(),
-                questionId,
-                label: opt.label,
-                dateValue: opt.dateValue ? new Date(opt.dateValue) : null,
-                order: optIdx,
-                createdAt: now,
-              })),
-            );
-          }
         }
+      }
+    }
 
-        if (invites && invites.length > 0) {
-          await tx.insert(pollInvites).values(
-            invites.map((invite) => ({
-              id: crypto.randomUUID(),
-              pollId,
-              userId: invite.userId,
-              isIndispensable: invite.isIndispensable ? 1 : 0,
-              createdAt: now,
-            })),
-          );
-        }
-      }),
-    );
-
-    if (txError) throw new Error("Transaction failed");
-
+    // Create invites
     if (invites && invites.length > 0) {
+      for (const invite of invites) {
+        await phpFetch("/poll-invites", {
+          method: "POST",
+          body: {
+            pollId,
+            userId: invite.userId,
+            isIndispensable: invite.isIndispensable ? 1 : 0,
+          },
+        });
+      }
+
       const targetUserIds = invites
         .filter((invite) => invite.userId !== session.sub)
         .map((invite) => invite.userId);

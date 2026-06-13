@@ -1,9 +1,6 @@
-import crypto from "node:crypto";
-import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { recipeReviews, users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(req) {
   const session = await getSession();
@@ -20,31 +17,12 @@ export async function GET(req) {
     );
   }
 
-  const { data, error } = await safeQuery(
-    db
-      .select({
-        id: recipeReviews.id,
-        rating: recipeReviews.rating,
-        comment: recipeReviews.comment,
-        createdAt: recipeReviews.createdAt,
-        userId: recipeReviews.userId,
-        user: {
-          id: users.id,
-          displayName: users.displayName,
-          image: users.image,
-        },
-      })
-      .from(recipeReviews)
-      .innerJoin(users, eq(recipeReviews.userId, users.id))
-      .where(eq(recipeReviews.recipeId, recipeId))
-      .orderBy(sql`${recipeReviews.createdAt} DESC`),
-  );
-
-  if (error) {
+  const result = await phpFetch(`/recipe-reviews?recipeId=${recipeId}`);
+  if (!result.ok) {
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 
-  return NextResponse.json(data || []);
+  return NextResponse.json(result.data?.data || []);
 }
 
 export async function POST(req) {
@@ -62,23 +40,21 @@ export async function POST(req) {
       );
     }
 
-    const id = crypto.randomUUID();
-    const { error: insertError } = await safeQuery(
-      db.insert(recipeReviews).values({
-        id,
+    const result = await phpFetch("/recipe-reviews", {
+      method: "POST",
+      body: {
         recipeId,
         userId: session.sub,
         rating: parseInt(rating, 10),
         comment,
-        createdAt: new Date(),
-      }),
-    );
+      },
+    });
 
-    if (insertError) {
+    if (!result.ok) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, id });
+    return NextResponse.json({ ok: true, id: result.data?.data?.id });
   } catch (error) {
     console.error("[API/Rezepte/Reviews] POST Error:", error);
     return NextResponse.json(

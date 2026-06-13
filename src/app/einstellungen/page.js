@@ -1,9 +1,7 @@
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db, safeQuery } from "@/lib/db/db";
-import { userPreferences } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getCloseFriends } from "@/lib/profile/closeFriends";
 import { getProfileData } from "@/lib/profile/profile";
 import EinstellungenClient from "./EinstellungenClient";
@@ -14,14 +12,8 @@ export default async function EinstellungenPage({ searchParams }) {
   const data = await getProfileData(session);
   if (!data) redirect("/login");
 
-  const { data: preferencesData } = await safeQuery(
-    db
-      .select()
-      .from(userPreferences)
-      .where(eq(userPreferences.userId, session.sub))
-      .limit(1),
-  );
-  const preferences = preferencesData?.[0];
+  const prefsResult = await phpFetch(`/user-preferences`);
+  const preferences = prefsResult.ok ? (prefsResult.data?.data?.[0] || null) : null;
 
   const { user, contact, social } = data;
   const { tab } = await searchParams;

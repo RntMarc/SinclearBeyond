@@ -1,10 +1,8 @@
-import { eq, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
 import { InlineError } from "@/components/ui/InlineError";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db, safeQuery } from "@/lib/db/db";
-import { mediaItems, mediaReviews } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getProfileData } from "@/lib/profile/profile";
 import MusicClient from "./MusicClient";
 
@@ -19,32 +17,17 @@ export default async function MusicPage() {
   if (!data) redirect("/login");
   const { user } = data;
 
-  const { data: music, error } = await safeQuery(
-    db
-      .select({
-        id: mediaItems.id,
-        title: mediaItems.title,
-        description: mediaItems.description,
-        image: mediaItems.image,
-        type: mediaItems.type,
-        avgRating: sql`AVG(${mediaReviews.rating})`,
-        reviewCount: sql`COUNT(${mediaReviews.id})`,
-      })
-      .from(mediaItems)
-      .innerJoin(mediaReviews, eq(mediaItems.id, mediaReviews.itemId))
-      .where(eq(mediaItems.type, "music"))
-      .groupBy(mediaItems.id)
-      .orderBy(sql`${mediaItems.updatedAt} DESC`),
-  );
+  const result = await phpFetch("/media/list?type=music");
+  const music = result.ok ? (result.data?.data || []) : [];
 
   return (
     <AppShell user={user} session={session}>
-      {error && (
+      {!result.ok && (
         <div className="p-6">
           <InlineError />
         </div>
       )}
-      <MusicClient initialMusic={music || []} />
+      <MusicClient initialMusic={music} />
     </AppShell>
   );
 }

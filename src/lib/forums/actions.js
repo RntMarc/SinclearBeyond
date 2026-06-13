@@ -1,11 +1,8 @@
 "use server";
 
-import { and, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import sharp from "sharp";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { feedPosts, feedPostVotes, forumMembers, forums } from "@/lib/db/schema";
 import { phpFetch } from "@/lib/api/phpClient";
 
 export async function createForum(formData) {
@@ -26,21 +23,12 @@ export async function createForum(formData) {
     image = `data:image/jpeg;base64,${processedBuffer.toString("base64")}`;
   }
 
-  const id = crypto.randomUUID();
-  const now = new Date();
+  const result = await phpFetch("/forums", {
+    method: "POST",
+    body: { name, description, image },
+  });
 
-  const { error } = await safeQuery(
-    db.insert(forums).values({
-      id,
-      name,
-      description,
-      image,
-      createdAt: now,
-      updatedAt: now,
-    }),
-  );
-
-  if (error) throw error;
+  if (!result.ok) throw new Error("Failed to create forum");
 
   revalidatePath("/admin");
   revalidatePath("/forum");
@@ -56,11 +44,7 @@ export async function updateForum(id, formData) {
   const imageFile = formData.get("image");
   const removeImage = formData.get("removeImage") === "true";
 
-  const updateData = {
-    name,
-    description,
-    updatedAt: new Date(),
-  };
+  const updateData = { name, description };
 
   if (removeImage) {
     updateData.image = null;
@@ -73,11 +57,12 @@ export async function updateForum(id, formData) {
     updateData.image = `data:image/jpeg;base64,${processedBuffer.toString("base64")}`;
   }
 
-  const { error } = await safeQuery(
-    db.update(forums).set(updateData).where(eq(forums.id, id)),
-  );
+  const result = await phpFetch(`/forums/${id}`, {
+    method: "PATCH",
+    body: updateData,
+  });
 
-  if (error) throw error;
+  if (!result.ok) throw new Error("Failed to update forum");
 
   revalidatePath("/admin");
   revalidatePath("/forum");
@@ -89,22 +74,22 @@ export async function deleteForum(id) {
   const session = await getSession();
   if (!session?.isAdmin) throw new Error("Unauthorized");
 
-  await safeQuery(
-    db
-      .delete(feedPostVotes)
-      .where(
-        sql`${feedPostVotes.postId} IN (SELECT id FROM ${feedPosts} WHERE ${feedPosts.forumId} = ${id})`,
-      ),
-  );
-  await safeQuery(db.delete(feedPosts).where(eq(feedPosts.forumId, id)));
-  await safeQuery(db.delete(forumMembers).where(eq(forumMembers.forumId, id)));
+  // Delete related records via generic CRUD
+  const postsRes = await phpFetch(`/posts?forumId=${id}`);
+  if (postsRes.ok) {
+    const posts = postsRes.data?.data || [];
+    for (const post of posts) {
+      await phpFetch(`/post-votes?postId=${post.id}`, { method: "DELETE" });
+      await phpFetch(`/posts/${post.id}`, { method: "DELETE" });
+    }
+  }
+
+  await phpFetch(`/forum-members?forumId=${id}`, { method: "DELETE" });
   await phpFetch("/notifications/read-type", {
     method: "POST",
     body: { type: ["forum"] },
   });
-  const { error } = await safeQuery(db.delete(forums).where(eq(forums.id, id)));
-
-  if (error) throw error;
+  await phpFetch(`/forums/${id}`, { method: "DELETE" });
 
   revalidatePath("/admin");
   revalidatePath("/forum");
@@ -115,34 +100,21 @@ export async function joinForum(forumId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
-  // Check if already a member
-  const { data: existing } = await safeQuery(
-    db
-      .select()
-      .from(forumMembers)
-      .where(
-        and(
-          eq(forumMembers.forumId, forumId),
-          eq(forumMembers.userId, session.sub),
-        ),
-      )
-      .limit(1),
+  const existing = await phpFetch(
+    `/forum-members?forumId=${forumId}&userId=${session.sub}&limit=1`,
   );
+  const existingMembers = existing.ok ? (existing.data?.data || []) : [];
 
-  if (existing?.length > 0) {
+  if (existingMembers.length > 0) {
     return { ok: true, alreadyMember: true };
   }
 
-  const { error } = await safeQuery(
-    db.insert(forumMembers).values({
-      id: crypto.randomUUID(),
-      forumId,
-      userId: session.sub,
-      createdAt: new Date(),
-    }),
-  );
+  const result = await phpFetch("/forum-members", {
+    method: "POST",
+    body: { forumId, userId: session.sub },
+  });
 
-  if (error) throw error;
+  if (!result.ok) throw new Error("Failed to join forum");
 
   revalidatePath("/forum");
   revalidatePath(`/forum/${forumId}`);
@@ -153,18 +125,13 @@ export async function leaveForum(forumId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
-  const { error } = await safeQuery(
-    db
-      .delete(forumMembers)
-      .where(
-        and(
-          eq(forumMembers.forumId, forumId),
-          eq(forumMembers.userId, session.sub),
-        ),
-      ),
+  const existing = await phpFetch(
+    `/forum-members?forumId=${forumId}&userId=${session.sub}&limit=1`,
   );
-
-  if (error) throw error;
+  const members = existing.ok ? (existing.data?.data || []) : [];
+  if (members.length > 0) {
+    await phpFetch(`/forum-members/${members[0].id}`, { method: "DELETE" });
+  }
 
   revalidatePath("/forum");
   revalidatePath(`/forum/${forumId}`);
@@ -175,27 +142,16 @@ export async function votePost(postId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
-  const { error } = await safeQuery(
-    db.insert(feedPostVotes).values({
-      id: crypto.randomUUID(),
-      postId,
-      userId: session.sub,
-      createdAt: new Date(),
-    }),
-  );
+  const result = await phpFetch("/post-votes", {
+    method: "POST",
+    body: { postId, userId: session.sub },
+  });
 
-  if (error) throw error;
+  if (!result.ok) throw new Error("Failed to vote");
 
-  // We need the forumId to revalidate.
-  const { data } = await safeQuery(
-    db
-      .select({ forumId: feedPosts.forumId })
-      .from(feedPosts)
-      .where(eq(feedPosts.id, postId))
-      .limit(1),
-  );
-  if (data?.[0]) {
-    revalidatePath(`/forum/${data[0].forumId}`);
+  const postRes = await phpFetch(`/posts/${postId}`);
+  if (postRes.ok && postRes.data?.forumId) {
+    revalidatePath(`/forum/${postRes.data.forumId}`);
   }
 
   return { ok: true };
@@ -205,28 +161,17 @@ export async function unvotePost(postId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
-  const { error } = await safeQuery(
-    db
-      .delete(feedPostVotes)
-      .where(
-        and(
-          eq(feedPostVotes.postId, postId),
-          eq(feedPostVotes.userId, session.sub),
-        ),
-      ),
+  const existing = await phpFetch(
+    `/post-votes?postId=${postId}&userId=${session.sub}&limit=1`,
   );
+  const votes = existing.ok ? (existing.data?.data || []) : [];
+  if (votes.length > 0) {
+    await phpFetch(`/post-votes/${votes[0].id}`, { method: "DELETE" });
+  }
 
-  if (error) throw error;
-
-  const { data } = await safeQuery(
-    db
-      .select({ forumId: feedPosts.forumId })
-      .from(feedPosts)
-      .where(eq(feedPosts.id, postId))
-      .limit(1),
-  );
-  if (data?.[0]) {
-    revalidatePath(`/forum/${data[0].forumId}`);
+  const postRes = await phpFetch(`/posts/${postId}`);
+  if (postRes.ok && postRes.data?.forumId) {
+    revalidatePath(`/forum/${postRes.data.forumId}`);
   }
 
   return { ok: true };

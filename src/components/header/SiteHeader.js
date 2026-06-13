@@ -1,9 +1,7 @@
-import { eq } from "drizzle-orm";
 import { getTranslations } from "next-intl/server";
 import LogoutButton from "@/components/auth/LogoutButton";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import OpenAppButton from "./OpenAppButton";
 
 export default async function SiteHeader({ variant = "default" }) {
@@ -13,18 +11,15 @@ export default async function SiteHeader({ variant = "default" }) {
   let user = null;
 
   if (session != null) {
-    const { data: usersData } = await safeQuery(
-      db
-        .select({
-          displayName: users.displayName,
-          email: users.email,
-          createdAt: users.createdAt,
-        })
-        .from(users)
-        .where(eq(users.id, session.sub))
-        .limit(1),
-    );
-    user = usersData?.[0];
+    const result = await phpFetch(`/users/${session.sub}`);
+    if (result.ok) {
+      const userData = result.data?.data || result.data;
+      user = {
+        displayName: userData?.displayName,
+        email: userData?.email,
+        createdAt: userData?.createdAt,
+      };
+    }
   }
 
   return (

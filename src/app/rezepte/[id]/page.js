@@ -1,17 +1,8 @@
-import { eq, sql } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/layout/Appshell";
 import { InlineError } from "@/components/ui/InlineError";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db, safeQuery } from "@/lib/db/db";
-import {
-  recipeBookmarks,
-  recipeIngredients,
-  recipeReviews,
-  recipeSteps,
-  recipes,
-  users,
-} from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getProfileData } from "@/lib/profile/profile";
 import RezepteDetailClient from "./RezepteDetailClient";
 
@@ -27,33 +18,9 @@ export default async function RezepteDetailPage({ params }) {
   if (!profileData) redirect("/login");
   const { user } = profileData;
 
-  const { data: recipeResult, error } = await safeQuery(
-    db
-      .select({
-        id: recipes.id,
-        title: recipes.title,
-        description: recipes.description,
-        category: recipes.category,
-        servings: recipes.servings,
-        dietaryTags: recipes.dietaryTags,
-        image: recipes.image,
-        creatorId: recipes.creatorId,
-        creatorName: users.displayName,
-        creatorImage: users.image,
-        createdAt: recipes.createdAt,
-        updatedAt: recipes.updatedAt,
-        avgRating: sql`AVG(${recipeReviews.rating})`,
-        reviewCount: sql`COUNT(${recipeReviews.id})`,
-      })
-      .from(recipes)
-      .leftJoin(users, eq(recipes.creatorId, users.id))
-      .leftJoin(recipeReviews, eq(recipes.id, recipeReviews.recipeId))
-      .where(eq(recipes.id, id))
-      .groupBy(recipes.id, users.displayName, users.image)
-      .limit(1),
-  );
-
-  if (error) {
+  const result = await phpFetch(`/recipes/${id}/detail`);
+  if (!result.ok) {
+    if (result.status === 404) notFound();
     return (
       <AppShell user={user} session={session}>
         <div className="p-6">
@@ -63,76 +30,45 @@ export default async function RezepteDetailPage({ params }) {
     );
   }
 
-  if (!recipeResult || recipeResult.length === 0) {
-    notFound();
-  }
+  const data = result.data?.data || {};
+  const recipe = {
+    id: data.id,
+    title: data.title,
+    description: data.description,
+    category: data.category,
+    servings: data.servings,
+    dietaryTags: data.dietaryTags,
+    image: data.image,
+    creatorId: data.creatorId,
+    creatorName: data.creatorName,
+    creatorImage: data.creatorImage,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    avgRating: data.avgRating,
+    reviewCount: data.reviewCount,
+    ingredients: data.ingredients || [],
+    steps: data.steps || [],
+    isBookmarked: data.isBookmarked ? 1 : 0,
+  };
 
-  const recipe = recipeResult[0];
-
-  const [ingredientsRes, stepsRes, reviewsRes, bookmarksRes] =
-    await Promise.all([
-      safeQuery(
-        db
-          .select()
-          .from(recipeIngredients)
-          .where(eq(recipeIngredients.recipeId, id))
-          .orderBy(recipeIngredients.order),
-      ),
-      safeQuery(
-        db
-          .select()
-          .from(recipeSteps)
-          .where(eq(recipeSteps.recipeId, id))
-          .orderBy(recipeSteps.order),
-      ),
-      safeQuery(
-        db
-          .select({
-            id: recipeReviews.id,
-            rating: recipeReviews.rating,
-            comment: recipeReviews.comment,
-            createdAt: recipeReviews.createdAt,
-            userId: recipeReviews.userId,
-            user: {
-              id: users.id,
-              displayName: users.displayName,
-              image: users.image,
-            },
-          })
-          .from(recipeReviews)
-          .innerJoin(users, eq(recipeReviews.userId, users.id))
-          .where(eq(recipeReviews.recipeId, id))
-          .orderBy(sql`${recipeReviews.createdAt} DESC`),
-      ),
-      safeQuery(
-        db
-          .select({ id: recipeBookmarks.id })
-          .from(recipeBookmarks)
-          .where(
-            sql`${recipeBookmarks.recipeId} = ${id} AND ${recipeBookmarks.userId} = ${session.sub}`,
-          )
-          .limit(1),
-      ),
-    ]);
-
-  const reviewsError = reviewsRes.error;
+  const reviews = (data.reviews || []).map((r) => ({
+    id: r.id,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt,
+    userId: r.userId,
+    user: {
+      id: r.userId,
+      displayName: r.displayName,
+      image: r.image,
+    },
+  }));
 
   return (
     <AppShell user={user} session={session}>
-      {reviewsError && (
-        <div className="px-6 pt-6">
-          <InlineError />
-        </div>
-      )}
       <RezepteDetailClient
-        recipe={{
-          ...recipe,
-          ingredients: ingredientsRes.data || [],
-          steps: stepsRes.data || [],
-          isBookmarked:
-            bookmarksRes.data && bookmarksRes.data.length > 0 ? 1 : 0,
-        }}
-        reviews={reviewsRes.data || []}
+        recipe={recipe}
+        reviews={reviews}
         userId={session.sub}
       />
     </AppShell>

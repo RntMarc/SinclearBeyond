@@ -1,12 +1,10 @@
-import { eq } from "drizzle-orm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import AppShell from "@/components/layout/Appshell";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getPoll } from "@/lib/polls/utils";
 import PollDetailClient from "./PollDetailClient";
 
@@ -25,18 +23,12 @@ export default async function PollDetailPage({ params }) {
     notFound();
   }
 
-  const { data: userData } = await safeQuery(
-    db
-      .select({
-        displayName: users.displayName,
-        image: users.image,
-        onboardingCompleted: users.onboardingCompleted,
-      })
-      .from(users)
-      .where(eq(users.id, session.sub))
-      .limit(1),
-  );
-  const user = userData?.[0];
+  const userResult = await phpFetch(`/users/${session.sub}`);
+  const user = userResult.ok ? {
+    displayName: userResult.data?.data?.displayName || userResult.data?.displayName,
+    image: userResult.data?.data?.image || userResult.data?.image,
+    onboardingCompleted: userResult.data?.data?.onboardingCompleted || userResult.data?.onboardingCompleted,
+  } : null;
 
   return (
     <AppShell user={user} session={session}>

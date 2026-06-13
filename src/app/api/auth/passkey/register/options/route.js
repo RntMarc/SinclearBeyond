@@ -1,11 +1,9 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getRegistrationOptions } from "@/lib/auth/passkey";
 import { passkeyLimiter } from "@/lib/auth/rateLimiter";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST() {
   const t = await getTranslations("Common");
@@ -20,16 +18,12 @@ export async function POST() {
     return NextResponse.json({ error: t("tooManyRequests") }, { status: 429 });
   }
 
-  const { data: usersData, error: fetchErr } = await safeQuery(
-    db.select().from(users).where(eq(users.id, session.sub)).limit(1),
-  );
-  if (fetchErr) throw fetchErr;
-
-  const user = usersData?.[0];
-
-  if (!user) {
+  const userRes = await phpFetch(`/users/${session.sub}`);
+  if (!userRes.ok) {
     return NextResponse.json({ error: t("notFound") }, { status: 404 });
   }
+
+  const user = userRes.data;
 
   try {
     console.log(

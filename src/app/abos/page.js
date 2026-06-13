@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { Banknote } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -7,8 +6,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import AbosClient from "@/components/subscriptions/AbosClient";
 import { InlineError } from "@/components/ui/InlineError";
 import { getSessionWithSubs } from "@/lib/auth/sessionExtended";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { getSubscriptions } from "@/lib/subscriptions";
 
 export default async function AbosPage() {
@@ -16,21 +14,8 @@ export default async function AbosPage() {
   const session = await getSessionWithSubs();
   if (!session) redirect("/login");
 
-  const userId = session.sub;
-
-  const { data: userData, error: userError } = await safeQuery(
-    db
-      .select({
-        displayName: users.displayName,
-        email: users.email,
-        image: users.image,
-        isAdmin: users.isAdmin,
-      })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1),
-  );
-  const user = userData?.[0];
+  const userResult = await phpFetch(`/users/${session.sub}`);
+  const user = userResult.ok ? (userResult.data?.data || userResult.data) : null;
 
   let subscriptions = [];
   let subError = false;
@@ -55,7 +40,7 @@ export default async function AbosPage() {
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-5xl mx-auto space-y-6">
-            {(userError || subError) && <InlineError />}
+            {(!userResult.ok || subError) && <InlineError />}
             <AbosClient initialSubscriptions={subscriptions || []} />
           </div>
         </div>

@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyInternalHmac } from "@/lib/auth/internalV2";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(req) {
   const url = new URL(req.url);
@@ -30,13 +28,12 @@ export async function POST(req) {
   }
 
   try {
-    const { data: userRows } = await safeQuery(
-      db.select().from(users).where(eq(users.id, userId)).limit(1),
-    );
-    const user = userRows?.[0];
-    if (!user) {
+    const userRes = await phpFetch(`/users/${userId}`);
+    if (!userRes.ok) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    const user = userRes.data;
 
     return NextResponse.json({
       user_id: user.id,

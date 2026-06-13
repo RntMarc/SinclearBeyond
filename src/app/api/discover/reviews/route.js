@@ -1,8 +1,6 @@
-import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { discoverReviews } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function POST(req) {
   const session = await getSession();
@@ -19,23 +17,21 @@ export async function POST(req) {
       );
     }
 
-    const id = crypto.randomUUID();
-    const { error: insertError } = await safeQuery(
-      db.insert(discoverReviews).values({
-        id,
+    const result = await phpFetch("/discover-reviews", {
+      method: "POST",
+      body: {
         placeId,
         userId: session.sub,
         rating: parseInt(rating, 10),
         comment,
-        createdAt: new Date(),
-      }),
-    );
+      },
+    });
 
-    if (insertError) {
+    if (!result.ok) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, id });
+    return NextResponse.json({ ok: true, id: result.data?.data?.id });
   } catch (error) {
     console.error("[API/Discover/Reviews] POST Error:", error);
     return NextResponse.json(

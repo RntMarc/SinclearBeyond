@@ -1,9 +1,7 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyToken } from "@/lib/auth/auth";
-import { db, safeQuery } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 import { transport } from "@/lib/mail";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -48,41 +46,19 @@ export async function POST(req, { params }) {
 
     const { subject, message } = result.data;
 
-    // Fetch recipient email
-    const { data: recData, error: recErr } = await safeQuery(
-      db
-        .select({
-          email: users.email,
-          displayName: users.displayName,
-        })
-        .from(users)
-        .where(eq(users.id, recipientId))
-        .limit(1),
-    );
-    if (recErr) throw recErr;
-    const recipient = recData?.[0];
-
-    if (!recipient) {
+    // Fetch recipient info via PHP
+    const recipientResult = await phpFetch(`/users/${recipientId}`);
+    if (!recipientResult.ok) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+    const recipient = recipientResult.data?.data || recipientResult.data;
 
-    // Fetch sender info
-    const { data: senderData, error: senderErr } = await safeQuery(
-      db
-        .select({
-          displayName: users.displayName,
-          email: users.email,
-        })
-        .from(users)
-        .where(eq(users.id, senderId))
-        .limit(1),
-    );
-    if (senderErr) throw senderErr;
-    const sender = senderData?.[0];
-
-    if (!sender) {
+    // Fetch sender info via PHP
+    const senderResult = await phpFetch(`/users/${senderId}`);
+    if (!senderResult.ok) {
       return NextResponse.json({ error: "Sender not found" }, { status: 404 });
     }
+    const sender = senderResult.data?.data || senderResult.data;
 
     await transport.sendMail({
       from: process.env.SMTP_FROM,

@@ -1,9 +1,7 @@
-import { like, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function GET(req) {
   const t = await getTranslations("Common");
@@ -14,25 +12,19 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search");
 
-  let query = db
-    .select({
-      id: users.id,
-      displayName: users.displayName,
-      email: users.email,
-      image: users.image,
-    })
-    .from(users);
+  try {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
 
-  if (search) {
-    query = query.where(
-      or(
-        like(users.displayName, `%${search}%`),
-        like(users.email, `%${search}%`),
-      ),
-    );
+    const result = await phpFetch(`/users?${params.toString()}`);
+    if (!result.ok) {
+      return NextResponse.json([], { status: 200 });
+    }
+
+    const users = result.data?.data || result.data || [];
+    return NextResponse.json(users);
+  } catch (error) {
+    console.error("[API/Users] GET Error:", error);
+    return NextResponse.json([], { status: 200 });
   }
-
-  const rows = await query;
-
-  return NextResponse.json(rows);
 }

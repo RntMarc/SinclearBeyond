@@ -1,11 +1,9 @@
-import { desc, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { verifyToken } from "@/lib/auth/auth";
-import { db, safeQuery } from "@/lib/db/db";
-import { feedbackSuggestions, feedbackVotes, users } from "@/lib/db/schema";
 import { rateLimit } from "@/lib/rate-limit";
+import { phpFetch } from "@/lib/api/phpClient";
 
 const FeedbackSchema = z.discriminatedUnion("type", [
   z.object({
@@ -44,54 +42,15 @@ export async function GET(req) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const payload = await verifyToken(token);
-    const userId = payload.sub;
+    const result = await phpFetch("/feedback/list");
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
 
-    // Fetch suggestions with upvote count and whether the current user has upvoted
-    const { data: suggestions, error } = await safeQuery(
-      db
-        .select({
-          id: feedbackSuggestions.id,
-          userId: feedbackSuggestions.userId,
-          userDisplayName: users.displayName,
-          userImage: users.image,
-          title: feedbackSuggestions.title,
-          description: feedbackSuggestions.description,
-          status: feedbackSuggestions.status,
-          createdAt: feedbackSuggestions.createdAt,
-          updatedAt: feedbackSuggestions.updatedAt,
-          upvotes: sql`count(${feedbackVotes.id})`.mapWith(Number),
-          hasUpvoted:
-            sql`max(case when ${feedbackVotes.userId} = ${userId} then 1 else 0 end)`.mapWith(
-              Boolean,
-            ),
-        })
-        .from(feedbackSuggestions)
-        .leftJoin(users, eq(feedbackSuggestions.userId, users.id))
-        .leftJoin(
-          feedbackVotes,
-          eq(feedbackSuggestions.id, feedbackVotes.suggestionId),
-        )
-        .groupBy(
-          feedbackSuggestions.id,
-          feedbackSuggestions.userId,
-          users.displayName,
-          users.image,
-          feedbackSuggestions.title,
-          feedbackSuggestions.description,
-          feedbackSuggestions.status,
-          feedbackSuggestions.createdAt,
-          feedbackSuggestions.updatedAt,
-        )
-        .orderBy(
-          desc(sql`count(${feedbackVotes.id})`),
-          desc(feedbackSuggestions.createdAt),
-        ),
-    );
-
-    if (error) throw error;
-
-    return NextResponse.json(suggestions || []);
+    return NextResponse.json(result.data?.data || []);
   } catch (error) {
     console.error("Error fetching suggestions:", error);
     return NextResponse.json(
@@ -128,7 +87,6 @@ export async function POST(req) {
     const body = result.data;
 
     if (body.type === "feedback") {
-      // Send general feedback email
       const { message } = body;
 
       await transport.sendMail({
@@ -148,24 +106,18 @@ export async function POST(req) {
 
       return NextResponse.json({ success: true });
     } else if (body.type === "suggestion") {
-      // Create new feature suggestion
       const { title, description } = body;
 
-      const newId = crypto.randomUUID();
-      const { error: insertError } = await safeQuery(
-        db.insert(feedbackSuggestions).values({
-          id: newId,
-          userId,
-          title,
-          description,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-      );
+      const insertResult = await phpFetch("/feedback-suggestions", {
+        method: "POST",
+        body: { title, description },
+      });
 
-      if (insertError) throw insertError;
+      if (!insertResult.ok) {
+        return NextResponse.json({ error: "Database error" }, { status: 500 });
+      }
 
-      return NextResponse.json({ id: newId });
+      return NextResponse.json({ id: insertResult.data?.data?.id });
     } else if (body.type === "missing_place") {
       const { name, address, googleMapsLink, website, latitude, longitude } =
         body;

@@ -1,9 +1,7 @@
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth/session";
-import { db, safeQuery } from "@/lib/db/db";
-import { feedPosts } from "@/lib/db/schema";
+import { phpFetch } from "@/lib/api/phpClient";
 
 export async function PATCH(req, { params }) {
   const t = await getTranslations("Common");
@@ -17,186 +15,67 @@ export async function PATCH(req, { params }) {
     const body = await req.json();
     const { category, content, visibility, ...details } = body;
 
-    const { data: existingRows, error: fetchErr } = await safeQuery(
-      db.select().from(feedPosts).where(eq(feedPosts.id, id)).limit(1),
-    );
-    if (fetchErr) throw fetchErr;
-
-    const existing = existingRows?.[0];
-
-    if (!existing)
-      return NextResponse.json({ error: t("notFound") }, { status: 404 });
-
-    if (existing.userId !== session.sub)
-      return NextResponse.json({ error: t("forbidden") }, { status: 403 });
-
-    // Server-side validation
-    const currentCategory = category || existing.category;
-    if (currentCategory === "text") {
+    // Validate music URLs if category is music
+    const currentCategory = category || "text";
+    if (currentCategory === "music") {
       const tFeed = await getTranslations("Feed.form");
-      const currentContent = content !== undefined ? content : existing.content;
-      if (!currentContent?.trim()) {
-        return NextResponse.json(
-          { error: tFeed("errors.text") },
-          { status: 400 },
-        );
-      }
-    } else if (currentCategory === "music") {
-      const tFeed = await getTranslations("Feed.form");
-      const artist =
-        details.artist !== undefined ? details.artist?.trim() : existing.artist;
-      const title =
-        details.title !== undefined ? details.title?.trim() : existing.title;
-      const spotifyUrl =
-        details.spotifyUrl !== undefined
-          ? details.spotifyUrl?.trim()
-          : existing.spotifyUrl;
-      const youtubeMusicUrl =
-        details.youtubeMusicUrl !== undefined
-          ? details.youtubeMusicUrl?.trim()
-          : existing.youtubeMusicUrl;
-      const youtubeUrl =
-        details.youtubeUrl !== undefined
-          ? details.youtubeUrl?.trim()
-          : existing.youtubeUrl;
-      const soundcloudUrl =
-        details.soundcloudUrl !== undefined
-          ? details.soundcloudUrl?.trim()
-          : existing.soundcloudUrl;
-
+      const artist = details.artist?.trim();
+      const title = details.title?.trim();
       if (!artist || !title) {
         return NextResponse.json(
           { error: tFeed("errors.music") },
           { status: 400 },
         );
       }
-      if (!spotifyUrl && !youtubeMusicUrl && !youtubeUrl && !soundcloudUrl) {
+      if (
+        !details.spotifyUrl &&
+        !details.youtubeMusicUrl &&
+        !details.youtubeUrl &&
+        !details.soundcloudUrl
+      ) {
         return NextResponse.json(
           { error: tFeed("errors.musicLink") },
           { status: 400 },
         );
       }
-
-      // URL Validations
-      if (
-        spotifyUrl &&
-        !spotifyUrl.match(
-          /^(https?:\/\/)?(open\.spotify\.com\/|spotify:)(track|album|playlist|artist).+$/,
-        )
-      ) {
-        return NextResponse.json(
-          { error: tFeed("errors.invalidUrl") },
-          { status: 400 },
-        );
-      }
-      if (
-        youtubeMusicUrl &&
-        !youtubeMusicUrl.match(
-          /^(https?:\/\/)?(music\.youtube\.com\/)(watch\?v=|playlist\?list=).+$/,
-        )
-      ) {
-        return NextResponse.json(
-          { error: tFeed("errors.invalidUrl") },
-          { status: 400 },
-        );
-      }
-      if (
-        youtubeUrl &&
-        !youtubeUrl.match(
-          /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+$/,
-        )
-      ) {
-        return NextResponse.json(
-          { error: tFeed("errors.invalidUrl") },
-          { status: 400 },
-        );
-      }
-      if (
-        soundcloudUrl &&
-        !soundcloudUrl.match(/^(https?:\/\/)?(soundcloud\.com\/).+$/)
-      ) {
-        return NextResponse.json(
-          { error: tFeed("errors.invalidUrl") },
-          { status: 400 },
-        );
-      }
     }
 
-    const now = new Date();
+    const updateData = {
+      updatedAt: new Date().toISOString(),
+    };
+    if (category !== undefined) updateData.category = category;
+    if (content !== undefined) updateData.content = content?.trim() || null;
+    if (visibility !== undefined) updateData.visibility = visibility;
+    if (details.artist !== undefined) updateData.artist = details.artist?.trim() || null;
+    if (details.title !== undefined) updateData.title = details.title?.trim() || null;
+    if (details.spotifyUrl !== undefined) updateData.spotifyUrl = details.spotifyUrl?.trim() || null;
+    if (details.youtubeMusicUrl !== undefined) updateData.youtubeMusicUrl = details.youtubeMusicUrl?.trim() || null;
+    if (details.youtubeUrl !== undefined) updateData.youtubeUrl = details.youtubeUrl?.trim() || null;
+    if (details.soundcloudUrl !== undefined) updateData.soundcloudUrl = details.soundcloudUrl?.trim() || null;
+    if (details.videoUrl !== undefined) updateData.videoUrl = details.videoUrl?.trim() || null;
+    if (details.videoPlatform !== undefined) updateData.videoPlatform = details.videoPlatform?.trim() || null;
+    if (details.newsTitle !== undefined) updateData.newsTitle = details.newsTitle?.trim() || null;
+    if (details.newsSite !== undefined) updateData.newsSite = details.newsSite?.trim() || null;
+    if (details.newsUrl !== undefined) updateData.newsUrl = details.newsUrl?.trim() || null;
+    if (details.otherTitle !== undefined) updateData.otherTitle = details.otherTitle?.trim() || null;
+    if (details.otherUrl !== undefined) updateData.otherUrl = details.otherUrl?.trim() || null;
 
-    const { error: upErr } = await safeQuery(
-      db
-        .update(feedPosts)
-        .set({
-          category: category || existing.category,
-          content:
-            content !== undefined ? content?.trim() || null : existing.content,
-          visibility:
-            visibility !== undefined ? visibility : existing.visibility,
-          updatedAt: now,
-          artist:
-            details.artist !== undefined
-              ? details.artist?.trim() || null
-              : existing.artist,
-          title:
-            details.title !== undefined
-              ? details.title?.trim() || null
-              : existing.title,
-          spotifyUrl:
-            details.spotifyUrl !== undefined
-              ? details.spotifyUrl?.trim() || null
-              : existing.spotifyUrl,
-          youtubeMusicUrl:
-            details.youtubeMusicUrl !== undefined
-              ? details.youtubeMusicUrl?.trim() || null
-              : existing.youtubeMusicUrl,
-          youtubeUrl:
-            details.youtubeUrl !== undefined
-              ? details.youtubeUrl?.trim() || null
-              : existing.youtubeUrl,
-          soundcloudUrl:
-            details.soundcloudUrl !== undefined
-              ? details.soundcloudUrl?.trim() || null
-              : existing.soundcloudUrl,
-          videoUrl:
-            details.videoUrl !== undefined
-              ? details.videoUrl?.trim() || null
-              : existing.videoUrl,
-          videoPlatform:
-            details.videoPlatform !== undefined
-              ? details.videoPlatform?.trim() || null
-              : existing.videoPlatform,
-          newsTitle:
-            details.newsTitle !== undefined
-              ? details.newsTitle?.trim() || null
-              : existing.newsTitle,
-          newsSite:
-            details.newsSite !== undefined
-              ? details.newsSite?.trim() || null
-              : existing.newsSite,
-          newsUrl:
-            details.newsUrl !== undefined
-              ? details.newsUrl?.trim() || null
-              : existing.newsUrl,
-          otherTitle:
-            details.otherTitle !== undefined
-              ? details.otherTitle?.trim() || null
-              : existing.otherTitle,
-          otherUrl:
-            details.otherUrl !== undefined
-              ? details.otherUrl?.trim() || null
-              : existing.otherUrl,
-        })
-        .where(eq(feedPosts.id, id)),
-    );
-    if (upErr) throw upErr;
+    const result = await phpFetch(`/posts/${id}`, {
+      method: "PATCH",
+      body: updateData,
+    });
 
-    const { data: updatedRows, error: finalFetchErr } = await safeQuery(
-      db.select().from(feedPosts).where(eq(feedPosts.id, id)).limit(1),
-    );
-    if (finalFetchErr) throw finalFetchErr;
+    if (!result.ok) {
+      if (result.status === 404) {
+        return NextResponse.json({ error: t("notFound") }, { status: 404 });
+      }
+      if (result.status === 403) {
+        return NextResponse.json({ error: t("forbidden") }, { status: 403 });
+      }
+      return NextResponse.json({ error: t("saveError") }, { status: 500 });
+    }
 
-    return NextResponse.json(updatedRows?.[0]);
+    return NextResponse.json(result.data?.data || { id });
   } catch (error) {
     console.error("[API/Feed/ID] PATCH Error:", error);
     return NextResponse.json({ error: t("saveError") }, { status: 500 });
@@ -212,22 +91,17 @@ export async function DELETE(_req, { params }) {
   const { id } = await params;
 
   try {
-    const { data: rows, error: fetchErr } = await safeQuery(
-      db.select().from(feedPosts).where(eq(feedPosts.id, id)).limit(1),
-    );
-    if (fetchErr) throw fetchErr;
-    const existing = rows?.[0];
+    const result = await phpFetch(`/posts/${id}`, { method: "DELETE" });
 
-    if (!existing)
-      return NextResponse.json({ error: t("notFound") }, { status: 404 });
-
-    if (existing.userId !== session.sub)
-      return NextResponse.json({ error: t("forbidden") }, { status: 403 });
-
-    const { error: delErr } = await safeQuery(
-      db.delete(feedPosts).where(eq(feedPosts.id, id)),
-    );
-    if (delErr) throw delErr;
+    if (!result.ok) {
+      if (result.status === 404) {
+        return NextResponse.json({ error: t("notFound") }, { status: 404 });
+      }
+      if (result.status === 403) {
+        return NextResponse.json({ error: t("forbidden") }, { status: 403 });
+      }
+      return NextResponse.json({ error: t("deleteError") }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
