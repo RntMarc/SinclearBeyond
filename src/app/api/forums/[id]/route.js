@@ -24,11 +24,19 @@ export async function GET(_req, { params }) {
 
     const forum = forumRes.data?.data || forumRes.data;
     const posts = postsRes.ok ? (postsRes.data?.data || []) : [];
-    const memberRecords = membersRes.ok ? (membersRes.data?.data || []) : [];
+    const memberRecords = membersRes.ok
+      ? (membersRes.data?.data || [])
+      : [];
+    const seenUserIds = new Set();
+    const dedupedMemberRecords = memberRecords.filter((m) => {
+      if (seenUserIds.has(m.userId)) return false;
+      seenUserIds.add(m.userId);
+      return true;
+    });
 
     const userIds = [
       ...new Set([
-        ...memberRecords.map((m) => m.userId),
+        ...dedupedMemberRecords.map((m) => m.userId),
         ...posts.map((p) => p.userId).filter(Boolean),
       ]),
     ];
@@ -66,9 +74,11 @@ export async function GET(_req, { params }) {
       voteCount: post.voteCount ?? 0,
     }));
 
-    const members = memberRecords.map((m) => userMap[m.userId]).filter(Boolean);
+    const members = dedupedMemberRecords
+      .map((m) => userMap[m.userId])
+      .filter(Boolean);
 
-    const isMember = memberRecords.some((m) => m.userId === session.sub);
+    const isMember = dedupedMemberRecords.some((m) => m.userId === session.sub);
 
     return NextResponse.json({
       forum,
