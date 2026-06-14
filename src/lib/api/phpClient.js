@@ -9,7 +9,7 @@ const API_BASE_URL =
  */
 export async function phpFetch(
   path,
-  { method = "GET", body, headers = {}, cache = "no-store", next, accessToken: explicitAccessToken } = {},
+  { method = "GET", body, headers = {}, cache = "no-store", next, accessToken: explicitAccessToken, silent = false } = {},
 ) {
   const cookieStore = await cookies();
   const accessToken = explicitAccessToken ?? cookieStore.get("accessToken")?.value;
@@ -76,10 +76,12 @@ export async function phpFetch(
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-      console.error(`[PHP API] Error Response: ${response.status} ${url}`, {
-        error: data?.error || response.statusText,
-        data,
-      });
+      if (!silent) {
+        console.error(`[PHP API] Error Response: ${response.status} ${url}`, {
+          error: data?.error || response.statusText,
+          data,
+        });
+      }
       return {
         ok: false,
         status: response.status,

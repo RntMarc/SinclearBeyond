@@ -8,8 +8,8 @@ export async function getProfileData(session) {
 
   const [userRes, contactRes, socialRes] = await Promise.all([
     phpFetch(`/users/${session.sub}`),
-    phpFetch(`/contact-info/${session.sub}`),
-    phpFetch(`/social-info/${session.sub}`),
+    phpFetch(`/contact-info/${session.sub}`, { silent: true }),
+    phpFetch(`/social-info/${session.sub}`, { silent: true }),
   ]);
 
   if (!userRes.ok) return null;
@@ -109,6 +109,7 @@ export async function saveProfile(_prevState, formData) {
     const contactUpdateRes = await phpFetch(`/contact-info/${session.sub}`, {
       method: "PUT",
       body: contactData,
+      silent: true,
     });
     if (!contactUpdateRes.ok) {
       await phpFetch("/contact-info", {
@@ -137,6 +138,7 @@ export async function saveProfile(_prevState, formData) {
     const socialUpdateRes = await phpFetch(`/social-info/${session.sub}`, {
       method: "PUT",
       body: socialData,
+      silent: true,
     });
     if (!socialUpdateRes.ok) {
       await phpFetch("/social-info", {
