@@ -14,7 +14,7 @@ export default function SubPageHeader({
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
-            <Link href={backHref}>
+            <Link prefetch={false} href={backHref}>
               <ArrowLeft size={20} />
             </Link>
           </Button>

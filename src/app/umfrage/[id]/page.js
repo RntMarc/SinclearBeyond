@@ -36,6 +36,7 @@ export default async function PollDetailPage({ params }) {
         <header className="bg-card border-b border-border px-6 py-6 shrink-0">
           <div className="max-w-5xl mx-auto flex items-center gap-4">
             <Link
+              prefetch={false}
               href="/umfrage"
               className="p-2 hover:bg-muted rounded-full transition-colors"
             >

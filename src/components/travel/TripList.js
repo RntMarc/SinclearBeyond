@@ -71,7 +71,7 @@ function TripCard({ trip, isAdmin, isEvent }) {
       {isEvent ? (
         Content
       ) : (
-        <Link href={`/reisen/${trip.id}`} className="w-full">
+        <Link prefetch={false} href={`/reisen/${trip.id}`} className="w-full">
           {Content}
         </Link>
       )}

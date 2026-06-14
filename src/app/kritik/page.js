@@ -32,6 +32,7 @@ export default async function ReviewsPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Link
+                  prefetch={false}
                   href="/kritik/spiele"
                   className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
                 >
@@ -47,6 +48,7 @@ export default async function ReviewsPage() {
                 </Link>
 
                 <Link
+                  prefetch={false}
                   href="/kritik/filme"
                   className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
                 >
@@ -62,6 +64,7 @@ export default async function ReviewsPage() {
                 </Link>
 
                 <Link
+                  prefetch={false}
                   href="/kritik/musik"
                   className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
                 >

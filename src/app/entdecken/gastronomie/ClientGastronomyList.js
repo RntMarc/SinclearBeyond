@@ -70,6 +70,7 @@ export default function ClientGastronomyList({ initialPlaces }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {initialPlaces.map((place, index) => (
                 <Link
+                  prefetch={false}
                   key={place.id}
                   href={`/entdecken/orte/${place.id}`}
                   className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col relative"

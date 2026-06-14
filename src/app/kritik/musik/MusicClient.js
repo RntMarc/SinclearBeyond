@@ -56,6 +56,7 @@ export default function MusicClient({ initialMusic }) {
 function MusicCard({ music, t }) {
   return (
     <Link
+      prefetch={false}
       href={`/kritik/musik/${music.id}`}
       className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
     >
