@@ -100,12 +100,13 @@ export async function joinForum(forumId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
-  const existing = await phpFetch(
-    `/forum-members?forumId=${forumId}&userId=${session.sub}&limit=1`,
+  const existing = await phpFetch("/forum-members", { silent: true });
+  const allMembers = existing.ok ? (existing.data?.data || []) : [];
+  const existingMember = allMembers.find(
+    (m) => m.forumId === forumId && m.userId === session.sub,
   );
-  const existingMembers = existing.ok ? (existing.data?.data || []) : [];
 
-  if (existingMembers.length > 0) {
+  if (existingMember) {
     return { ok: true, alreadyMember: true };
   }
 
@@ -125,12 +126,14 @@ export async function leaveForum(forumId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
-  const existing = await phpFetch(
-    `/forum-members?forumId=${forumId}&userId=${session.sub}&limit=1`,
+  const existing = await phpFetch("/forum-members", { silent: true });
+  const allMembers = existing.ok ? (existing.data?.data || []) : [];
+  const membership = allMembers.find(
+    (m) => m.forumId === forumId && m.userId === session.sub,
   );
-  const members = existing.ok ? (existing.data?.data || []) : [];
-  if (members.length > 0) {
-    await phpFetch(`/forum-members/${members[0].id}`, { method: "DELETE" });
+
+  if (membership) {
+    await phpFetch(`/forum-members/${membership.id}`, { method: "DELETE" });
   }
 
   revalidatePath("/forum");
@@ -161,12 +164,14 @@ export async function unvotePost(postId) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
-  const existing = await phpFetch(
-    `/post-votes?postId=${postId}&userId=${session.sub}&limit=1`,
+  const existing = await phpFetch("/post-votes", { silent: true });
+  const allVotes = existing.ok ? (existing.data?.data || []) : [];
+  const vote = allVotes.find(
+    (v) => v.postId === postId && v.userId === session.sub,
   );
-  const votes = existing.ok ? (existing.data?.data || []) : [];
-  if (votes.length > 0) {
-    await phpFetch(`/post-votes/${votes[0].id}`, { method: "DELETE" });
+
+  if (vote) {
+    await phpFetch(`/post-votes/${vote.id}`, { method: "DELETE" });
   }
 
   const postRes = await phpFetch(`/posts/${postId}`);
