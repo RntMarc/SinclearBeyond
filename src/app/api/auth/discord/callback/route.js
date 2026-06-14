@@ -11,6 +11,7 @@ import {
 import { getSession } from "@/lib/auth/session";
 import { completeV2AuthFlowIfPresent } from "@/lib/auth/v2Flow";
 import { phpFetch } from "@/lib/api/phpClient";
+import { internalFetch } from "@/lib/api/internalClient";
 import { normalizeOrigin, validateRelativeCallbackUrl } from "@/lib/utils";
 
 export async function GET(req) {
@@ -39,14 +40,10 @@ export async function GET(req) {
       (g) => g.id === process.env.DISCORD_ALLOWED_GUILD_ID,
     );
 
-    // Find existing user by discordId or email via public endpoint
-    const [byIdRes, byEmailRes] = await Promise.all([
-      phpFetch(`/auth/discord/find-user?discordId=${discordUser.id}`),
-      phpFetch(`/auth/discord/find-user?email=${encodeURIComponent(discordUser.email)}`),
-    ]);
+    // Find existing user by discordId
+    const byIdRes = await internalFetch(`/auth/discord/find-user?discordId=${discordUser.id}`);
 
     const existingByDiscordId = byIdRes.ok ? (byIdRes.data?.data || []) : [];
-    const existingByEmail = byEmailRes.ok ? (byEmailRes.data?.data || []) : [];
 
     if (mode === "link") {
       const session = await getSession();
@@ -96,7 +93,7 @@ export async function GET(req) {
         );
       }
 
-      if (existingByEmail.length > 0 || existingByDiscordId.length > 0) {
+      if (existingByDiscordId.length > 0) {
         return NextResponse.redirect(
           new URL("/login?error=account_exists", origin),
         );
@@ -143,39 +140,12 @@ export async function GET(req) {
     }
 
     // Default: Login
-    let user = existingByDiscordId[0] || existingByEmail[0];
+    let user = existingByDiscordId[0];
 
     if (!user) {
       return NextResponse.redirect(
         new URL("/login?error=user_not_found", origin),
       );
-    }
-
-    if (!user.discordId) {
-      await phpFetch(`/users/${user.id}`, {
-        method: "PATCH",
-        body: { discordId: discordUser.id },
-      });
-
-      const contactRes = await phpFetch(`/contact-info/${user.id}`);
-      if (contactRes.ok) {
-        if (!contactRes.data?.discordHandle) {
-          await phpFetch(`/contact-info/${user.id}`, {
-            method: "PATCH",
-            body: { discordHandle: discordUser.username },
-          });
-        }
-      } else {
-        await phpFetch("/contact-info", {
-          method: "POST",
-          body: {
-            userId: user.id,
-            discordHandle: discordUser.username,
-          },
-        });
-      }
-
-      user = { ...user, discordId: discordUser.id };
     }
 
     return await createSessionAndRedirect(user, origin, callbackUrl);
