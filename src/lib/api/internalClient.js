@@ -19,8 +19,11 @@ export async function internalFetch(path, options = {}) {
   const signature = signRequest(timestamp);
 
   const url = `${BASE_URL}${path}`;
+  const body = options.body ? JSON.stringify(options.body) : undefined;
+
   const response = await fetch(url, {
     ...options,
+    body,
     headers: {
       "Content-Type": "application/json",
       "X-Timestamp": String(timestamp),
@@ -34,7 +37,7 @@ export async function internalFetch(path, options = {}) {
     console.error(`[Internal API] Error: ${response.status} ${path}`, {
       error: data?.error || response.statusText,
     });
-    return { ok: false, status: response.status, data };
+    return { ok: false, status: response.status, error: data?.error || response.statusText, data };
   }
 
   const data = await response.json().catch(() => null);
