@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { createSessionToken } from "@/lib/auth/auth";
 import {
   exchangeDiscordCode,
   getDiscordUser,
@@ -128,15 +127,7 @@ export async function GET(req) {
         },
       });
 
-      return await createSessionAndRedirect(
-        {
-          id: userId,
-          email: discordUser.email,
-          isAdmin: 0,
-          onboardingCompleted: 0,
-        },
-        origin,
-      );
+      return await createSessionAndRedirect(userId, origin);
     }
 
     // Default: Login
@@ -148,7 +139,7 @@ export async function GET(req) {
       );
     }
 
-    return await createSessionAndRedirect(user, origin, callbackUrl);
+    return await createSessionAndRedirect(user.id, origin, callbackUrl);
   } catch (error) {
     const duration = Date.now() - startTime;
     console.error(`Discord callback error after ${duration}ms:`, error);
@@ -166,16 +157,46 @@ export async function GET(req) {
   }
 }
 
-async function createSessionAndRedirect(user, origin, callbackUrl) {
-  const token = await createSessionToken(user);
+async function createSessionAndRedirect(userId, origin, callbackUrl) {
+  const tokenRes = await internalFetch("/auth/discord/issue-token", {
+    method: "POST",
+    body: { userId },
+  });
+
+  if (!tokenRes.ok) {
+    console.error("[Discord Callback] Token issuance failed:", tokenRes.error);
+    return NextResponse.redirect(new URL("/login?error=auth_failed", origin));
+  }
+
+  const { accessToken, refreshToken, expiresIn } = tokenRes.data;
 
   const cookieStore = await cookies();
-  cookieStore.set("session", token, {
+
+  cookieStore.set("accessToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: expiresIn || 900,
     path: "/",
+  });
+
+  if (refreshToken) {
+    cookieStore.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
+  }
+
+  // Legacy session cookie for compatibility
+  cookieStore.set("session", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
   });
 
   const v2Flow = await completeV2AuthFlowIfPresent();
