@@ -59,6 +59,35 @@ export async function phpFetch(
         if (refreshResponse.ok) {
           const refreshData = await refreshResponse.json();
           console.log(`[PHP API] Token refresh successful, retrying ${url} with new token`);
+          // Save new tokens to cookies so subsequent requests don't re-trigger refresh
+          try {
+            const cs = await cookies();
+            cs.set("accessToken", refreshData.accessToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              maxAge: refreshData.expiresIn || 900,
+              path: "/",
+            });
+            if (refreshData.refreshToken) {
+              cs.set("refreshToken", refreshData.refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 60 * 60 * 24 * 90,
+                path: "/",
+              });
+            }
+            cs.set("session", refreshData.accessToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              maxAge: 60 * 60 * 24 * 7,
+              path: "/",
+            });
+          } catch (_e) {
+            // Cookies may be read-only in Server Component context
+          }
           // Retry original request with the new token
           return phpFetch(path, { method, body, headers, cache, next, accessToken: refreshData.accessToken });
         } else {
