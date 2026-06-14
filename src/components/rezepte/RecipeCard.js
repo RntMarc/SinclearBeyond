@@ -23,6 +23,7 @@ export default function RecipeCard({ recipe }) {
 
   return (
     <Link
+      prefetch={false}
       href={`/rezepte/${recipe.id}`}
       className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
     >

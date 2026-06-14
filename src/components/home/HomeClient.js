@@ -84,6 +84,7 @@ export default function HomeClient({
         >
           {upcomingTrips.map((trip) => (
             <Link
+              prefetch={false}
               key={trip.id}
               href={`/reisen/${trip.id}`}
               className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group flex items-center justify-between"
@@ -116,6 +117,7 @@ export default function HomeClient({
         <Section title={t("polls")} href="/umfrage" className="space-y-3">
           {activePolls.map((poll) => (
             <Link
+              prefetch={false}
               key={poll.id}
               href={`/umfrage/${poll.id}`}
               className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
@@ -142,6 +144,7 @@ export default function HomeClient({
           ))}
           {finalizedPolls.map((poll) => (
             <Link
+              prefetch={false}
               key={poll.id}
               href={`/umfrage/${poll.id}`}
               className="block p-4 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-xl transition-all group"
@@ -269,6 +272,7 @@ export default function HomeClient({
         >
           {latestMediaReviews.map(({ review, item, user }) => (
             <Link
+              prefetch={false}
               key={review.id}
               href={`/kritik/${item.type === "game" ? "spiele" : item.type === "movie" ? "filme" : "musik"}/${item.id}`}
               className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
@@ -317,6 +321,7 @@ export default function HomeClient({
         >
           {latestDiscoverReviews.map(({ review, place, user }) => (
             <Link
+              prefetch={false}
               key={review.id}
               href={`/entdecken/orte/${place.id}`}
               className="block p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
@@ -384,6 +389,7 @@ function Section({ title, href, children, className = "" }) {
   return (
     <section className="flex flex-col break-inside-avoid mb-10">
       <Link
+        prefetch={false}
         href={href}
         className="group flex items-center justify-between mb-6 hover:text-primary transition-colors"
       >

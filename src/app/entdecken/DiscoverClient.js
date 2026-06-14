@@ -134,6 +134,7 @@ export default function DiscoverClient({
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link
+                prefetch={false}
                 href="/entdecken/gastronomie"
                 className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
               >
@@ -149,6 +150,7 @@ export default function DiscoverClient({
               </Link>
 
               <Link
+                prefetch={false}
                 href="/entdecken/freizeit"
                 className="group p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all shadow-sm flex items-center gap-4"
               >
@@ -197,6 +199,7 @@ export default function DiscoverClient({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {bookmarks.map((place) => (
                   <Link
+                    prefetch={false}
                     key={place.id}
                     href={`/entdecken/orte/${place.id}`}
                     className="p-4 bg-card border border-border rounded-xl hover:border-primary/50 transition-all shadow-sm"
@@ -268,6 +271,7 @@ export default function DiscoverClient({
               ) : places.length > 0 ? (
                 places.map((place, index) => (
                   <Link
+                    prefetch={false}
                     key={place.id}
                     href={`/entdecken/orte/${place.id}`}
                     className="flex items-center gap-4 p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all group"
@@ -325,6 +329,7 @@ export default function DiscoverClient({
 function PlaceCard({ place, t }) {
   return (
     <Link
+      prefetch={false}
       href={`/entdecken/orte/${place.id}`}
       className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
     >

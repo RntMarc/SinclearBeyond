@@ -45,7 +45,7 @@ function PollCard({ poll }) {
     poll.type === "survey" ? CheckSquare : isFinalized ? CheckCircle2 : Target;
 
   return (
-    <Link href={`/umfrage/${poll.id}`} className="block">
+    <Link prefetch={false} href={`/umfrage/${poll.id}`} className="block">
       <div className="flex items-center justify-between p-4 bg-sidebar hover:bg-sidebar-accent border border-sidebar-border rounded-xl transition-all group">
         <div className="flex items-center gap-3">
           <div

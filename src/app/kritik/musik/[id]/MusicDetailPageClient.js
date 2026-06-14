@@ -274,6 +274,7 @@ export default function MusicDetailPageClient({
               <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
                 {music.tracks.map((track) => (
                   <Link
+                    prefetch={false}
                     key={track.id}
                     href={`/kritik/musik/${track.id}`}
                     className="p-4 flex items-center justify-between hover:bg-muted/20 transition-colors"
@@ -330,6 +331,7 @@ export default function MusicDetailPageClient({
                     <div>
                       <h2 className="text-2xl font-black">{album.title}</h2>
                       <Link
+                        prefetch={false}
                         href={`/kritik/musik/${album.id}`}
                         className="text-primary text-sm font-bold hover:underline"
                       >
@@ -341,6 +343,7 @@ export default function MusicDetailPageClient({
                   <div className="bg-muted/30 rounded-3xl overflow-hidden border border-border divide-y divide-border">
                     {album.tracks.map((track) => (
                       <Link
+                        prefetch={false}
                         key={track.id}
                         href={`/kritik/musik/${track.id}`}
                         className={`p-4 flex items-center justify-between hover:bg-muted/20 transition-colors ${

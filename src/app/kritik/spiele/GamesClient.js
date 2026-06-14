@@ -58,6 +58,7 @@ export default function GamesClient({ initialGames }) {
 function GameCard({ game, t }) {
   return (
     <Link
+      prefetch={false}
       href={`/kritik/spiele/${game.id}`}
       className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
     >

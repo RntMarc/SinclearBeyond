@@ -59,6 +59,7 @@ export default function MoviesClient({ initialMovies }) {
 function MovieCard({ movie, t }) {
   return (
     <Link
+      prefetch={false}
       href={`/kritik/filme/${movie.id}`}
       className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-sm flex flex-col"
     >

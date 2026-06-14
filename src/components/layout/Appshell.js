@@ -138,6 +138,7 @@ export default function AppShell({ children, user, session }) {
       >
         <div className="flex items-center justify-between px-5 py-5 border-b border-sidebar-border shrink-0">
           <Link
+            prefetch={false}
             href="/home"
             className="text-base font-semibold tracking-tight text-sidebar-foreground hover:opacity-80 transition-opacity"
             onClick={() => setOpen(false)}
@@ -186,6 +187,7 @@ export default function AppShell({ children, user, session }) {
 
                     return (
                       <Link
+                        prefetch={false}
                         key={item.href}
                         href={item.href}
                         onClick={() => setOpen(false)}
@@ -245,6 +247,7 @@ export default function AppShell({ children, user, session }) {
             <Menu size={20} />
           </button>
           <Link
+            prefetch={false}
             href="/home"
             className="text-base font-semibold tracking-tight text-foreground"
           >

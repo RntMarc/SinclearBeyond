@@ -144,7 +144,7 @@ export async function votePost(postId) {
 
   const result = await phpFetch("/post-votes", {
     method: "POST",
-    body: { postId, userId: session.sub },
+    body: { postId, userId: session.sub, createdAt: new Date().toISOString() },
   });
 
   if (!result.ok) throw new Error("Failed to vote");

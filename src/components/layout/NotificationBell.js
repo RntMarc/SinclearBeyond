@@ -113,6 +113,7 @@ export default function NotificationBell({ side = "right" }) {
                     className="p-4 hover:bg-muted/30 transition-colors group relative"
                   >
                     <Link
+                      prefetch={false}
                       href={notification.link}
                       onClick={() => {
                         setIsOpen(false);
@@ -144,7 +145,8 @@ export default function NotificationBell({ side = "right" }) {
           {notifications.length > 0 && (
             <div className="p-2 border-t bg-muted/10">
               <Link
-                href="/home" // Or a dedicated notifications page if it exists
+                prefetch={false}
+                href="/home"
                 onClick={() => setIsOpen(false)}
                 className="block w-full py-2 text-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
               >

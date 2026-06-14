@@ -80,6 +80,7 @@ export default function FeedDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.joined.map((forum) => (
                   <Link
+                    prefetch={false}
                     key={forum.id}
                     href={`/forum/${forum.id}`}
                     className="group relative bg-sidebar border border-sidebar-border rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all flex flex-col"
@@ -179,6 +180,7 @@ export default function FeedDashboard() {
                       />
                     </div>
                     <Link
+                      prefetch={false}
                       href={`/forum/${forum.id}`}
                       className="p-2 text-muted-foreground hover:text-foreground"
                     >

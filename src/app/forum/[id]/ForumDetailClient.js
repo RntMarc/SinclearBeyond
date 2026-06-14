@@ -84,6 +84,7 @@ export default function ForumDetailClient({ forumId, userId: _userId }) {
       <div className="flex-1 flex flex-col items-center justify-center space-y-4">
         <p className="text-muted-foreground">Forum nicht gefunden.</p>
         <Link
+          prefetch={false}
           href="/forum"
           className="text-primary hover:underline flex items-center gap-2"
         >
