@@ -1,12 +1,15 @@
 import "server-only";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { phpFetch } from "@/lib/api/phpClient";
 
 /**
  * Gets the current session by calling the PHP API /auth/me
  * Returns null immediately if no access token cookie exists (no API call)
+ *
+ * Wrapped with React cache() to deduplicate parallel calls within a single render.
  */
-export async function getSession() {
+export const getSession = cache(async function getSession() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
@@ -51,4 +54,4 @@ export async function getSession() {
     primaryColor: prefs.primaryColor || "#7c3aed",
     timezone: prefs.timezone || null,
   };
-}
+});
